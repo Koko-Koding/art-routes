@@ -50,6 +50,27 @@ function wp_art_routes_enqueue_scripts() {
         WP_ART_ROUTES_VERSION,
         true
     );
+    
+    // If we're on a single art_route post, pass the data directly to JavaScript
+    if (is_singular('art_route')) {
+        $route_id = get_the_ID();
+        $route_data = wp_art_routes_get_route_data($route_id);
+        
+        if ($route_data) {
+            $js_data = [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('wp_art_routes_nonce'),
+                'route_path' => $route_data['route_path'],
+                'artworks' => $route_data['artworks'],
+                'i18n' => [
+                    'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
+                    'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
+                ],
+            ];
+            
+            wp_localize_script('wp-art-routes-map-js', 'artRouteData', $js_data);
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'wp_art_routes_enqueue_scripts');
 
@@ -151,6 +172,11 @@ function wp_art_routes_is_route_page() {
     
     // Check for our template
     if (is_page_template('art-route-map-template.php')) {
+        return true;
+    }
+    
+    // Check if viewing a single art_route post type
+    if (is_singular('art_route')) {
         return true;
     }
     

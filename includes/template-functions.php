@@ -181,3 +181,97 @@ function wp_art_routes_template_include($template) {
     return $template;
 }
 add_filter('template_include', 'wp_art_routes_template_include');
+
+/**
+ * Automatically append map to route content
+ */
+function wp_art_routes_append_map_to_route_content($content) {
+    // Only apply on singular art_route pages
+    if (!is_singular('art_route')) {
+        return $content;
+    }
+    
+    // Get the current post ID
+    $route_id = get_the_ID();
+    $route_data = wp_art_routes_get_route_data($route_id);
+    
+    if (!$route_data) {
+        return $content;
+    }
+    
+    // Generate the HTML for the map
+    ob_start();
+    ?>
+    <div class="art-route-container">
+        <div class="art-route-details">
+            <div class="route-meta">
+                <?php if (!empty($route_data['length'])) : ?>
+                    <span class="route-length"><?php echo esc_html($route_data['length']); ?> km</span>
+                <?php endif; ?>
+                
+                <?php if (!empty($route_data['duration'])) : ?>
+                    <span class="route-duration"><?php echo esc_html($route_data['duration']); ?> <?php _e('minutes', 'wp-art-routes'); ?></span>
+                <?php endif; ?>
+                
+                <?php if (!empty($route_data['type'])) : ?>
+                    <span class="route-type">
+                        <?php 
+                        $route_types = [
+                            'walking' => __('Wandelroute', 'wp-art-routes'),
+                            'cycling' => __('Fietsroute', 'wp-art-routes'),
+                            'wheelchair' => __('Rolstoelvriendelijk', 'wp-art-routes'),
+                            'children' => __('Kinderroute', 'wp-art-routes'),
+                        ];
+                        echo isset($route_types[$route_data['type']]) ? $route_types[$route_data['type']] : $route_data['type']; 
+                        ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <!-- Map container -->
+        <div id="art-route-map" class="art-route-map" style="height: 600px;"></div>
+        
+        <!-- Loading indicator -->
+        <div id="map-loading" class="map-loading" style="display: none;">
+            <div class="spinner"></div>
+            <p><?php _e('Loading map...', 'wp-art-routes'); ?></p>
+        </div>
+        
+        <!-- Location error message -->
+        <div id="location-error" class="map-error" style="display: none;">
+            <p></p>
+            <button id="retry-location" class="button"><?php _e('Retry', 'wp-art-routes'); ?></button>
+        </div>
+        
+        <!-- Route progress -->
+        <div class="route-progress" style="display: none;">
+            <h3><?php _e('Progress', 'wp-art-routes'); ?></h3>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <p><?php _e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php _e('of this route', 'wp-art-routes'); ?></p>
+        </div>
+        
+        <!-- Artwork modal -->
+        <div id="artwork-modal" class="artwork-modal" style="display: none;">
+            <div class="artwork-modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="artwork-image">
+                    <img id="artwork-img" src="" alt="">
+                </div>
+                <div class="artwork-info">
+                    <h3 id="artwork-title"></h3>
+                    <div id="artwork-description"></div>
+                    <a id="artwork-artist-link" class="artist-link" href=""><?php _e('View Artist', 'wp-art-routes'); ?></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    $map_content = ob_get_clean();
+    
+    // Append the map to the content
+    return $content . $map_content;
+}
+add_filter('the_content', 'wp_art_routes_append_map_to_route_content');
