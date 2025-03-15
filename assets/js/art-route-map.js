@@ -11,10 +11,16 @@
     let artworkMarkers = [];
     let routePath = [];
     let completedPath = [];
+    let initialLocationSet = false;
+    // Add toast container and queue
+    let toastQueue = [];
+    let toastDisplaying = false;
     
     // Initialize the map when the DOM is ready
     $(document).ready(function() {
         initMap();
+        // Create toast container
+        $('body').append('<div id="art-route-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>');
     });
     
     /**
@@ -45,10 +51,7 @@
         // Get user location
         getUserLocation();
         
-        // Handle modal close
-        $('.close-modal').on('click', function() {
-            $('#artwork-modal').hide();
-        });
+        // Remove modal close handler and replace with toast handling
         
         // Retry location button
         $('#retry-location').on('click', function() {
@@ -111,6 +114,9 @@
             
             // Center map on user position first time
             map.setView([latitude, longitude], 15);
+            
+            // Set flag for initial location
+            initialLocationSet = true;
         } else {
             // Update existing marker
             userMarker.setLatLng([latitude, longitude]);
@@ -119,8 +125,10 @@
         // Update completed route path
         updateCompletedRoute();
         
-        // Check proximity to artworks
-        checkArtworkProximity();
+        // Only check artwork proximity if not first location update
+        if (initialLocationSet) {
+            checkArtworkProximity();
+        }
     }
     
     /**
@@ -211,17 +219,90 @@
     }
     
     /**
-     * Show artwork details in modal
+     * Show artwork details as a toast
      */
     function showArtworkDetails(artwork) {
-        // Set artwork details
-        $('#artwork-img').attr('src', artwork.image_url).attr('alt', artwork.title);
-        $('#artwork-title').text(artwork.title);
-        $('#artwork-description').html(artwork.description);
-        $('#artwork-artist-link').attr('href', artwork.artist_url);
+        // Create a toast instead of showing modal
+        const toast = $(`
+            <div class="art-route-toast" style="
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                margin-bottom: 10px;
+                max-width: 320px;
+                overflow: hidden;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;">
+                <div style="position: relative;">
+                    <img src="${artwork.image_url}" alt="${artwork.title}" style="width: 100%; height: 160px; object-fit: cover;">
+                    <div style="position: absolute; top: 10px; right: 10px; cursor: pointer; background-color: rgba(255,255,255,0.7); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" class="toast-close">
+                        &times;
+                    </div>
+                </div>
+                <div style="padding: 16px;">
+                    <h3 style="margin: 0 0 8px; font-size: 18px;">${artwork.title}</h3>
+                    <div style="font-size: 14px; max-height: 100px; overflow-y: auto;">
+                        ${artwork.description}
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <a href="${artwork.artist_url || '#'}" target="_blank" style="text-decoration: none; color: #3388FF;">
+                            ${artwork.artist_url ? 'Meer informatie' : ''}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // Add to queue
+        toastQueue.push(toast);
         
-        // Show modal
-        $('#artwork-modal').show();
+        // If no toast is displaying, show this one
+        if (!toastDisplaying) {
+            showNextToast();
+        }
+    }
+    
+    /**
+     * Display the next toast in queue
+     */
+    function showNextToast() {
+        if (toastQueue.length === 0) {
+            toastDisplaying = false;
+            return;
+        }
+        
+        toastDisplaying = true;
+        const toast = toastQueue.shift();
+        
+        // Add to container
+        $('#art-route-toast-container').append(toast);
+        
+        // Animate in
+        setTimeout(function() {
+            toast.css('transform', 'translateX(0)');
+        }, 50);
+        
+        // Add close handler
+        toast.find('.toast-close').on('click', function() {
+            hideToast(toast);
+        });
+        
+        // Auto dismiss after 12 seconds
+        setTimeout(function() {
+            hideToast(toast);
+        }, 12000);
+    }
+    
+    /**
+     * Hide a toast element
+     */
+    function hideToast(toast) {
+        toast.css('transform', 'translateX(400px)');
+        
+        setTimeout(function() {
+            toast.remove();
+            showNextToast();
+        }, 300);
     }
     
     /**
@@ -353,7 +434,7 @@
                 
                 item.marker.setIcon(newIcon);
                 
-                // Show artwork details
+                // Show artwork details as toast instead of modal
                 showArtworkDetails(item.artwork);
                 
                 // Save visited status
