@@ -190,12 +190,18 @@
         
         if (artworks && artworks.length > 0) {
             artworks.forEach(function(artwork, index) {
-                // Create a custom artwork marker
+                // Create a custom artwork marker with image background
                 const artworkIcon = L.divIcon({
                     className: 'artwork-marker',
-                    html: `<div class="artwork-marker-inner">${index + 1}</div>`,
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15]
+                    html: `
+                        <div class="artwork-marker-inner">
+                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url}');"></div>
+                            <div class="artwork-marker-overlay"></div>
+                            <div class="artwork-marker-number">${index + 1}</div>
+                        </div>
+                    `,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
                 });
                 
                 // Create the marker
@@ -425,9 +431,11 @@
                 
                 // Update marker style
                 const icon = item.marker.options.icon;
+                const newIconHtml = icon.options.html.replace('artwork-marker-inner', 'artwork-marker-inner visited');
+                
                 const newIcon = L.divIcon({
-                    className: 'artwork-marker visited',
-                    html: icon.options.html,
+                    className: 'artwork-marker',
+                    html: newIconHtml,
                     iconSize: icon.options.iconSize,
                     iconAnchor: icon.options.iconAnchor
                 });
