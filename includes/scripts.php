@@ -20,7 +20,7 @@ function wp_art_routes_enqueue_scripts() {
     // Leaflet CSS
     wp_enqueue_style(
         'wp-art-routes-leaflet-css',
-        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
         [],
         '1.9.4'
     );
@@ -28,7 +28,7 @@ function wp_art_routes_enqueue_scripts() {
     // Leaflet JS
     wp_enqueue_script(
         'wp-art-routes-leaflet-js',
-        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
         [],
         '1.9.4',
         true
@@ -72,7 +72,7 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
     // Leaflet CSS (shared)
     wp_enqueue_style(
         'wp-art-routes-admin-leaflet-css',
-        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
         [],
         '1.9.4'
     );
@@ -80,7 +80,7 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
     // Leaflet JS (shared)
     wp_enqueue_script(
         'wp-art-routes-admin-leaflet-js',
-        'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
         ['jquery'],
         '1.9.4',
         true
