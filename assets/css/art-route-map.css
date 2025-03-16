@@ -315,6 +315,75 @@
     text-decoration: underline;
 }
 
+/* Artwork Popup in Map */
+.leaflet-popup-content-wrapper {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.leaflet-popup-content {
+    margin: 0;
+    width: 300px !important;
+}
+
+.artwork-popup {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.artwork-popup-image {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.artwork-popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.artwork-popup-content {
+    padding: 15px;
+}
+
+.artwork-popup-content h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.artwork-artist {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+.artwork-description {
+    font-size: 14px;
+    line-height: 1.4;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.artwork-link {
+    display: inline-block;
+    color: #3388FF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.artwork-link:hover {
+    text-decoration: underline;
+}
+
+.artwork-popup-container .leaflet-popup-tip {
+    background-color: white;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
     .artwork-modal-content {
@@ -330,5 +399,13 @@
     
     .art-route-map {
         height: 400px;
+    }
+    
+    .leaflet-popup-content {
+        width: 250px !important;
+    }
+    
+    .artwork-popup-image {
+        height: 120px;
     }
 }

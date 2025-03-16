@@ -250,17 +250,28 @@
                     icon: artworkIcon
                 }).addTo(map);
                 
-                // Add click event
+                // Generate the popup content once
+                const popupContent = createPopupContent(artwork);
+                
+                // Create a permanent popup that we'll show/hide instead of creating/removing it
+                const popup = L.popup({
+                    maxWidth: 300,
+                    className: 'artwork-popup-container',
+                    closeButton: true,
+                    autoClose: false,  // Important - don't auto close when clicking elsewhere
+                    closeOnEscapeKey: true
+                }).setContent(popupContent);
+                
+                // Add click event to show the popup
                 marker.on('click', function() {
-                    // Create a copy of the artwork with userClicked flag
-                    const clickedArtwork = {...artwork, userClicked: true};
-                    showArtworkDetails(clickedArtwork);
+                    popup.setLatLng(marker.getLatLng()).openOn(map);
                 });
                 
                 // Add to array for proximity checking
                 artworkMarkers.push({
                     marker: marker,
                     artwork: artwork,
+                    popup: popup,
                     visited: false
                 });
             });
@@ -268,11 +279,32 @@
     }
     
     /**
-     * Show artwork details as a toast
+     * Create popup content for an artwork
+     */
+    function createPopupContent(artwork) {
+        return `
+            <div class="artwork-popup">
+                <div class="artwork-popup-image">
+                    <img src="${artwork.image_url}" alt="${artwork.title}">
+                </div>
+                <div class="artwork-popup-content">
+                    <h3>${artwork.title}</h3>
+                    <p class="artwork-artist">${artwork.artist}</p>
+                    <div class="artwork-description">
+                        ${artwork.description}
+                    </div>
+                    ${artwork.artist_url ? `<a href="${artwork.artist_url}" target="_blank" class="artwork-link">Meer informatie</a>` : ''}
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * Show artwork details as a toast (used for proximity detection)
      */
     function showArtworkDetails(artwork) {
-        // Skip showing toasts if disabled AND not clicked by user
-        if (!showArtworkToasts && !artwork.userClicked) {
+        // Skip showing toasts if disabled
+        if (!showArtworkToasts) {
             return;
         }
         
@@ -498,7 +530,7 @@
                 
                 item.marker.setIcon(newIcon);
                 
-                // Show artwork details as toast instead of modal (if toasts are enabled)
+                // Show artwork details as toast for proximity notifications
                 if (showArtworkToasts) {
                     showArtworkDetails(item.artwork);
                 }

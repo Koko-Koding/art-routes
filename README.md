@@ -18,6 +18,7 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 - Location-aware functionality showing user position on map
 - Route progress tracking with visualization of completed segments
 - Proximity detection for nearby artworks with toast notifications
+- Interactive artwork balloons when clicking artwork markers on the map
 - Shortcode for embedding maps on any page (`[art_route_map]`)
 - Custom page template for full-page map display
 - Mobile-friendly responsive design
@@ -99,6 +100,23 @@ If you previously had art routes functionality in your theme, follow these steps
 2. Existing routes and artworks will continue to work
 3. Remove the old art routes code from your theme
 4. Update any shortcodes to use the new format if needed
+
+## Changelog
+
+### 1.1.2
+- Fixed issue with artwork popups not reopening after being closed
+- Improved popup handling to ensure consistent behavior across all browsers
+
+### 1.1.1
+- Fixed issue where artwork popups couldn't be reopened after being closed
+
+### 1.1.0
+- Added artwork balloons that display within the map when clicking on artwork markers
+- Improved artwork information display with better styling
+- Fixed various UI issues with popup display
+
+### 1.0.0
+- Initial release
 
 ## Credits
 
