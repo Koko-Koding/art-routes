@@ -9,20 +9,26 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 ### Features
 
 - Custom post types for routes and artworks
-- Interactive maps using OpenStreetMap/Leaflet
+- Interactive maps using OpenStreetMap/Leaflet.js (version 1.9.4)
 - Route editor for creating custom paths
-- Artwork location picker
+- Artwork location picker with map interface
 - Artist taxonomy for categorizing artworks
+- Route types (walking, cycling, wheelchair-accessible, children routes)
+- Route details (length in km, duration in minutes)
+- Location-aware functionality showing user position on map
+- Route progress tracking with visualization of completed segments
+- Proximity detection for nearby artworks with toast notifications
 - Shortcode for embedding maps on any page (`[art_route_map]`)
 - Custom page template for full-page map display
-- Location-aware functionality for tracking user progress
 - Mobile-friendly responsive design
+- Plugin settings page for global configuration
 
 ## Installation
 
 1. Upload the `wp-art-routes` folder to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Start creating art routes and artworks through the WordPress admin panel
+3. Configure the plugin settings at Routes > Settings
+4. Start creating art routes and artworks through the WordPress admin panel
 
 ## Usage
 
@@ -32,7 +38,8 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 2. Enter a title and description for your route
 3. Fill in the route details (length, duration, type)
 4. Use the "Use Map to Create Route" button to draw your route on the map
-5. Publish your route
+5. Configure route options (show completed route path, show artwork notifications)
+6. Publish your route
 
 ### Adding Artworks
 
@@ -67,6 +74,13 @@ Parameters:
 3. Publish the page
 4. To display a specific route, add `?route_id=123` to the page URL
 
+### Plugin Settings
+
+1. Navigate to **Routes > Settings** in the WordPress admin
+2. Set a default route to use when no specific route is selected
+3. Enable or disable location tracking for users
+4. Save your settings
+
 ## Customization
 
 ### Template Overrides
@@ -89,7 +103,7 @@ If you previously had art routes functionality in your theme, follow these steps
 ## Credits
 
 - Maps provided by [OpenStreetMap](https://www.openstreetmap.org/) 
-- Map library: [Leaflet](https://leafletjs.com/)
+- Map library: [Leaflet](https://leafletjs.com/) version 1.9.4
 
 ## License
 
