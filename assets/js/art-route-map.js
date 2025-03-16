@@ -225,7 +225,9 @@
                 
                 // Add click event
                 marker.on('click', function() {
-                    showArtworkDetails(artwork);
+                    // Create a copy of the artwork with userClicked flag
+                    const clickedArtwork = {...artwork, userClicked: true};
+                    showArtworkDetails(clickedArtwork);
                 });
                 
                 // Add to array for proximity checking
@@ -242,7 +244,7 @@
      * Show artwork details as a toast
      */
     function showArtworkDetails(artwork) {
-        // Skip showing toasts if disabled
+        // Skip showing toasts if disabled AND not clicked by user
         if (!showArtworkToasts && !artwork.userClicked) {
             return;
         }
