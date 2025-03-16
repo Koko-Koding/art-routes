@@ -122,8 +122,21 @@
                 zIndexOffset: 1000
             }).addTo(map);
             
-            // Center map on user position first time
-            map.setView([latitude, longitude], 15);
+            // Now fit both the route and user location in view when user is first located
+            if (routeLayer) {
+                // Create a bounds object that includes both the route and the user's position
+                const combinedBounds = routeLayer.getBounds();
+                combinedBounds.extend([latitude, longitude]);
+                
+                // Fit the map to these combined bounds with some padding
+                map.fitBounds(combinedBounds, {
+                    padding: [50, 50],
+                    maxZoom: 19  // Limit how far it can zoom out
+                });
+            } else {
+                // If there's no route, just center on user
+                map.setView([latitude, longitude], 19);
+            }
             
             // Set flag for initial location
             initialLocationSet = true;
@@ -181,8 +194,13 @@
                 lineJoin: 'round'
             }).addTo(map);
             
-            // Fit the map to the route bounds
-            map.fitBounds(routeLayer.getBounds());
+            // Fit the map to the route bounds (only initially if user location not yet available)
+            if (!userPosition) {
+                map.fitBounds(routeLayer.getBounds(), {
+                    padding: [50, 50],
+                    maxZoom: 16  // Limit how far it can zoom out
+                });
+            }
             
             // Initialize completed route layer (empty at first) if feature is enabled
             if (showCompletedRoute) {
