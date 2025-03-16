@@ -63,6 +63,7 @@ function wp_art_routes_enqueue_scripts() {
                 'route_path' => $route_data['route_path'],
                 'artworks' => $route_data['artworks'],
                 'show_completed_route' => $route_data['show_completed_route'],
+                'show_artwork_toasts' => $route_data['show_artwork_toasts'],
                 'i18n' => [
                     'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
                     'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),

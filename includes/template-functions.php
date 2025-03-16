@@ -31,9 +31,16 @@ function wp_art_routes_get_route_data($route_id) {
     }
     
     $show_completed_route = get_post_meta($route_id, '_show_completed_route', true);
+    $show_artwork_toasts = get_post_meta($route_id, '_show_artwork_toasts', true);
+    
     // Default to true if not set
     if ($show_completed_route === '') {
         $show_completed_route = '1';
+    }
+    
+    // Default to true if not set
+    if ($show_artwork_toasts === '') {
+        $show_artwork_toasts = '1';
     }
     
     $route_data = [
@@ -46,6 +53,7 @@ function wp_art_routes_get_route_data($route_id) {
         'duration' => get_post_meta($route->ID, '_route_duration', true),
         'type' => get_post_meta($route->ID, '_route_type', true),
         'show_completed_route' => $show_completed_route === '1',
+        'show_artwork_toasts' => $show_artwork_toasts === '1',
     ];
     
     // Get route path

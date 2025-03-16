@@ -17,6 +17,8 @@
     let toastDisplaying = false;
     // Flag to indicate whether to show completed route
     let showCompletedRoute = true;
+    // Flag to indicate whether to show artwork toasts
+    let showArtworkToasts = true;
     
     // Initialize the map when the DOM is ready
     $(document).ready(function() {
@@ -46,6 +48,9 @@
         
         // Check if we should show the completed route
         showCompletedRoute = artRouteData.show_completed_route !== undefined ? artRouteData.show_completed_route : true;
+        
+        // Check if we should show artwork toasts
+        showArtworkToasts = artRouteData.show_artwork_toasts !== undefined ? artRouteData.show_artwork_toasts : true;
         
         // Add the route to the map
         drawRoute();
@@ -237,6 +242,11 @@
      * Show artwork details as a toast
      */
     function showArtworkDetails(artwork) {
+        // Skip showing toasts if disabled
+        if (!showArtworkToasts && !artwork.userClicked) {
+            return;
+        }
+        
         // Create a toast instead of showing modal
         const toast = $(`
             <div class="art-route-toast" style="
@@ -456,8 +466,10 @@
                 
                 item.marker.setIcon(newIcon);
                 
-                // Show artwork details as toast instead of modal
-                showArtworkDetails(item.artwork);
+                // Show artwork details as toast instead of modal (if toasts are enabled)
+                if (showArtworkToasts) {
+                    showArtworkDetails(item.artwork);
+                }
                 
                 // Save visited status
                 saveVisitedArtwork(item.artwork.id);

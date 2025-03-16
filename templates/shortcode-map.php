@@ -33,6 +33,7 @@ $js_data = [
     'route_path' => $route['route_path'],
     'artworks' => $route['artworks'],
     'show_completed_route' => $route['show_completed_route'],
+    'show_artwork_toasts' => $route['show_artwork_toasts'],
     'i18n' => [
         'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
         'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),

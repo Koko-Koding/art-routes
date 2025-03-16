@@ -66,9 +66,16 @@ function wp_art_routes_render_route_details_meta_box($post) {
     $duration = get_post_meta($post->ID, '_route_duration', true);
     $type = get_post_meta($post->ID, '_route_type', true);
     $show_completed_route = get_post_meta($post->ID, '_show_completed_route', true);
+    $show_artwork_toasts = get_post_meta($post->ID, '_show_artwork_toasts', true);
+    
     // Default to true if not set
     if ($show_completed_route === '') {
         $show_completed_route = '1';
+    }
+    
+    // Default to true if not set
+    if ($show_artwork_toasts === '') {
+        $show_artwork_toasts = '1';
     }
     
     // Route types
@@ -115,6 +122,15 @@ function wp_art_routes_render_route_details_meta_box($post) {
         </label>
         <br>
         <span class="description"><?php _e('When checked, users will see which part of the route they have already traversed.', 'wp-art-routes'); ?></span>
+    </p>
+    
+    <p>
+        <label for="show_artwork_toasts">
+            <input type="checkbox" id="show_artwork_toasts" name="show_artwork_toasts" value="1" <?php checked($show_artwork_toasts, '1'); ?> />
+            <?php _e('Show artwork notifications', 'wp-art-routes'); ?>
+        </label>
+        <br>
+        <span class="description"><?php _e('When checked, users will receive a notification when they pass near an artwork.', 'wp-art-routes'); ?></span>
     </p>
     <?php
 }
@@ -243,6 +259,10 @@ function wp_art_routes_save_route_details($post_id) {
     // Save show completed route setting (checkbox)
     $show_completed_route = isset($_POST['show_completed_route']) ? '1' : '0';
     update_post_meta($post_id, '_show_completed_route', $show_completed_route);
+    
+    // Save show artwork toasts setting (checkbox)
+    $show_artwork_toasts = isset($_POST['show_artwork_toasts']) ? '1' : '0';
+    update_post_meta($post_id, '_show_artwork_toasts', $show_artwork_toasts);
 }
 add_action('save_post_art_route', 'wp_art_routes_save_route_details');
 
