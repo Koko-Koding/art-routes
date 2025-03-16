@@ -2,9 +2,11 @@ Art Routes is a WordPress plugin that allows a WordPress dashboard user to confi
 
 The plugin uses Leaflet.js version 1.9.4 (loaded from cdn.jsdelivr.net) in combination with OpenStreetMap to display the map and the routes.
 
-The plugin is designed to be used by organizations that organize art routes / events, such as Woest & Bijster in the Netherlands, and want to display them on their website.
+The plugin is designed to be used by organizations that organize art routes / events, such as Woest & Bijster in the Netherlands, and want to display them on their website. It will probably be used by non-technical users who are more or less familiar with WordPress.
 
-Please refer to README.md for more information about the specific features of the plugin and how to use them.
+The map will likely be used on smaller devices, and by non-technical, sometimes older people as well, so the plugin should be responsive and mobile-friendly.
+
+Please refer to `README.md` and `CHANGELOG.md` for more information about the specific features of the plugin and how to use them.
 
 Whenever you make changes to the plugin, make sure to
 1. Update the version number in the main plugin file (`wp-art-routes.php`)
