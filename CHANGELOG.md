@@ -2,6 +2,11 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.1.3] - 2023-10-XX
+
+### Changed
+- Increased size and improved styling (white icon on dark background) of artwork balloon's close button for better accessibility on smaller devices.
+
 ## [1.1.2] - 2023-07-18
 
 ### Fixed

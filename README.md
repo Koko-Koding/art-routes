@@ -103,6 +103,10 @@ If you previously had art routes functionality in your theme, follow these steps
 
 ## Changelog
 
+### 1.1.3
+- Fixed issue with artwork popups not reopening after being closed
+- Improved popup handling to ensure consistent behavior across all browsers
+
 ### 1.1.2
 - Fixed issue with artwork popups not reopening after being closed
 - Improved popup handling to ensure consistent behavior across all browsers
