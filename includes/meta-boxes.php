@@ -65,6 +65,11 @@ function wp_art_routes_render_route_details_meta_box($post) {
     $length = get_post_meta($post->ID, '_route_length', true);
     $duration = get_post_meta($post->ID, '_route_duration', true);
     $type = get_post_meta($post->ID, '_route_type', true);
+    $show_completed_route = get_post_meta($post->ID, '_show_completed_route', true);
+    // Default to true if not set
+    if ($show_completed_route === '') {
+        $show_completed_route = '1';
+    }
     
     // Route types
     $route_types = [
@@ -101,6 +106,15 @@ function wp_art_routes_render_route_details_meta_box($post) {
                 </option>
             <?php endforeach; ?>
         </select>
+    </p>
+    
+    <p>
+        <label for="show_completed_route">
+            <input type="checkbox" id="show_completed_route" name="show_completed_route" value="1" <?php checked($show_completed_route, '1'); ?> />
+            <?php _e('Show completed route path', 'wp-art-routes'); ?>
+        </label>
+        <br>
+        <span class="description"><?php _e('When checked, users will see which part of the route they have already traversed.', 'wp-art-routes'); ?></span>
     </p>
     <?php
 }
@@ -225,6 +239,10 @@ function wp_art_routes_save_route_details($post_id) {
     if (isset($_POST['route_type'])) {
         update_post_meta($post_id, '_route_type', sanitize_text_field($_POST['route_type']));
     }
+    
+    // Save show completed route setting (checkbox)
+    $show_completed_route = isset($_POST['show_completed_route']) ? '1' : '0';
+    update_post_meta($post_id, '_show_completed_route', $show_completed_route);
 }
 add_action('save_post_art_route', 'wp_art_routes_save_route_details');
 

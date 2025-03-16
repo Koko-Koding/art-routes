@@ -62,6 +62,7 @@ function wp_art_routes_enqueue_scripts() {
                 'nonce' => wp_create_nonce('wp_art_routes_nonce'),
                 'route_path' => $route_data['route_path'],
                 'artworks' => $route_data['artworks'],
+                'show_completed_route' => $route_data['show_completed_route'],
                 'i18n' => [
                     'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
                     'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),

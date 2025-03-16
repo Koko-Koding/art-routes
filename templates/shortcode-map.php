@@ -32,6 +32,7 @@ $js_data = [
     'nonce' => wp_create_nonce('wp_art_routes_nonce'),
     'route_path' => $route['route_path'],
     'artworks' => $route['artworks'],
+    'show_completed_route' => $route['show_completed_route'],
     'i18n' => [
         'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
         'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),

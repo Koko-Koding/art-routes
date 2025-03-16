@@ -15,6 +15,8 @@
     // Add toast container and queue
     let toastQueue = [];
     let toastDisplaying = false;
+    // Flag to indicate whether to show completed route
+    let showCompletedRoute = true;
     
     // Initialize the map when the DOM is ready
     $(document).ready(function() {
@@ -41,6 +43,9 @@
         
         // Get route data from WordPress
         routePath = artRouteData.route_path;
+        
+        // Check if we should show the completed route
+        showCompletedRoute = artRouteData.show_completed_route !== undefined ? artRouteData.show_completed_route : true;
         
         // Add the route to the map
         drawRoute();
@@ -122,8 +127,10 @@
             userMarker.setLatLng([latitude, longitude]);
         }
         
-        // Update completed route path
-        updateCompletedRoute();
+        // Update completed route path if feature is enabled
+        if (showCompletedRoute) {
+            updateCompletedRoute();
+        }
         
         // Only check artwork proximity if not first location update
         if (initialLocationSet) {
@@ -172,13 +179,15 @@
             // Fit the map to the route bounds
             map.fitBounds(routeLayer.getBounds());
             
-            // Initialize completed route layer (empty at first)
-            completedRouteLayer = L.polyline([], {
-                color: '#32CD32', // Green color for completed segments
-                weight: 4,
-                opacity: 0.8,
-                lineJoin: 'round'
-            }).addTo(map);
+            // Initialize completed route layer (empty at first) if feature is enabled
+            if (showCompletedRoute) {
+                completedRouteLayer = L.polyline([], {
+                    color: '#32CD32', // Green color for completed segments
+                    weight: 4,
+                    opacity: 0.8,
+                    lineJoin: 'round'
+                }).addTo(map);
+            }
         }
     }
     
@@ -315,6 +324,11 @@
      * Update the completed route based on user position
      */
     function updateCompletedRoute() {
+        // Only proceed if showing completed route is enabled
+        if (!showCompletedRoute) {
+            return;
+        }
+        
         if (!userPosition || !routePath || routePath.length === 0) {
             return;
         }
@@ -337,7 +351,7 @@
         const completedDistance = calculateRouteDistance(completedPath);
         const progressPercent = Math.min(Math.round((completedDistance / totalDistance) * 100), 100);
         
-        // Update progress UI
+        // Update progress UI only if showing completed route is enabled
         $('.route-progress').show();
         $('.progress-fill').css('width', `${progressPercent}%`);
         $('#progress-percentage').text(progressPercent);

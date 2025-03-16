@@ -30,6 +30,12 @@ function wp_art_routes_get_route_data($route_id) {
         return null;
     }
     
+    $show_completed_route = get_post_meta($route_id, '_show_completed_route', true);
+    // Default to true if not set
+    if ($show_completed_route === '') {
+        $show_completed_route = '1';
+    }
+    
     $route_data = [
         'id' => $route->ID,
         'title' => $route->post_title,
@@ -39,6 +45,7 @@ function wp_art_routes_get_route_data($route_id) {
         'length' => get_post_meta($route->ID, '_route_length', true),
         'duration' => get_post_meta($route->ID, '_route_duration', true),
         'type' => get_post_meta($route->ID, '_route_type', true),
+        'show_completed_route' => $show_completed_route === '1',
     ];
     
     // Get route path
