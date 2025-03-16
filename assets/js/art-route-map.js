@@ -5,7 +5,7 @@
 
 (function($) {
     // Map variables
-    let map, userMarker, routeLayer, completedRouteLayer;
+    let map, userMarker, routeLayer, completedRouteLayer, userToRouteLayer;
     let userPosition = null;
     let watchId = null;
     let artworkMarkers = [];
@@ -210,6 +210,15 @@
                     opacity: 0.8,
                     lineJoin: 'round'
                 }).addTo(map);
+                
+                // Create a separate layer for the line connecting user to route
+                userToRouteLayer = L.polyline([], {
+                    color: '#32CD32', // Same base color as completed route but different style
+                    weight: 3,
+                    opacity: 0.5, // More transparent
+                    dashArray: '6, 8', // Dashed line
+                    lineJoin: 'round'
+                }).addTo(map);
             }
         }
     }
@@ -370,11 +379,14 @@
         // Update completed path (all points up to the closest one)
         completedPath = routePath.slice(0, closestIndex + 1);
         
-        // Add the user's current position as the last point
-        completedPath.push(userPosition);
-        
         // Update the completed route layer
         completedRouteLayer.setLatLngs(completedPath);
+        
+        // Create a separate line from closest point to user position
+        userToRouteLayer.setLatLngs([
+            routePath[closestIndex],
+            userPosition
+        ]);
         
         // Calculate and update progress
         const totalDistance = calculateRouteDistance(routePath);
