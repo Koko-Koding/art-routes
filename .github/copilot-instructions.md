@@ -6,4 +6,7 @@ The plugin is designed to be used by organizations that organize art routes / ev
 
 Please refer to README.md for more information about the specific features of the plugin and how to use them.
 
-Whenever you make changes to the plugin, make sure to update the version number in the main plugin file (`wp-art-routes.php`) and the `README.md` file.
+Whenever you make changes to the plugin, make sure to
+1. Update the version number in the main plugin file (`wp-art-routes.php`)
+2. Add the new version with description in the `CHANGELOG.md` file, and
+3. Update the `README.md` file accordingly.
