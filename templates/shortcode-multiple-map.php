@@ -53,19 +53,44 @@ foreach ($routes as $index => $route) {
     // Assign a color from our palette (cycle through if more routes than colors)
     $color = $route_colors[$index % count($route_colors)];
     
+    // Get post permalink for the route
+    $route_url = get_permalink($route['id']);
+    
     // Add route data to JS array
     $js_data['routes'][] = [
         'id' => $route['id'],
         'title' => $route['title'],
         'description' => $route['description'],
+        'excerpt' => $route['excerpt'],
         'route_path' => $route['route_path'],
         'artworks' => $route['artworks'],
         'color' => $color,
         'length' => $route['length'],
         'duration' => $route['duration'],
         'type' => $route['type'],
+        'url' => $route_url,
     ];
 }
+
+// Define route type icons and labels
+$route_types = [
+    'walking' => [
+        'icon' => 'dashicons dashicons-admin-users',
+        'label' => __('Wandelroute', 'wp-art-routes')
+    ],
+    'cycling' => [
+        'icon' => 'dashicons dashicons-controls-repeat',
+        'label' => __('Fietsroute', 'wp-art-routes')
+    ],
+    'wheelchair' => [
+        'icon' => 'dashicons dashicons-universal-access',
+        'label' => __('Rolstoelvriendelijk', 'wp-art-routes')
+    ],
+    'children' => [
+        'icon' => 'dashicons dashicons-buddicons-groups',
+        'label' => __('Kinderroute', 'wp-art-routes')
+    ],
+];
 
 // Generate a unique ID for this map instance
 $map_id = 'art-routes-map-' . uniqid();
@@ -78,14 +103,50 @@ $map_id = 'art-routes-map-' . uniqid();
             <ul class="route-list">
                 <?php foreach ($js_data['routes'] as $index => $route): ?>
                     <li class="route-item">
-                        <label class="route-toggle">
-                            <input type="checkbox" class="route-toggle-checkbox" data-route-index="<?php echo esc_attr($index); ?>" checked>
-                            <span class="route-color-indicator" style="background-color: <?php echo esc_attr($route['color']); ?>;"></span>
-                            <span class="route-title"><?php echo esc_html($route['title']); ?></span>
-                        </label>
-                        <?php if ($atts['show_description'] && !empty($route['description'])): ?>
+                        <div class="route-header">
+                            <label class="route-toggle">
+                                <input type="checkbox" class="route-toggle-checkbox" data-route-index="<?php echo esc_attr($index); ?>" checked>
+                                <span class="route-color-indicator" style="background-color: <?php echo esc_attr($route['color']); ?>;"></span>
+                                <span class="route-title"><?php echo esc_html($route['title']); ?></span>
+                            </label>
+                            <a href="<?php echo esc_url($route['url']); ?>" class="route-link" title="<?php esc_attr_e('View route details', 'wp-art-routes'); ?>">
+                                <span class="dashicons dashicons-arrow-right-alt2"></span>
+                            </a>
+                        </div>
+                        
+                        <div class="route-meta">
+                            <?php if (!empty($route['type']) && isset($route_types[$route['type']])): ?>
+                                <span class="route-type">
+                                    <span class="<?php echo esc_attr($route_types[$route['type']]['icon']); ?>"></span>
+                                    <?php echo esc_html($route_types[$route['type']]['label']); ?>
+                                </span>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($route['length'])): ?>
+                                <span class="route-length">
+                                    <span class="dashicons dashicons-location"></span>
+                                    <?php echo esc_html($route['length']); ?> km
+                                </span>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($route['duration'])): ?>
+                                <span class="route-duration">
+                                    <span class="dashicons dashicons-clock"></span>
+                                    <?php echo esc_html($route['duration']); ?> <?php _e('min', 'wp-art-routes'); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <?php if ($atts['show_description']): ?>
                             <div class="route-description">
-                                <?php echo wp_kses_post($route['description']); ?>
+                                <?php 
+                                if (!empty($route['excerpt'])) {
+                                    echo wp_kses_post($route['excerpt']);
+                                } else {
+                                    // If no excerpt, create one from content
+                                    echo wp_kses_post(wp_trim_words($route['description'], 25, '...'));
+                                }
+                                ?>
                             </div>
                         <?php endif; ?>
                     </li>
@@ -306,14 +367,14 @@ $map_id = 'art-routes-map-' . uniqid();
         list-style: none;
         padding: 0;
         margin: 0;
-        max-height: 400px;
+        max-height: 450px;
         overflow-y: auto;
         border: 1px solid #ddd;
         border-radius: 4px;
     }
     
     .route-item {
-        padding: 10px;
+        padding: 12px;
         border-bottom: 1px solid #eee;
     }
     
@@ -321,10 +382,17 @@ $map_id = 'art-routes-map-' . uniqid();
         border-bottom: none;
     }
     
+    .route-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
     .route-toggle {
         display: flex;
         align-items: center;
         cursor: pointer;
+        flex: 1;
     }
     
     .route-toggle-checkbox {
@@ -343,10 +411,52 @@ $map_id = 'art-routes-map-' . uniqid();
         font-weight: 500;
     }
     
+    .route-link {
+        color: #0073aa;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+    }
+    
+    .route-link:hover {
+        background-color: #f0f0f0;
+        color: #00a0d2;
+    }
+    
+    .route-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 8px 0;
+        font-size: 0.85em;
+    }
+    
+    .route-meta > span {
+        display: flex;
+        align-items: center;
+        background-color: #f8f8f8;
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: #555;
+    }
+    
+    .route-meta .dashicons {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        margin-right: 4px;
+    }
+    
     .route-description {
-        margin-top: 5px;
+        margin-top: 8px;
         font-size: 0.9em;
         color: #666;
+        line-height: 1.5;
     }
     
     /* Map styling */

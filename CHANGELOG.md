@@ -2,6 +2,16 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.1] - 2025-03-26
+
+### Enhanced
+- Improved the legend display for multiple routes map with:
+  - Route excerpts instead of full content for better readability
+  - Distance and duration information with icons
+  - Route type indicators with appropriate icons
+  - Direct links to individual route pages
+  - Improved mobile-friendly styling
+
 ## [1.2.0] - 2025-03-26
 
 ### Added
