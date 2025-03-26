@@ -2,6 +2,14 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.2] - 2025-03-26
+
+### Changed
+- Replaced route toggle checkboxes with "Zoom to Route" buttons in the multiple routes display
+- Added a "Show All Routes" button to easily return to the overview of all routes
+- Improved the user experience with smooth animations when zooming to specific routes
+- Enhanced the visual feedback for the currently selected route
+
 ## [1.2.1] - 2025-03-26
 
 ### Enhanced

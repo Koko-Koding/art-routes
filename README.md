@@ -83,10 +83,18 @@ Parameters:
 - `height`: The height of the map (default: 600px)
 - `show_title`: Whether to show the map title (default: true)
 - `show_description`: Whether to show route descriptions (default: true)
-- `show_legend`: Whether to show the route legend with toggle controls (default: true)
+- `show_legend`: Whether to show the route legend with route information (default: true)
 - `center_lat`: Optional latitude to center the map on
 - `center_lng`: Optional longitude to center the map on
 - `zoom`: Optional zoom level for the map
+
+The multiple routes map includes:
+- Color-coded routes for easy differentiation
+- Detailed route information (excerpt, distance, duration, type)
+- "Zoom to Route" buttons to focus the map on a specific route
+- "Show All Routes" button to view the complete overview
+- Direct links to individual route pages for more details
+- Smooth animations when transitioning between routes
 
 #### Using the Page Template
 

@@ -104,11 +104,10 @@ $map_id = 'art-routes-map-' . uniqid();
                 <?php foreach ($js_data['routes'] as $index => $route): ?>
                     <li class="route-item">
                         <div class="route-header">
-                            <label class="route-toggle">
-                                <input type="checkbox" class="route-toggle-checkbox" data-route-index="<?php echo esc_attr($index); ?>" checked>
+                            <div class="route-title-container">
                                 <span class="route-color-indicator" style="background-color: <?php echo esc_attr($route['color']); ?>;"></span>
                                 <span class="route-title"><?php echo esc_html($route['title']); ?></span>
-                            </label>
+                            </div>
                             <a href="<?php echo esc_url($route['url']); ?>" class="route-link" title="<?php esc_attr_e('View route details', 'wp-art-routes'); ?>">
                                 <span class="dashicons dashicons-arrow-right-alt2"></span>
                             </a>
@@ -149,6 +148,11 @@ $map_id = 'art-routes-map-' . uniqid();
                                 ?>
                             </div>
                         <?php endif; ?>
+                        
+                        <button class="zoom-to-route-button" data-route-index="<?php echo esc_attr($index); ?>">
+                            <span class="dashicons dashicons-search"></span>
+                            <?php _e('Zoom to Route', 'wp-art-routes'); ?>
+                        </button>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -189,7 +193,7 @@ $map_id = 'art-routes-map-' . uniqid();
         document.getElementById('map-loading-' + mapId).style.display = 'block';
         
         // Map variables
-        let map, routeLayers = [], artworkMarkers = [];
+        let map, routeLayers = [], routeBounds = [], artworkMarkers = [];
         
         // Create the map
         map = L.map(mapId);
@@ -209,6 +213,9 @@ $map_id = 'art-routes-map-' . uniqid();
             // Create a layer group for this route
             routeLayers[index] = L.layerGroup().addTo(map);
             
+            // Create bounds for this specific route
+            routeBounds[index] = L.latLngBounds();
+            
             // Add route path if it exists
             if (route.route_path && route.route_path.length > 0) {
                 // Create polyline with the route's color
@@ -219,9 +226,10 @@ $map_id = 'art-routes-map-' . uniqid();
                     lineJoin: 'round'
                 }).addTo(routeLayers[index]);
                 
-                // Add points to bounds
+                // Add points to both the global bounds and this route's bounds
                 route.route_path.forEach(function(point) {
                     allBounds.extend(point);
+                    routeBounds[index].extend(point);
                     hasValidCoordinates = true;
                 });
             }
@@ -248,8 +256,9 @@ $map_id = 'art-routes-map-' . uniqid();
                         icon: artworkIcon
                     }).addTo(routeLayers[index]);
                     
-                    // Add to bounds
+                    // Add to global bounds and this route's bounds
                     allBounds.extend([artwork.latitude, artwork.longitude]);
+                    routeBounds[index].extend([artwork.latitude, artwork.longitude]);
                     
                     // Prepare popup content
                     const popupContent = `
@@ -309,18 +318,56 @@ $map_id = 'art-routes-map-' . uniqid();
             map.setView([52.1326, 5.2913], 7);
         }
         
-        // Add toggle functionality for routes
-        const toggleCheckboxes = document.querySelectorAll('.route-toggle-checkbox');
-        toggleCheckboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
+        // Add zoom to route functionality
+        const zoomButtons = document.querySelectorAll('.zoom-to-route-button');
+        zoomButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
                 const routeIndex = parseInt(this.getAttribute('data-route-index'));
-                if (this.checked) {
-                    map.addLayer(routeLayers[routeIndex]);
-                } else {
-                    map.removeLayer(routeLayers[routeIndex]);
+                
+                // Make sure this route has valid bounds
+                if (routeBounds[routeIndex] && routeBounds[routeIndex].isValid()) {
+                    // Fit the map to this route's bounds with animation
+                    map.flyToBounds(routeBounds[routeIndex], {
+                        padding: [30, 30],
+                        duration: 0.8 // Animation duration in seconds
+                    });
+                    
+                    // Apply visual feedback to the button that was clicked
+                    zoomButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
                 }
             });
         });
+        
+        // Add a button to zoom out to show all routes
+        const legendElement = document.querySelector('.art-routes-legend');
+        if (legendElement && hasValidCoordinates) {
+            const allRoutesButton = document.createElement('button');
+            allRoutesButton.className = 'zoom-to-all-routes-button';
+            allRoutesButton.innerHTML = '<span class="dashicons dashicons-admin-site"></span>' + 
+                                        '<?php _e('Show All Routes', 'wp-art-routes'); ?>';
+            
+            // Insert button at the top of the legend
+            const legendTitle = legendElement.querySelector('h3');
+            if (legendTitle) {
+                legendTitle.insertAdjacentElement('afterend', allRoutesButton);
+            } else {
+                legendElement.insertAdjacentElement('afterbegin', allRoutesButton);
+            }
+            
+            // Add event listener
+            allRoutesButton.addEventListener('click', function() {
+                if (allBounds.isValid()) {
+                    map.flyToBounds(allBounds, {
+                        padding: [30, 30],
+                        duration: 0.8
+                    });
+                    
+                    // Remove active state from all zoom buttons
+                    zoomButtons.forEach(btn => btn.classList.remove('active'));
+                }
+            });
+        }
         
         // Hide loading indicator
         document.getElementById('map-loading-' + mapId).style.display = 'none';
@@ -388,15 +435,10 @@ $map_id = 'art-routes-map-' . uniqid();
         align-items: center;
     }
     
-    .route-toggle {
+    .route-title-container {
         display: flex;
         align-items: center;
-        cursor: pointer;
         flex: 1;
-    }
-    
-    .route-toggle-checkbox {
-        margin-right: 8px;
     }
     
     .route-color-indicator {
@@ -405,6 +447,7 @@ $map_id = 'art-routes-map-' . uniqid();
         height: 16px;
         border-radius: 50%;
         margin-right: 8px;
+        flex-shrink: 0;
     }
     
     .route-title {
@@ -421,6 +464,7 @@ $map_id = 'art-routes-map-' . uniqid();
         height: 28px;
         border-radius: 50%;
         transition: background-color 0.2s;
+        flex-shrink: 0;
     }
     
     .route-link:hover {
@@ -457,6 +501,68 @@ $map_id = 'art-routes-map-' . uniqid();
         font-size: 0.9em;
         color: #666;
         line-height: 1.5;
+        margin-bottom: 10px;
+    }
+    
+    /* Zoom to route buttons */
+    .zoom-to-route-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 6px 12px;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.2s;
+        color: #555;
+    }
+    
+    .zoom-to-route-button .dashicons {
+        margin-right: 5px;
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .zoom-to-route-button:hover {
+        background-color: #e8e8e8;
+    }
+    
+    .zoom-to-route-button.active {
+        background-color: #0073aa;
+        color: white;
+        border-color: #005177;
+    }
+    
+    .zoom-to-all-routes-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 8px 12px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.95em;
+        transition: all 0.2s;
+        margin-bottom: 10px;
+        color: #444;
+        font-weight: 500;
+    }
+    
+    .zoom-to-all-routes-button .dashicons {
+        margin-right: 5px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+    
+    .zoom-to-all-routes-button:hover {
+        background-color: #e0e0e0;
     }
     
     /* Map styling */
