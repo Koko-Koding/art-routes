@@ -3,7 +3,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://example.com/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Your Name
  * Author URI: https://example.com
  * License: GPL v2 or later
@@ -18,10 +18,22 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', '1.2.2');
+define('WP_ART_ROUTES_VERSION', '1.2.3');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
+
+/**
+ * Load plugin text domain for translations
+ */
+function wp_art_routes_load_textdomain() {
+    load_plugin_textdomain(
+        'wp-art-routes',
+        false,
+        dirname(WP_ART_ROUTES_PLUGIN_BASENAME) . '/languages'
+    );
+}
+add_action('plugins_loaded', 'wp_art_routes_load_textdomain');
 
 // Load required files
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/post-types.php';

@@ -2,6 +2,11 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.3] - 2025-03-26
+- Added proper internationalization (i18n) support
+- Added complete Dutch (nl_NL) translation
+- Updated plugin file to load translation files
+
 ## [1.2.2] - 2025-03-26
 
 ### Changed
