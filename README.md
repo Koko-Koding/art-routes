@@ -12,6 +12,7 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 - Interactive maps using OpenStreetMap/Leaflet.js (version 1.9.4)
 - Route editor for creating custom paths
 - Artwork location picker with map interface
+- Multiple routes display with color-coding on a single map
 - Artist taxonomy for categorizing artworks
 - Route types (walking, cycling, wheelchair-accessible, children routes)
 - Route details (length in km, duration in minutes)
@@ -19,7 +20,7 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 - Route progress tracking with visualization of completed segments
 - Proximity detection for nearby artworks with toast notifications
 - Interactive artwork balloons when clicking artwork markers on the map
-- Shortcode for embedding maps on any page (`[art_route_map]`)
+- Shortcodes for embedding single route maps (`[art_route_map]`) or multiple routes (`[art_routes_map]`)
 - Custom page template for full-page map display
 - Mobile-friendly responsive design
 - Plugin settings page for global configuration
@@ -54,9 +55,9 @@ WP Art Routes allows you to create and manage art routes and artworks on your Wo
 
 ### Displaying Art Routes
 
-#### Using the Shortcode
+#### Using the Single Route Shortcode
 
-You can display an art route map on any page or post using the shortcode:
+You can display a single art route map on any page or post using the shortcode:
 
 ```
 [art_route_map route_id="123" height="500px" show_title="true" show_description="true"]
@@ -67,6 +68,25 @@ Parameters:
 - `height`: The height of the map (default: 600px)
 - `show_title`: Whether to show the route title (default: true)
 - `show_description`: Whether to show the route description (default: true)
+
+#### Using the Multiple Routes Shortcode
+
+You can display multiple art routes on a single map with color-coding using the shortcode:
+
+```
+[art_routes_map ids="123,456,789" height="600px" show_legend="true"]
+```
+
+Parameters:
+- `ids`: Comma-separated list of route IDs to display (empty = all routes)
+- `exclude`: Comma-separated list of route IDs to exclude
+- `height`: The height of the map (default: 600px)
+- `show_title`: Whether to show the map title (default: true)
+- `show_description`: Whether to show route descriptions (default: true)
+- `show_legend`: Whether to show the route legend with toggle controls (default: true)
+- `center_lat`: Optional latitude to center the map on
+- `center_lng`: Optional longitude to center the map on
+- `zoom`: Optional zoom level for the map
 
 #### Using the Page Template
 

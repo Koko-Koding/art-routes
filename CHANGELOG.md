@@ -2,6 +2,16 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.0] - 2025-03-26
+
+### Added
+- New `[art_routes_map]` shortcode to display multiple routes on a single map
+- Color-coding for different routes when displayed together
+- Route toggle functionality to show/hide specific routes on the multi-route map
+- Legend/control panel for multi-route maps with route information
+- Responsive design for the multi-route map display on mobile devices
+- Customization options for multi-route maps (height, zoom, center coordinates)
+
 ## [1.1.3] - 2023-10-XX
 
 ### Changed
