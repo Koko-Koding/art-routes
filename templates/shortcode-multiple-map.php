@@ -76,19 +76,19 @@ foreach ($routes as $index => $route) {
 $route_types = [
     'walking' => [
         'icon' => 'dashicons dashicons-admin-users',
-        'label' => __('Wandelroute', 'wp-art-routes')
+        'label' => __('Walking route', 'wp-art-routes')
     ],
     'cycling' => [
         'icon' => 'dashicons dashicons-controls-repeat',
-        'label' => __('Fietsroute', 'wp-art-routes')
+        'label' => __('Bicycle route', 'wp-art-routes')
     ],
     'wheelchair' => [
         'icon' => 'dashicons dashicons-universal-access',
-        'label' => __('Rolstoelvriendelijk', 'wp-art-routes')
+        'label' => __('Wheelchair friendly', 'wp-art-routes')
     ],
     'children' => [
         'icon' => 'dashicons dashicons-buddicons-groups',
-        'label' => __('Kinderroute', 'wp-art-routes')
+        'label' => __('Child-friendly route', 'wp-art-routes')
     ],
 ];
 
