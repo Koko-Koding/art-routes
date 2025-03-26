@@ -364,11 +364,11 @@ msgstr "Voortgang"
 
 #: includes/template-functions.php:268 templates/shortcode-map.php:102
 msgid "You have completed"
-msgstr "Je hebt voltooid"
+msgstr "Je hebt"
 
 #: includes/template-functions.php:268 templates/shortcode-map.php:102
 msgid "of this route"
-msgstr "van deze route"
+msgstr "voltooid van deze route"
 
 #: includes/template-functions.php:281 templates/shortcode-map.php:115
 msgid "View Artist"
