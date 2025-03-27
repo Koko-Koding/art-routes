@@ -4,16 +4,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Art Routes 1.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-art-routes\n"
+"POT-Creation-Date: 2025-03-27T10:31:21+00:00\n"
+"PO-Revision-Date: 2025-03-26 23:13+0100\n"
 "Last-Translator: Drikus Roor <drikusroor@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-26T22:11:06+00:00\n"
-"PO-Revision-Date: 2025-03-26 23:13+0100\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wp-art-routes\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
@@ -29,7 +29,8 @@ msgstr "https://example.com/wp-art-routes"
 #. Description of the plugin
 #: wp-art-routes.php
 msgid "Interactive art route maps with OpenStreetMap integration for WordPress"
-msgstr "Interactieve kunstroute kaarten met OpenStreetMap integratie voor WordPress"
+msgstr ""
+"Interactieve kunstroute kaarten met OpenStreetMap integratie voor WordPress"
 
 #. Author of the plugin
 #: wp-art-routes.php
@@ -57,95 +58,139 @@ msgstr "Kunstwerk Locatie"
 msgid "Artwork Route"
 msgstr "Kunstwerk Route"
 
-#: includes/meta-boxes.php:83 includes/template-functions.php:235
+#: includes/meta-boxes.php:58
+msgid "Artist(s)"
+msgstr "Kunstenaars"
+
+#: includes/meta-boxes.php:93 includes/template-functions.php:254
 #: templates/shortcode-map.php:69 templates/shortcode-multiple-map.php:79
 msgid "Walking route"
 msgstr "Wandelroute"
 
-#: includes/meta-boxes.php:84 includes/template-functions.php:236
+#: includes/meta-boxes.php:94 includes/template-functions.php:255
 #: templates/shortcode-map.php:70 templates/shortcode-multiple-map.php:83
 msgid "Bicycle route"
 msgstr "Fietsroute"
 
-#: includes/meta-boxes.php:85 includes/template-functions.php:237
+#: includes/meta-boxes.php:95 includes/template-functions.php:256
 #: templates/shortcode-map.php:71 templates/shortcode-multiple-map.php:87
 msgid "Wheelchair friendly"
 msgstr "Rolstoelvriendelijk"
 
-#: includes/meta-boxes.php:86 includes/template-functions.php:238
+#: includes/meta-boxes.php:96 includes/template-functions.php:257
 #: templates/shortcode-map.php:72 templates/shortcode-multiple-map.php:91
 msgid "Child-friendly route"
 msgstr "Kindvriendelijke route"
 
-#: includes/meta-boxes.php:92
+#: includes/meta-boxes.php:102
 msgid "Route Length (km)"
 msgstr "Routelengte (km)"
 
-#: includes/meta-boxes.php:99
+#: includes/meta-boxes.php:109
 msgid "Duration (minutes)"
 msgstr "Duur (minuten)"
 
-#: includes/meta-boxes.php:106
+#: includes/meta-boxes.php:116
 msgid "Route Type"
 msgstr "Routetype"
 
-#: includes/meta-boxes.php:109
+#: includes/meta-boxes.php:119
 msgid "Select Type"
 msgstr "Selecteer Type"
 
-#: includes/meta-boxes.php:121
+#: includes/meta-boxes.php:131
 msgid "Show completed route path"
 msgstr "Toon afgelegd routepad"
 
-#: includes/meta-boxes.php:124
+#: includes/meta-boxes.php:134
 msgid ""
 "When checked, users will see which part of the route they have already "
 "traversed."
-msgstr "Indien aangevinkt, zien gebruikers welk deel van de route ze al hebben afgelegd."
+msgstr ""
+"Indien aangevinkt, zien gebruikers welk deel van de route ze al hebben "
+"afgelegd."
 
-#: includes/meta-boxes.php:130
+#: includes/meta-boxes.php:140
 msgid "Show artwork notifications"
 msgstr "Toon kunstwerk meldingen"
 
-#: includes/meta-boxes.php:133
+#: includes/meta-boxes.php:143
 msgid ""
 "When checked, users will receive a notification when they pass near an "
 "artwork."
-msgstr "Indien aangevinkt, ontvangen gebruikers een melding wanneer ze in de buurt van een kunstwerk komen."
+msgstr ""
+"Indien aangevinkt, ontvangen gebruikers een melding wanneer ze in de buurt "
+"van een kunstwerk komen."
 
-#: includes/meta-boxes.php:149
+#: includes/meta-boxes.php:159
 msgid ""
 "Enter the route path as a series of latitude,longitude points. One point per "
 "line."
-msgstr "Voer het routepad in als een reeks van breedtegraad,lengtegraad punten. Eén punt per regel."
+msgstr ""
+"Voer het routepad in als een reeks van breedtegraad,lengtegraad punten. Eén "
+"punt per regel."
 
-#: includes/meta-boxes.php:150
+#: includes/meta-boxes.php:160
 msgid "Example: 52.3702, 4.8952"
 msgstr "Voorbeeld: 52.3702, 4.8952"
 
-#: includes/meta-boxes.php:156
+#: includes/meta-boxes.php:166
 msgid "Use Map to Create Route"
 msgstr "Gebruik Kaart om Route te Maken"
 
-#: includes/meta-boxes.php:173
+#: includes/meta-boxes.php:183
 msgid "Latitude"
 msgstr "Breedtegraad"
 
-#: includes/meta-boxes.php:180
+#: includes/meta-boxes.php:190
 msgid "Longitude"
 msgstr "Lengtegraad"
 
-#: includes/meta-boxes.php:186
+#: includes/meta-boxes.php:196
 msgid "Pick Location on Map"
 msgstr "Kies Locatie op Kaart"
 
-#: includes/meta-boxes.php:209 includes/settings.php:112
+#: includes/meta-boxes.php:219 includes/settings.php:112
 msgid "No routes available. Please create a route first."
 msgstr "Geen routes beschikbaar. Maak eerst een route aan."
 
-#: includes/meta-boxes.php:214
+#: includes/meta-boxes.php:224
 msgid "Select a Route"
 msgstr "Selecteer een Route"
+
+#: includes/meta-boxes.php:258
+msgid "Connect this artwork to one or more posts representing the artist(s)."
+msgstr "Verbind dit kunstwerk met een of meer berichten die de kunstenaar(s) representeren."
+
+#: includes/meta-boxes.php:261
+#, fuzzy
+msgid "Search for content:"
+msgstr "Zoeken naar pagina:"
+
+#: includes/meta-boxes.php:262
+msgid "Start typing to search..."
+msgstr "Begin met typen om te zoeken..."
+
+#: includes/meta-boxes.php:265
+msgid "Filter by post type:"
+msgstr "Filteren op berichttype:"
+
+#: includes/meta-boxes.php:267
+msgid "All post types"
+msgstr "Alle berichttypes"
+
+#: includes/meta-boxes.php:280
+#, fuzzy
+msgid "Selected Artist(s):"
+msgstr "Geselecteerde Kunstenaars:"
+
+#: includes/meta-boxes.php:293 includes/meta-boxes.php:381
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: includes/meta-boxes.php:301
+msgid "These posts will be associated with this artwork as artists."
+msgstr ""Deze berichten worden geassocieerd met dit kunstwerk als kunstenaars."
 
 #: includes/post-types.php:18 templates/shortcode-multiple-map.php:102
 msgid "Routes"
@@ -240,8 +285,12 @@ msgid "Search"
 msgstr "Zoeken"
 
 #: includes/scripts.php:214
-msgid "Click \"Start Drawing\" then click on the map to create your route. Click \"Stop Drawing\" when finished."
-msgstr "Klik op \"Begin met Tekenen\" en klik vervolgens op de kaart om je route te maken. Klik op \"Stop met Tekenen\" wanneer je klaar bent."
+msgid ""
+"Click \"Start Drawing\" then click on the map to create your route. Click "
+"\"Stop Drawing\" when finished."
+msgstr ""
+"Klik op \"Begin met Tekenen\" en klik vervolgens op de kaart om je route te "
+"maken. Klik op \"Stop met Tekenen\" wanneer je klaar bent."
 
 #: includes/scripts.php:215
 msgid "points in route"
@@ -297,7 +346,8 @@ msgstr "Selecteer een standaard route"
 
 #: includes/settings.php:110
 msgid "This route will be used when no specific route is selected."
-msgstr "Deze route wordt gebruikt wanneer er geen specifieke route is geselecteerd."
+msgstr ""
+"Deze route wordt gebruikt wanneer er geen specifieke route is geselecteerd."
 
 #: includes/settings.php:118
 msgid "Location Tracking"
@@ -311,30 +361,32 @@ msgstr "Locatie volgen inschakelen voor gebruikers"
 msgid ""
 "When enabled, users will be prompted to share their location to track "
 "progress on routes."
-msgstr "Indien ingeschakeld, worden gebruikers gevraagd om hun locatie te delen om voortgang op routes bij te houden."
+msgstr ""
+"Indien ingeschakeld, worden gebruikers gevraagd om hun locatie te delen om "
+"voortgang op routes bij te houden."
 
-#: includes/template-functions.php:228 templates/shortcode-map.php:62
+#: includes/template-functions.php:247 templates/shortcode-map.php:62
 msgid "minutes"
 msgstr "minuten"
 
-#: includes/template-functions.php:253 templates/shortcode-map.php:87
+#: includes/template-functions.php:272 templates/shortcode-map.php:87
 #: templates/shortcode-multiple-map.php:173
 msgid "Loading map..."
 msgstr "Kaart laden..."
 
-#: includes/template-functions.php:259 templates/shortcode-map.php:93
+#: includes/template-functions.php:278 templates/shortcode-map.php:93
 msgid "Retry"
 msgstr "Opnieuw proberen"
 
-#: includes/template-functions.php:264 templates/shortcode-map.php:98
+#: includes/template-functions.php:283 templates/shortcode-map.php:98
 msgid "Progress"
 msgstr "Voortgang"
 
-#: includes/template-functions.php:268 templates/shortcode-map.php:102
+#: includes/template-functions.php:287 templates/shortcode-map.php:102
 msgid "You have completed"
 msgstr "Je hebt"
 
-#: includes/template-functions.php:268 templates/shortcode-map.php:102
+#: includes/template-functions.php:287 templates/shortcode-map.php:102
 msgid "of this route"
 msgstr "voltooid van deze route"
 
@@ -362,6 +414,6 @@ msgstr "Inzoomen op Route"
 msgid "Art Routes Map"
 msgstr "Kunstroutes Kaart"
 
-#: templates/shortcode-multiple-map.php:348
+#: templates/shortcode-multiple-map.php:346
 msgid "Show All Routes"
 msgstr "Toon Alle Routes"

@@ -286,7 +286,7 @@
         let artistsHtml = '';
         if (artwork.artists && artwork.artists.length > 0) {
             artistsHtml = '<div class="artwork-artists">';
-            artistsHtml += `<h4>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Artists' : artRouteData.i18n.artist || 'Artist'}:</h4>`;
+            artistsHtml += `<h4>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Kunstenaars' : artRouteData.i18n.artist || 'Kunstenaar'}:</h4>`;
             artistsHtml += '<ul>';
             
             artwork.artists.forEach(function(artist) {
@@ -326,7 +326,7 @@
         let artistsHtml = '';
         if (artwork.artists && artwork.artists.length > 0) {
             artistsHtml = '<div style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">';
-            artistsHtml += `<strong>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Artists' : artRouteData.i18n.artist || 'Artist'}:</strong>`;
+            artistsHtml += `<strong>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Kunstenaars' : artRouteData.i18n.artist || 'Kunstenaar'}:</strong>`;
             artistsHtml += '<ul style="margin: 5px 0 0 0; padding-left: 20px; font-size: 13px;">';
             
             artwork.artists.forEach(function(artist) {

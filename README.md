@@ -92,6 +92,27 @@ To add new translations:
 3. Translate all strings using a POT/PO editor like Poedit
 4. Generate the `.mo` file and place both files in the `languages` folder
 
+### Commands
+
+Make sure you have wp-cli installed and available in your PATH. You can use the following command to generate the `.po` and `.mo` files:
+
+```bash
+To (re-)generate the `.pot`, `.po` and `.mo` files, you can use the following command:
+
+```bash
+# Generate the .pot file
+wp i18n make-pot . languages/wp-art-routes.pot
+
+# To merge the .pot file with existing translations
+msgmerge --update languages/wp-art-routes-nl_NL.po languages/wp-art-routes.pot
+
+# Generate the .po file for Dutch
+wp i18n make-po languages/wp-art-routes.pot languages/wp-art-routes-nl_NL.po
+
+# Generate the .mo file for Dutch
+wp i18n make-mo languages/wp-art-routes-nl_NL.po
+```
+
 ## Requirements
 
 - WordPress 5.6 or higher
