@@ -6,7 +6,7 @@ The plugin is designed to be used by organizations that organize art routes / ev
 
 The map will likely be used on smaller devices, and by non-technical, sometimes older people as well, so the plugin should be responsive and mobile-friendly.
 
-Please refer to `README.md` and `CHANGELOG.md` for more information about the specific features of the plugin and how to use them.
+Please refer to `README.md` and `CHANGELOG.md` for more information about the specific features of the plugin and how to use them. Use semantic versioning for the plugin.
 
 In the languages directory, you will find the translation files for the plugin. The plugin is currently available in English and Dutch. You can add more languages by creating a new `.po` file in the `languages` directory and adding the corresponding translations.
 
