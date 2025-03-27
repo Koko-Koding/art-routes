@@ -289,11 +289,9 @@
                 </div>
                 <div class="artwork-popup-content">
                     <h3>${artwork.title}</h3>
-                    <p class="artwork-artist">${artwork.artist}</p>
                     <div class="artwork-description">
                         ${artwork.description}
                     </div>
-                    ${artwork.artist_url ? `<a href="${artwork.artist_url}" target="_blank" class="artwork-link">Meer informatie</a>` : ''}
                 </div>
             </div>
         `;
@@ -329,11 +327,6 @@
                     <h3 style="margin: 0 0 8px; font-size: 18px;">${artwork.title}</h3>
                     <div style="font-size: 14px; max-height: 100px; overflow-y: auto;">
                         ${artwork.description}
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <a href="${artwork.artist_url || '#'}" target="_blank" style="text-decoration: none; color: #3388FF;">
-                            ${artwork.artist_url ? 'Meer informatie' : ''}
-                        </a>
                     </div>
                 </div>
             </div>
@@ -470,7 +463,7 @@
         const φ1 = lat1 * Math.PI/180;
         const φ2 = lat2 * Math.PI/180;
         const Δφ = (lat2-lat1) * Math.PI/180;
-        const Δλ = (lon2-lon1) * Math.PI/180;
+        const Δλ = (lon1-lon2) * Math.PI/180;
 
         const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
                 Math.cos(φ1) * Math.cos(φ2) *

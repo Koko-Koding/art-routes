@@ -303,18 +303,6 @@
     margin-bottom: 20px;
 }
 
-.artist-link {
-    display: inline-block;
-    margin-top: 15px;
-    color: #1890ff;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.artist-link:hover {
-    text-decoration: underline;
-}
-
 /* Artwork Popup in Map */
 .leaflet-popup-content-wrapper {
     padding: 0;
@@ -353,31 +341,12 @@
     color: #333;
 }
 
-.artwork-artist {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #666;
-    font-style: italic;
-}
-
 .artwork-description {
     font-size: 14px;
     line-height: 1.4;
     max-height: 120px;
     overflow-y: auto;
     margin-bottom: 10px;
-}
-
-.artwork-link {
-    display: inline-block;
-    color: #3388FF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.artwork-link:hover {
-    text-decoration: underline;
 }
 
 .artwork-popup-container .leaflet-popup-tip {

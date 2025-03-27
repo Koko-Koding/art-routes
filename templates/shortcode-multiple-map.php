@@ -268,11 +268,9 @@ $map_id = 'art-routes-map-' . uniqid();
                             </div>
                             <div class="artwork-popup-content">
                                 <h3>${artwork.title}</h3>
-                                <p class="artwork-artist">${artwork.artist}</p>
                                 <div class="artwork-description">
                                     ${artwork.description}
                                 </div>
-                                ${artwork.artist_url ? `<a href="${artwork.artist_url}" target="_blank" class="artwork-link">Meer informatie</a>` : ''}
                             </div>
                         </div>
                     `;
@@ -663,12 +661,6 @@ $map_id = 'art-routes-map-' . uniqid();
     .artwork-popup-content h3 {
         margin-top: 0;
         margin-bottom: 5px;
-    }
-    
-    .artwork-artist {
-        font-style: italic;
-        margin-top: 0;
-        margin-bottom: 10px;
     }
     
     .artwork-description {

@@ -112,7 +112,6 @@ $js_data = [
             <div class="artwork-info">
                 <h3 id="artwork-title"></h3>
                 <div id="artwork-description"></div>
-                <a id="artwork-artist-link" class="artist-link" href=""><?php _e('View Artist', 'wp-art-routes'); ?></a>
             </div>
         </div>
     </div>

@@ -11,7 +11,6 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 ## Features
 
 - Custom post types for Routes and Artworks
-- Artist taxonomy for categorizing artworks
 - Interactive route editor with map interface
 - Artwork location picker with map integration
 - Route types (walking, cycling, wheelchair-accessible, child-friendly)

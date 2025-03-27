@@ -51,25 +51,5 @@ function wp_art_routes_register_post_types() {
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'artwork'],
     ]);
-    
-    // Register Artists taxonomy
-    register_taxonomy('artist', ['artwork'], [
-        'hierarchical' => false,
-        'labels' => [
-            'name' => __('Artists', 'wp-art-routes'),
-            'singular_name' => __('Artist', 'wp-art-routes'),
-            'search_items' => __('Search Artists', 'wp-art-routes'),
-            'all_items' => __('All Artists', 'wp-art-routes'),
-            'edit_item' => __('Edit Artist', 'wp-art-routes'),
-            'update_item' => __('Update Artist', 'wp-art-routes'),
-            'add_new_item' => __('Add New Artist', 'wp-art-routes'),
-            'new_item_name' => __('New Artist Name', 'wp-art-routes'),
-        ],
-        'show_ui' => true,
-        'show_admin_column' => true,
-        'query_var' => true,
-        'rewrite' => ['slug' => 'artist'],
-        'show_in_rest' => true,
-    ]);
 }
 add_action('init', 'wp_art_routes_register_post_types');

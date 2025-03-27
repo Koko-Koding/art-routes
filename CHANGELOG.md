@@ -2,6 +2,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.4] - 2025-03-27
+### Removed
+- Removed the artist taxonomy and all related features for artwork
+- Removed artist links from artwork popups and modals
+- Simplified the artwork display by focusing only on the artwork itself
+
 ## [1.2.3] - 2025-03-26
 - Added proper internationalization (i18n) support
 - Added complete Dutch (nl_NL) translation
