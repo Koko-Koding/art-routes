@@ -2,6 +2,14 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.2.5] - 2025-03-27
+
+### Improved
+- De-duplicated CSS styles between the single route map and multiple routes map
+- Moved all styles from shortcode-multiple-map.php to the main art-route-map.css file
+- Better organization of styles with clear section comments
+- Improved maintainability and consistency across different map displays
+
 ## [1.2.4] - 2025-03-27
 ### Removed
 - Removed the artist taxonomy and all related features for artwork

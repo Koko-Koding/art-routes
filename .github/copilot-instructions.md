@@ -11,6 +11,7 @@ Please refer to `README.md` and `CHANGELOG.md` for more information about the sp
 In the languages directory, you will find the translation files for the plugin. The plugin is currently available in English and Dutch. You can add more languages by creating a new `.po` file in the `languages` directory and adding the corresponding translations.
 
 Whenever you make changes to the plugin, make sure to
+
 1. Update the version number in the main plugin file (`wp-art-routes.php`)
 2. Add the new version with description in the `CHANGELOG.md` file, and
 3. Update the `README.md` file accordingly.

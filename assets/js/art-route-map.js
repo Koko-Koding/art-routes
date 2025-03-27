@@ -291,9 +291,6 @@
             
             artwork.artists.forEach(function(artist) {
                 artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a>`;
-                if (artist.post_type_label) {
-                    artistsHtml += ` <span class="artist-post-type">(${artist.post_type_label})</span>`;
-                }
                 artistsHtml += '</li>';
             });
             
