@@ -5,18 +5,23 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [1.2.5] - 2025-03-27
 
 ### Improved
+
 - De-duplicated CSS styles between the single route map and multiple routes map
 - Moved all styles from shortcode-multiple-map.php to the main art-route-map.css file
 - Better organization of styles with clear section comments
 - Improved maintainability and consistency across different map displays
+- Replace artist taxonomy with a many-to-many relationship between artworks and any post type
 
 ## [1.2.4] - 2025-03-27
+
 ### Removed
+
 - Removed the artist taxonomy and all related features for artwork
 - Removed artist links from artwork popups and modals
 - Simplified the artwork display by focusing only on the artwork itself
 
 ## [1.2.3] - 2025-03-26
+
 - Added proper internationalization (i18n) support
 - Added complete Dutch (nl_NL) translation
 - Updated plugin file to load translation files
@@ -24,6 +29,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [1.2.2] - 2025-03-26
 
 ### Changed
+
 - Replaced route toggle checkboxes with "Zoom to Route" buttons in the multiple routes display
 - Added a "Show All Routes" button to easily return to the overview of all routes
 - Improved the user experience with smooth animations when zooming to specific routes
@@ -32,6 +38,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [1.2.1] - 2025-03-26
 
 ### Enhanced
+
 - Improved the legend display for multiple routes map with:
   - Route excerpts instead of full content for better readability
   - Distance and duration information with icons
@@ -42,6 +49,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [1.2.0] - 2025-03-26
 
 ### Added
+
 - New `[art_routes_map]` shortcode to display multiple routes on a single map
 - Color-coding for different routes when displayed together
 - Route toggle functionality to show/hide specific routes on the multi-route map
@@ -52,35 +60,42 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [1.1.3] - 2023-10-XX
 
 ### Changed
+
 - Increased size and improved styling (white icon on dark background) of artwork balloon's close button for better accessibility on smaller devices.
 
 ## [1.1.2] - 2023-07-18
 
 ### Fixed
+
 - Fixed issue with artwork popups not reopening after being closed by using a different popup creation approach
 - Improved popup handling to ensure consistent behavior across all browsers
 
 ## [1.1.1] - 2023-07-17
 
 ### Fixed
+
 - Fixed issue where artwork popups couldn't be reopened after being closed when clicking an artwork marker
 
 ## [1.1.0] - 2023-07-15
 
 ### Added
+
 - Artwork balloons that display within the map when clicking on artwork markers
 - Better styling for artwork information display in map popups
 
 ### Changed
+
 - Clicking an artwork icon now shows information in a map balloon instead of a toast notification
 - Improved popup balloon styling for better readability
 
 ### Fixed
+
 - Various UI issues with popup display and interaction
 
 ## [1.0.0] - 2023-07-01
 
 ### Added
+
 - Initial release of WP Art Routes plugin
 - Custom post types for routes and artworks
 - Interactive maps using OpenStreetMap/Leaflet.js
