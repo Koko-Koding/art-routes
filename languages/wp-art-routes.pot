@@ -207,38 +207,6 @@ msgstr ""
 msgid "No artworks found"
 msgstr ""
 
-#: includes/post-types.php:59
-msgid "Artists"
-msgstr ""
-
-#: includes/post-types.php:60
-msgid "Artist"
-msgstr ""
-
-#: includes/post-types.php:61
-msgid "Search Artists"
-msgstr ""
-
-#: includes/post-types.php:62
-msgid "All Artists"
-msgstr ""
-
-#: includes/post-types.php:63
-msgid "Edit Artist"
-msgstr ""
-
-#: includes/post-types.php:64
-msgid "Update Artist"
-msgstr ""
-
-#: includes/post-types.php:65
-msgid "Add New Artist"
-msgstr ""
-
-#: includes/post-types.php:66
-msgid "New Artist Name"
-msgstr ""
-
 #: includes/scripts.php:68
 #: templates/shortcode-map.php:38
 msgid "Congratulations! You have completed this route!"
@@ -382,11 +350,6 @@ msgstr ""
 #: includes/template-functions.php:268
 #: templates/shortcode-map.php:102
 msgid "of this route"
-msgstr ""
-
-#: includes/template-functions.php:281
-#: templates/shortcode-map.php:115
-msgid "View Artist"
 msgstr ""
 
 #: templates/shortcode-map.php:19
