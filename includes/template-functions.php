@@ -119,7 +119,7 @@ function wp_art_routes_get_route_artworks($route_id) {
     $result = [];
     
     foreach ($artworks as $artwork) {
-        $result[] = [
+        $artwork_data = [
             'id' => $artwork->ID,
             'title' => $artwork->post_title,
             'description' => $artwork->post_content,
@@ -127,6 +127,31 @@ function wp_art_routes_get_route_artworks($route_id) {
             'latitude' => (float)get_post_meta($artwork->ID, '_artwork_latitude', true),
             'longitude' => (float)get_post_meta($artwork->ID, '_artwork_longitude', true),
         ];
+        
+        // Get artist information
+        $artist_ids = get_post_meta($artwork->ID, '_artwork_artist_ids', true);
+        $artists = [];
+        
+        if (is_array($artist_ids) && !empty($artist_ids)) {
+            foreach ($artist_ids as $artist_id) {
+                $artist_post = get_post($artist_id);
+                if ($artist_post) {
+                    $post_type_obj = get_post_type_object($artist_post->post_type);
+                    $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $artist_post->post_type;
+                    
+                    $artists[] = [
+                        'id' => $artist_id,
+                        'title' => $artist_post->post_title,
+                        'url' => get_permalink($artist_id),
+                        'post_type' => $artist_post->post_type,
+                        'post_type_label' => $post_type_label
+                    ];
+                }
+            }
+        }
+        
+        $artwork_data['artists'] = $artists;
+        $result[] = $artwork_data;
     }
     
     return $result;

@@ -282,6 +282,24 @@
      * Create popup content for an artwork
      */
     function createPopupContent(artwork) {
+        // Build artists HTML if there are any
+        let artistsHtml = '';
+        if (artwork.artists && artwork.artists.length > 0) {
+            artistsHtml = '<div class="artwork-artists">';
+            artistsHtml += `<h4>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Artists' : artRouteData.i18n.artist || 'Artist'}:</h4>`;
+            artistsHtml += '<ul>';
+            
+            artwork.artists.forEach(function(artist) {
+                artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a>`;
+                if (artist.post_type_label) {
+                    artistsHtml += ` <span class="artist-post-type">(${artist.post_type_label})</span>`;
+                }
+                artistsHtml += '</li>';
+            });
+            
+            artistsHtml += '</ul></div>';
+        }
+        
         return `
             <div class="artwork-popup">
                 <div class="artwork-popup-image">
@@ -292,6 +310,7 @@
                     <div class="artwork-description">
                         ${artwork.description}
                     </div>
+                    ${artistsHtml}
                 </div>
             </div>
         `;
@@ -304,6 +323,24 @@
         // Skip showing toasts if disabled
         if (!showArtworkToasts) {
             return;
+        }
+        
+        // Build artists HTML if there are any
+        let artistsHtml = '';
+        if (artwork.artists && artwork.artists.length > 0) {
+            artistsHtml = '<div style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">';
+            artistsHtml += `<strong>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Artists' : artRouteData.i18n.artist || 'Artist'}:</strong>`;
+            artistsHtml += '<ul style="margin: 5px 0 0 0; padding-left: 20px; font-size: 13px;">';
+            
+            artwork.artists.forEach(function(artist) {
+                artistsHtml += `<li><a href="${artist.url}" target="_blank" style="color: #0073aa; text-decoration: none;">${artist.title}</a>`;
+                if (artist.post_type_label) {
+                    artistsHtml += ` <span style="color: #666; font-style: italic; font-size: 12px;">(${artist.post_type_label})</span>`;
+                }
+                artistsHtml += '</li>';
+            });
+            
+            artistsHtml += '</ul></div>';
         }
         
         // Create a toast instead of showing modal
@@ -325,9 +362,10 @@
                 </div>
                 <div style="padding: 16px;">
                     <h3 style="margin: 0 0 8px; font-size: 18px;">${artwork.title}</h3>
-                    <div style="font-size: 14px; max-height: 100px; overflow-y: auto;">
+                    <div style="font-size: 14px; max-height: 100px; overflow-y: auto; margin-bottom: 8px;">
                         ${artwork.description}
                     </div>
+                    ${artistsHtml}
                 </div>
             </div>
         `);

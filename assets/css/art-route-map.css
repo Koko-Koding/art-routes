@@ -349,6 +349,43 @@
     margin-bottom: 10px;
 }
 
+.artwork-artists {
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.artwork-artists h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.artwork-artists ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+}
+
+.artwork-artists li {
+    margin-bottom: 3px;
+}
+
+.artwork-artists a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.artwork-artists a:hover {
+    text-decoration: underline;
+}
+
+.artist-post-type {
+    color: #666;
+    font-style: italic;
+    font-size: 12px;
+}
+
 .artwork-popup-container .leaflet-popup-tip {
     background-color: white;
 }
