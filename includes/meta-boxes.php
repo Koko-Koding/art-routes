@@ -51,6 +51,16 @@ function wp_art_routes_add_meta_boxes() {
         'side',
         'default'
     );
+    
+    // Artwork Artist Association meta box
+    add_meta_box(
+        'artwork_artists',
+        __('Artist(s)', 'wp-art-routes'),
+        'wp_art_routes_render_artwork_artists_meta_box',
+        'artwork',
+        'normal',
+        'default'
+    );
 }
 add_action('add_meta_boxes', 'wp_art_routes_add_meta_boxes');
 
@@ -80,10 +90,10 @@ function wp_art_routes_render_route_details_meta_box($post) {
     
     // Route types
     $route_types = [
-        'walking' => __('Wandelroute', 'wp-art-routes'),
-        'cycling' => __('Fietsroute', 'wp-art-routes'),
-        'wheelchair' => __('Rolstoelvriendelijk', 'wp-art-routes'),
-        'children' => __('Kinderroute', 'wp-art-routes'),
+        'walking' => __('Walking route', 'wp-art-routes'),
+        'cycling' => __('Bicycle route', 'wp-art-routes'),
+        'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
+        'children' => __('Child-friendly route', 'wp-art-routes'),
     ];
     
     ?>
@@ -223,6 +233,169 @@ function wp_art_routes_render_artwork_route_meta_box($post) {
 }
 
 /**
+ * Render Artwork Artist Association meta box
+ */
+function wp_art_routes_render_artwork_artists_meta_box($post) {
+    // Add nonce for security
+    wp_nonce_field('save_artwork_artists', 'artwork_artists_nonce');
+    
+    // Get saved artist associations
+    $artist_ids = get_post_meta($post->ID, '_artwork_artist_ids', true);
+    
+    if (!is_array($artist_ids)) {
+        $artist_ids = empty($artist_ids) ? array() : array($artist_ids);
+    }
+    
+    // Enqueue the WordPress media scripts
+    wp_enqueue_script('jquery-ui-autocomplete');
+    
+    // Get all available post types except some internal ones
+    $excluded_post_types = array('revision', 'attachment', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request', 'wp_block', 'art_route', 'artwork');
+    $post_types = get_post_types(array('public' => true), 'objects');
+    
+    ?>
+    <div class="artist-association-container">
+        <p><?php _e('Connect this artwork to one or more posts representing the artist(s).', 'wp-art-routes'); ?></p>
+        
+        <div class="artist-search">
+            <label for="artist_search"><?php _e('Search for content:', 'wp-art-routes'); ?></label>
+            <input type="text" id="artist_search" placeholder="<?php esc_attr_e('Start typing to search...', 'wp-art-routes'); ?>" class="regular-text" />
+            
+            <div class="post-type-filter">
+                <label><?php _e('Filter by post type:', 'wp-art-routes'); ?></label>
+                <select id="post_type_filter">
+                    <option value=""><?php _e('All post types', 'wp-art-routes'); ?></option>
+                    <?php foreach ($post_types as $type) : 
+                        if (!in_array($type->name, $excluded_post_types)) : ?>
+                            <option value="<?php echo esc_attr($type->name); ?>">
+                                <?php echo esc_html($type->labels->singular_name); ?>
+                            </option>
+                        <?php endif;
+                    endforeach; ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="selected-artists">
+            <h4><?php _e('Selected Artist(s):', 'wp-art-routes'); ?></h4>
+            <ul id="selected_artists_list">
+                <?php 
+                if (!empty($artist_ids)) {
+                    foreach ($artist_ids as $artist_id) {
+                        $artist = get_post($artist_id);
+                        if ($artist) {
+                            $post_type_obj = get_post_type_object($artist->post_type);
+                            $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $artist->post_type;
+                            
+                            echo '<li data-id="' . esc_attr($artist_id) . '">';
+                            echo '<span class="artist-title">' . esc_html($artist->post_title) . '</span>';
+                            echo ' <span class="post-type-label">(' . esc_html($post_type_label) . ')</span>';
+                            echo ' <a href="#" class="remove-artist">' . __('Remove', 'wp-art-routes') . '</a>';
+                            echo '<input type="hidden" name="artwork_artist_ids[]" value="' . esc_attr($artist_id) . '">';
+                            echo '</li>';
+                        }
+                    }
+                }
+                ?>
+            </ul>
+            <p class="description"><?php _e('These posts will be associated with this artwork as artists.', 'wp-art-routes'); ?></p>
+        </div>
+    </div>
+    
+    <style>
+        .artist-association-container {
+            margin-bottom: 20px;
+        }
+        .artist-search {
+            margin-bottom: 15px;
+        }
+        .post-type-filter {
+            margin-top: 10px;
+        }
+        #selected_artists_list {
+            margin-top: 10px;
+        }
+        #selected_artists_list li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .remove-artist {
+            color: #a00;
+            text-decoration: none;
+        }
+        .post-type-label {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        // Autocomplete for artist search
+        $('#artist_search').autocomplete({
+            source: function(request, response) {
+                var postType = $('#post_type_filter').val();
+                
+                $.ajax({
+                    url: ajaxurl,
+                    dataType: 'json',
+                    data: {
+                        action: 'search_posts_for_artist',
+                        term: request.term,
+                        post_type: postType,
+                        nonce: '<?php echo wp_create_nonce('artist_search_nonce'); ?>'
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                // Add the selected artist to the list
+                addArtistToList(ui.item);
+                
+                // Clear the search field
+                setTimeout(function() {
+                    $('#artist_search').val('');
+                }, 100);
+                
+                return false;
+            }
+        }).autocomplete('instance')._renderItem = function(ul, item) {
+            return $('<li>')
+                .append('<div>' + item.label + ' <span class="post-type-label">(' + item.post_type_label + ')</span></div>')
+                .appendTo(ul);
+        };
+        
+        // Function to add artist to the selected list
+        function addArtistToList(item) {
+            // Check if already added
+            if ($('#selected_artists_list li[data-id="' + item.id + '"]').length === 0) {
+                var artistItem = $('<li data-id="' + item.id + '"></li>');
+                artistItem.append('<span class="artist-title">' + item.label + '</span>');
+                artistItem.append(' <span class="post-type-label">(' + item.post_type_label + ')</span>');
+                artistItem.append(' <a href="#" class="remove-artist"><?php _e('Remove', 'wp-art-routes'); ?></a>');
+                artistItem.append('<input type="hidden" name="artwork_artist_ids[]" value="' + item.id + '">');
+                
+                $('#selected_artists_list').append(artistItem);
+            }
+        }
+        
+        // Remove artist from the list
+        $(document).on('click', '.remove-artist', function(e) {
+            e.preventDefault();
+            $(this).parent('li').remove();
+        });
+    });
+    </script>
+    <?php
+}
+
+/**
  * Save route details meta box data
  */
 function wp_art_routes_save_route_details($post_id) {
@@ -348,3 +521,30 @@ function wp_art_routes_save_artwork_route($post_id) {
     }
 }
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_route');
+
+/**
+ * Save artwork artist association
+ */
+function wp_art_routes_save_artwork_artists($post_id) {
+    // Verify nonce
+    if (!isset($_POST['artwork_artists_nonce']) || !wp_verify_nonce($_POST['artwork_artists_nonce'], 'save_artwork_artists')) {
+        return;
+    }
+    
+    // Check autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // Check permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    // Save artist associations
+    if (isset($_POST['artwork_artist_ids'])) {
+        $artist_ids = array_map('sanitize_text_field', $_POST['artwork_artist_ids']);
+        update_post_meta($post_id, '_artwork_artist_ids', $artist_ids);
+    }
+}
+add_action('save_post_artwork', 'wp_art_routes_save_artwork_artists');

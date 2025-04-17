@@ -66,10 +66,10 @@ $js_data = [
                 <span class="route-type">
                     <?php 
                     $route_types = [
-                        'walking' => __('Wandelroute', 'wp-art-routes'),
-                        'cycling' => __('Fietsroute', 'wp-art-routes'),
-                        'wheelchair' => __('Rolstoelvriendelijk', 'wp-art-routes'),
-                        'children' => __('Kinderroute', 'wp-art-routes'),
+                        'walking' => __('Walking route', 'wp-art-routes'),
+                        'cycling' => __('Bicycle route', 'wp-art-routes'),
+                        'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
+                        'children' => __('Child-friendly route', 'wp-art-routes'),
                     ];
                     echo isset($route_types[$route['type']]) ? $route_types[$route['type']] : $route['type']; 
                     ?>
@@ -112,7 +112,6 @@ $js_data = [
             <div class="artwork-info">
                 <h3 id="artwork-title"></h3>
                 <div id="artwork-description"></div>
-                <a id="artwork-artist-link" class="artist-link" href=""><?php _e('View Artist', 'wp-art-routes'); ?></a>
             </div>
         </div>
     </div>
