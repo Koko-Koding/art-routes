@@ -447,6 +447,27 @@
     }
 }
 
+/* Info Point markers */
+.info-point-marker {
+    background: transparent;
+}
+
+.info-point-marker-inner {
+    width: 30px;
+    height: 30px;
+    background-color: #ffc107; /* Amber color */
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    font-family: sans-serif;
+}
+
 /* Artwork modal */
 .artwork-modal {
     display: none;
@@ -631,6 +652,70 @@
     right: 8px;
 }
 
+/* Info Point Popup in Map */
+.info-point-popup-container .leaflet-popup-content-wrapper {
+    /* Reuse artwork popup styles if desired, or add specific ones */
+    padding: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.info-point-popup-container .leaflet-popup-content {
+    margin: 0;
+    width: 300px !important;
+}
+
+.info-point-popup {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.info-point-popup-image {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.info-point-popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info-point-popup-content {
+    padding: 15px;
+}
+
+.info-point-popup-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.info-point-excerpt {
+    font-size: 14px;
+    line-height: 1.4;
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.info-point-link {
+    display: inline-block;
+    color: #3388FF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.info-point-link:hover {
+    text-decoration: underline;
+}
+
+.info-point-popup-container .leaflet-popup-tip {
+    background-color: white;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
     .artwork-modal-content {
@@ -653,6 +738,14 @@
     }
     
     .artwork-popup-image {
+        height: 120px;
+    }
+    
+    .info-point-popup-container .leaflet-popup-content {
+        width: 250px !important;
+    }
+    
+    .info-point-popup-image {
         height: 120px;
     }
 }

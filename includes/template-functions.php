@@ -62,6 +62,9 @@ function wp_art_routes_get_route_data($route_id) {
     // Get artworks
     $route_data['artworks'] = wp_art_routes_get_route_artworks($route_id);
     
+    // Get information points
+    $route_data['information_points'] = wp_art_routes_get_route_information_points($route_id);
+    
     return $route_data;
 }
 
@@ -155,6 +158,45 @@ function wp_art_routes_get_route_artworks($route_id) {
     }
     
     return $result;
+}
+
+/**
+ * Get information points for a specific route
+ */
+function wp_art_routes_get_route_information_points($route_id) {
+    // Query the information_point CPT instead of reading meta
+    $info_point_posts = get_posts([
+        'post_type' => 'information_point',
+        'posts_per_page' => -1,
+        'meta_query' => [
+            [
+                'key' => '_artwork_route_id', // Using the same meta key as artworks
+                'value' => $route_id,
+            ],
+        ],
+    ]);
+
+    $info_points = [];
+
+    foreach ($info_point_posts as $info_post) {
+        $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
+        $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
+
+        // Ensure location data exists
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            $info_points[] = [
+                'id' => $info_post->ID,
+                'title' => $info_post->post_title,
+                'excerpt' => has_excerpt($info_post->ID) ? get_the_excerpt($info_post->ID) : wp_trim_words($info_post->post_content, 30, '...'),
+                'image_url' => get_the_post_thumbnail_url($info_post->ID, 'medium'), // Use medium size for popup
+                'permalink' => get_permalink($info_post->ID), // Link to the info point post itself
+                'latitude' => (float)$latitude,
+                'longitude' => (float)$longitude,
+            ];
+        }
+    }
+
+    return $info_points;
 }
 
 /**

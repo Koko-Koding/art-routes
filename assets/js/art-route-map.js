@@ -1,6 +1,6 @@
 /**
  * Art Route Map JavaScript
- * Handles the OpenStreetMap integration, location tracking, and artwork markers
+ * Handles the OpenStreetMap integration, location tracking, and artwork/info point markers
  */
 
 (function($) {
@@ -9,6 +9,7 @@
     let userPosition = null;
     let watchId = null;
     let artworkMarkers = [];
+    let infoPointMarkers = []; // Added for information points
     let routePath = [];
     let completedPath = [];
     let initialLocationSet = false;
@@ -58,10 +59,11 @@
         // Add artwork markers
         addArtworkMarkers();
         
+        // Add information point markers
+        addInfoPointMarkers(); // Call the new function
+        
         // Get user location
         getUserLocation();
-        
-        // Remove modal close handler and replace with toast handling
         
         // Retry location button
         $('#retry-location').on('click', function() {
@@ -236,7 +238,7 @@
                     className: 'artwork-marker',
                     html: `
                         <div class="artwork-marker-inner">
-                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url}');"></div>
+                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + 'assets/images/placeholder.png'}');"></div>
                             <div class="artwork-marker-overlay"></div>
                             <div class="artwork-marker-number">${index + 1}</div>
                         </div>
@@ -251,7 +253,7 @@
                 }).addTo(map);
                 
                 // Generate the popup content once
-                const popupContent = createPopupContent(artwork);
+                const popupContent = createArtworkPopupContent(artwork); // Renamed function
                 
                 // Create a permanent popup that we'll show/hide instead of creating/removing it
                 const popup = L.popup({
@@ -277,37 +279,95 @@
             });
         }
     }
+
+    /**
+     * Add information point markers to the map
+     */
+    function addInfoPointMarkers() {
+        const infoPoints = artRouteData.information_points;
+        
+        if (infoPoints && infoPoints.length > 0) {
+            infoPoints.forEach(function(infoPoint) {
+                // Create a custom info point marker ('i' icon)
+                const infoIcon = L.divIcon({
+                    className: 'info-point-marker',
+                    html: '<div class="info-point-marker-inner">i</div>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                // Create the marker
+                const marker = L.marker([infoPoint.latitude, infoPoint.longitude], {
+                    icon: infoIcon
+                }).addTo(map);
+                
+                // Generate the popup content once
+                const popupContent = createInfoPointPopupContent(infoPoint);
+                
+                // Create a permanent popup
+                const popup = L.popup({
+                    maxWidth: 300,
+                    className: 'info-point-popup-container',
+                    closeButton: true,
+                    autoClose: false,
+                    closeOnEscapeKey: true
+                }).setContent(popupContent);
+                
+                // Add click event to show the popup
+                marker.on('click', function() {
+                    popup.setLatLng(marker.getLatLng()).openOn(map);
+                });
+                
+                // Add to array (optional, if needed for future interactions)
+                infoPointMarkers.push({
+                    marker: marker,
+                    infoPoint: infoPoint,
+                    popup: popup
+                });
+            });
+        }
+    }
     
     /**
      * Create popup content for an artwork
      */
-    function createPopupContent(artwork) {
-        // Build artists HTML if there are any
-        let artistsHtml = '';
-        if (artwork.artists && artwork.artists.length > 0) {
-            artistsHtml = '<div class="artwork-artists">';
-            artistsHtml += `<h4>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Kunstenaars' : artRouteData.i18n.artist || 'Kunstenaar'}:</h4>`;
-            artistsHtml += '<ul>';
-            
-            artwork.artists.forEach(function(artist) {
-                artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a>`;
-                artistsHtml += '</li>';
-            });
-            
-            artistsHtml += '</ul></div>';
-        }
-        
+    function createArtworkPopupContent(artwork) { // Renamed function
         return `
             <div class="artwork-popup">
                 <div class="artwork-popup-image">
-                    <img src="${artwork.image_url}" alt="${artwork.title}">
+                    <img src="${artwork.image_url || artRouteData.plugin_url + 'assets/images/placeholder.png'}" alt="${artwork.title}">
                 </div>
                 <div class="artwork-popup-content">
                     <h3>${artwork.title}</h3>
                     <div class="artwork-description">
-                        ${artwork.description}
+                        ${artwork.description || ''} 
                     </div>
                     ${artistsHtml}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Create popup content for an information point
+     */
+    function createInfoPointPopupContent(infoPoint) {
+        return `
+            <div class="info-point-popup"> 
+                ${infoPoint.image_url ? 
+                    `<div class="info-point-popup-image">
+                        <img src="${infoPoint.image_url}" alt="${infoPoint.title}">
+                    </div>` : 
+                    // Add fallback for info point image as well
+                    `<div class="info-point-popup-image">
+                        <img src="${artRouteData.plugin_url + 'assets/images/placeholder.png'}" alt="${infoPoint.title}">
+                    </div>`}
+                <div class="info-point-popup-content">
+                    <h3>${infoPoint.title}</h3>
+                    <div class="info-point-excerpt">
+                        ${infoPoint.excerpt || ''}
+                    </div>
+                    ${infoPoint.permalink ? `<a href="${infoPoint.permalink}" target="_blank" class="info-point-link">Lees meer</a>` : ''}
                 </div>
             </div>
         `;

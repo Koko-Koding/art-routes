@@ -57,26 +57,26 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 - Responsive design for the multi-route map display on mobile devices
 - Customization options for multi-route maps (height, zoom, center coordinates)
 
-## [1.1.3] - 2023-10-XX
+## [1.1.3] - 2025-03-16
 
 ### Changed
 
 - Increased size and improved styling (white icon on dark background) of artwork balloon's close button for better accessibility on smaller devices.
 
-## [1.1.2] - 2023-07-18
+## [1.1.2] - 2025-03-16
 
 ### Fixed
 
 - Fixed issue with artwork popups not reopening after being closed by using a different popup creation approach
 - Improved popup handling to ensure consistent behavior across all browsers
 
-## [1.1.1] - 2023-07-17
+## [1.1.1] - 2025-03-16
 
 ### Fixed
 
 - Fixed issue where artwork popups couldn't be reopened after being closed when clicking an artwork marker
 
-## [1.1.0] - 2023-07-15
+## [1.1.0] - 2025-03-16
 
 ### Added
 
@@ -92,7 +92,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 
 - Various UI issues with popup display and interaction
 
-## [1.0.0] - 2023-07-01
+## [1.0.0] - 2025-03-16
 
 ### Added
 
