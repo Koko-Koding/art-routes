@@ -115,6 +115,10 @@
 
         // Load associated artworks and info points
         loadAssociatedPoints();
+
+        // Fit map to initial bounds (path + any immediately available data)
+        // This will be refined when points finish loading via AJAX
+        fitMapToBounds();
     }
 
     /**
