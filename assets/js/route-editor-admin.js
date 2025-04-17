@@ -184,6 +184,14 @@
 
         // Add click handler for drawing/adding points
         editorMap.on('click', onMapClick);
+
+        // Add delegated event handler for remove links inside popups (moved here)
+        $(editorMap.getContainer()).on('click', '.remove-point-link', function(e) {
+            e.preventDefault();
+            const pointId = $(this).data('id');
+            const pointType = $(this).data('type');
+            removePoint(pointId, pointType);
+        });
     }
 
     /**
@@ -650,14 +658,6 @@
         content += `<a href="#" class="remove-point-link" data-id="${pointData.id || pointData.temp_id}" data-type="${pointData.type}">${i18n.remove}</a>`;
         return content;
     }
-
-    // Add delegated event handler for remove links inside popups
-    $(editorMap.getContainer()).on('click', '.remove-point-link', function(e) {
-        e.preventDefault();
-        const pointId = $(this).data('id');
-        const pointType = $(this).data('type');
-        removePoint(pointId, pointType);
-    });
 
     /**
      * Remove an artwork or info point marker and track removal

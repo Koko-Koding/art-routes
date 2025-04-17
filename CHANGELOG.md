@@ -2,6 +2,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.3.2] - 2025-04-17
+
+### Fixed
+
+- Resolved a JavaScript TypeError (`undefined is not an object (evaluating 'editorMap.getContainer')`) in the route editor admin script (`route-editor-admin.js`) by ensuring the map object is initialized before attaching event handlers to its container.
+
 ## [1.3.1] - 2025-04-17
 
 ### Changed

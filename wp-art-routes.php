@@ -3,8 +3,8 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://example.com/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress
- * Version: 1.3.1
- * Author: Your Name
+ * Version: 1.3.2
+ * Author: Drikus Roor - Koko Koding
  * Author URI: https://example.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', '1.3.1');
+define('WP_ART_ROUTES_VERSION', '1.3.2');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
