@@ -242,6 +242,7 @@ add_action('wp_ajax_save_route_points', 'wp_ajax_save_route_points');
 
 /**
  * Helper function to get associated artworks and info points for a route
+ * Fetches both published and draft points.
  *
  * @param int $route_id The ID of the route post.
  * @return array An array containing 'artworks' and 'information_points'.
@@ -258,6 +259,7 @@ function wp_art_routes_get_associated_points($route_id) {
         $query_args = [
             'post_type' => $post_type,
             'posts_per_page' => -1,
+            'post_status' => ['publish', 'draft'], // Fetch both published and draft posts
             'meta_query' => [
                 [
                     'key' => '_artwork_route_id', // Using the same meta key for association
@@ -265,12 +267,13 @@ function wp_art_routes_get_associated_points($route_id) {
                     'compare' => '=',
                 ],
             ],
-            'fields' => 'ids', // Only get IDs initially
+            // No 'fields' => 'ids' here, as we need post objects to get status
         ];
 
-        $point_ids = get_posts($query_args);
+        $point_posts = get_posts($query_args); // Get full post objects
 
-        foreach ($point_ids as $point_id) {
+        foreach ($point_posts as $point_post) {
+            $point_id = $point_post->ID;
             $latitude = get_post_meta($point_id, '_artwork_latitude', true);
             $longitude = get_post_meta($point_id, '_artwork_longitude', true);
 
@@ -281,7 +284,8 @@ function wp_art_routes_get_associated_points($route_id) {
                     'lat' => floatval($latitude),
                     'lng' => floatval($longitude),
                     'edit_link' => get_edit_post_link($point_id, 'raw'),
-                    'type' => $post_type, // Add type information
+                    'type' => $post_type,
+                    'status' => $point_post->post_status, // Add post status
                 ];
 
                 if ($post_type === 'artwork') {

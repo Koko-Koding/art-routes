@@ -2,6 +2,13 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.3.1] - 2025-04-17
+
+### Changed
+
+- Modified route editor to load associated artworks and information points that are in 'draft' status.
+- Added visual indicators (opacity, border, popup text) in the route editor map for draft points (both newly added and previously saved drafts), warning users they are not yet public.
+
 ## [1.3.0] - 2025-04-17
 
 ### Added

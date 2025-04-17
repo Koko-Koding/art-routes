@@ -202,14 +202,14 @@
 
         switch (currentMode) {
             case 'draw':
-                // Add point to the route path
+                // Add point to route path
                 routePoints.push([lat, lng]);
-                drawingLayer.setLatLngs(routePoints);
+                drawingLayer.addLatLng([lat, lng]);
                 updateRouteInfo();
                 break;
             case 'addArtwork':
             case 'addInfoPoint':
-                // Add a new temporary artwork or info point
+                // Add a temporary marker for a new point
                 const pointType = (currentMode === 'addArtwork') ? 'artwork' : 'information_point';
                 const tempId = `temp_${tempPointIdCounter++}`;
                 const newPointData = {
@@ -217,15 +217,17 @@
                     lat: lat,
                     lng: lng,
                     type: pointType,
-                    title: (pointType === 'artwork' ? i18n.artwork : i18n.infoPoint) + ' (New)'
+                    title: (pointType === 'artwork' ? i18n.artwork : i18n.infoPoint) + ' (New)', // Temporary title
+                    status: 'draft' // Treat new points as draft initially
                 };
+
+                addPointMarker(newPointData, true); // Pass true for isNew
                 changedPoints.new.push(newPointData);
-                addPointMarker(newPointData, true); // Add marker for the new point
                 updateRouteInfo();
                 stopAddingPoint(); // Go back to 'none' mode after adding one point
                 break;
-            default: // 'none' mode
-                // Do nothing on click if not in a specific mode
+            default:
+                // Do nothing if not in a specific mode
                 break;
         }
     }
@@ -577,12 +579,20 @@
     function addPointMarker(pointData, isNew = false) {
         const layer = (pointData.type === 'artwork') ? artworkLayer : infoPointLayer;
         const icon = (pointData.type === 'artwork') ? artworkIcon : infoPointIcon;
+        const isDraft = pointData.status === 'draft';
 
         const marker = L.marker([pointData.lat, pointData.lng], {
             icon: icon,
             draggable: true,
-            pointData: { ...pointData } // Store data within the marker
+            pointData: { ...pointData }, // Store data within the marker
+            // Add a class if the point is a draft
+            iconOptions: { className: isDraft ? 'draft-point' : '' } 
         }).addTo(layer);
+
+        // Apply the draft class to the actual icon element after creation
+        if (isDraft && marker._icon) {
+            L.DomUtil.addClass(marker._icon, 'draft-point');
+        }
 
         marker.bindPopup(createPointPopupContent(pointData));
 
@@ -622,9 +632,13 @@
      * Create HTML content for a point marker's popup
      */
     function createPointPopupContent(pointData) {
-        let content = `<strong>${pointData.title || 'Point'}</strong><br>`;
+        const isDraft = pointData.status === 'draft';
+        let content = `<strong>${pointData.title || 'Point'}${isDraft ? ' (Draft)' : ''}</strong><br>`;
         content += `Type: ${(pointData.type === 'artwork' ? i18n.artwork : i18n.infoPoint)}<br>`;
         content += `Lat: ${pointData.lat.toFixed(5)}, Lng: ${pointData.lng.toFixed(5)}<br>`;
+        if (isDraft) {
+            content += `<span style="color: orange; font-weight: bold;">${i18n.draftWarning || 'Warning: This point is a draft and won\'t be visible on the public map.'}</span><br>`;
+        }
 
         if (pointData.id) { // Only show edit link for saved points
             content += `<a href="${pointData.edit_link}" target="_blank">${i18n.edit}</a> | `;

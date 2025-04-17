@@ -174,3 +174,18 @@
     margin-top: 5px;
     font-size: 0.9em;
 }
+
+/* Style for draft point markers */
+.draft-point {
+    opacity: 0.6;
+    border: 1px dashed orange;
+    border-radius: 50%; /* Adjust if your icons aren't circular */
+}
+
+/* Style for draft point popups */
+.leaflet-popup-content .draft-warning {
+    color: orange;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+}

@@ -182,6 +182,7 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
                     'errorSavingPoints' => __('Error saving points.', 'wp-art-routes'),
                     'savingPoints' => __('Saving points...', 'wp-art-routes'),
                     'pointsSaved' => __('Points saved successfully.', 'wp-art-routes'),
+                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'wp-art-routes'), // Added draft warning
                 ]
             ]
         );
