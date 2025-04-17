@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  * Enqueue frontend scripts and styles for the art route map
  */
 function wp_art_routes_enqueue_scripts() {
-    // Only enqueue on pages with our shortcode or template
+    // Only enqueue on pages with our shortcode or template or single post type
     if (!wp_art_routes_is_route_page()) {
         return;
     }
@@ -51,27 +51,60 @@ function wp_art_routes_enqueue_scripts() {
         true
     );
     
-    // If we're on a single art_route post, pass the data directly to JavaScript
+    // Determine Route ID
+    $route_id = 0;
     if (is_singular('art_route')) {
         $route_id = get_the_ID();
-        $route_data = wp_art_routes_get_route_data($route_id);
-        
-        if ($route_data) {
-            $js_data = [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('wp_art_routes_nonce'),
-                'route_path' => $route_data['route_path'],
-                'artworks' => $route_data['artworks'],
-                'show_completed_route' => $route_data['show_completed_route'],
-                'show_artwork_toasts' => $route_data['show_artwork_toasts'],
-                'i18n' => [
-                    'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
-                    'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
-                ],
-            ];
-            
-            wp_localize_script('wp-art-routes-map-js', 'artRouteData', $js_data);
+    } elseif (is_page_template('art-route-map-template.php')) {
+        $route_id = isset($_GET['route_id']) ? intval($_GET['route_id']) : get_option('wp_art_routes_default_route', 0);
+    } else {
+        // Attempt to find route_id if shortcode is present on a non-singular/non-template page
+        global $post;
+        if (isset($post->post_content) && has_shortcode($post->post_content, 'art_route_map')) {
+            // Basic regex to extract route_id - might fail with complex attributes
+            // It's generally better to handle this within the shortcode callback itself if more complex logic is needed.
+            preg_match('/\\[art_route_map.*?route_id=([\'"]?)(\d+)\1.*?\\]/', $post->post_content, $matches);
+            if (!empty($matches[2])) {
+                $route_id = intval($matches[2]);
+            } else {
+                // If shortcode exists but no ID, check for default route
+                $route_id = get_option('wp_art_routes_default_route', 0);
+            }
         }
+    }
+
+    // Get route data if we have a valid ID
+    $route_data = null;
+    if ($route_id > 0) {
+         $route_data = wp_art_routes_get_route_data($route_id);
+    }
+    
+    // Localize script if we have data
+    if ($route_data) {
+        $js_data = [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('wp_art_routes_nonce'),
+            'route_path' => $route_data['route_path'],
+            'artworks' => $route_data['artworks'],
+            'information_points' => $route_data['information_points'], // Ensure this is included
+            'show_completed_route' => $route_data['show_completed_route'],
+            'show_artwork_toasts' => $route_data['show_artwork_toasts'],
+            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL, // Pass plugin URL for JS
+            'i18n' => [
+                'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
+                'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
+            ],
+        ];
+        wp_localize_script('wp-art-routes-map-js', 'artRouteData', $js_data);
+    } else {
+         // Localize with empty data or defaults if the script expects artRouteData to always exist
+         wp_localize_script('wp-art-routes-map-js', 'artRouteData', [
+            'error' => 'No route data found or specified.',
+            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL, // Still pass URL
+            'route_path' => [],
+            'artworks' => [],
+            'information_points' => [],
+         ]);
     }
 }
 add_action('wp_enqueue_scripts', 'wp_art_routes_enqueue_scripts');
@@ -83,12 +116,13 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
     global $post;
 
     // Check if we need the route editor scripts
-    $is_route_edit = $hook === 'post.php' || $hook === 'post-new.php';
+    $is_edit_page = $hook === 'post.php' || $hook === 'post-new.php';
     $is_route_type = isset($post) && $post->post_type === 'art_route';
     $is_artwork_type = isset($post) && $post->post_type === 'artwork';
+    $is_info_point_type = isset($post) && $post->post_type === 'information_point';
     
     // Only load on relevant pages
-    if (!$is_route_edit || (!$is_route_type && !$is_artwork_type)) {
+    if (!$is_edit_page || (!$is_route_type && !$is_artwork_type && !$is_info_point_type)) {
         return;
     }
 
@@ -121,21 +155,41 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
         wp_enqueue_script(
             'wp-art-routes-editor-js',
             WP_ART_ROUTES_PLUGIN_URL . 'assets/js/route-editor-admin.js',
-            ['jquery', 'wp-art-routes-admin-leaflet-js'],
+            ['jquery', 'wp-art-routes-admin-leaflet-js', 'jquery-ui-draggable'],
             WP_ART_ROUTES_VERSION,
             true
         );
         
-        // Pass the modal HTML to JavaScript
+        // Pass data to JavaScript
         wp_localize_script(
             'wp-art-routes-editor-js',
-            'routeEditorModalHTML',
-            wp_art_routes_get_route_editor_modal_html()
+            'routeEditorData',
+            [
+                'modalHTML' => wp_art_routes_get_route_editor_modal_html(),
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'get_points_nonce' => wp_create_nonce('get_route_points_nonce'),
+                'save_points_nonce' => wp_create_nonce('save_route_points_nonce'),
+                'route_id' => isset($post) ? $post->ID : 0,
+                'i18n' => [
+                    'addArtwork' => __('Add Artwork', 'wp-art-routes'),
+                    'addInfoPoint' => __('Add Info Point', 'wp-art-routes'),
+                    'artwork' => __('Artwork', 'wp-art-routes'),
+                    'infoPoint' => __('Info Point', 'wp-art-routes'),
+                    'edit' => __('Edit', 'wp-art-routes'),
+                    'remove' => __('Remove', 'wp-art-routes'),
+                    'confirmRemove' => __('Are you sure you want to remove this point from the route?', 'wp-art-routes'),
+                    'errorLoadingPoints' => __('Error loading points for this route.', 'wp-art-routes'),
+                    'errorSavingPoints' => __('Error saving points.', 'wp-art-routes'),
+                    'savingPoints' => __('Saving points...', 'wp-art-routes'),
+                    'pointsSaved' => __('Points saved successfully.', 'wp-art-routes'),
+                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'wp-art-routes'), // Added draft warning
+                ]
+            ]
         );
     }
     
-    // Location picker (for artwork post type)
-    if ($is_artwork_type) {
+    // Location picker (for artwork and information_point post types)
+    if ($is_artwork_type || $is_info_point_type) {
         wp_enqueue_style(
             'wp-art-routes-location-picker-css',
             WP_ART_ROUTES_PLUGIN_URL . 'assets/css/artwork-location-picker.css',
@@ -200,27 +254,40 @@ function wp_art_routes_get_route_editor_modal_html() {
             </div>
             <div class="route-editor-body">
                 <div class="route-editor-controls">
-                    <div class="control-group">
+                    <div class="control-group route-drawing-controls">
+                        <strong><?php _e('Route Path:', 'wp-art-routes'); ?></strong><br>
                         <button type="button" class="button" id="start-drawing"><?php _e('Start Drawing', 'wp-art-routes'); ?></button>
                         <button type="button" class="button" id="stop-drawing"><?php _e('Stop Drawing', 'wp-art-routes'); ?></button>
                         <button type="button" class="button" id="clear-route"><?php _e('Clear Route', 'wp-art-routes'); ?></button>
                     </div>
-                    <div class="control-group">
-                        <label for="route-search"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
+                    <div class="control-group point-controls">
+                         <strong><?php _e('Points of Interest:', 'wp-art-routes'); ?></strong><br>
+                        <button type="button" class="button" id="add-artwork"><?php _e('Add Artwork', 'wp-art-routes'); ?></button>
+                        <button type="button" class="button" id="add-info-point"><?php _e('Add Info Point', 'wp-art-routes'); ?></button>
+                        <span id="adding-point-info" style="display: none; margin-left: 10px; color: #0073aa;"></span>
+                    </div>
+                    <div class="control-group search-controls">
+                         <strong><?php _e('Map Navigation:', 'wp-art-routes'); ?></strong><br>
+                        <label for="route-search" class="screen-reader-text"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
                         <input type="text" id="route-search" class="regular-text" placeholder="<?php _e('Enter location...', 'wp-art-routes'); ?>">
                         <button type="button" class="button" id="search-location"><?php _e('Search', 'wp-art-routes'); ?></button>
                     </div>
                     <div class="control-info">
-                        <p id="drawing-instructions"><?php _e('Click "Start Drawing" then click on the map to create your route. Click "Stop Drawing" when finished.', 'wp-art-routes'); ?></p>
-                        <p><span id="point-count">0</span> <?php _e('points in route', 'wp-art-routes'); ?></p>
-                        <p><?php _e('Total distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                        <p id="drawing-instructions"><?php _e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
+                        <p>
+                            <span id="point-count">0</span> <?php _e('route points', 'wp-art-routes'); ?> |
+                            <span id="artwork-count">0</span> <?php _e('artworks', 'wp-art-routes'); ?> |
+                            <span id="info-point-count">0</span> <?php _e('info points', 'wp-art-routes'); ?>
+                        </p>
+                        <p><?php _e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                        <p id="save-status" style="color: green; font-weight: bold;"></p>
                     </div>
                 </div>
                 <div id="route-editor-map"></div>
             </div>
             <div class="route-editor-footer">
-                <button type="button" class="button button-secondary" id="cancel-route"><?php _e('Cancel', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-route"><?php _e('Save Route', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-route"><?php _e('Close', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-route"><?php _e('Save Changes', 'wp-art-routes'); ?></button>
             </div>
         </div>
     </div>
@@ -271,15 +338,15 @@ function wp_art_routes_get_location_picker_modal_html() {
 function wp_art_routes_add_location_map_script() {
     global $post;
     
-    // Only add to artwork post type
-    if (!$post || get_post_type($post->ID) !== 'artwork') {
+    // Only add to artwork or information_point post type
+    if (!$post || !in_array(get_post_type($post->ID), ['artwork', 'information_point'])) {
         return;
     }
     
     ?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
-            // Initialize small map for artwork location in the meta box
+            // Initialize small map for location in the meta box
             window.locationMap = L.map('artwork_location_map').setView([52.1326, 5.2913], 8);
             
             // Add tile layer

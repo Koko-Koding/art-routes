@@ -41,6 +41,16 @@ function wp_art_routes_add_meta_boxes() {
         'normal',
         'high'
     );
+
+    // Info Point Location meta box (reuses artwork location rendering)
+    add_meta_box(
+        'info_point_location',
+        __('Info Point Location', 'wp-art-routes'),
+        'wp_art_routes_render_artwork_location_meta_box', // Reuse the artwork location renderer
+        'information_point', // Apply to the new CPT
+        'normal',
+        'high'
+    );
     
     // Artwork Route Association meta box
     add_meta_box(
@@ -51,7 +61,7 @@ function wp_art_routes_add_meta_boxes() {
         'side',
         'default'
     );
-    
+
     // Artwork Artist Association meta box
     add_meta_box(
         'artwork_artists',
@@ -59,6 +69,16 @@ function wp_art_routes_add_meta_boxes() {
         'wp_art_routes_render_artwork_artists_meta_box',
         'artwork',
         'normal',
+        'default'
+    );
+
+    // Info Point Route Association meta box (reuses artwork route rendering)
+    add_meta_box(
+        'info_point_route',
+        __('Associated Route', 'wp-art-routes'),
+        'wp_art_routes_render_artwork_route_meta_box', // Reuse the artwork route renderer
+        'information_point', // Apply to the new CPT
+        'side',
         'default'
     );
 }
@@ -202,9 +222,12 @@ function wp_art_routes_render_artwork_location_meta_box($post) {
  */
 function wp_art_routes_render_artwork_route_meta_box($post) {
     // Add nonce for security
-    wp_nonce_field('save_artwork_route', 'artwork_route_nonce');
+    // Use a dynamic nonce name based on post type to avoid conflicts
+    $nonce_action = 'save_' . $post->post_type . '_route';
+    $nonce_name = $post->post_type . '_route_nonce';
+    wp_nonce_field($nonce_action, $nonce_name);
     
-    // Get saved route ID
+    // Get saved route ID (use the same meta key for simplicity)
     $route_id = get_post_meta($post->ID, '_artwork_route_id', true);
     
     // Get all routes
@@ -220,7 +243,7 @@ function wp_art_routes_render_artwork_route_meta_box($post) {
         return;
     }
     
-    echo '<select name="artwork_route_id" id="artwork_route_id">';
+    echo '<select name="artwork_route_id" id="artwork_route_id">'; // Keep name generic for reuse
     echo '<option value="">' . __('Select a Route', 'wp-art-routes') . '</option>';
     
     foreach ($routes as $route) {
@@ -470,17 +493,15 @@ add_action('save_post_art_route', 'wp_art_routes_save_route_path');
  */
 function wp_art_routes_save_artwork_location($post_id) {
     // Verify nonce
-    if (!isset($_POST['artwork_location_nonce']) || !wp_verify_nonce($_POST['artwork_location_nonce'], 'save_artwork_location')) {
-        return;
+    // Use a dynamic nonce name based on post type
+    $post_type = get_post_type($post_id);
+    if ($post_type !== 'artwork' && $post_type !== 'information_point') {
+        return; // Only save for these post types
     }
-    
-    // Check autosave
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-    
-    // Check permissions
-    if (!current_user_can('edit_post', $post_id)) {
+    $nonce_action = 'save_artwork_location'; // Nonce action remains the same as it's tied to the rendering function
+    $nonce_name = 'artwork_location_nonce';
+
+    if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_action)) {
         return;
     }
     
@@ -494,57 +515,32 @@ function wp_art_routes_save_artwork_location($post_id) {
         update_post_meta($post_id, '_artwork_longitude', sanitize_text_field($_POST['artwork_longitude']));
     }
 }
+// Hook for both post types
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_location');
+add_action('save_post_information_point', 'wp_art_routes_save_artwork_location');
 
 /**
  * Save artwork route association
  */
 function wp_art_routes_save_artwork_route($post_id) {
     // Verify nonce
-    if (!isset($_POST['artwork_route_nonce']) || !wp_verify_nonce($_POST['artwork_route_nonce'], 'save_artwork_route')) {
+    // Use a dynamic nonce name based on post type
+    $post_type = get_post_type($post_id);
+    if ($post_type !== 'artwork' && $post_type !== 'information_point') {
+        return; // Only save for these post types
+    }
+    $nonce_action = 'save_' . $post_type . '_route';
+    $nonce_name = $post_type . '_route_nonce';
+
+    if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_action)) {
         return;
     }
     
-    // Check autosave
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-    
-    // Check permissions
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
-    
-    // Save route association
+    // Save route association (use the same meta key)
     if (isset($_POST['artwork_route_id'])) {
         update_post_meta($post_id, '_artwork_route_id', sanitize_text_field($_POST['artwork_route_id']));
     }
 }
+// Hook for both post types
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_route');
-
-/**
- * Save artwork artist association
- */
-function wp_art_routes_save_artwork_artists($post_id) {
-    // Verify nonce
-    if (!isset($_POST['artwork_artists_nonce']) || !wp_verify_nonce($_POST['artwork_artists_nonce'], 'save_artwork_artists')) {
-        return;
-    }
-    
-    // Check autosave
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-        return;
-    }
-    
-    // Check permissions
-    if (!current_user_can('edit_post', $post_id)) {
-        return;
-    }
-    
-    // Save artist associations
-    if (isset($_POST['artwork_artist_ids'])) {
-        $artist_ids = array_map('sanitize_text_field', $_POST['artwork_artist_ids']);
-        update_post_meta($post_id, '_artwork_artist_ids', $artist_ids);
-    }
-}
-add_action('save_post_artwork', 'wp_art_routes_save_artwork_artists');
+add_action('save_post_information_point', 'wp_art_routes_save_artwork_route');

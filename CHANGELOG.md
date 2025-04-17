@@ -2,6 +2,24 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.3.1] - 2025-04-17
+
+### Changed
+
+- Modified route editor to load associated artworks and information points that are in 'draft' status.
+- Added visual indicators (opacity, border, popup text) in the route editor map for draft points (both newly added and previously saved drafts), warning users they are not yet public.
+
+## [1.3.0] - 2025-04-17
+
+### Added
+
+- Added new "Information Point" post type to allow adding general points of interest to routes, distinct from artworks.
+- Implemented functionality to display Information Points on the route map with a unique icon.
+- Added meta boxes for managing Information Point details (title, description, location).
+- Updated route editor to allow adding and managing Information Points alongside artworks.
+- Updated map display logic in `art-route-map.js` to handle Information Points.
+- Added specific CSS styles for Information Points in `art-route-map.css` and `route-editor-admin.css`.
+
 ## [1.2.5] - 2025-03-27
 
 ### Improved
@@ -57,26 +75,26 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 - Responsive design for the multi-route map display on mobile devices
 - Customization options for multi-route maps (height, zoom, center coordinates)
 
-## [1.1.3] - 2023-10-XX
+## [1.1.3] - 2025-03-16
 
 ### Changed
 
 - Increased size and improved styling (white icon on dark background) of artwork balloon's close button for better accessibility on smaller devices.
 
-## [1.1.2] - 2023-07-18
+## [1.1.2] - 2025-03-16
 
 ### Fixed
 
 - Fixed issue with artwork popups not reopening after being closed by using a different popup creation approach
 - Improved popup handling to ensure consistent behavior across all browsers
 
-## [1.1.1] - 2023-07-17
+## [1.1.1] - 2025-03-16
 
 ### Fixed
 
 - Fixed issue where artwork popups couldn't be reopened after being closed when clicking an artwork marker
 
-## [1.1.0] - 2023-07-15
+## [1.1.0] - 2025-03-16
 
 ### Added
 
@@ -92,7 +110,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 
 - Various UI issues with popup display and interaction
 
-## [1.0.0] - 2023-07-01
+## [1.0.0] - 2025-03-16
 
 ### Added
 

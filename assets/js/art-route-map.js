@@ -1,6 +1,6 @@
 /**
  * Art Route Map JavaScript
- * Handles the OpenStreetMap integration, location tracking, and artwork markers
+ * Handles the OpenStreetMap integration, location tracking, and artwork/info point markers
  */
 
 (function($) {
@@ -9,6 +9,7 @@
     let userPosition = null;
     let watchId = null;
     let artworkMarkers = [];
+    let infoPointMarkers = [];
     let routePath = [];
     let completedPath = [];
     let initialLocationSet = false;
@@ -57,11 +58,12 @@
         
         // Add artwork markers
         addArtworkMarkers();
+                
+        // Add information point markers
+        addInfoPointMarkers();
         
         // Get user location
         getUserLocation();
-        
-        // Remove modal close handler and replace with toast handling
         
         // Retry location button
         $('#retry-location').on('click', function() {
@@ -222,97 +224,156 @@
             }
         }
     }
-    
+
     /**
-     * Add artwork markers to the map
+     * Generic function to add markers to the map
+     * @param {Array} items - Array of data objects (artworks or info points)
+     * @param {String} type - 'artwork' or 'info-point'
+     * @param {Array} markerArray - Array to store marker references and data
+     * @param {Object} iconOptions - Options for creating the L.divIcon
+     * @param {String} iconOptions.className - Base CSS class for the icon
+     * @param {Function} iconOptions.htmlFn - Function(item, index) returning icon's inner HTML
+     * @param {Array} iconOptions.iconSize - [width, height]
+     * @param {Array} iconOptions.iconAnchor - [x, y]
+     * @param {Object} popupOptions - Options for creating popup (e.g. readMore)
+     */
+    function addMapMarkers(items, type, markerArray, iconOptions, popupOptions) {
+        if (!items || items.length === 0) {
+            return;
+        }
+
+        items.forEach(function(item, index) {
+            // Create custom marker icon
+            const iconHtml = iconOptions.htmlFn(item, index);
+            const markerIcon = L.divIcon({
+                className: iconOptions.className,
+                html: iconHtml,
+                iconSize: iconOptions.iconSize,
+                iconAnchor: iconOptions.iconAnchor
+            });
+
+            // Create the marker
+            const marker = L.marker([item.latitude, item.longitude], {
+                icon: markerIcon
+            }).addTo(map);
+
+            // Generate the popup content
+            const popupContent = createPopupHtml(item, type, popupOptions);
+
+            // Create a permanent popup
+            const popup = L.popup({
+                maxWidth: 300,
+                className: `${type}-popup-container`, // e.g., 'artwork-popup-container'
+                closeButton: true,
+                autoClose: false,
+                closeOnEscapeKey: true
+            }).setContent(popupContent);
+
+            // Add click event to show the popup
+            marker.on('click', function() {
+                popup.setLatLng(marker.getLatLng()).openOn(map);
+            });
+
+            // Store marker info
+            const markerData = {
+                marker: marker,
+                popup: popup
+            };
+            markerData[type] = item; // Store item data under its type name (e.g., markerData.artwork = item)
+
+            // Add visited flag specifically for artworks for proximity checking
+            if (type === 'artwork') {
+                markerData.visited = false;
+            }
+
+            markerArray.push(markerData);
+        });
+    }
+
+    /**
+     * Add artwork markers to the map using the generic function
      */
     function addArtworkMarkers() {
         const artworks = artRouteData.artworks;
-        
-        if (artworks && artworks.length > 0) {
-            artworks.forEach(function(artwork, index) {
-                // Create a custom artwork marker with image background
-                const artworkIcon = L.divIcon({
-                    className: 'artwork-marker',
-                    html: `
-                        <div class="artwork-marker-inner">
-                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url}');"></div>
-                            <div class="artwork-marker-overlay"></div>
-                            <div class="artwork-marker-number">${index + 1}</div>
-                        </div>
-                    `,
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20]
-                });
-                
-                // Create the marker
-                const marker = L.marker([artwork.latitude, artwork.longitude], {
-                    icon: artworkIcon
-                }).addTo(map);
-                
-                // Generate the popup content once
-                const popupContent = createPopupContent(artwork);
-                
-                // Create a permanent popup that we'll show/hide instead of creating/removing it
-                const popup = L.popup({
-                    maxWidth: 300,
-                    className: 'artwork-popup-container',
-                    closeButton: true,
-                    autoClose: false,  // Important - don't auto close when clicking elsewhere
-                    closeOnEscapeKey: true
-                }).setContent(popupContent);
-                
-                // Add click event to show the popup
-                marker.on('click', function() {
-                    popup.setLatLng(marker.getLatLng()).openOn(map);
-                });
-                
-                // Add to array for proximity checking
-                artworkMarkers.push({
-                    marker: marker,
-                    artwork: artwork,
-                    popup: popup,
-                    visited: false
-                });
-            });
-        }
+        const iconOptions = {
+            className: 'artwork-marker',
+            htmlFn: function(artwork, index) {
+                return `
+                    <div class="artwork-marker-inner">
+                        <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + 'assets/images/placeholder.png'}');"></div>
+                        <div class="artwork-marker-overlay"></div>
+                        <div class="artwork-marker-number">${index + 1}</div>
+                    </div>
+                `;
+            },
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        };
+
+        addMapMarkers(artworks, 'artwork', artworkMarkers, iconOptions);
     }
-    
+
     /**
-     * Create popup content for an artwork
+     * Add information point markers to the map using the generic function
      */
-    function createPopupContent(artwork) {
-        // Build artists HTML if there are any
+    function addInfoPointMarkers() {
+        const infoPoints = artRouteData.information_points;
+        const iconOptions = {
+            className: 'info-point-marker',
+            htmlFn: function(infoPoint) {
+                return '<div class="info-point-marker-inner">i</div>';
+            },
+            iconSize: [30, 30],
+            iconAnchor: [15, 15]
+        };
+
+        addMapMarkers(infoPoints, 'info-point', infoPointMarkers, iconOptions, { readMore: false });
+    }
+
+    /**
+     * Create popup HTML content for an artwork or information point
+     * @param {Object} item - The artwork or info point data object
+     * @param {String} type - 'artwork' or 'infoPoint'
+     * @param {Object} options - Additional options for customization (e.g., readMore)
+     * @returns {String} HTML content for the popup
+     */
+    function createPopupHtml(item, type, options = { readMore: true }) {
+        const { readMore = true } = options;
+        const imageUrl = item.image_url || artRouteData.plugin_url + 'assets/images/placeholder.png';
+        const title = item.title || '';
+        const content = type === 'artwork' ? (item.description || '') : (item.excerpt || '');
+        const permalink = item.permalink || '';
+        const readMoreText = artRouteData.i18n.readMore || 'Lees meer'; // Use translated string or default
+
+        // Build artists HTML only for artworks
         let artistsHtml = '';
-        if (artwork.artists && artwork.artists.length > 0) {
+        if (type === 'artwork' && item.artists && item.artists.length > 0) {
             artistsHtml = '<div class="artwork-artists">';
-            artistsHtml += `<h4>${artwork.artists.length > 1 ? artRouteData.i18n.artists || 'Kunstenaars' : artRouteData.i18n.artist || 'Kunstenaar'}:</h4>`;
+            artistsHtml += `<h4>${item.artists.length > 1 ? artRouteData.i18n.artists || 'Kunstenaars' : artRouteData.i18n.artist || 'Kunstenaar'}:</h4>`;
             artistsHtml += '<ul>';
-            
-            artwork.artists.forEach(function(artist) {
-                artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a>`;
-                artistsHtml += '</li>';
+            item.artists.forEach(function(artist) {
+                artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a></li>`;
             });
-            
             artistsHtml += '</ul></div>';
         }
-        
+
         return `
-            <div class="artwork-popup">
-                <div class="artwork-popup-image">
-                    <img src="${artwork.image_url}" alt="${artwork.title}">
+            <div class="${type}-popup">
+                <div class="${type}-popup-image">
+                    <img src="${imageUrl}" alt="${title}">
                 </div>
-                <div class="artwork-popup-content">
-                    <h3>${artwork.title}</h3>
-                    <div class="artwork-description">
-                        ${artwork.description}
+                <div class="${type}-popup-content">
+                    <h3>${title}</h3>
+                    <div class="${type === 'artwork' ? 'artwork-description' : 'info-point-excerpt'}">
+                        ${content}
                     </div>
                     ${artistsHtml}
+                    ${permalink && readMore ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ''}
                 </div>
             </div>
         `;
     }
-    
+
     /**
      * Show artwork details as a toast (used for proximity detection)
      */

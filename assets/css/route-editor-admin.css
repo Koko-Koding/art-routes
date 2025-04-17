@@ -27,7 +27,6 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-    height: 80vh;
 }
 
 .route-editor-header {
@@ -85,6 +84,24 @@
     margin: 5px 0;
 }
 
+.route-editor-controls .point-controls {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.route-editor-controls .search-controls {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.route-editor-controls button.active {
+    background-color: #dcdcde; /* WordPress button hover/active color */
+    border-color: #a7aaaf;
+    box-shadow: inset 0 2px 5px -3px rgba(0, 0, 0, 0.5);
+}
+
 #route-editor-map {
     flex-grow: 1;
     min-height: 300px;
@@ -118,4 +135,56 @@
     border-radius: 50%;
     border: 2px solid white;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Marker Icons */
+.artwork-marker-icon svg,
+.info-point-marker-icon svg {
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.artwork-marker-icon svg {
+    color: #0073aa; /* WordPress blue */
+}
+
+.info-point-marker-icon svg {
+    color: #d63638; /* WordPress red */
+}
+
+/* Popup Links */
+.leaflet-popup-content a {
+    color: #0073aa;
+    text-decoration: none;
+}
+.leaflet-popup-content a:hover {
+    text-decoration: underline;
+}
+.leaflet-popup-content .remove-point-link {
+    color: #a00;
+}
+
+/* Save Status */
+#save-status {
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+/* Style for draft point markers */
+.draft-point {
+    opacity: 0.6;
+    border: 1px dashed orange;
+    border-radius: 50%; /* Adjust if your icons aren't circular */
+}
+
+/* Style for draft point popups */
+.leaflet-popup-content .draft-warning {
+    color: orange;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
 }
