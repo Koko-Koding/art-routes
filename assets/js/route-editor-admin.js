@@ -113,12 +113,9 @@
         // Load existing route path
         loadExistingRoutePath();
 
-        // Load associated artworks and info points
+        // Load associated artworks and info points (this is async)
+        // The success callback will handle the initial map view setting
         loadAssociatedPoints();
-
-        // Fit map to initial bounds (path + any immediately available data)
-        // This will be refined when points finish loading via AJAX
-        fitMapToBounds();
     }
 
     /**
@@ -160,8 +157,8 @@
      * Initialize the map for route editing
      */
     function initEditorMap() {
-        // Create the map
-        editorMap = L.map('route-editor-map').setView([52.1326, 5.2913], 8); // Default center on Netherlands
+        // Create the map - Default to Netherlands view initially
+        editorMap = L.map('route-editor-map').setView([52.1326, 5.2913], 8);
 
         // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -175,23 +172,40 @@
             weight: 4
         }).addTo(editorMap);
 
-        // Add layers for artwork and info points
-        artworkLayer = L.layerGroup().addTo(editorMap);
-        infoPointLayer = L.layerGroup().addTo(editorMap);
+        // Add layers for artwork and info points (Use FeatureGroup for getBounds)
+        artworkLayer = L.featureGroup().addTo(editorMap);
+        infoPointLayer = L.featureGroup().addTo(editorMap);
 
         // Add search control
-        setupSearchControl();
+        setupSearchControl(); // Note: setupSearchControl might call locate initially
 
         // Add click handler for drawing/adding points
         editorMap.on('click', onMapClick);
 
-        // Add delegated event handler for remove links inside popups (moved here)
+        // Add delegated event handler for remove links inside popups
         $(editorMap.getContainer()).on('click', '.remove-point-link', function(e) {
             e.preventDefault();
             const pointId = $(this).data('id');
             const pointType = $(this).data('type');
             removePoint(pointId, pointType);
         });
+
+        // Handle geolocation errors - default to Netherlands view
+        editorMap.on('locationerror', function(e) {
+            console.warn("Geolocation failed:", e.message);
+            // Only set view if it hasn't already been set by fitting bounds
+            // Check if map has loaded tiles/view (simple check)
+            if (!editorMap._loaded || editorMap.getZoom() === 8) { 
+                 console.log("Setting default Netherlands view due to location error.");
+                 editorMap.setView([52.1326, 5.2913], 8);
+            }
+        });
+
+         // Handle location found (useful if locate is called elsewhere)
+         editorMap.on('locationfound', function(e) {
+            // setView is handled by calling locate with setView: true
+            console.log("Geolocation successful.");
+         });
     }
 
     /**
@@ -534,7 +548,6 @@
             routePoints = validPoints;
             drawingLayer.setLatLngs(routePoints);
             updateRouteInfo();
-            // Fit map to bounds later, after points are also loaded
         }
     }
 
@@ -542,7 +555,14 @@
      * Load associated artworks and info points via AJAX
      */
     function loadAssociatedPoints() {
-        if (!routeId) return; // No route ID, nothing to load
+        if (!routeId) {
+             // No route ID, attempt geolocation as fallback if map exists
+             if (editorMap) {
+                 console.log("No route ID, attempting geolocation.");
+                 editorMap.locate({setView: true, maxZoom: 14});
+             }
+             return;
+        }
 
         $.ajax({
             url: ajaxUrl,
@@ -560,16 +580,54 @@
                     displayPoints(pointsData.information_points, 'information_point');
                     updateRouteInfo();
 
-                    // Fit map bounds after everything is loaded
-                    fitMapToBounds();
+                    // --- Start: Set Initial Map View Logic ---
+                    let bounds = L.latLngBounds([]);
+
+                    // Include route path bounds
+                    if (drawingLayer && drawingLayer.getLatLngs().length > 0) {
+                        bounds.extend(drawingLayer.getBounds());
+                    }
+
+                    // Include artwork bounds
+                    if (artworkLayer && artworkLayer.getLayers().length > 0) {
+                        bounds.extend(artworkLayer.getBounds());
+                    }
+
+                    // Include info point bounds
+                    if (infoPointLayer && infoPointLayer.getLayers().length > 0) {
+                        bounds.extend(infoPointLayer.getBounds());
+                    }
+
+                    if (bounds.isValid()) {
+                        // 1. If there is a route, artworks and/or info points, fit bounds
+                        console.log("Fitting map to existing route/points bounds.");
+                        editorMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 }); // Add maxZoom
+                    } else {
+                        // 2. Otherwise, try to go to user's location
+                        console.log("No existing route/points, attempting geolocation.");
+                        editorMap.locate({setView: true, maxZoom: 14});
+                        // If locate fails, the 'locationerror' handler will set the Netherlands view (fallback 3)
+                    }
+                    // --- End: Set Initial Map View Logic ---
+
                 } else {
                     console.error('Error loading points:', response.data.message);
                     alert(i18n.errorLoadingPoints + (response.data.message ? `: ${response.data.message}` : ''));
+                     // Fallback if loading points fails: attempt geolocation
+                     if (editorMap) {
+                         console.log("Error loading points, attempting geolocation.");
+                         editorMap.locate({setView: true, maxZoom: 14});
+                     }
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.error('AJAX Load Points Error:', textStatus, errorThrown);
                 alert(`${i18n.errorLoadingPoints} (AJAX: ${textStatus})`);
+                 // Fallback if AJAX fails: attempt geolocation
+                 if (editorMap) {
+                     console.log("AJAX error loading points, attempting geolocation.");
+                     editorMap.locate({setView: true, maxZoom: 14});
+                 }
             }
         });
     }
@@ -696,35 +754,6 @@
 
             updateRouteInfo();
             $('#save-status').text('Unsaved changes').css('color', 'orange'); // Indicate unsaved changes
-        }
-    }
-
-    /**
-     * Fit map bounds to show the route path and all points
-     */
-    function fitMapToBounds() {
-        let bounds = L.latLngBounds([]);
-
-        // Include route path bounds
-        if (drawingLayer.getLatLngs().length > 0) {
-            bounds.extend(drawingLayer.getBounds());
-        }
-
-        // Include artwork bounds
-        if (artworkLayer.getLayers().length > 0) {
-            bounds.extend(artworkLayer.getBounds());
-        }
-
-        // Include info point bounds
-        if (infoPointLayer.getLayers().length > 0) {
-            bounds.extend(infoPointLayer.getBounds());
-        }
-
-        if (bounds.isValid()) {
-            editorMap.fitBounds(bounds, { padding: [50, 50] }); // Add some padding
-        } else {
-            // Fallback if no bounds (e.g., empty route)
-            editorMap.setView([52.1326, 5.2913], 8);
         }
     }
 

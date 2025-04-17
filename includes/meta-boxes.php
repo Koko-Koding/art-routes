@@ -121,7 +121,7 @@ function wp_art_routes_render_route_details_meta_box($post) {
         <label for="route_length">
             <?php _e('Route Length (km)', 'wp-art-routes'); ?>:
         </label>
-        <input type="number" id="route_length" name="route_length" value="<?php echo esc_attr($length); ?>" step="0.1" min="0" style="width: 100px;" />
+        <input type="number" id="route_length" name="route_length" value="<?php echo esc_attr($length); ?>" step="0.01" min="0" style="width: 100px;" />
     </p>
     
     <p>

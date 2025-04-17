@@ -2,6 +2,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.3.3] - 2025-04-17
+
+### Fixed
+
+- Refactored the way the route map editor initially pans & zooms (first, try to fit bounds on existing points, otherwise, pan to user location, otherwise, pan to the netherlands).
+
 ## [1.3.2] - 2025-04-17
 
 ### Fixed
