@@ -324,6 +324,18 @@ msgstr "Geselecteerde coördinaten:"
 msgid "Save Location"
 msgstr "Locatie Opslaan"
 
+#: includes/scripts.php:268
+msgid "Map View"
+msgstr "Kaartweergave"
+
+#: includes/scripts.php:269
+msgid "Fit Route"
+msgstr "Toon Route"
+
+#: includes/scripts.php:270
+msgid "My Location"
+msgstr "Mijn Locatie"
+
 #: includes/settings.php:43
 msgid "Art Routes Settings"
 msgstr "Kunstroutes Instellingen"

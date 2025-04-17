@@ -16,7 +16,7 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 - Route types (walking, cycling, wheelchair-accessible, child-friendly)
 - Route details (length, duration)
 - Location-aware functionality showing user position on map
-- Route progress tracking 
+- Route progress tracking
 - Proximity detection for nearby artworks
 - Multiple routes on a single map
 - Responsive design for mobile devices
@@ -52,13 +52,13 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 
 Use the shortcode `[art_route_map]` to display a specific route map:
 
-```
+```shortcode
 [art_route_map route="123" height="500px"]
 ```
 
 Or use `[art_routes_map]` to display multiple routes on a single map:
 
-```
+```shortcode
 [art_routes_map height="600px"]
 ```
 
@@ -87,6 +87,7 @@ The plugin is fully translation-ready and includes the following translations:
 - Dutch (nl_NL)
 
 To add new translations:
+
 1. Copy the `wp-art-routes.pot` file from the `languages` folder
 2. Rename it to `wp-art-routes-{language_code}.po` (e.g., `wp-art-routes-fr_FR.po` for French)
 3. Translate all strings using a POT/PO editor like Poedit
@@ -95,9 +96,6 @@ To add new translations:
 ### Commands
 
 Make sure you have wp-cli installed and available in your PATH. You can use the following command to generate the `.po` and `.mo` files:
-
-```bash
-To (re-)generate the `.pot`, `.po` and `.mo` files, you can use the following command:
 
 ```bash
 # Generate the .pot file
@@ -122,3 +120,12 @@ wp i18n make-mo languages/wp-art-routes-nl_NL.po
 ## License
 
 This plugin is licensed under the GPL v2 or later.
+
+## Editor Description
+
+### Route Editor Features
+
+- **Map View:**
+  - **Fit Route:** Click this to automatically zoom and pan the map to fit the entire drawn route and all added points.
+  - **My Location:** Click this to attempt to center the map on your current browser location.
+- **Search:** Enter a location name or address and click "Search" to pan the map to that area.

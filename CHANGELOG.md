@@ -2,6 +2,18 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.4.0] - 2025-04-17
+
+### Added
+
+- "Fit Route" button in the map editor to zoom/pan the map to show the entire route and all points.
+- "My Location" button in the map editor to center the map on the user's current location.
+- "Map View" section in editor controls for the new buttons.
+
+### Changed
+
+- Initial map view in the editor now attempts to fit the existing route/points first, falling back to user location or default view.
+
 ## [1.3.3] - 2025-04-17
 
 ### Fixed
@@ -31,6 +43,10 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 - Updated route editor to allow adding and managing Information Points alongside artworks.
 - Updated map display logic in `art-route-map.js` to handle Information Points.
 - Added specific CSS styles for Information Points in `art-route-map.css` and `route-editor-admin.css`.
+
+### Changed
+
+- Initial map view in the editor now attempts to fit the existing route/points first, falling back to user location or default view.
 
 ## [1.2.5] - 2025-03-27
 

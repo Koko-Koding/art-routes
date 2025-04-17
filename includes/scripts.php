@@ -254,34 +254,34 @@ function wp_art_routes_get_route_editor_modal_html() {
             </div>
             <div class="route-editor-body">
                 <div class="route-editor-controls">
-                    <div class="control-group route-drawing-controls">
-                        <strong><?php _e('Route Path:', 'wp-art-routes'); ?></strong><br>
-                        <button type="button" class="button" id="start-drawing"><?php _e('Start Drawing', 'wp-art-routes'); ?></button>
-                        <button type="button" class="button" id="stop-drawing"><?php _e('Stop Drawing', 'wp-art-routes'); ?></button>
-                        <button type="button" class="button" id="clear-route"><?php _e('Clear Route', 'wp-art-routes'); ?></button>
-                    </div>
-                    <div class="control-group point-controls">
-                         <strong><?php _e('Points of Interest:', 'wp-art-routes'); ?></strong><br>
-                        <button type="button" class="button" id="add-artwork"><?php _e('Add Artwork', 'wp-art-routes'); ?></button>
-                        <button type="button" class="button" id="add-info-point"><?php _e('Add Info Point', 'wp-art-routes'); ?></button>
-                        <span id="adding-point-info" style="display: none; margin-left: 10px; color: #0073aa;"></span>
-                    </div>
-                    <div class="control-group search-controls">
-                         <strong><?php _e('Map Navigation:', 'wp-art-routes'); ?></strong><br>
-                        <label for="route-search" class="screen-reader-text"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
-                        <input type="text" id="route-search" class="regular-text" placeholder="<?php _e('Enter location...', 'wp-art-routes'); ?>">
-                        <button type="button" class="button" id="search-location"><?php _e('Search', 'wp-art-routes'); ?></button>
-                    </div>
-                    <div class="control-info">
-                        <p id="drawing-instructions"><?php _e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
-                        <p>
-                            <span id="point-count">0</span> <?php _e('route points', 'wp-art-routes'); ?> |
-                            <span id="artwork-count">0</span> <?php _e('artworks', 'wp-art-routes'); ?> |
-                            <span id="info-point-count">0</span> <?php _e('info points', 'wp-art-routes'); ?>
-                        </p>
-                        <p><?php _e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
-                        <p id="save-status" style="color: green; font-weight: bold;"></p>
-                    </div>
+                    <h4><?php esc_html_e( 'Route Path', 'wp-art-routes' ); ?></h4>
+                    <button id="start-drawing" class="button"><?php esc_html_e( 'Start Drawing', 'wp-art-routes' ); ?></button>
+                    <button id="stop-drawing" class="button"><?php esc_html_e( 'Stop Drawing', 'wp-art-routes' ); ?></button>
+                    <button id="clear-route" class="button button-secondary"><?php esc_html_e( 'Clear Path', 'wp-art-routes' ); ?></button>
+                    <p id="drawing-instructions" class="description"><?php esc_html_e( 'Select an action.', 'wp-art-routes' ); ?></p>
+
+                    <h4><?php esc_html_e( 'Points of Interest', 'wp-art-routes' ); ?></h4>
+                    <button id="add-artwork" class="button"><?php esc_html_e( 'Add Artwork', 'wp-art-routes' ); ?></button>
+                    <button id="add-info-point" class="button"><?php esc_html_e( 'Add Info Point', 'wp-art-routes' ); ?></button>
+                    <p id="adding-point-info" class="description" style="display: none;"></p>
+
+                    <h4><?php esc_html_e( 'Map View', 'wp-art-routes' ); ?></h4>
+                    <button id="fit-route-bounds" class="button"><?php esc_html_e( 'Fit Route', 'wp-art-routes' ); ?></button>
+                    <button id="locate-user" class="button"><?php esc_html_e( 'My Location', 'wp-art-routes' ); ?></button>
+
+                    <h4><?php esc_html_e( 'Search Location', 'wp-art-routes' ); ?></h4>
+                    <input type="text" id="route-search" placeholder="<?php esc_attr_e( 'Enter address or place...', 'wp-art-routes' ); ?>" />
+                    <button id="search-location" class="button"><?php esc_html_e( 'Search', 'wp-art-routes' ); ?></button>
+                </div>
+                <div class="control-info">
+                    <p id="drawing-instructions"><?php _e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
+                    <p>
+                        <span id="point-count">0</span> <?php _e('route points', 'wp-art-routes'); ?> |
+                        <span id="artwork-count">0</span> <?php _e('artworks', 'wp-art-routes'); ?> |
+                        <span id="info-point-count">0</span> <?php _e('info points', 'wp-art-routes'); ?>
+                    </p>
+                    <p><?php _e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                    <p id="save-status" style="color: green; font-weight: bold;"></p>
                 </div>
                 <div id="route-editor-map"></div>
             </div>

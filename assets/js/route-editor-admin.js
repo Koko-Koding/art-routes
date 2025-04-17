@@ -79,6 +79,10 @@
         $('body').on('click', '#add-artwork', () => startAddingPoint('artwork'));
         $('body').on('click', '#add-info-point', () => startAddingPoint('information_point'));
 
+        // Map view controls
+        $('body').on('click', '#fit-route-bounds', fitRouteBounds);
+        $('body').on('click', '#locate-user', locateUser);
+
         // Search location
         $('body').on('click', '#search-location', searchLocation);
         $('body').on('keypress', '#route-search', function(e) {
@@ -385,6 +389,46 @@
     }
 
     /**
+     * Fit map bounds to show the entire route and all points
+     */
+    function fitRouteBounds() {
+        if (!editorMap) return;
+
+        let bounds = L.latLngBounds([]);
+
+        // Include route path bounds
+        if (drawingLayer && drawingLayer.getLatLngs().length > 0) {
+            bounds.extend(drawingLayer.getBounds());
+        }
+
+        // Include artwork bounds
+        if (artworkLayer && artworkLayer.getLayers().length > 0) {
+            bounds.extend(artworkLayer.getBounds());
+        }
+
+        // Include info point bounds
+        if (infoPointLayer && infoPointLayer.getLayers().length > 0) {
+            bounds.extend(infoPointLayer.getBounds());
+        }
+
+        if (bounds.isValid()) {
+            console.log("Fitting map to route/points bounds.");
+            editorMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 17 });
+        } else {
+            console.log("Fit Route Bounds: No valid bounds found (no route/points).");
+        }
+    }
+
+    /**
+     * Attempt to locate the user and center the map
+     */
+    function locateUser() {
+        if (!editorMap) return;
+        console.log("Attempting geolocation via 'My Location' button.");
+        editorMap.locate({setView: true, maxZoom: 16});
+    }
+
+    /**
      * Save all changes (route path and points)
      */
     function saveChanges() {
@@ -581,33 +625,7 @@
                     updateRouteInfo();
 
                     // --- Start: Set Initial Map View Logic ---
-                    let bounds = L.latLngBounds([]);
-
-                    // Include route path bounds
-                    if (drawingLayer && drawingLayer.getLatLngs().length > 0) {
-                        bounds.extend(drawingLayer.getBounds());
-                    }
-
-                    // Include artwork bounds
-                    if (artworkLayer && artworkLayer.getLayers().length > 0) {
-                        bounds.extend(artworkLayer.getBounds());
-                    }
-
-                    // Include info point bounds
-                    if (infoPointLayer && infoPointLayer.getLayers().length > 0) {
-                        bounds.extend(infoPointLayer.getBounds());
-                    }
-
-                    if (bounds.isValid()) {
-                        // 1. If there is a route, artworks and/or info points, fit bounds
-                        console.log("Fitting map to existing route/points bounds.");
-                        editorMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 }); // Add maxZoom
-                    } else {
-                        // 2. Otherwise, try to go to user's location
-                        console.log("No existing route/points, attempting geolocation.");
-                        editorMap.locate({setView: true, maxZoom: 14});
-                        // If locate fails, the 'locationerror' handler will set the Netherlands view (fallback 3)
-                    }
+                    fitRouteBounds();
                     // --- End: Set Initial Map View Logic ---
 
                 } else {
@@ -616,7 +634,7 @@
                      // Fallback if loading points fails: attempt geolocation
                      if (editorMap) {
                          console.log("Error loading points, attempting geolocation.");
-                         editorMap.locate({setView: true, maxZoom: 14});
+                         locateUser();
                      }
                 }
             },
@@ -626,7 +644,7 @@
                  // Fallback if AJAX fails: attempt geolocation
                  if (editorMap) {
                      console.log("AJAX error loading points, attempting geolocation.");
-                     editorMap.locate({setView: true, maxZoom: 14});
+                     locateUser();
                  }
             }
         });

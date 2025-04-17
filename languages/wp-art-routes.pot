@@ -322,6 +322,18 @@ msgstr ""
 msgid "Save Location"
 msgstr ""
 
+#: includes/scripts.php:268
+msgid "Map View"
+msgstr ""
+
+#: includes/scripts.php:269
+msgid "Fit Route"
+msgstr ""
+
+#: includes/scripts.php:270
+msgid "My Location"
+msgstr ""
+
 #: includes/settings.php:43
 msgid "Art Routes Settings"
 msgstr ""
