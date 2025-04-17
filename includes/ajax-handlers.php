@@ -123,3 +123,175 @@ function wp_art_routes_search_posts_for_artist() {
     die();
 }
 add_action('wp_ajax_search_posts_for_artist', 'wp_art_routes_search_posts_for_artist');
+
+/**
+ * AJAX handler to get artworks and info points for a specific route
+ */
+function wp_ajax_get_route_points() {
+    check_ajax_referer('get_route_points_nonce', 'nonce');
+
+    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
+        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
+    }
+
+    $route_id = intval($_POST['route_id']);
+    $points = wp_art_routes_get_associated_points($route_id);
+
+    wp_send_json_success($points);
+}
+add_action('wp_ajax_get_route_points', 'wp_ajax_get_route_points');
+
+/**
+ * AJAX handler to save route path and associated points (artworks/info points)
+ */
+function wp_ajax_save_route_points() {
+    check_ajax_referer('save_route_points_nonce', 'nonce');
+
+    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
+        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
+    }
+
+    $route_id = intval($_POST['route_id']);
+    $results = [];
+
+    // 1. Save Route Path
+    if (isset($_POST['route_path'])) {
+        $sanitized_path = sanitize_textarea_field($_POST['route_path']);
+        update_post_meta($route_id, '_route_path', $sanitized_path);
+        $results['path_saved'] = true;
+    }
+
+    // 2. Save Route Length (calculated client-side, passed here)
+    if (isset($_POST['route_length'])) {
+        update_post_meta($route_id, '_route_length', sanitize_text_field($_POST['route_length']));
+        $results['length_saved'] = true;
+    }
+
+    // 3. Handle Point Updates (Moved Points)
+    if (isset($_POST['updated_points']) && is_array($_POST['updated_points'])) {
+        $results['updated'] = [];
+        foreach ($_POST['updated_points'] as $point) {
+            $point_id = isset($point['id']) ? intval($point['id']) : 0;
+            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
+            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+
+            if ($point_id > 0 && $lat !== null && $lng !== null && current_user_can('edit_post', $point_id)) {
+                update_post_meta($point_id, '_artwork_latitude', $lat);
+                update_post_meta($point_id, '_artwork_longitude', $lng);
+                $results['updated'][] = $point_id;
+            }
+        }
+    }
+
+    // 4. Handle Point Removals (Disassociate from Route)
+    if (isset($_POST['removed_points']) && is_array($_POST['removed_points'])) {
+        $results['removed'] = [];
+        foreach ($_POST['removed_points'] as $point_id_raw) {
+            $point_id = intval($point_id_raw);
+            if ($point_id > 0 && current_user_can('edit_post', $point_id)) {
+                // Remove the association (meta key _artwork_route_id)
+                delete_post_meta($point_id, '_artwork_route_id', $route_id);
+                // Optional: Check if it was the *only* route associated and delete if desired?
+                // For now, just disassociate.
+                $results['removed'][] = $point_id;
+            }
+        }
+    }
+
+    // 5. Handle New Points (Create Draft Posts)
+    if (isset($_POST['new_points']) && is_array($_POST['new_points'])) {
+        $results['added'] = [];
+        foreach ($_POST['new_points'] as $point) {
+            $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
+            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
+            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+
+            if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
+                $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
+                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %s, %s', 'wp-art-routes'), $lat, $lng) : sprintf(__('New Info Point near %s, %s', 'wp-art-routes'), $lat, $lng);
+
+                $new_post_id = wp_insert_post([
+                    'post_title' => $post_title,
+                    'post_type' => $post_type,
+                    'post_status' => 'draft', // Create as draft initially
+                    'post_author' => get_current_user_id(),
+                ]);
+
+                if ($new_post_id && !is_wp_error($new_post_id)) {
+                    // Save location
+                    update_post_meta($new_post_id, '_artwork_latitude', $lat);
+                    update_post_meta($new_post_id, '_artwork_longitude', $lng);
+                    // Associate with the current route
+                    update_post_meta($new_post_id, '_artwork_route_id', $route_id);
+                    $results['added'][] = [
+                        'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
+                        'new_id' => $new_post_id,
+                        'type' => $type,
+                        'edit_link' => get_edit_post_link($new_post_id, 'raw')
+                    ];
+                } else {
+                    // Log error if needed
+                }
+            }
+        }
+    }
+
+    wp_send_json_success($results);
+}
+add_action('wp_ajax_save_route_points', 'wp_ajax_save_route_points');
+
+/**
+ * Helper function to get associated artworks and info points for a route
+ *
+ * @param int $route_id The ID of the route post.
+ * @return array An array containing 'artworks' and 'information_points'.
+ */
+function wp_art_routes_get_associated_points($route_id) {
+    $points = [
+        'artworks' => [],
+        'information_points' => [],
+    ];
+
+    $point_types = ['artwork', 'information_point'];
+
+    foreach ($point_types as $post_type) {
+        $query_args = [
+            'post_type' => $post_type,
+            'posts_per_page' => -1,
+            'meta_query' => [
+                [
+                    'key' => '_artwork_route_id', // Using the same meta key for association
+                    'value' => $route_id,
+                    'compare' => '=',
+                ],
+            ],
+            'fields' => 'ids', // Only get IDs initially
+        ];
+
+        $point_ids = get_posts($query_args);
+
+        foreach ($point_ids as $point_id) {
+            $latitude = get_post_meta($point_id, '_artwork_latitude', true);
+            $longitude = get_post_meta($point_id, '_artwork_longitude', true);
+
+            if ($latitude && $longitude) {
+                $point_data = [
+                    'id' => $point_id,
+                    'title' => get_the_title($point_id),
+                    'lat' => floatval($latitude),
+                    'lng' => floatval($longitude),
+                    'edit_link' => get_edit_post_link($point_id, 'raw'),
+                    'type' => $post_type, // Add type information
+                ];
+
+                if ($post_type === 'artwork') {
+                    $points['artworks'][] = $point_data;
+                } else {
+                    $points['information_points'][] = $point_data;
+                }
+            }
+        }
+    }
+
+    return $points;
+}

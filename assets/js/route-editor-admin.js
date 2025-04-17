@@ -1,24 +1,53 @@
 /**
  * Route Editor Admin JavaScript
- * Handles the map modal for drawing routes in the WordPress admin
+ * Handles the map modal for drawing routes and managing associated points in the WordPress admin
  */
 
 (function($) {
     // Map variables
     let editorMap, drawingLayer, searchControl, routePoints = [];
+    let artworkLayer, infoPointLayer;
     let isDrawing = false;
-    
+    let currentMode = 'none'; // 'draw', 'addArtwork', 'addInfoPoint', 'none'
+    let pointsData = { artworks: [], information_points: [] }; // Holds loaded points
+    let changedPoints = { new: [], updated: [], removed: [] }; // Tracks changes
+    let tempPointIdCounter = 0;
+    let artworkIcon, infoPointIcon; // Custom icons
+
+    // Localized data from PHP
+    const ajaxUrl = routeEditorData.ajax_url;
+    const routeId = routeEditorData.route_id;
+    const getPointsNonce = routeEditorData.get_points_nonce;
+    const savePointsNonce = routeEditorData.save_points_nonce;
+    const i18n = routeEditorData.i18n;
+
     // Initialize when document is ready
     $(document).ready(function() {
         // Add modal to body if not already there
         if ($('#route-editor-modal').length === 0) {
-            $('body').append(routeEditorModalHTML);
+            $('body').append(routeEditorData.modalHTML);
         }
-        
+
+        // Define custom icons
+        artworkIcon = L.divIcon({
+            className: 'artwork-marker-icon',
+            html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06l4.47-4.47a.75.75 0 0 1 1.06 0l3.97 3.97 3.97-3.97a.75.75 0 0 1 1.06 0l4.47 4.47V6a.75.75 0 0 0-.75-.75H3.75a.75.75 0 0 0-.75.75v10.06Z" clip-rule="evenodd" /></svg>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -24]
+        });
+        infoPointIcon = L.divIcon({
+            className: 'info-point-marker-icon',
+            html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>',
+            iconSize: [24, 24],
+            iconAnchor: [12, 24],
+            popupAnchor: [0, -24]
+        });
+
         // Setup event handlers
         setupEventHandlers();
     });
-    
+
     /**
      * Set up event handlers for the route editor
      */
@@ -28,44 +57,48 @@
             e.preventDefault();
             openRouteEditorModal();
         });
-        
+
         // Close modal
-        $('.route-editor-modal .close-modal, #cancel-route').on('click', function() {
+        $('body').on('click', '.route-editor-modal .close-modal, #cancel-route', function() {
             closeRouteEditorModal();
         });
-        
+
         // Close modal if clicking outside the content
         $(document).on('click', '.route-editor-modal', function(e) {
             if ($(e.target).hasClass('route-editor-modal')) {
                 closeRouteEditorModal();
             }
         });
-        
+
         // Drawing controls
-        $('#start-drawing').on('click', startDrawing);
-        $('#stop-drawing').on('click', stopDrawing);
-        $('#clear-route').on('click', clearRoute);
-        
+        $('body').on('click', '#start-drawing', startDrawing);
+        $('body').on('click', '#stop-drawing', stopDrawing);
+        $('body').on('click', '#clear-route', clearRoute);
+
+        // Point controls
+        $('body').on('click', '#add-artwork', () => startAddingPoint('artwork'));
+        $('body').on('click', '#add-info-point', () => startAddingPoint('information_point'));
+
         // Search location
-        $('#search-location').on('click', searchLocation);
-        $('#route-search').on('keypress', function(e) {
+        $('body').on('click', '#search-location', searchLocation);
+        $('body').on('keypress', '#route-search', function(e) {
             if (e.which === 13) {
                 searchLocation();
                 e.preventDefault();
             }
         });
-        
-        // Save route
-        $('#save-route').on('click', saveRoute);
+
+        // Save route and points
+        $('body').on('click', '#save-route', saveChanges);
     }
-    
+
     /**
      * Open the route editor modal and initialize the map
      */
     function openRouteEditorModal() {
         // Show the modal
         $('#route-editor-modal').show();
-        
+
         // Initialize map if not already initialized
         if (!editorMap) {
             initEditorMap();
@@ -73,146 +106,210 @@
             // Reset the map view if already initialized
             editorMap.invalidateSize();
         }
-        
-        // Load existing route if available
-        loadExistingRoute();
+
+        // Reset state
+        resetEditorState();
+
+        // Load existing route path
+        loadExistingRoutePath();
+
+        // Load associated artworks and info points
+        loadAssociatedPoints();
     }
-    
+
     /**
      * Close the route editor modal
      */
     function closeRouteEditorModal() {
         $('#route-editor-modal').hide();
         stopDrawing();
+        stopAddingPoint();
     }
-    
+
+    /**
+     * Reset editor state variables
+     */
+    function resetEditorState() {
+        routePoints = [];
+        pointsData = { artworks: [], information_points: [] };
+        changedPoints = { new: [], updated: [], removed: [] };
+        tempPointIdCounter = 0;
+        currentMode = 'none';
+        $('#save-status').text('');
+        $('#adding-point-info').hide();
+        $('.route-editor-controls button').removeClass('active');
+        if (editorMap) {
+            drawingLayer.setLatLngs([]);
+            artworkLayer.clearLayers();
+            infoPointLayer.clearLayers();
+            // Remove temporary markers (like search highlight)
+            editorMap.eachLayer(function(layer) {
+                if (layer.options && layer.options.isTemporary) {
+                    editorMap.removeLayer(layer);
+                }
+            });
+        }
+        updateRouteInfo();
+    }
+
     /**
      * Initialize the map for route editing
      */
     function initEditorMap() {
         // Create the map
         editorMap = L.map('route-editor-map').setView([52.1326, 5.2913], 8); // Default center on Netherlands
-        
+
         // Add tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             maxZoom: 19
         }).addTo(editorMap);
-        
-        // Add drawing layer for the route
+
+        // Add drawing layer for the route path
         drawingLayer = L.polyline([], {
             color: '#3388FF',
             weight: 4
         }).addTo(editorMap);
-        
+
+        // Add layers for artwork and info points
+        artworkLayer = L.layerGroup().addTo(editorMap);
+        infoPointLayer = L.layerGroup().addTo(editorMap);
+
         // Add search control
         setupSearchControl();
-        
-        // Add click handler for drawing points
+
+        // Add click handler for drawing/adding points
         editorMap.on('click', onMapClick);
     }
-    
+
     /**
      * Set up the search control for finding locations
      */
     function setupSearchControl() {
         // Use browser's Geolocation API to center on user's location
         editorMap.locate({setView: true, maxZoom: 13});
-        
+
         // Add scale control
         L.control.scale().addTo(editorMap);
     }
-    
+
     /**
-     * Handle map clicks when drawing a route
+     * Handle map clicks for drawing route or adding points
      */
     function onMapClick(e) {
-        if (!isDrawing) return;
-        
-        // Add point to the route
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
-        
-        routePoints.push([lat, lng]);
-        
-        // Update the drawing layer
-        drawingLayer.setLatLngs(routePoints);
-        
-        // Update point count
-        updateRouteInfo();
-        
-        // Add marker for visual feedback
-        L.marker([lat, lng], {
-            icon: L.divIcon({
-                className: 'route-point-marker',
-                html: '<div class="route-point-dot"></div>',
-                iconSize: [10, 10],
-                iconAnchor: [5, 5]
-            })
-        }).addTo(editorMap);
+
+        switch (currentMode) {
+            case 'draw':
+                // Add point to the route path
+                routePoints.push([lat, lng]);
+                drawingLayer.setLatLngs(routePoints);
+                updateRouteInfo();
+                break;
+            case 'addArtwork':
+            case 'addInfoPoint':
+                // Add a new temporary artwork or info point
+                const pointType = (currentMode === 'addArtwork') ? 'artwork' : 'information_point';
+                const tempId = `temp_${tempPointIdCounter++}`;
+                const newPointData = {
+                    temp_id: tempId,
+                    lat: lat,
+                    lng: lng,
+                    type: pointType,
+                    title: (pointType === 'artwork' ? i18n.artwork : i18n.infoPoint) + ' (New)'
+                };
+                changedPoints.new.push(newPointData);
+                addPointMarker(newPointData, true); // Add marker for the new point
+                updateRouteInfo();
+                stopAddingPoint(); // Go back to 'none' mode after adding one point
+                break;
+            default: // 'none' mode
+                // Do nothing on click if not in a specific mode
+                break;
+        }
     }
-    
+
     /**
-     * Start drawing mode
+     * Start drawing mode for the route path
      */
     function startDrawing() {
+        stopAddingPoint(); // Ensure not in adding mode
+        currentMode = 'draw';
         isDrawing = true;
         $('#start-drawing').addClass('active');
-        $('#stop-drawing').removeClass('active');
-        
-        // Update UI
+        $('#stop-drawing, #add-artwork, #add-info-point').removeClass('active');
         $('#drawing-instructions').text('Click on the map to add points to your route. Click "Stop Drawing" when finished.');
         editorMap.getContainer().style.cursor = 'crosshair';
     }
-    
+
     /**
-     * Stop drawing mode
+     * Stop drawing mode for the route path
      */
     function stopDrawing() {
-        isDrawing = false;
-        $('#start-drawing').removeClass('active');
-        $('#stop-drawing').addClass('active');
-        
-        // Update UI
-        $('#drawing-instructions').text('Drawing paused. Click "Start Drawing" to continue adding points.');
-        editorMap.getContainer().style.cursor = '';
+        if (currentMode === 'draw') {
+            currentMode = 'none';
+            isDrawing = false;
+            $('#start-drawing').removeClass('active');
+            $('#stop-drawing').addClass('active');
+            $('#drawing-instructions').text('Drawing paused. Click "Start Drawing" to continue, or add points of interest.');
+            editorMap.getContainer().style.cursor = '';
+        }
     }
-    
+
     /**
-     * Clear the current route
+     * Start mode for adding an artwork or info point
+     */
+    function startAddingPoint(type) {
+        stopDrawing(); // Ensure not in drawing mode
+        currentMode = (type === 'artwork') ? 'addArtwork' : 'addInfoPoint';
+        const typeLabel = (type === 'artwork') ? i18n.artwork : i18n.infoPoint;
+
+        $('#add-artwork, #add-info-point').removeClass('active');
+        $(type === 'artwork' ? '#add-artwork' : '#add-info-point').addClass('active');
+        $('#start-drawing, #stop-drawing').removeClass('active');
+
+        $('#adding-point-info').text(`Click on the map to place the new ${typeLabel}.`).show();
+        $('#drawing-instructions').hide();
+        editorMap.getContainer().style.cursor = 'copy';
+    }
+
+    /**
+     * Stop mode for adding points
+     */
+    function stopAddingPoint() {
+        if (currentMode === 'addArtwork' || currentMode === 'addInfoPoint') {
+            currentMode = 'none';
+            $('#add-artwork, #add-info-point').removeClass('active');
+            $('#adding-point-info').hide();
+            $('#drawing-instructions').show().text('Select an action: Start Drawing, Add Artwork, or Add Info Point.');
+            editorMap.getContainer().style.cursor = '';
+        }
+    }
+
+    /**
+     * Clear the current route path
      */
     function clearRoute() {
-        // Clear the route points
+        if (!confirm('Are you sure you want to clear the entire route path?')) return;
+
         routePoints = [];
-        
-        // Clear the drawing layer
         drawingLayer.setLatLngs([]);
-        
-        // Remove all route point markers
-        editorMap.eachLayer(function(layer) {
-            if (layer instanceof L.Marker) {
-                editorMap.removeLayer(layer);
-            }
-        });
-        
-        // Reset point count
         updateRouteInfo();
-        
-        // Show message
-        $('#drawing-instructions').text('Route cleared. Click "Start Drawing" to begin a new route.');
+        $('#drawing-instructions').text('Route path cleared. Click "Start Drawing" to begin a new path.');
     }
-    
+
     /**
      * Search for a location and center the map on it
      */
     function searchLocation() {
         const searchValue = $('#route-search').val().trim();
-        
+
         if (!searchValue) return;
-        
+
         // Show loading indicator
         $('#search-location').text('Searching...').prop('disabled', true);
-        
+
         // Use Nominatim for geocoding (OpenStreetMap's service)
         $.ajax({
             url: 'https://nominatim.openstreetmap.org/search',
@@ -228,18 +325,19 @@
                     const result = data[0];
                     const lat = parseFloat(result.lat);
                     const lon = parseFloat(result.lon);
-                    
+
                     // Center map on result
                     editorMap.setView([lat, lon], 14);
-                    
+
                     // Add a temporary highlight
                     const searchHighlight = L.circle([lat, lon], {
                         color: '#FF5722',
                         fillColor: '#FF5722',
                         fillOpacity: 0.5,
-                        radius: 50
+                        radius: 50,
+                        isTemporary: true
                     }).addTo(editorMap);
-                    
+
                     // Remove highlight after 3 seconds
                     setTimeout(function() {
                         editorMap.removeLayer(searchHighlight);
@@ -257,56 +355,102 @@
             }
         });
     }
-    
+
     /**
-     * Save the route to the textarea
+     * Save all changes (route path and points)
      */
-    function saveRoute() {
-        if (routePoints.length < 2) {
-            alert('Please add at least 2 points to create a route.');
-            return;
-        }
-        
-        // Format points for storage
-        let formattedPoints = '';
-        
-        for (let i = 0; i < routePoints.length; i++) {
-            formattedPoints += routePoints[i][0] + ', ' + routePoints[i][1] + '\n';
-        }
-        
-        // Set the value in the textarea
-        $('#route_path').val(formattedPoints.trim());
-        
-        // Update route length field if available
-        const routeLength = calculateRouteLength();
-        if ($('#route_length').length) {
-            $('#route_length').val(routeLength.toFixed(2));
-        }
-        
-        // Close the modal
-        closeRouteEditorModal();
-        
-        // Show success message
-        alert('Route saved successfully with ' + routePoints.length + ' points.');
+    function saveChanges() {
+        // Format route path points for storage
+        let formattedPath = routePoints.map(p => p[0] + ', ' + p[1]).join('\n');
+
+        // Prepare data for AJAX
+        const dataToSend = {
+            action: 'save_route_points',
+            nonce: savePointsNonce,
+            route_id: routeId,
+            route_path: formattedPath,
+            route_length: calculateRouteLength(),
+            new_points: changedPoints.new,
+            updated_points: changedPoints.updated,
+            removed_points: changedPoints.removed
+        };
+
+        // Show saving status
+        $('#save-status').text(i18n.savingPoints).css('color', 'orange');
+        $('#save-route').prop('disabled', true);
+
+        $.ajax({
+            url: ajaxUrl,
+            type: 'POST',
+            data: dataToSend,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    $('#save-status').text(i18n.pointsSaved).css('color', 'green');
+
+                    // Update the main route path textarea in the underlying page
+                    $('#route_path').val(formattedPath.trim());
+                    // Update route length field if available
+                    if ($('#route_length').length) {
+                        $('#route_length').val(calculateRouteLength().toFixed(2));
+                    }
+
+                    // Process newly added points (update temp IDs with real IDs)
+                    if (response.data.added && response.data.added.length > 0) {
+                        response.data.added.forEach(addedPoint => {
+                            const layer = (addedPoint.type === 'artwork') ? artworkLayer : infoPointLayer;
+                            layer.eachLayer(marker => {
+                                if (marker.options.pointData && marker.options.pointData.temp_id === addedPoint.temp_id) {
+                                    // Update marker's internal data
+                                    marker.options.pointData.id = addedPoint.new_id;
+                                    marker.options.pointData.edit_link = addedPoint.edit_link;
+                                    delete marker.options.pointData.temp_id;
+                                    // Update popup content
+                                    marker.setPopupContent(createPointPopupContent(marker.options.pointData));
+                                }
+                            });
+                        });
+                    }
+
+                    // Reset change tracking
+                    changedPoints = { new: [], updated: [], removed: [] };
+
+                    // Optionally close modal after a delay
+                    // setTimeout(closeRouteEditorModal, 1500);
+                } else {
+                    console.error('Save Error:', response.data.message);
+                    $('#save-status').text(i18n.errorSavingPoints + (response.data.message ? `: ${response.data.message}` : '')).css('color', 'red');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX Save Error:', textStatus, errorThrown);
+                $('#save-status').text(`${i18n.errorSavingPoints} (AJAX: ${textStatus})`).css('color', 'red');
+            },
+            complete: function() {
+                $('#save-route').prop('disabled', false);
+                // Clear status message after a few seconds
+                setTimeout(() => { $('#save-status').text(''); }, 5000);
+            }
+        });
     }
-    
+
     /**
      * Calculate the total route length in kilometers
      */
     function calculateRouteLength() {
         let totalDistance = 0;
-        
+
         for (let i = 0; i < routePoints.length - 1; i++) {
             totalDistance += calculateDistance(
                 routePoints[i][0], routePoints[i][1],
                 routePoints[i+1][0], routePoints[i+1][1]
             );
         }
-        
+
         // Convert meters to kilometers
         return totalDistance / 1000;
     }
-    
+
     /**
      * Calculate distance between two points using Haversine formula
      */
@@ -324,73 +468,246 @@
 
         return R * c; // in meters
     }
-    
+
     /**
-     * Update the route information display
+     * Update the route information display (counts, distance)
      */
     function updateRouteInfo() {
-        // Update point count
+        // Route path points
         $('#point-count').text(routePoints.length);
-        
-        // Update distance
         const distance = calculateRouteLength();
         $('#route-distance').text(distance.toFixed(2));
+
+        // Artwork and Info Point counts (consider current state including changes)
+        let artworkCount = pointsData.artworks.filter(p => !changedPoints.removed.includes(p.id)).length;
+        artworkCount += changedPoints.new.filter(p => p.type === 'artwork').length;
+
+        let infoPointCount = pointsData.information_points.filter(p => !changedPoints.removed.includes(p.id)).length;
+        infoPointCount += changedPoints.new.filter(p => p.type === 'information_point').length;
+
+        $('#artwork-count').text(artworkCount);
+        $('#info-point-count').text(infoPointCount);
     }
-    
+
     /**
-     * Load existing route from textarea
+     * Load existing route path from textarea
      */
-    function loadExistingRoute() {
-        // Clear any existing route
-        clearRoute();
-        
-        // Get existing route from textarea
+    function loadExistingRoutePath() {
         const routeText = $('#route_path').val().trim();
-        
-        if (!routeText) return;
-        
-        // Parse the route
+        routePoints = []; // Reset points
+
+        if (!routeText) {
+            drawingLayer.setLatLngs([]);
+            updateRouteInfo();
+            return;
+        }
+
         const lines = routeText.split('\n');
         let validPoints = [];
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-            
-            const parts = line.split(',');
+
+        lines.forEach(line => {
+            const parts = line.trim().split(',');
             if (parts.length >= 2) {
                 const lat = parseFloat(parts[0].trim());
                 const lng = parseFloat(parts[1].trim());
-                
                 if (!isNaN(lat) && !isNaN(lng)) {
                     validPoints.push([lat, lng]);
-                    
-                    // Add marker
-                    L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: 'route-point-marker',
-                            html: '<div class="route-point-dot"></div>',
-                            iconSize: [10, 10],
-                            iconAnchor: [5, 5]
-                        })
-                    }).addTo(editorMap);
                 }
             }
-        }
-        
+        });
+
         if (validPoints.length > 0) {
-            // Set the points
             routePoints = validPoints;
-            
-            // Update the drawing layer
             drawingLayer.setLatLngs(routePoints);
-            
-            // Update info
             updateRouteInfo();
-            
-            // Fit map to bounds
-            editorMap.fitBounds(drawingLayer.getBounds());
+            // Fit map to bounds later, after points are also loaded
         }
     }
-    
+
+    /**
+     * Load associated artworks and info points via AJAX
+     */
+    function loadAssociatedPoints() {
+        if (!routeId) return; // No route ID, nothing to load
+
+        $.ajax({
+            url: ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'get_route_points',
+                nonce: getPointsNonce,
+                route_id: routeId
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    pointsData = response.data; // Store loaded points
+                    displayPoints(pointsData.artworks, 'artwork');
+                    displayPoints(pointsData.information_points, 'information_point');
+                    updateRouteInfo();
+
+                    // Fit map bounds after everything is loaded
+                    fitMapToBounds();
+                } else {
+                    console.error('Error loading points:', response.data.message);
+                    alert(i18n.errorLoadingPoints + (response.data.message ? `: ${response.data.message}` : ''));
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX Load Points Error:', textStatus, errorThrown);
+                alert(`${i18n.errorLoadingPoints} (AJAX: ${textStatus})`);
+            }
+        });
+    }
+
+    /**
+     * Display markers for artworks or info points
+     */
+    function displayPoints(points, type) {
+        const layer = (type === 'artwork') ? artworkLayer : infoPointLayer;
+
+        points.forEach(point => {
+            addPointMarker(point);
+        });
+    }
+
+    /**
+     * Add a single marker for an artwork or info point
+     */
+    function addPointMarker(pointData, isNew = false) {
+        const layer = (pointData.type === 'artwork') ? artworkLayer : infoPointLayer;
+        const icon = (pointData.type === 'artwork') ? artworkIcon : infoPointIcon;
+
+        const marker = L.marker([pointData.lat, pointData.lng], {
+            icon: icon,
+            draggable: true,
+            pointData: { ...pointData } // Store data within the marker
+        }).addTo(layer);
+
+        marker.bindPopup(createPointPopupContent(pointData));
+
+        // Handle dragging
+        marker.on('dragend', function(e) {
+            const movedMarker = e.target;
+            const newLatLng = movedMarker.getLatLng();
+            const markerData = movedMarker.options.pointData;
+
+            // Update internal data
+            markerData.lat = newLatLng.lat;
+            markerData.lng = newLatLng.lng;
+
+            // Mark as updated (if it's not a new, unsaved point)
+            if (markerData.id) {
+                // Check if already in updated list
+                const existingUpdateIndex = changedPoints.updated.findIndex(p => p.id === markerData.id);
+                if (existingUpdateIndex > -1) {
+                    changedPoints.updated[existingUpdateIndex].lat = newLatLng.lat;
+                    changedPoints.updated[existingUpdateIndex].lng = newLatLng.lng;
+                } else {
+                    changedPoints.updated.push({ id: markerData.id, lat: newLatLng.lat, lng: newLatLng.lng });
+                }
+            } else if (markerData.temp_id) {
+                 // If it's a new point, update its data in the new array
+                 const newPointIndex = changedPoints.new.findIndex(p => p.temp_id === markerData.temp_id);
+                 if (newPointIndex > -1) {
+                     changedPoints.new[newPointIndex].lat = newLatLng.lat;
+                     changedPoints.new[newPointIndex].lng = newLatLng.lng;
+                 }
+            }
+            $('#save-status').text('Unsaved changes').css('color', 'orange'); // Indicate unsaved changes
+        });
+    }
+
+    /**
+     * Create HTML content for a point marker's popup
+     */
+    function createPointPopupContent(pointData) {
+        let content = `<strong>${pointData.title || 'Point'}</strong><br>`;
+        content += `Type: ${(pointData.type === 'artwork' ? i18n.artwork : i18n.infoPoint)}<br>`;
+        content += `Lat: ${pointData.lat.toFixed(5)}, Lng: ${pointData.lng.toFixed(5)}<br>`;
+
+        if (pointData.id) { // Only show edit link for saved points
+            content += `<a href="${pointData.edit_link}" target="_blank">${i18n.edit}</a> | `;
+        }
+        content += `<a href="#" class="remove-point-link" data-id="${pointData.id || pointData.temp_id}" data-type="${pointData.type}">${i18n.remove}</a>`;
+        return content;
+    }
+
+    // Add delegated event handler for remove links inside popups
+    $(editorMap.getContainer()).on('click', '.remove-point-link', function(e) {
+        e.preventDefault();
+        const pointId = $(this).data('id');
+        const pointType = $(this).data('type');
+        removePoint(pointId, pointType);
+    });
+
+    /**
+     * Remove an artwork or info point marker and track removal
+     */
+    function removePoint(pointId, pointType) {
+        if (!confirm(i18n.confirmRemove)) return;
+
+        const layer = (pointType === 'artwork') ? artworkLayer : infoPointLayer;
+        let markerToRemove = null;
+
+        layer.eachLayer(marker => {
+            if (marker.options.pointData && (marker.options.pointData.id === pointId || marker.options.pointData.temp_id === pointId)) {
+                markerToRemove = marker;
+            }
+        });
+
+        if (markerToRemove) {
+            layer.removeLayer(markerToRemove);
+
+            // Check if it was a new, unsaved point
+            const newPointIndex = changedPoints.new.findIndex(p => p.temp_id === pointId);
+            if (newPointIndex > -1) {
+                // Just remove it from the new points array
+                changedPoints.new.splice(newPointIndex, 1);
+            } else if (pointId && typeof pointId !== 'string') { // Check if it's a real ID (not temp_...)
+                // Add to removed points array if not already there
+                if (!changedPoints.removed.includes(pointId)) {
+                    changedPoints.removed.push(pointId);
+                }
+                // If it was also marked as updated, remove from updated array
+                const updatedIndex = changedPoints.updated.findIndex(p => p.id === pointId);
+                if (updatedIndex > -1) {
+                    changedPoints.updated.splice(updatedIndex, 1);
+                }
+            }
+
+            updateRouteInfo();
+            $('#save-status').text('Unsaved changes').css('color', 'orange'); // Indicate unsaved changes
+        }
+    }
+
+    /**
+     * Fit map bounds to show the route path and all points
+     */
+    function fitMapToBounds() {
+        let bounds = L.latLngBounds([]);
+
+        // Include route path bounds
+        if (drawingLayer.getLatLngs().length > 0) {
+            bounds.extend(drawingLayer.getBounds());
+        }
+
+        // Include artwork bounds
+        if (artworkLayer.getLayers().length > 0) {
+            bounds.extend(artworkLayer.getBounds());
+        }
+
+        // Include info point bounds
+        if (infoPointLayer.getLayers().length > 0) {
+            bounds.extend(infoPointLayer.getBounds());
+        }
+
+        if (bounds.isValid()) {
+            editorMap.fitBounds(bounds, { padding: [50, 50] }); // Add some padding
+        } else {
+            // Fallback if no bounds (e.g., empty route)
+            editorMap.setView([52.1326, 5.2913], 8);
+        }
+    }
+
 })(jQuery);

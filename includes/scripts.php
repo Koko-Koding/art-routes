@@ -155,16 +155,35 @@ function wp_art_routes_enqueue_admin_scripts($hook) {
         wp_enqueue_script(
             'wp-art-routes-editor-js',
             WP_ART_ROUTES_PLUGIN_URL . 'assets/js/route-editor-admin.js',
-            ['jquery', 'wp-art-routes-admin-leaflet-js'],
+            ['jquery', 'wp-art-routes-admin-leaflet-js', 'jquery-ui-draggable'],
             WP_ART_ROUTES_VERSION,
             true
         );
         
-        // Pass the modal HTML to JavaScript
+        // Pass data to JavaScript
         wp_localize_script(
             'wp-art-routes-editor-js',
-            'routeEditorModalHTML',
-            wp_art_routes_get_route_editor_modal_html()
+            'routeEditorData',
+            [
+                'modalHTML' => wp_art_routes_get_route_editor_modal_html(),
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'get_points_nonce' => wp_create_nonce('get_route_points_nonce'),
+                'save_points_nonce' => wp_create_nonce('save_route_points_nonce'),
+                'route_id' => isset($post) ? $post->ID : 0,
+                'i18n' => [
+                    'addArtwork' => __('Add Artwork', 'wp-art-routes'),
+                    'addInfoPoint' => __('Add Info Point', 'wp-art-routes'),
+                    'artwork' => __('Artwork', 'wp-art-routes'),
+                    'infoPoint' => __('Info Point', 'wp-art-routes'),
+                    'edit' => __('Edit', 'wp-art-routes'),
+                    'remove' => __('Remove', 'wp-art-routes'),
+                    'confirmRemove' => __('Are you sure you want to remove this point from the route?', 'wp-art-routes'),
+                    'errorLoadingPoints' => __('Error loading points for this route.', 'wp-art-routes'),
+                    'errorSavingPoints' => __('Error saving points.', 'wp-art-routes'),
+                    'savingPoints' => __('Saving points...', 'wp-art-routes'),
+                    'pointsSaved' => __('Points saved successfully.', 'wp-art-routes'),
+                ]
+            ]
         );
     }
     
@@ -234,27 +253,40 @@ function wp_art_routes_get_route_editor_modal_html() {
             </div>
             <div class="route-editor-body">
                 <div class="route-editor-controls">
-                    <div class="control-group">
+                    <div class="control-group route-drawing-controls">
+                        <strong><?php _e('Route Path:', 'wp-art-routes'); ?></strong><br>
                         <button type="button" class="button" id="start-drawing"><?php _e('Start Drawing', 'wp-art-routes'); ?></button>
                         <button type="button" class="button" id="stop-drawing"><?php _e('Stop Drawing', 'wp-art-routes'); ?></button>
                         <button type="button" class="button" id="clear-route"><?php _e('Clear Route', 'wp-art-routes'); ?></button>
                     </div>
-                    <div class="control-group">
-                        <label for="route-search"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
+                    <div class="control-group point-controls">
+                         <strong><?php _e('Points of Interest:', 'wp-art-routes'); ?></strong><br>
+                        <button type="button" class="button" id="add-artwork"><?php _e('Add Artwork', 'wp-art-routes'); ?></button>
+                        <button type="button" class="button" id="add-info-point"><?php _e('Add Info Point', 'wp-art-routes'); ?></button>
+                        <span id="adding-point-info" style="display: none; margin-left: 10px; color: #0073aa;"></span>
+                    </div>
+                    <div class="control-group search-controls">
+                         <strong><?php _e('Map Navigation:', 'wp-art-routes'); ?></strong><br>
+                        <label for="route-search" class="screen-reader-text"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
                         <input type="text" id="route-search" class="regular-text" placeholder="<?php _e('Enter location...', 'wp-art-routes'); ?>">
                         <button type="button" class="button" id="search-location"><?php _e('Search', 'wp-art-routes'); ?></button>
                     </div>
                     <div class="control-info">
-                        <p id="drawing-instructions"><?php _e('Click "Start Drawing" then click on the map to create your route. Click "Stop Drawing" when finished.', 'wp-art-routes'); ?></p>
-                        <p><span id="point-count">0</span> <?php _e('points in route', 'wp-art-routes'); ?></p>
-                        <p><?php _e('Total distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                        <p id="drawing-instructions"><?php _e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
+                        <p>
+                            <span id="point-count">0</span> <?php _e('route points', 'wp-art-routes'); ?> |
+                            <span id="artwork-count">0</span> <?php _e('artworks', 'wp-art-routes'); ?> |
+                            <span id="info-point-count">0</span> <?php _e('info points', 'wp-art-routes'); ?>
+                        </p>
+                        <p><?php _e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                        <p id="save-status" style="color: green; font-weight: bold;"></p>
                     </div>
                 </div>
                 <div id="route-editor-map"></div>
             </div>
             <div class="route-editor-footer">
-                <button type="button" class="button button-secondary" id="cancel-route"><?php _e('Cancel', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-route"><?php _e('Save Route', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-route"><?php _e('Close', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-route"><?php _e('Save Changes', 'wp-art-routes'); ?></button>
             </div>
         </div>
     </div>
