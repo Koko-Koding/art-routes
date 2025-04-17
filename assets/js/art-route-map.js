@@ -339,11 +339,21 @@
      */
     function createPopupHtml(item, type, options = { readMore: true }) {
         const { readMore = true } = options;
-        const imageUrl = item.image_url || artRouteData.plugin_url + 'assets/images/placeholder.png';
+        const imageUrl = item.image_url; // Get the image URL, might be null/undefined
         const title = item.title || '';
         const content = type === 'artwork' ? (item.description || '') : (item.excerpt || '');
         const permalink = item.permalink || '';
         const readMoreText = artRouteData.i18n.readMore || 'Lees meer'; // Use translated string or default
+
+        // Build image HTML only if imageUrl exists
+        let imageHtml = '';
+        if (imageUrl) {
+            imageHtml = `
+                <div class="${type}-popup-image">
+                    <img src="${imageUrl}" alt="${title}">
+                </div>
+            `;
+        }
 
         // Build artists HTML only for artworks
         let artistsHtml = '';
@@ -359,9 +369,7 @@
 
         return `
             <div class="${type}-popup">
-                <div class="${type}-popup-image">
-                    <img src="${imageUrl}" alt="${title}">
-                </div>
+                ${imageHtml}
                 <div class="${type}-popup-content">
                     <h3>${title}</h3>
                     <div class="${type === 'artwork' ? 'artwork-description' : 'info-point-excerpt'}">

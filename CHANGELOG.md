@@ -2,6 +2,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.4.1] - 2025-04-17
+
+### Fixed
+
+- Fixed a bug where the popups for artworks and information points were trying to display a non-existent image when the image was not set. The popups now handle this case gracefully by not attempting to display an image if it is not available.
+
 ## [1.4.0] - 2025-04-17
 
 ### Added
