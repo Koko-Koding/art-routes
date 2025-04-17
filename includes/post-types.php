@@ -50,6 +50,7 @@ function wp_art_routes_register_post_types() {
         'menu_icon' => 'dashicons-format-image',
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'artwork'],
+        'show_in_menu' => 'edit.php?post_type=art_route', // Add under the main Routes menu
     ]);
     
     // Register Information Points post type
