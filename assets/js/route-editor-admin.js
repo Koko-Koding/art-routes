@@ -577,14 +577,23 @@
         routePointMarkers = [];
         if (!routePoints || routePoints.length === 0) return;
         routePoints.forEach((pt, idx) => {
-            // Use L.Marker with a custom HTML icon for each route point
+            // Support new metadata: is_start, is_end, notes
+            const pointObj = (typeof pt === 'object' && pt !== null && pt.lat !== undefined && pt.lng !== undefined) ? pt : { lat: pt[0], lng: pt[1] };
+            // Visual indicator for start/end
+            let markerLabel = '';
+            if (pointObj.is_start) markerLabel = '<span title="Start" style="position:absolute;left:0;top:-18px;font-size:12px;color:#388e3c;">&#9679;</span>';
+            if (pointObj.is_end) markerLabel = '<span title="End" style="position:absolute;right:0;top:-18px;font-size:12px;color:#d32f2f;">&#9679;</span>';
             const iconHtml = `
                 <div class="route-point-marker-dot" style="position: relative; width: 18px; height: 18px;">
                     <div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
-                    <button class="route-point-delete-btn" title="Delete this route point" style="position: absolute; right: -20px; top: 1px; width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    <div class="route-point-button-bar" style="position: absolute; transform: translateX(100%); right: -0px; top: 1px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.125rem; background: rgba(255, 255, 255, 0.8); padding: 2px; border-radius: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+                        <button class="route-point-edit-btn" title="Edit this route point" style="width: 18px; height: 18px; border: none; background: #1976d2; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">✎</button>
+                        <button class="route-point-delete-btn" title="Delete this route point" style="width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
+                    </div>
+                    ${markerLabel}
                 </div>
             `;
-            const marker = L.marker(pt, {
+            const marker = L.marker([pointObj.lat, pointObj.lng], {
                 icon: L.divIcon({
                     className: 'route-point-marker',
                     html: iconHtml,
@@ -597,8 +606,13 @@
             // Drag handler
             marker.on('drag', function(e) {
                 const newLatLng = e.target.getLatLng();
-                routePoints[idx] = [newLatLng.lat, newLatLng.lng];
-                drawingLayer.setLatLngs(routePoints);
+                if (typeof routePoints[idx] === 'object' && routePoints[idx] !== null && routePoints[idx].lat !== undefined) {
+                    routePoints[idx].lat = newLatLng.lat;
+                    routePoints[idx].lng = newLatLng.lng;
+                } else {
+                    routePoints[idx] = [newLatLng.lat, newLatLng.lng];
+                }
+                drawingLayer.setLatLngs(routePoints.map(pt => (pt.lat !== undefined ? [pt.lat, pt.lng] : pt)));
             });
             marker.on('dragend', function(e) {
                 $('#save-status').text('Unsaved changes').css('color', 'orange');
@@ -615,10 +629,18 @@
                         }
                         if (confirm(i18n.confirmDeleteRoutePoint || 'Delete this route point?')) {
                             routePoints.splice(idx, 1);
-                            drawingLayer.setLatLngs(routePoints);
+                            drawingLayer.setLatLngs(routePoints.map(pt => (pt.lat !== undefined ? [pt.lat, pt.lng] : pt)));
                             updateRouteInfo();
                             $('#save-status').text('Unsaved changes').css('color', 'orange');
                         }
+                    });
+                }
+                // Edit button handler
+                const editBtn = marker._icon && marker._icon.querySelector('.route-point-edit-btn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', function(ev) {
+                        ev.stopPropagation();
+                        showRoutePointEditModal(idx);
                     });
                 }
             }, 0);
@@ -856,5 +878,65 @@
             $('#save-status').text('Unsaved changes').css('color', 'orange'); // Indicate unsaved changes
         }
     }
+
+    // Add modal HTML for editing route point metadata
+    if ($('#route-point-edit-modal').length === 0) {
+        $('body').append(`
+        <div id="route-point-edit-modal" class="route-point-edit-modal">
+            <div class="route-point-edit-content">
+                <button id="close-route-point-edit-modal" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
+                <h3 style="margin-top:0;font-size:1.1em;">Edit Route Point</h3>
+                <form id="route-point-edit-form" class="route-point-edit-form">
+                    <div style="margin-bottom:8px;">
+                        <label><input type="checkbox" name="is_start"> Start point</label>
+                        <label style="margin-left:12px;"><input type="checkbox" name="is_end"> End point</label>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <label>Notes:<br><textarea name="notes" rows="2" style="width:100%;resize:vertical;"></textarea></label>
+                    </div>
+                    <button type="submit" style="background:#1976d2;color:#fff;border:none;padding:6px 16px;border-radius:4px;">Save</button>
+                </form>
+            </div>
+        </div>
+    `);
+}
+
+// Show modal and populate with current data
+function showRoutePointEditModal(idx) {
+    const pt = routePoints[idx];
+    const isObj = typeof pt === 'object' && pt !== null;
+    const modal = $('#route-point-edit-modal');
+    const form = $('#route-point-edit-form');
+    form[0].reset();
+    if (isObj) {
+        form.find('[name="is_start"]').prop('checked', !!pt.is_start);
+        form.find('[name="is_end"]').prop('checked', !!pt.is_end);
+        form.find('[name="notes"]').val(pt.notes || '');
+    }
+    // Show as flex
+    modal.css({
+        display: 'flex',
+    });
+    // Save handler
+    form.off('submit').on('submit', function(e) {
+        e.preventDefault();
+        if (isObj) {
+            pt.is_start = form.find('[name="is_start"]').is(':checked');
+            pt.is_end = form.find('[name="is_end"]').is(':checked');
+            pt.notes = form.find('[name="notes"]').val();
+        }
+        modal.hide();
+        updateRouteInfo();
+        $('#save-status').text('Unsaved changes').css('color', 'orange');
+    });
+    // Close handler
+    $('#close-route-point-edit-modal').off('click').on('click', function() {
+        modal.hide();
+    });
+    // Hide modal on background click
+    modal.off('click').on('click', function(e) {
+        if (e.target === this) modal.hide();
+    });
+}
 
 })(jQuery);
