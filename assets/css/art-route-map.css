@@ -716,7 +716,32 @@
     background-color: white;
 }
 
-/* Responsive styles */
+/* Route Point Popup (Start/End) */
+.route-point-popup-container .leaflet-popup-content-wrapper {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.route-point-popup-container .leaflet-popup-content {
+    margin: 0;
+    width: 300px !important;
+}
+
+.route-point-popup-content {
+    padding: 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 15px;
+    color: #333;
+}
+
+.route-point-popup-content strong {
+    font-size: 17px;
+    color: #333;
+    margin-bottom: 6px;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .artwork-modal-content {
         width: 95%;
@@ -747,5 +772,13 @@
     
     .info-point-popup-image {
         height: 120px;
+    }
+    
+    .route-point-popup-container .leaflet-popup-content {
+        width: 220px !important;
+    }
+    .route-point-popup-content {
+        padding: 10px;
+        font-size: 14px;
     }
 }

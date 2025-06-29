@@ -55,6 +55,7 @@
         
         // Add the route to the map
         drawRoute();
+        addStartEndMarkers();
         
         // Add artwork markers
         addArtworkMarkers();
@@ -223,6 +224,50 @@
                 }).addTo(map);
             }
         }
+    }
+
+    // Add start/end point markers after drawing the route
+    function addStartEndMarkers() {
+        if (!routePath || !routePath.length) return;
+        routePath.forEach(function(pt, idx) {
+            let lat, lng, isStart, isEnd, notes;
+            if (Array.isArray(pt)) {
+                lat = pt[0];
+                lng = pt[1];
+                isStart = false;
+                isEnd = false;
+                notes = '';
+            } else {
+                lat = pt.lat;
+                lng = pt.lng;
+                isStart = !!pt.is_start;
+                isEnd = !!pt.is_end;
+                notes = pt.notes || '';
+            }
+            if (isStart || isEnd) {
+                let iconHtml = isStart
+                    ? '<div style="background:#388e3c;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M6 2v20l15-10L6 2z"/></svg></div>'
+                    : '<div style="background:#d32f2f;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M18 2v20L3 12 18 2z"/></svg></div>';
+                let marker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: isStart ? 'route-start-marker' : 'route-end-marker',
+                        html: iconHtml,
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    })
+                }).addTo(map);
+                let popupHtml = '<div class="route-point-popup-container"><div class="route-point-popup-content">';
+                popupHtml += '<strong>' + (isStart ? (artRouteData.i18n.startPoint || 'Startpunt') : (artRouteData.i18n.endPoint || 'Eindpunt')) + '</strong>';
+                if (notes && notes.trim().length > 0) {
+                    popupHtml += '<div style="margin-top:4px;max-width:220px;word-break:break-word;">' + notes.replace(/\n/g, '<br>') + '</div>';
+                }
+                popupHtml += '</div></div>';
+                marker.bindPopup(popupHtml, { className: 'route-point-popup-container' });
+                marker.on('click', function() {
+                    marker.openPopup();
+                });
+            }
+        });
     }
 
     /**
