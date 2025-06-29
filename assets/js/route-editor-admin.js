@@ -423,6 +423,7 @@
      * Attempt to locate the user and center the map
      */
     function locateUser() {
+        console.log("Attempting user geolocation.");
         if (!editorMap) return;
         console.log("Attempting geolocation via 'My Location' button.");
         editorMap.locate({setView: true, maxZoom: 16});
@@ -432,8 +433,8 @@
      * Save all changes (route path and points)
      */
     function saveChanges() {
-        // Format route path points for storage
-        let formattedPath = routePoints.map(p => p[0] + ', ' + p[1]).join('\n');
+        // Format route path points for storage as JSON
+        let formattedPath = JSON.stringify(routePoints.map(p => ({ lat: p[0], lng: p[1] })), null, 2);
 
         // Prepare data for AJAX
         const dataToSend = {
@@ -574,25 +575,41 @@
             return;
         }
 
-        const lines = routeText.split('\n');
-        let validPoints = [];
-
-        lines.forEach(line => {
-            const parts = line.trim().split(',');
-            if (parts.length >= 2) {
-                const lat = parseFloat(parts[0].trim());
-                const lng = parseFloat(parts[1].trim());
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    validPoints.push([lat, lng]);
-                }
-            }
-        });
-
-        if (validPoints.length > 0) {
-            routePoints = validPoints;
-            drawingLayer.setLatLngs(routePoints);
-            updateRouteInfo();
+        let parsed = null;
+        // Try to parse as JSON
+        try {
+            parsed = JSON.parse(routeText);
+        } catch (e) {
+            parsed = null;
         }
+
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object' && parsed[0].lat !== undefined && parsed[0].lng !== undefined) {
+            // New JSON format
+            routePoints = parsed.map(pt => [parseFloat(pt.lat), parseFloat(pt.lng)]);
+        } else {
+            // Old format: lines of lat, lng
+            const lines = routeText.split('\n');
+            let validPoints = [];
+            lines.forEach(line => {
+                const parts = line.trim().split(',');
+                if (parts.length >= 2) {
+                    const lat = parseFloat(parts[0].trim());
+                    const lng = parseFloat(parts[1].trim());
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        validPoints.push([lat, lng]);
+                    }
+                }
+            });
+            routePoints = validPoints;
+            // Auto-migrate: update textarea to JSON format
+            if (validPoints.length > 0) {
+                const jsonPoints = validPoints.map(pt => ({ lat: pt[0], lng: pt[1] }));
+                $('#route_path').val(JSON.stringify(jsonPoints, null, 2));
+            }
+        }
+
+        drawingLayer.setLatLngs(routePoints);
+        updateRouteInfo();
     }
 
     /**

@@ -73,34 +73,37 @@ function wp_art_routes_get_route_data($route_id) {
  */
 function wp_art_routes_get_route_path($route_id) {
     $path_string = get_post_meta($route_id, '_route_path', true);
-    
     if (empty($path_string)) {
         return [];
     }
-    
     $path = [];
+    // Try to decode as JSON first
+    $json = json_decode($path_string, true);
+    if (is_array($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
+        // New format: array of objects with lat/lng
+        foreach ($json as $pt) {
+            if (isset($pt['lat']) && isset($pt['lng']) && is_numeric($pt['lat']) && is_numeric($pt['lng'])) {
+                $path[] = [floatval($pt['lat']), floatval($pt['lng'])];
+            }
+        }
+        return $path;
+    }
+    // Fallback: old format (lines of lat, lng)
     $lines = explode("\n", $path_string);
-    
     foreach ($lines as $line) {
         $line = trim($line);
-        
         if (empty($line)) {
             continue;
         }
-        
-        // Split by comma
         $parts = explode(',', $line);
-        
         if (count($parts) >= 2) {
             $lat = trim($parts[0]);
             $lng = trim($parts[1]);
-            
             if (is_numeric($lat) && is_numeric($lng)) {
                 $path[] = [(float)$lat, (float)$lng];
             }
         }
     }
-    
     return $path;
 }
 

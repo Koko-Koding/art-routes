@@ -470,20 +470,38 @@ function wp_art_routes_save_route_path($post_id) {
     if (!isset($_POST['route_path_nonce']) || !wp_verify_nonce($_POST['route_path_nonce'], 'save_route_path')) {
         return;
     }
-    
     // Check autosave
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
-    
     // Check permissions
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
-    
     // Save route path
     if (isset($_POST['route_path'])) {
-        update_post_meta($post_id, '_route_path', sanitize_textarea_field($_POST['route_path']));
+        $raw = trim(stripslashes($_POST['route_path']));
+        $json = json_decode($raw, true);
+        if (is_array($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
+            // Already valid JSON format
+            $to_save = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } else {
+            // Try to parse as old format and convert
+            $lines = explode("\n", $raw);
+            $points = [];
+            foreach ($lines as $line) {
+                $parts = explode(',', $line);
+                if (count($parts) >= 2) {
+                    $lat = trim($parts[0]);
+                    $lng = trim($parts[1]);
+                    if (is_numeric($lat) && is_numeric($lng)) {
+                        $points[] = [ 'lat' => (float)$lat, 'lng' => (float)$lng ];
+                    }
+                }
+            }
+            $to_save = json_encode($points, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+        update_post_meta($post_id, '_route_path', $to_save);
     }
 }
 add_action('save_post_art_route', 'wp_art_routes_save_route_path');
