@@ -436,8 +436,22 @@
      * Save all changes (route path and points)
      */
     function saveChanges() {
-        // Format route path points for storage as JSON
-        let formattedPath = JSON.stringify(routePoints.map(p => ({ lat: p[0], lng: p[1] })), null, 2);
+        // Format route path points for storage as JSON (save all properties)
+        let formattedPath = JSON.stringify(routePoints.map(pt => {
+            if (typeof pt === 'object' && pt !== null && pt.lat !== undefined && pt.lng !== undefined) {
+                // Only include relevant properties
+                return {
+                    lat: pt.lat,
+                    lng: pt.lng,
+                    is_start: !!pt.is_start,
+                    is_end: !!pt.is_end,
+                    notes: pt.notes || ''
+                };
+            } else if (Array.isArray(pt) && pt.length >= 2) {
+                // Fallback for old format
+                return { lat: pt[0], lng: pt[1] };
+            }
+        }), null, 2);
 
         // Prepare data for AJAX
         const dataToSend = {
@@ -670,8 +684,14 @@
         }
 
         if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object' && parsed[0].lat !== undefined && parsed[0].lng !== undefined) {
-            // New JSON format
-            routePoints = parsed.map(pt => [parseFloat(pt.lat), parseFloat(pt.lng)]);
+            // New JSON format: preserve all properties
+            routePoints = parsed.map(pt => ({
+                lat: parseFloat(pt.lat),
+                lng: parseFloat(pt.lng),
+                is_start: !!pt.is_start,
+                is_end: !!pt.is_end,
+                notes: pt.notes || ''
+            }));
         } else {
             // Old format: lines of lat, lng
             const lines = routeText.split('\n');
@@ -682,19 +702,18 @@
                     const lat = parseFloat(parts[0].trim());
                     const lng = parseFloat(parts[1].trim());
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        validPoints.push([lat, lng]);
+                        validPoints.push({ lat, lng });
                     }
                 }
             });
             routePoints = validPoints;
             // Auto-migrate: update textarea to JSON format
             if (validPoints.length > 0) {
-                const jsonPoints = validPoints.map(pt => ({ lat: pt[0], lng: pt[1] }));
-                $('#route_path').val(JSON.stringify(jsonPoints, null, 2));
+                $('#route_path').val(JSON.stringify(validPoints, null, 2));
             }
         }
 
-        drawingLayer.setLatLngs(routePoints);
+        drawingLayer.setLatLngs(routePoints.map(pt => [pt.lat, pt.lng]));
         updateRouteInfo();
         drawRoutePointMarkers();
     }
