@@ -14,6 +14,9 @@
     let tempPointIdCounter = 0;
     let artworkIcon, infoPointIcon; // Custom icons
 
+    // Store references to route point markers for easy updating/removal
+    let routePointMarkers = [];
+
     // Localized data from PHP
     const ajaxUrl = routeEditorData.ajax_url;
     const routeId = routeEditorData.route_id;
@@ -560,6 +563,49 @@
 
         $('#artwork-count').text(artworkCount);
         $('#info-point-count').text(infoPointCount);
+
+        // Draw draggable markers for each route path point
+        drawRoutePointMarkers();
+    }
+
+    /**
+     * Draw draggable markers for each route path point
+     */
+    function drawRoutePointMarkers() {
+        // Remove old markers
+        routePointMarkers.forEach(marker => editorMap.removeLayer(marker));
+        routePointMarkers = [];
+        if (!routePoints || routePoints.length === 0) return;
+        routePoints.forEach((pt, idx) => {
+            const marker = L.circleMarker(pt, {
+                radius: 7,
+                color: '#3388FF',
+                fillColor: '#fff',
+                fillOpacity: 1,
+                weight: 2,
+                draggable: true // Not native to Leaflet, will use leaflet-path-drag workaround
+            }).addTo(editorMap);
+            marker._routeIdx = idx;
+            marker.bindTooltip(i18n.dragRoutePoint || 'Drag to move route point', {permanent: false, direction: 'top'});
+            // Make marker draggable
+            marker.on('mousedown', function(e) {
+                editorMap.dragging.disable();
+                let moveHandler = function(ev) {
+                    marker.setLatLng(ev.latlng);
+                    routePoints[idx] = [ev.latlng.lat, ev.latlng.lng];
+                    drawingLayer.setLatLngs(routePoints);
+                };
+                let upHandler = function(ev) {
+                    editorMap.off('mousemove', moveHandler);
+                    editorMap.off('mouseup', upHandler);
+                    editorMap.dragging.enable();
+                    $('#save-status').text('Unsaved changes').css('color', 'orange');
+                };
+                editorMap.on('mousemove', moveHandler);
+                editorMap.on('mouseup', upHandler);
+            });
+            routePointMarkers.push(marker);
+        });
     }
 
     /**
@@ -610,6 +656,7 @@
 
         drawingLayer.setLatLngs(routePoints);
         updateRouteInfo();
+        drawRoutePointMarkers();
     }
 
     /**
