@@ -188,3 +188,21 @@
     display: block;
     margin-top: 5px;
 }
+
+/* Delete button styles */
+.route-point-marker-dot .route-point-delete-btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.route-point-marker-dot:hover .route-point-delete-btn,
+.route-point-marker-dot:focus-within .route-point-delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .route-point-marker-dot .route-point-delete-btn {
+    opacity: 0.7;
+    pointer-events: auto;
+  }
+}

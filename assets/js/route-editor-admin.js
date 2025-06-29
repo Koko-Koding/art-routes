@@ -577,33 +577,51 @@
         routePointMarkers = [];
         if (!routePoints || routePoints.length === 0) return;
         routePoints.forEach((pt, idx) => {
-            const marker = L.circleMarker(pt, {
-                radius: 7,
-                color: '#3388FF',
-                fillColor: '#fff',
-                fillOpacity: 1,
-                weight: 2,
-                draggable: true // Not native to Leaflet, will use leaflet-path-drag workaround
+            // Use L.Marker with a custom HTML icon for each route point
+            const iconHtml = `
+                <div class="route-point-marker-dot" style="position: relative; width: 18px; height: 18px;">
+                    <div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
+                    <button class="route-point-delete-btn" title="Delete this route point" style="position: absolute; right: -20px; top: 1px; width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
+                </div>
+            `;
+            const marker = L.marker(pt, {
+                icon: L.divIcon({
+                    className: 'route-point-marker',
+                    html: iconHtml,
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 9],
+                }),
+                draggable: true
             }).addTo(editorMap);
             marker._routeIdx = idx;
-            marker.bindTooltip(i18n.dragRoutePoint || 'Drag to move route point', {permanent: false, direction: 'top'});
-            // Make marker draggable
-            marker.on('mousedown', function(e) {
-                editorMap.dragging.disable();
-                let moveHandler = function(ev) {
-                    marker.setLatLng(ev.latlng);
-                    routePoints[idx] = [ev.latlng.lat, ev.latlng.lng];
-                    drawingLayer.setLatLngs(routePoints);
-                };
-                let upHandler = function(ev) {
-                    editorMap.off('mousemove', moveHandler);
-                    editorMap.off('mouseup', upHandler);
-                    editorMap.dragging.enable();
-                    $('#save-status').text('Unsaved changes').css('color', 'orange');
-                };
-                editorMap.on('mousemove', moveHandler);
-                editorMap.on('mouseup', upHandler);
+            // Drag handler
+            marker.on('drag', function(e) {
+                const newLatLng = e.target.getLatLng();
+                routePoints[idx] = [newLatLng.lat, newLatLng.lng];
+                drawingLayer.setLatLngs(routePoints);
             });
+            marker.on('dragend', function(e) {
+                $('#save-status').text('Unsaved changes').css('color', 'orange');
+            });
+            // Delete button handler
+            setTimeout(() => {
+                const btn = marker._icon && marker._icon.querySelector('.route-point-delete-btn');
+                if (btn) {
+                    btn.addEventListener('click', function(ev) {
+                        ev.stopPropagation();
+                        if (routePoints.length <= 2) {
+                            alert(i18n.cannotDeleteLastPoints || 'A route must have at least two points.');
+                            return;
+                        }
+                        if (confirm(i18n.confirmDeleteRoutePoint || 'Delete this route point?')) {
+                            routePoints.splice(idx, 1);
+                            drawingLayer.setLatLngs(routePoints);
+                            updateRouteInfo();
+                            $('#save-status').text('Unsaved changes').css('color', 'orange');
+                        }
+                    });
+                }
+            }, 0);
             routePointMarkers.push(marker);
         });
     }
