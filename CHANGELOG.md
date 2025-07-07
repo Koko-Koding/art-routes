@@ -2,6 +2,18 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.5.0] - 2025-06-29
+
+### Added
+
+- Added start and end markers with popups to route paths, including enhanced route path data structure to support these markers.
+- Made the Leaflet popup close button smaller for improved mobile usability.
+- Enhanced route path saving and loading: now supports additional properties in JSON format for route points and improved handling for legacy data structures.
+- Added edit functionality for route points: implemented modal for editing metadata and updated marker controls in the route editor.
+- Added delete button functionality for route point markers in the route editor.
+- Added draggable markers for route path points in the route editor for easier reordering and adjustment.
+- Enhanced route path handling: supports JSON format for saving and retrieving route paths, added user geolocation logging, and improved data validation.
+
 ## [1.4.1] - 2025-04-17
 
 ### Fixed
