@@ -52,16 +52,6 @@ function wp_art_routes_add_meta_boxes() {
         'high'
     );
     
-    // Artwork Route Association meta box
-    add_meta_box(
-        'artwork_route',
-        __('Artwork Route', 'wp-art-routes'),
-        'wp_art_routes_render_artwork_route_meta_box',
-        'artwork',
-        'side',
-        'default'
-    );
-
     // Artwork Artist Association meta box
     add_meta_box(
         'artwork_artists',
@@ -205,44 +195,6 @@ function wp_art_routes_render_artwork_location_meta_box($post) {
     <div id="artwork_location_map" style="width: 100%; height: 300px; margin-top: 10px;"></div>
     <p><button type="button" class="button" id="pick_artwork_location"><?php _e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
     <?php
-}
-
-/**
- * Render Artwork Route Association meta box
- */
-function wp_art_routes_render_artwork_route_meta_box($post) {
-    // Add nonce for security
-    // Use a dynamic nonce name based on post type to avoid conflicts
-    $nonce_action = 'save_' . $post->post_type . '_route';
-    $nonce_name = $post->post_type . '_route_nonce';
-    wp_nonce_field($nonce_action, $nonce_name);
-    
-    // Get saved route ID (use the same meta key for simplicity)
-    $route_id = get_post_meta($post->ID, '_artwork_route_id', true);
-    
-    // Get all routes
-    $routes = get_posts([
-        'post_type' => 'art_route',
-        'posts_per_page' => -1,
-        'orderby' => 'title',
-        'order' => 'ASC',
-    ]);
-    
-    if (empty($routes)) {
-        echo '<p>' . __('No routes available. Please create a route first.', 'wp-art-routes') . '</p>';
-        return;
-    }
-    
-    echo '<select name="artwork_route_id" id="artwork_route_id">'; // Keep name generic for reuse
-    echo '<option value="">' . __('Select a Route', 'wp-art-routes') . '</option>';
-    
-    foreach ($routes as $route) {
-        echo '<option value="' . esc_attr($route->ID) . '" ' . selected($route_id, $route->ID, false) . '>';
-        echo esc_html($route->post_title);
-        echo '</option>';
-    }
-    
-    echo '</select>';
 }
 
 /**
@@ -528,26 +480,32 @@ add_action('save_post_artwork', 'wp_art_routes_save_artwork_location');
 add_action('save_post_information_point', 'wp_art_routes_save_artwork_location');
 
 /**
- * Save artwork route association
+ * Save artwork artist associations
  */
-function wp_art_routes_save_artwork_route($post_id) {
+function wp_art_routes_save_artwork_artists($post_id) {
     // Verify nonce
-    // Use a dynamic nonce name based on post type
-    $post_type = get_post_type($post_id);
-    if ($post_type !== 'artwork') {
-        return; // Only save for artwork post type
-    }
-    $nonce_action = 'save_' . $post_type . '_route';
-    $nonce_name = $post_type . '_route_nonce';
-
-    if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_action)) {
+    if (!isset($_POST['artwork_artists_nonce']) || !wp_verify_nonce($_POST['artwork_artists_nonce'], 'save_artwork_artists')) {
         return;
     }
     
-    // Save route association (use the same meta key)
-    if (isset($_POST['artwork_route_id'])) {
-        update_post_meta($post_id, '_artwork_route_id', sanitize_text_field($_POST['artwork_route_id']));
+    // Check autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // Check permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    // Save artist associations
+    if (isset($_POST['artwork_artist_ids']) && is_array($_POST['artwork_artist_ids'])) {
+        // Sanitize the array of IDs
+        $artist_ids = array_map('intval', $_POST['artwork_artist_ids']);
+        update_post_meta($post_id, '_artwork_artist_ids', $artist_ids);
+    } else {
+        // If no artists selected, save empty array
+        update_post_meta($post_id, '_artwork_artist_ids', array());
     }
 }
-// Hook only for artwork post type
-add_action('save_post_artwork', 'wp_art_routes_save_artwork_route');
+add_action('save_post_artwork', 'wp_art_routes_save_artwork_artists');

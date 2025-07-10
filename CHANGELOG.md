@@ -2,6 +2,24 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.6.2] - 2025-07-10
+
+### Changed
+
+- **BREAKING CHANGE**: Artworks are now also global and no longer associated with specific routes
+- Removed route association meta box from artwork edit screens
+- Both artworks and information points now appear on all maps regardless of the selected route
+- Updated AJAX handlers to fetch all artworks globally instead of filtering by route
+- Modified template functions to return all artworks for any route request
+
+### Technical Details
+
+- Removed artwork route association meta box and save functions
+- Updated `wp_art_routes_get_associated_points()` to fetch all artworks globally
+- Updated `wp_art_routes_get_route_artworks()` to return all artworks globally
+- Modified save functionality to not associate any points (artworks or information points) with routes
+- All points of interest are now truly global and shared across all routes
+
 ## [1.6.1] - 2025-07-10
 
 ### Changed

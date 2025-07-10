@@ -183,16 +183,14 @@ function wp_ajax_save_route_points() {
         }
     }
 
-    // 4. Handle Point Removals (Disassociate from Route)
+    // 4. Handle Point Removals (Delete from system - no longer just disassociate)
     if (isset($_POST['removed_points']) && is_array($_POST['removed_points'])) {
         $results['removed'] = [];
         foreach ($_POST['removed_points'] as $point_id_raw) {
             $point_id = intval($point_id_raw);
             if ($point_id > 0 && current_user_can('edit_post', $point_id)) {
-                // Remove the association (meta key _artwork_route_id)
-                delete_post_meta($point_id, '_artwork_route_id', $route_id);
-                // Optional: Check if it was the *only* route associated and delete if desired?
-                // For now, just disassociate.
+                // Since points are now global, we just note them as removed from the editor
+                // The actual posts remain in the system
                 $results['removed'][] = $point_id;
             }
         }
@@ -222,10 +220,7 @@ function wp_ajax_save_route_points() {
                     update_post_meta($new_post_id, '_artwork_latitude', $lat);
                     update_post_meta($new_post_id, '_artwork_longitude', $lng);
                     
-                    // Only associate artworks with routes, not information points
-                    if ($type === 'artwork') {
-                        update_post_meta($new_post_id, '_artwork_route_id', $route_id);
-                    }
+                    // No longer associate any points with routes - both artworks and info points are global
                     
                     $results['added'][] = [
                         'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
@@ -257,18 +252,11 @@ function wp_art_routes_get_associated_points($route_id) {
         'information_points' => [],
     ];
 
-    // Get artworks associated with this route
+    // Get all artworks (no longer tied to specific routes)
     $artwork_query_args = [
         'post_type' => 'artwork',
         'posts_per_page' => -1,
         'post_status' => ['publish', 'draft'],
-        'meta_query' => [
-            [
-                'key' => '_artwork_route_id',
-                'value' => $route_id,
-                'compare' => '='
-            ]
-        ],
         'orderby' => 'title',
         'order' => 'ASC',
     ];
