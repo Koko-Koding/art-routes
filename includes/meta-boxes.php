@@ -71,16 +71,6 @@ function wp_art_routes_add_meta_boxes() {
         'normal',
         'default'
     );
-
-    // Info Point Route Association meta box (reuses artwork route rendering)
-    add_meta_box(
-        'info_point_route',
-        __('Associated Route', 'wp-art-routes'),
-        'wp_art_routes_render_artwork_route_meta_box', // Reuse the artwork route renderer
-        'information_point', // Apply to the new CPT
-        'side',
-        'default'
-    );
 }
 add_action('add_meta_boxes', 'wp_art_routes_add_meta_boxes');
 
@@ -544,8 +534,8 @@ function wp_art_routes_save_artwork_route($post_id) {
     // Verify nonce
     // Use a dynamic nonce name based on post type
     $post_type = get_post_type($post_id);
-    if ($post_type !== 'artwork' && $post_type !== 'information_point') {
-        return; // Only save for these post types
+    if ($post_type !== 'artwork') {
+        return; // Only save for artwork post type
     }
     $nonce_action = 'save_' . $post_type . '_route';
     $nonce_name = $post_type . '_route_nonce';
@@ -559,6 +549,5 @@ function wp_art_routes_save_artwork_route($post_id) {
         update_post_meta($post_id, '_artwork_route_id', sanitize_text_field($_POST['artwork_route_id']));
     }
 }
-// Hook for both post types
+// Hook only for artwork post type
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_route');
-add_action('save_post_information_point', 'wp_art_routes_save_artwork_route');

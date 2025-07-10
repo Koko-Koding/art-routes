@@ -221,8 +221,12 @@ function wp_ajax_save_route_points() {
                     // Save location
                     update_post_meta($new_post_id, '_artwork_latitude', $lat);
                     update_post_meta($new_post_id, '_artwork_longitude', $lng);
-                    // Associate with the current route
-                    update_post_meta($new_post_id, '_artwork_route_id', $route_id);
+                    
+                    // Only associate artworks with routes, not information points
+                    if ($type === 'artwork') {
+                        update_post_meta($new_post_id, '_artwork_route_id', $route_id);
+                    }
+                    
                     $results['added'][] = [
                         'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
                         'new_id' => $new_post_id,
@@ -253,47 +257,68 @@ function wp_art_routes_get_associated_points($route_id) {
         'information_points' => [],
     ];
 
-    $point_types = ['artwork', 'information_point'];
+    // Get artworks associated with this route
+    $artwork_query_args = [
+        'post_type' => 'artwork',
+        'posts_per_page' => -1,
+        'post_status' => ['publish', 'draft'],
+        'meta_query' => [
+            [
+                'key' => '_artwork_route_id',
+                'value' => $route_id,
+                'compare' => '='
+            ]
+        ],
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ];
 
-    foreach ($point_types as $post_type) {
-        $query_args = [
-            'post_type' => $post_type,
-            'posts_per_page' => -1,
-            'post_status' => ['publish', 'draft'], // Fetch both published and draft posts
-            'meta_query' => [
-                [
-                    'key' => '_artwork_route_id', // Using the same meta key for association
-                    'value' => $route_id,
-                    'compare' => '=',
-                ],
-            ],
-            // No 'fields' => 'ids' here, as we need post objects to get status
-        ];
+    $artwork_posts = get_posts($artwork_query_args);
+    foreach ($artwork_posts as $artwork_post) {
+        $latitude = get_post_meta($artwork_post->ID, '_artwork_latitude', true);
+        $longitude = get_post_meta($artwork_post->ID, '_artwork_longitude', true);
 
-        $point_posts = get_posts($query_args); // Get full post objects
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            $point_data = [
+                'id' => $artwork_post->ID,
+                'title' => $artwork_post->post_title,
+                'lat' => floatval($latitude),
+                'lng' => floatval($longitude),
+                'edit_link' => get_edit_post_link($artwork_post->ID, 'raw'),
+                'type' => 'artwork',
+                'status' => $artwork_post->post_status,
+            ];
 
-        foreach ($point_posts as $point_post) {
-            $point_id = $point_post->ID;
-            $latitude = get_post_meta($point_id, '_artwork_latitude', true);
-            $longitude = get_post_meta($point_id, '_artwork_longitude', true);
+            $points['artworks'][] = $point_data;
+        }
+    }
 
-            if ($latitude && $longitude) {
-                $point_data = [
-                    'id' => $point_id,
-                    'title' => get_the_title($point_id),
-                    'lat' => floatval($latitude),
-                    'lng' => floatval($longitude),
-                    'edit_link' => get_edit_post_link($point_id, 'raw'),
-                    'type' => $post_type,
-                    'status' => $point_post->post_status, // Add post status
-                ];
+    // Get all information points (no longer tied to specific routes)
+    $info_point_query_args = [
+        'post_type' => 'information_point',
+        'posts_per_page' => -1,
+        'post_status' => ['publish', 'draft'],
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ];
 
-                if ($post_type === 'artwork') {
-                    $points['artworks'][] = $point_data;
-                } else {
-                    $points['information_points'][] = $point_data;
-                }
-            }
+    $info_point_posts = get_posts($info_point_query_args);
+    foreach ($info_point_posts as $info_post) {
+        $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
+        $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
+
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            $point_data = [
+                'id' => $info_post->ID,
+                'title' => $info_post->post_title,
+                'lat' => floatval($latitude),
+                'lng' => floatval($longitude),
+                'edit_link' => get_edit_post_link($info_post->ID, 'raw'),
+                'type' => 'information_point',
+                'status' => $info_post->post_status,
+            ];
+
+            $points['information_points'][] = $point_data;
         }
     }
 
