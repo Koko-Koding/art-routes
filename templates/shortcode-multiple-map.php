@@ -40,6 +40,7 @@ $js_data = [
     'ajax_url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('wp_art_routes_nonce'),
     'routes' => [],
+    'information_points' => wp_art_routes_get_all_information_points(), // Add global info points
     'colors' => $route_colors,
     'mapSettings' => [
         'center_lat' => !empty($atts['center_lat']) ? floatval($atts['center_lat']) : null,
@@ -298,6 +299,62 @@ $map_id = 'art-routes-map-' . uniqid();
                 });
             }
         });
+        
+        // Add global information point markers (visible on all routes)
+        if (routesData.information_points && routesData.information_points.length > 0) {
+            routesData.information_points.forEach(function(infoPoint) {
+                // Create a custom information point marker
+                const infoPointIcon = L.divIcon({
+                    className: 'info-point-marker',
+                    html: '<div class="info-point-marker-inner">i</div>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                // Create marker
+                const marker = L.marker([infoPoint.latitude, infoPoint.longitude], {
+                    icon: infoPointIcon
+                }).addTo(map); // Add directly to map, not to route layers
+                
+                // Add to global bounds
+                allBounds.extend([infoPoint.latitude, infoPoint.longitude]);
+                hasValidCoordinates = true;
+                
+                // Prepare popup content
+                let popupContent = '<div class="info-point-popup">';
+                if (infoPoint.image_url) {
+                    popupContent += `
+                        <div class="info-point-popup-image">
+                            <img src="${infoPoint.image_url}" alt="${infoPoint.title}">
+                        </div>
+                    `;
+                }
+                popupContent += `
+                    <div class="info-point-popup-content">
+                        <h3>${infoPoint.title}</h3>
+                        <div class="info-point-excerpt">
+                            ${infoPoint.excerpt}
+                        </div>
+                        <a href="${infoPoint.permalink}" class="info-point-link" target="_blank">Read more</a>
+                    </div>
+                `;
+                popupContent += '</div>';
+                
+                // Create popup
+                const popup = L.popup({
+                    maxWidth: 300,
+                    className: 'info-point-popup-container',
+                    closeButton: true,
+                    autoClose: false,
+                    closeOnEscapeKey: true
+                }).setContent(popupContent);
+                
+                // Add click event
+                marker.on('click', function() {
+                    popup.setLatLng(marker.getLatLng()).openOn(map);
+                });
+            });
+        }
         
         // Set map view based on attributes or all routes
         if (routesData.mapSettings.center_lat && routesData.mapSettings.center_lng && routesData.mapSettings.zoom) {

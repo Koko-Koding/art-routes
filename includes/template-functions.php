@@ -170,16 +170,21 @@ function wp_art_routes_get_route_artworks($route_id) {
  * Get information points for a specific route
  */
 function wp_art_routes_get_route_information_points($route_id) {
-    // Query the information_point CPT instead of reading meta
+    // Now return ALL information points instead of filtering by route
+    return wp_art_routes_get_all_information_points();
+}
+
+/**
+ * Get all information points (not tied to specific routes)
+ */
+function wp_art_routes_get_all_information_points() {
+    // Query all published information points
     $info_point_posts = get_posts([
         'post_type' => 'information_point',
         'posts_per_page' => -1,
-        'meta_query' => [
-            [
-                'key' => '_artwork_route_id', // Using the same meta key as artworks
-                'value' => $route_id,
-            ],
-        ],
+        'post_status' => 'publish', // Only get published points
+        'orderby' => 'title',
+        'order' => 'ASC',
     ]);
 
     $info_points = [];
