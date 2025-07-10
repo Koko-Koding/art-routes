@@ -366,7 +366,14 @@
         const iconOptions = {
             className: 'info-point-marker',
             htmlFn: function(infoPoint) {
-                return '<div class="info-point-marker-inner">i</div>';
+                console.log({ infoPoint });
+                if (infoPoint.icon_url) {
+                    return `<div class="info-point-marker-inner" style="background: none; position: relative;">
+                        <div style="width: 100%; height: 100%; background: url('${infoPoint.icon_url}') center center / cover no-repeat; border-radius: 50%; border: 2px solid #ffc107;"></div>
+                    </div>`;
+                } else {
+                    return '<div class="info-point-marker-inner">i</div>';
+                }
             },
             iconSize: [30, 30],
             iconAnchor: [15, 15]

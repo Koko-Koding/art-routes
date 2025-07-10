@@ -913,11 +913,49 @@
                     <div style="margin-bottom:8px;">
                         <label>Notes:<br><textarea name="notes" rows="2" style="width:100%;resize:vertical;"></textarea></label>
                     </div>
+                    <div id="info-point-icon-field" style="margin-bottom:8px;display:none;">
+                        <label>Icon image:<br>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <img id="info-point-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
+                                <button type="button" id="select-info-point-icon" class="button">Select Image</button>
+                                <button type="button" id="remove-info-point-icon" class="button" style="display:none;">Remove</button>
+                            </div>
+                            <input type="hidden" name="icon_url" value="" />
+                        </label>
+                    </div>
                     <button type="submit" style="background:#1976d2;color:#fff;border:none;padding:6px 16px;border-radius:4px;">Save</button>
                 </form>
             </div>
         </div>
-    `);
+`);
+
+    // Media library integration for icon image
+    let infoPointIconFrame;
+    $(document).on('click', '#select-info-point-icon', function(e) {
+        e.preventDefault();
+        if (infoPointIconFrame) {
+            infoPointIconFrame.open();
+            return;
+        }
+        infoPointIconFrame = wp.media({
+            title: 'Select Icon Image',
+            button: { text: 'Use this image' },
+            multiple: false
+        });
+        infoPointIconFrame.on('select', function() {
+            const attachment = infoPointIconFrame.state().get('selection').first().toJSON();
+            $("#info-point-icon-preview").attr('src', attachment.url).show();
+            $("#route-point-edit-form [name='icon_url']").val(attachment.url);
+            $('#remove-info-point-icon').show();
+        });
+        infoPointIconFrame.open();
+    });
+    $(document).on('click', '#remove-info-point-icon', function(e) {
+        e.preventDefault();
+        $("#info-point-icon-preview").attr('src', '').hide();
+        $("#route-point-edit-form [name='icon_url']").val('');
+        $(this).hide();
+    });
 }
 
 // Show modal and populate with current data
@@ -927,6 +965,22 @@ function showRoutePointEditModal(idx) {
     const modal = $('#route-point-edit-modal');
     const form = $('#route-point-edit-form');
     form[0].reset();
+    // Show/hide icon field for info points only
+    if (isObj && pt.type === 'information_point') {
+        $('#info-point-icon-field').show();
+        // Set preview and value if present
+        if (pt.icon_url) {
+            $('#info-point-icon-preview').attr('src', pt.icon_url).show();
+            form.find('[name="icon_url"]').val(pt.icon_url);
+            $('#remove-info-point-icon').show();
+        } else {
+            $('#info-point-icon-preview').attr('src', '').hide();
+            form.find('[name="icon_url"]').val('');
+            $('#remove-info-point-icon').hide();
+        }
+    } else {
+        $('#info-point-icon-field').hide();
+    }
     if (isObj) {
         form.find('[name="is_start"]').prop('checked', !!pt.is_start);
         form.find('[name="is_end"]').prop('checked', !!pt.is_end);
@@ -943,6 +997,9 @@ function showRoutePointEditModal(idx) {
             pt.is_start = form.find('[name="is_start"]').is(':checked');
             pt.is_end = form.find('[name="is_end"]').is(':checked');
             pt.notes = form.find('[name="notes"]').val();
+            if (pt.type === 'information_point') {
+                pt.icon_url = form.find('[name="icon_url"]').val();
+            }
         }
         modal.hide();
         updateRouteInfo();

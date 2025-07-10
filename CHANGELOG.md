@@ -2,6 +2,20 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.7.0] - 2025-07-10
+
+### Added
+
+- You can now upload or select a custom icon image for each information point in the WordPress admin (sidebar meta box).
+- The selected icon image is saved and used as the marker for that information point on all public maps.
+- If no icon is set, the default info point marker is used.
+- The route editor modal also supports selecting an icon image for info points using the WordPress media library.
+
+### Improved
+
+- Information points with a custom icon are now visually distinct and easier to recognize on the map, improving clarity for all users.
+- All features remain fully responsive and mobile-friendly.
+
 ## [1.6.2] - 2025-07-10
 
 ### Changed

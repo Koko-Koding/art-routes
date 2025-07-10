@@ -215,6 +215,7 @@ function wp_art_routes_get_all_information_points() {
                 'permalink' => get_permalink($info_post->ID), // Link to the info point post itself
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
+                'icon_url' => get_post_meta($info_post->ID, '_info_point_icon_url', true), // Custom icon URL
             ];
         }
     }

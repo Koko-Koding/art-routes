@@ -61,6 +61,16 @@ function wp_art_routes_add_meta_boxes() {
         'normal',
         'default'
     );
+
+    // Info Point Icon meta box
+    add_meta_box(
+        'info_point_icon',
+        __('Info Point Icon', 'wp-art-routes'),
+        'wp_art_routes_render_info_point_icon_meta_box',
+        'information_point',
+        'side',
+        'default'
+    );
 }
 add_action('add_meta_boxes', 'wp_art_routes_add_meta_boxes');
 
@@ -361,6 +371,55 @@ function wp_art_routes_render_artwork_artists_meta_box($post) {
 }
 
 /**
+ * Render Info Point Icon meta box
+ */
+function wp_art_routes_render_info_point_icon_meta_box($post) {
+    wp_nonce_field('save_info_point_icon', 'info_point_icon_nonce');
+    $icon_url = get_post_meta($post->ID, '_info_point_icon_url', true);
+    ?>
+    <div id="info-point-icon-meta-box">
+        <div style="margin-bottom:8px;">
+            <img id="info-point-icon-preview" src="<?php echo esc_url($icon_url); ?>" style="max-width:100%;max-height:80px;<?php echo $icon_url ? '' : 'display:none;'; ?>border:1px solid #ccc;" />
+        </div>
+        <input type="hidden" id="info_point_icon_url" name="info_point_icon_url" value="<?php echo esc_url($icon_url); ?>" />
+        <button type="button" class="button" id="select-info-point-icon"><?php _e('Select Image', 'wp-art-routes'); ?></button>
+        <button type="button" class="button" id="remove-info-point-icon" style="<?php echo $icon_url ? '' : 'display:none;'; ?>margin-left:8px;">Remove</button>
+    </div>
+    <script>
+    jQuery(document).ready(function($) {
+        let infoPointIconFrame;
+        $('#select-info-point-icon').on('click', function(e) {
+            e.preventDefault();
+            if (infoPointIconFrame) {
+                infoPointIconFrame.open();
+                return;
+            }
+            infoPointIconFrame = wp.media({
+                title: '<?php echo esc_js(__('Select Icon Image', 'wp-art-routes')); ?>',
+                button: { text: '<?php echo esc_js(__('Use this image', 'wp-art-routes')); ?>' },
+                multiple: false
+            });
+            infoPointIconFrame.on('select', function() {
+                const attachment = infoPointIconFrame.state().get('selection').first().toJSON();
+                $('#info-point-icon-preview').attr('src', attachment.url).show();
+                $('#info_point_icon_url').val(attachment.url);
+                $('#remove-info-point-icon').show();
+            });
+            infoPointIconFrame.open();
+        });
+        $('#remove-info-point-icon').on('click', function(e) {
+            e.preventDefault();
+            $('#info-point-icon-preview').attr('src', '').hide();
+            $('#info_point_icon_url').val('');
+            $(this).hide();
+        });
+    });
+    </script>
+    <p class="description"><?php _e('Select an icon image for this information point. This will be shown on the map if set.', 'wp-art-routes'); ?></p>
+    <?php
+}
+
+/**
  * Save route details meta box data
  */
 function wp_art_routes_save_route_details($post_id) {
@@ -509,3 +568,27 @@ function wp_art_routes_save_artwork_artists($post_id) {
     }
 }
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_artists');
+
+/**
+ * Save info point icon meta box data
+ */
+function wp_art_routes_save_info_point_icon($post_id) {
+    if (!isset($_POST['info_point_icon_nonce']) || !wp_verify_nonce($_POST['info_point_icon_nonce'], 'save_info_point_icon')) {
+        return;
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    if (isset($_POST['info_point_icon_url'])) {
+        $icon_url = esc_url_raw($_POST['info_point_icon_url']);
+        if ($icon_url) {
+            update_post_meta($post_id, '_info_point_icon_url', $icon_url);
+        } else {
+            delete_post_meta($post_id, '_info_point_icon_url');
+        }
+    }
+}
+add_action('save_post_information_point', 'wp_art_routes_save_info_point_icon');

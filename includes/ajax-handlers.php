@@ -174,10 +174,20 @@ function wp_ajax_save_route_points() {
             $point_id = isset($point['id']) ? intval($point['id']) : 0;
             $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
             $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+            $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
 
             if ($point_id > 0 && $lat !== null && $lng !== null && current_user_can('edit_post', $point_id)) {
                 update_post_meta($point_id, '_artwork_latitude', $lat);
                 update_post_meta($point_id, '_artwork_longitude', $lng);
+                // Save icon_url for info points
+                $post_type = get_post_type($point_id);
+                if ($post_type === 'information_point') {
+                    if ($icon_url) {
+                        update_post_meta($point_id, '_info_point_icon_url', $icon_url);
+                    } else {
+                        delete_post_meta($point_id, '_info_point_icon_url');
+                    }
+                }
                 $results['updated'][] = $point_id;
             }
         }
@@ -203,6 +213,7 @@ function wp_ajax_save_route_points() {
             $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
             $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
             $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+            $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
 
             if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
                 $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
@@ -219,9 +230,11 @@ function wp_ajax_save_route_points() {
                     // Save location
                     update_post_meta($new_post_id, '_artwork_latitude', $lat);
                     update_post_meta($new_post_id, '_artwork_longitude', $lng);
-                    
+                    // Save icon_url for info points
+                    if ($type === 'information_point' && $icon_url) {
+                        update_post_meta($new_post_id, '_info_point_icon_url', $icon_url);
+                    }
                     // No longer associate any points with routes - both artworks and info points are global
-                    
                     $results['added'][] = [
                         'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
                         'new_id' => $new_post_id,
@@ -294,6 +307,7 @@ function wp_art_routes_get_associated_points($route_id) {
     foreach ($info_point_posts as $info_post) {
         $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
+        $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
 
         if (is_numeric($latitude) && is_numeric($longitude)) {
             $point_data = [
@@ -304,6 +318,7 @@ function wp_art_routes_get_associated_points($route_id) {
                 'edit_link' => get_edit_post_link($info_post->ID, 'raw'),
                 'type' => 'information_point',
                 'status' => $info_post->post_status,
+                'icon_url' => $icon_url ? esc_url($icon_url) : '',
             ];
 
             $points['information_points'][] = $point_data;
