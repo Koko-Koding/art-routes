@@ -2,6 +2,22 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.6.0] - 2025-07-10
+
+### Changed
+
+- **Made artworks and information points global**: Both artworks and information points are now visible on all route maps, regardless of which specific route they were originally associated with.
+- Updated `wp_art_routes_get_route_artworks()` and `wp_art_routes_get_route_information_points()` functions to return all published artworks and information points globally.
+- Added new functions `wp_art_routes_get_all_artworks()` and `wp_art_routes_get_all_information_points()` for fetching global content.
+- Updated multiple routes map template to display global artworks and information points on all maps.
+- Improved user experience by ensuring all points of interest are visible regardless of the route being viewed.
+
+### Technical Details
+
+- Artworks and information points are no longer filtered by the `_artwork_route_id` meta key.
+- Global markers are added directly to the map (not to route-specific layers) ensuring they remain visible when toggling between routes.
+- Maintained backward compatibility with existing route editor functionality.
+
 ## [1.5.0] - 2025-06-29
 
 ### Added

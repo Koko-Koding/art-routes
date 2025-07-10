@@ -3,7 +3,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://example.com/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress
- * Version: 1.4.1
+ * Version: 1.5.0
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://example.com
  * License: GPL v2 or later

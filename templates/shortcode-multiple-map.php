@@ -40,6 +40,7 @@ $js_data = [
     'ajax_url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('wp_art_routes_nonce'),
     'routes' => [],
+    'artworks' => wp_art_routes_get_all_artworks(), // Add global artworks
     'information_points' => wp_art_routes_get_all_information_points(), // Add global info points
     'colors' => $route_colors,
     'mapSettings' => [
@@ -299,6 +300,79 @@ $map_id = 'art-routes-map-' . uniqid();
                 });
             }
         });
+        
+        // Add global artwork markers (visible on all routes)
+        if (routesData.artworks && routesData.artworks.length > 0) {
+            routesData.artworks.forEach(function(artwork, artworkIndex) {
+                // Create a custom artwork marker (neutral styling for global artworks)
+                const artworkIcon = L.divIcon({
+                    className: 'artwork-marker',
+                    html: `
+                        <div class="artwork-marker-inner">
+                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNmNGY0ZjQiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTE5IDNINVYyMUgxOVYzWk02IDEwTDEwLjUgMTQuNUwxMyAxMkwxNyAxNkg2VjEwWiIgZmlsbD0iIzk5OTk5OSIvPgo8L3N2Zz4KPC9zdmc+'}');"></div>
+                            <div class="artwork-marker-overlay"></div>
+                            <div class="artwork-marker-number">${artworkIndex + 1}</div>
+                        </div>
+                    `,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
+                });
+                
+                // Create marker
+                const marker = L.marker([artwork.latitude, artwork.longitude], {
+                    icon: artworkIcon
+                }).addTo(map); // Add directly to map, not to route layers
+                
+                // Add to global bounds
+                allBounds.extend([artwork.latitude, artwork.longitude]);
+                hasValidCoordinates = true;
+                
+                // Prepare popup content
+                let popupContent = '<div class="artwork-popup">';
+                if (artwork.image_url) {
+                    popupContent += `
+                        <div class="artwork-popup-image">
+                            <img src="${artwork.image_url}" alt="${artwork.title}">
+                        </div>
+                    `;
+                }
+                popupContent += `
+                    <div class="artwork-popup-content">
+                        <h3>${artwork.title}</h3>
+                        <div class="artwork-description">
+                            ${artwork.description}
+                        </div>
+                `;
+                
+                // Add artist information if available
+                if (artwork.artists && artwork.artists.length > 0) {
+                    popupContent += '<div class="artwork-artists"><strong>Artist(s):</strong><ul>';
+                    artwork.artists.forEach(function(artist) {
+                        popupContent += `<li><a href="${artist.url}" target="_blank">${artist.title}</a></li>`;
+                    });
+                    popupContent += '</ul></div>';
+                }
+                
+                popupContent += `
+                    </div>
+                </div>
+                `;
+                
+                // Create popup
+                const popup = L.popup({
+                    maxWidth: 300,
+                    className: 'artwork-popup-container',
+                    closeButton: true,
+                    autoClose: false,
+                    closeOnEscapeKey: true
+                }).setContent(popupContent);
+                
+                // Add click event
+                marker.on('click', function() {
+                    popup.setLatLng(marker.getLatLng()).openOn(map);
+                });
+            });
+        }
         
         // Add global information point markers (visible on all routes)
         if (routesData.information_points && routesData.information_points.length > 0) {
