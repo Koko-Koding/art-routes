@@ -1,4 +1,43 @@
-name	id	latitude	longitude	description	city	full_address
-Fietsknooppunt 1	1	52.104342	5.637101	bij restaurant t hek	Ede	bij restaurant t hek, Ede
-Fietsknooppunt 76	76	52.108298	5.665467	IJzertijdboerderij	Ede	IJzertijdboerderij, Ede
-Fietsknooppunt 80	80	52.087530	5.679497	kruising immenweg met hogevalksedijk	Ede	kruising immenweg met hogevalksedijk, Ede
+name	id	latitude	longitude	description	city	full_address	icon
+Fietsknooppunt 61	61	52.049129	5.666045	telefoonweg	Ede	telefoonweg, Ede	
+Fietsknooppunt 60	60	52.060961	5.649068	doesburgermolen	Ede	doesburgermolen, Ede	
+Fietsknooppunt 78	78	52.084167	5.636006	molenweg	Ede	molenweg, Ede	
+Fietsknooppunt 79	79	52.082715	5.649638	de koepel	Ede	de koepel, Ede	
+Fietsknooppunt 77	77	52.084839	5.623984	station Lunteren	Ede	station Lunteren, Ede	
+Fietsknooppunt 75	75	52.101228	5.640663	hessenweg	Ede	hessenweg, Ede	
+Fietsknooppunt 1	1	52.104342	5.637101	bij restaurant t hek	Ede	bij restaurant t hek, Ede	
+Fietsknooppunt 76	76	52.108298	5.665467	IJzertijdboerderij	Ede	IJzertijdboerderij, Ede	
+Fietsknooppunt 80	80	52.08753	5.679497	kruising immenweg met hogevalksedijk	Ede	kruising immenweg met hogevalksedijk, Ede	
+Luntersche buurtbosch	A	52.082882	5.648759				verrekijker
+Germaanse put	B	52.105647	5.657369				verrekijker
+Grindgaten	C	52.098629	5.648561				verrekijker
+Raatakkers	D	52.101999	5.664972				verrekijker
+Hessenweg	E	52.0919	5.655004				verrekijker
+Landgebruik Doesburgerbuurt en schaapskooi	F	52.06561	5.64573				verrekijker
+Hongerlaantje	G	52.08763	5.65484				verrekijker
+Wildwal	H	52.08348	5.63957				verrekijker
+Vleermuizen	I	52.05367	5.6624				verrekijker
+Doolhof	J	52.055639	5.674222				verrekijker
+Zandhagedis	K	52.056278	5.661167				verrekijker
+De Wagenschuur		52.054348046089046	5.6565689968090975		Ede	Kernhemseweg 6, Ede	koffie
+In Goede Aarde		52.062621878493246	5.648331195704168			Doesburgermolenweg 8	koffie
+De Pleisterplaats		52.082728579353095	5.648506008616801		Lunteren	boslaan 90, Lunteren	
+De Lunterse Boer		52.0889130132123	5.646125032816291		Lunteren	boslaan 87, Lunteren	koffie
+Eethuis t Hek		52.1043061202215	5.6376763371795		Lunteren	meulunterseweg 32, Lunteren	koffie
+Rita's		52.08817035536002	5.668950109703942		Lunteren	immenweg 15, Lunteren	koffie
+De Goudsberg		52.09919724666532	5.642002483070293		Lunteren	hessenweg 85, Lunteren	koffie
+Het Uilenbos		52.09437315677939	5.643756647708603		Lunteren	beukenlaan 11, Lunteren	koffie
+Belmont		52.07592307121617	5.649298648522012			goorsteeg 66	koffie
+The Park		52.07414361713917	5.664411081997205		Lunteren	barteweg 15, Lunteren	koffie
+Hotel De Werelt		52.08259531704939	5.641061584639413		Lunteren	westhofflaan 2, Lunteren	koffie
+De Wormshoef		52.09263116702522	5.618340604692193		Lunteren	dorpsstraat 192, Lunteren	koffie
+VRZRGD		52.09048946997167	5.660670615573183		Lunteren	boslaan 123, Lunteren	koffie
+Pannenkoekenboerderij Kernhem		52.05255847074848	5.656630670191489		Ede	Kernhemseweg 3, Ede	koffie
+Infopunt De Wagenschuur		52.054593309441856	5.656132936497679		Ede	kernhemseweg 6 ede	i
+Qpark		52.04722041745714	5.67088179218698		Ede	markt ede	P
+Station Lunteren		52.08505356612807	5.624147413775034				Station Lunteren
+Huis Kernhem		52.05284267818414	5.657328877267167				Huis Kernhem
+Museum Lunteren		52.083998709915484	5.620914010807815		Lunteren	dorpstraat 55 lunteren	Museum Lunteren
+Cultura		52.04651438723577	5.6672688566414475		Ede	molenstraat 45 ede	Cultura
+Fietsverhuur Lunteren		52.073961115529556	5.630270835626208		Lunteren	edeseweg 40 lunteren	Fietsverhuur
+Fiets en Verhuur Ede		52.04793138521472	5.666602327697762		Ede	telefoonweg 11 ede	Fietsverhuur
