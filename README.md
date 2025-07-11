@@ -22,6 +22,8 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 - Responsive design for mobile devices
 - Translation-ready with complete Dutch (nl_NL) translation
 
+📋 See the [CHANGELOG](CHANGELOG.md) for a detailed list of changes and updates.
+
 ## Installation
 
 1. Upload the plugin files to the `/wp-content/plugins/wp-art-routes` directory, or install the plugin through the WordPress plugins screen.

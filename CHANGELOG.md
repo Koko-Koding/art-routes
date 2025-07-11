@@ -1,5 +1,7 @@
 # Changelog
 
+[← Go back](README.md).
+
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
 ## [1.8.1] - 2025-07-11
