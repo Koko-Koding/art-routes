@@ -2,6 +2,13 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.8.1] - 2025-07-11
+
+### Changed
+
+- Updated: Registered meta fields for artworks and information points as REST fields using `register_rest_field` for improved API access and compatibility.
+- Updated: Import script to use new REST field structure for information points, supporting both new REST fields and legacy meta fields.
+
 ## [1.8.0] - 2025-07-11
 
 - Added support for creating information points through the WordPress JSON REST API.

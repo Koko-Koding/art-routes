@@ -78,6 +78,32 @@ function wp_art_routes_register_post_types() {
 add_action('init', 'wp_art_routes_register_post_types');
 
 /**
+ * Register REST API meta for artworks and information points
+ */
+function wp_art_routes_register_artwork_meta() {
+    // Register meta for artwork post type
+    register_post_meta('artwork', '_artwork_latitude', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    register_post_meta('artwork', '_artwork_longitude', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+}
+add_action('init', 'wp_art_routes_register_artwork_meta');
+
+/**
  * Register REST API meta for information points
  */
 function wp_art_routes_register_information_point_meta() {
@@ -110,3 +136,86 @@ function wp_art_routes_register_information_point_meta() {
     ]);
 }
 add_action('init', 'wp_art_routes_register_information_point_meta');
+
+/**
+ * Register REST fields for artwork meta data
+ */
+function wp_art_routes_register_artwork_rest_fields() {
+    register_rest_field('artwork', 'latitude', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_latitude', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork latitude coordinate', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    register_rest_field('artwork', 'longitude', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_longitude', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork longitude coordinate', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+}
+add_action('rest_api_init', 'wp_art_routes_register_artwork_rest_fields');
+
+/**
+ * Register REST fields for information point meta data
+ */
+function wp_art_routes_register_information_point_rest_fields() {
+    register_rest_field('information_point', 'latitude', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_latitude', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Information point latitude coordinate', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    register_rest_field('information_point', 'longitude', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_longitude', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Information point longitude coordinate', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    register_rest_field('information_point', 'icon_url', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_info_point_icon_url', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_info_point_icon_url', esc_url_raw($value));
+        },
+        'schema' => [
+            'description' => __('Information point icon URL', 'wp-art-routes'),
+            'type' => 'string',
+            'format' => 'uri',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+}
+add_action('rest_api_init', 'wp_art_routes_register_information_point_rest_fields');

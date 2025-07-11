@@ -20,9 +20,13 @@ interface InformationPoint {
   id: number;
   title: { rendered: string };
   content: { rendered: string };
+  latitude?: string;
+  longitude?: string;
+  icon_url?: string;
   meta: {
     _artwork_latitude?: string;
     _artwork_longitude?: string;
+    _info_point_icon_url?: string;
   };
 }
 
@@ -96,8 +100,9 @@ const findSimilarPoint = (csvRow: CSVRow, existingPoints: InformationPoint[]): I
     }
     
     // Compare coordinates if both points have them
-    const existingLat = point.meta?._artwork_latitude || '';
-    const existingLon = point.meta?._artwork_longitude || '';
+    // Try new REST fields first, fallback to meta fields
+    const existingLat = point.latitude || point.meta?._artwork_latitude || '';
+    const existingLon = point.longitude || point.meta?._artwork_longitude || '';
     
     if (csvRow.latitude && csvRow.longitude && existingLat && existingLon) {
       if (areCoordinatesSimilar(csvRow.latitude, csvRow.longitude, existingLat, existingLon)) {
@@ -140,9 +145,15 @@ const fetchAllInformationPoints = async (): Promise<InformationPoint[]> => {
     
     console.log(`📍 Found ${response.data.length} existing information points`);
     
-    // Debug: Show meta data for first point
+    // Debug: Show both new REST fields and meta data for first point
     if (response.data.length > 0) {
-      console.log(`🔧 Sample point meta:`, response.data[0].meta);
+      const firstPoint = response.data[0];
+      console.log(`🔧 Sample point REST fields:`, {
+        latitude: firstPoint.latitude,
+        longitude: firstPoint.longitude,
+        icon_url: firstPoint.icon_url
+      });
+      console.log(`🔧 Sample point meta:`, firstPoint.meta);
     }
     
     return response.data;
@@ -160,13 +171,16 @@ const createInformationPoint = async (csvRow: CSVRow): Promise<void> => {
     title: csvRow.name,
     content: address,
     status: 'publish',
+    latitude: csvRow.latitude,
+    longitude: csvRow.longitude,
+    // Keep meta fields for backwards compatibility
     meta: {
       _artwork_latitude: csvRow.latitude,
       _artwork_longitude: csvRow.longitude,
     },
   };
   
-  console.log(`🔧 Creating with name, lat & lon: ${requestData.title}, ${requestData.meta._artwork_latitude}, ${requestData.meta._artwork_longitude}`);
+  console.log(`🔧 Creating with name, lat & lon: ${requestData.title}, ${requestData.latitude}, ${requestData.longitude}`);
   
   try {
     const response = await axios.post(
@@ -175,7 +189,11 @@ const createInformationPoint = async (csvRow: CSVRow): Promise<void> => {
       { headers: AUTH_HEADER }
     );
     console.log(`✅ Created: ${csvRow.name}`);
-    console.log(`📍 Response meta:`, response.data.meta);
+    console.log(`📍 Response REST fields:`, {
+      latitude: response.data.latitude,
+      longitude: response.data.longitude,
+      icon_url: response.data.icon_url
+    });
   } catch (error) {
     console.error(`❌ Error creating "${csvRow.name}":`, error.response?.data || error.message);
   }
@@ -189,6 +207,9 @@ const updateInformationPoint = async (existingPoint: InformationPoint, csvRow: C
     title: csvRow.name,
     content: address,
     status: 'publish',
+    latitude: csvRow.latitude,
+    longitude: csvRow.longitude,
+    // Keep meta fields for backwards compatibility
     meta: {
       _artwork_latitude: csvRow.latitude,
       _artwork_longitude: csvRow.longitude,
@@ -204,7 +225,11 @@ const updateInformationPoint = async (existingPoint: InformationPoint, csvRow: C
       { headers: AUTH_HEADER }
     );
     console.log(`🔄 Updated: ${csvRow.name} (was: ${existingPoint.title.rendered})`);
-    console.log(`📍 Response meta:`, response.data.meta);
+    console.log(`📍 Response REST fields:`, {
+      latitude: response.data.latitude,
+      longitude: response.data.longitude,
+      icon_url: response.data.icon_url
+    });
   } catch (error) {
     console.error(`❌ Error updating "${csvRow.name}":`, error.response?.data || error.message);
   }
