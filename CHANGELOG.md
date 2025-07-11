@@ -2,6 +2,11 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.8.0] - 2025-07-11
+
+- Added support for creating information points through the WordPress JSON REST API.
+- Added the `@route-info-rest-client` project, which contains a Bun/Biome based REST client for importing information points via the REST API.
+
 ## [1.7.0] - 2025-07-10
 
 ### Added
