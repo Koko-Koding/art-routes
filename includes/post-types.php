@@ -76,3 +76,37 @@ function wp_art_routes_register_post_types() {
 
 }
 add_action('init', 'wp_art_routes_register_post_types');
+
+/**
+ * Register REST API meta for information points
+ */
+function wp_art_routes_register_information_point_meta() {
+    register_post_meta('information_point', '_artwork_latitude', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    register_post_meta('information_point', '_artwork_longitude', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    register_post_meta('information_point', '_info_point_icon_url', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'esc_url_raw',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+}
+add_action('init', 'wp_art_routes_register_information_point_meta');
