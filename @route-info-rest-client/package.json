@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "import:info-points": "bun run import_info-points.ts"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
     "@types/bun": "latest"

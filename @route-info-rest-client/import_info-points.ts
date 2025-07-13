@@ -237,7 +237,7 @@ const updateInformationPoint = async (existingPoint: InformationPoint, csvRow: C
 
 // Main processing function
 const processCSVData = async (): Promise<void> => {
-  const INPUT_CSV = path.join(import.meta.dir, 'data.csv');
+  const INPUT_CSV = path.join(import.meta.dir, 'data_info-points.csv');
   const existingPoints = await fetchAllInformationPoints();
   
   return new Promise((resolve, reject) => {
