@@ -16,3 +16,4 @@ Whenever you make changes to the plugin, make sure to
 2. Add the new version with description in the `CHANGELOG.md` file, and
 3. Update the `README.md` file accordingly.
 4. Update the translation files in the `languages` directory if necessary.
+5. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `vX.Y.Z`.
