@@ -230,20 +230,24 @@
     function addStartEndMarkers() {
         if (!routePath || !routePath.length) return;
         routePath.forEach(function(pt, idx) {
-            let lat, lng, isStart, isEnd, notes;
+            let lat, lng, isStart, isEnd, notes, arrowDirection;
             if (Array.isArray(pt)) {
                 lat = pt[0];
                 lng = pt[1];
                 isStart = false;
                 isEnd = false;
                 notes = '';
+                arrowDirection = null;
             } else {
                 lat = pt.lat;
                 lng = pt.lng;
                 isStart = !!pt.is_start;
                 isEnd = !!pt.is_end;
                 notes = pt.notes || '';
+                arrowDirection = pt.arrow_direction || null;
             }
+            
+            // Show start/end markers
             if (isStart || isEnd) {
                 let iconHtml = isStart
                     ? '<div style="background:#388e3c;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M6 2v20l15-10L6 2z"/></svg></div>'
@@ -266,6 +270,26 @@
                 marker.on('click', function() {
                     marker.openPopup();
                 });
+            }
+            
+            // Show direction arrows for any point that has arrow_direction set
+            if (arrowDirection !== null && arrowDirection !== undefined && arrowDirection !== '') {
+                const direction = parseFloat(arrowDirection);
+                if (!isNaN(direction)) {
+                    // Create arrow marker
+                    const arrowHtml = `<div style="transform: rotate(${direction}deg); width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 20px solid #ff6b35;"></div>`;
+                    let arrowMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'route-direction-arrow',
+                            html: arrowHtml,
+                            iconSize: [12, 18],
+                            iconAnchor: [6, 9]
+                        })
+                    }).addTo(map);
+                    
+                    // Add popup for direction info
+                    arrowMarker.bindPopup(`<div class="route-point-popup-container"><div class="route-point-popup-content"><strong>Direction Arrow</strong><br>Pointing ${direction}°</div></div>`);
+                }
             }
         });
     }

@@ -445,7 +445,8 @@
                     lng: pt.lng,
                     is_start: !!pt.is_start,
                     is_end: !!pt.is_end,
-                    notes: pt.notes || ''
+                    notes: pt.notes || '',
+                    arrow_direction: pt.arrow_direction || null
                 };
             } else if (Array.isArray(pt) && pt.length >= 2) {
                 // Fallback for old format
@@ -597,6 +598,15 @@
             let markerLabel = '';
             if (pointObj.is_start) markerLabel = '<span title="Start" style="position:absolute;left:0;top:-18px;font-size:12px;color:#388e3c;">&#9679;</span>';
             if (pointObj.is_end) markerLabel = '<span title="End" style="position:absolute;right:0;top:-18px;font-size:12px;color:#d32f2f;">&#9679;</span>';
+            
+            // Arrow indicator for direction
+            let arrowIndicator = '';
+            if (pointObj.arrow_direction !== null && pointObj.arrow_direction !== undefined && pointObj.arrow_direction !== '') {
+                const direction = parseFloat(pointObj.arrow_direction);
+                if (!isNaN(direction)) {
+                    arrowIndicator = `<div title="Arrow direction: ${direction}°" style="position:absolute;top:-28px;left:50%;transform:translateX(-50%) rotate(${direction}deg);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:12px solid #ff6b35;"></div>`;
+                }
+            }
             const iconHtml = `
                 <div class="route-point-marker-dot" style="position: relative; width: 18px; height: 18px;">
                     <div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
@@ -605,6 +615,7 @@
                         <button class="route-point-delete-btn" title="Delete this route point" style="width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
                     </div>
                     ${markerLabel}
+                    ${arrowIndicator}
                 </div>
             `;
             const marker = L.marker([pointObj.lat, pointObj.lng], {
@@ -690,7 +701,8 @@
                 lng: parseFloat(pt.lng),
                 is_start: !!pt.is_start,
                 is_end: !!pt.is_end,
-                notes: pt.notes || ''
+                notes: pt.notes || '',
+                arrow_direction: pt.arrow_direction || null
             }));
         } else {
             // Old format: lines of lat, lng
@@ -911,6 +923,12 @@
                         <label style="margin-left:12px;"><input type="checkbox" name="is_end"> End point</label>
                     </div>
                     <div style="margin-bottom:8px;">
+                        <label>Arrow Direction (0-360°):<br>
+                            <input type="number" name="arrow_direction" min="0" max="360" step="1" style="width:80px;" placeholder="None" />
+                            <span style="font-size:0.9em;color:#666;margin-left:8px;">Leave empty for no arrow</span>
+                        </label>
+                    </div>
+                    <div style="margin-bottom:8px;">
                         <label>Notes:<br><textarea name="notes" rows="2" style="width:100%;resize:vertical;"></textarea></label>
                     </div>
                     <div id="info-point-icon-field" style="margin-bottom:8px;display:none;">
@@ -985,6 +1003,7 @@ function showRoutePointEditModal(idx) {
         form.find('[name="is_start"]').prop('checked', !!pt.is_start);
         form.find('[name="is_end"]').prop('checked', !!pt.is_end);
         form.find('[name="notes"]').val(pt.notes || '');
+        form.find('[name="arrow_direction"]').val(pt.arrow_direction || '');
     }
     // Show as flex
     modal.css({
@@ -997,6 +1016,7 @@ function showRoutePointEditModal(idx) {
             pt.is_start = form.find('[name="is_start"]').is(':checked');
             pt.is_end = form.find('[name="is_end"]').is(':checked');
             pt.notes = form.find('[name="notes"]').val();
+            pt.arrow_direction = form.find('[name="arrow_direction"]').val();
             if (pt.type === 'information_point') {
                 pt.icon_url = form.find('[name="icon_url"]').val();
             }

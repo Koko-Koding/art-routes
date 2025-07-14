@@ -4,6 +4,23 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.9.0] - 2025-07-14
+
+### Added
+
+- Added direction arrow functionality for route points
+- Route points can now display custom direction arrows pointing in any direction (0-360°)
+- New arrow direction field in the route point edit modal in the admin route editor
+- Direction arrows are displayed both in the admin route editor and on public-facing maps
+- Arrows are visually distinct with orange color and drop shadow for better visibility
+- Arrow direction is saved as part of the route path data and preserved when loading existing routes
+
+### Enhanced
+
+- Improved route point editing interface with clearer field organization
+- Enhanced visual feedback for route points with direction indicators
+- Better user experience for administrators configuring route guidance
+
 ## [1.8.1] - 2025-07-11
 
 ### Changed
