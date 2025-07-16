@@ -398,7 +398,6 @@
 		const iconOptions = {
 			className: "artwork-marker",
 			htmlFn: (artwork) => {
-                console.log('artwork number', artwork.number); // this is undefined
 				// Use artwork number if available, otherwise fall back to index + 1
 				const displayNumber =
 					artwork.number && artwork.number.trim() !== ""
