@@ -38,8 +38,10 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 2. Click "Add New Route"
 3. Fill in the route details (title, description)
 4. Use the Route Editor to draw the route path
-5. Set route properties (type, length, duration)
+5. Set route properties (type, length, duration - duration is automatically calculated based on route type and distance)
 6. Publish the route
+
+**Note:** The duration field is automatically calculated based on your route type and distance using realistic average speeds (walking: 4.5 km/h, cycling: 15 km/h, wheelchair-friendly: 3.5 km/h, child-friendly: 3.0 km/h). You can override this with a custom duration if needed.
 
 ### Creating Artworks
 

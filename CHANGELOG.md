@@ -4,6 +4,25 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.11.1] - 2025-07-16
+
+### Added
+
+- **Automatic Duration Calculation**: Route duration is now automatically calculated based on route type and distance
+  - Walking routes: 4.5 km/h average speed
+  - Cycling routes: 15 km/h average speed  
+  - Wheelchair-friendly routes: 3.5 km/h (slower walking pace)
+  - Child-friendly routes: 3.0 km/h (slower pace for families)
+- **Smart Auto-Update Logic**: Duration field updates automatically when route distance changes or route type is modified
+- **Enhanced Route Editor**: Console logging for route length calculation and duration estimates for better debugging
+- **Route Loading Improvements**: Added console logging when loading existing routes with total distance and point count
+
+### Enhanced
+
+- Duration field only auto-updates when empty or zero, preserving manually entered custom durations
+- Real-time duration recalculation when changing route type in the admin interface
+- Improved user experience with automatic estimates while maintaining manual override capability
+
 ## [1.11.0] - 2025-07-16
 
 ### Added
