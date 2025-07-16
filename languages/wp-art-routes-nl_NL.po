@@ -138,6 +138,22 @@ msgstr "Voorbeeld: 52.3702, 4.8952"
 msgid "Use Map to Create Route"
 msgstr "Gebruik Kaart om Route te Maken"
 
+#: includes/meta-boxes.php:173
+msgid "Number"
+msgstr "Nummer"
+
+#: includes/meta-boxes.php:177
+msgid "Optional artwork number for identification"
+msgstr "Optioneel kunstwerknummer voor identificatie"
+
+#: includes/meta-boxes.php:182
+msgid "Location"
+msgstr "Locatie"
+
+#: includes/meta-boxes.php:186
+msgid "Optional location description (e.g., \"Near the town square\")"
+msgstr "Optionele locatiebeschrijving (bijv. \"Bij het dorpsplein\")"
+
 #: includes/meta-boxes.php:183
 msgid "Latitude"
 msgstr "Breedtegraad"

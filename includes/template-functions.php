@@ -146,6 +146,9 @@ function wp_art_routes_get_all_artworks() {
                 'image_url' => get_the_post_thumbnail_url($artwork->ID, 'large'),
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
+                'number' => get_post_meta($artwork->ID, '_artwork_number', true),
+                'location' => get_post_meta($artwork->ID, '_artwork_location', true),
+                'permalink' => get_permalink($artwork->ID),
             ];
             
             // Get artist information

@@ -46,9 +46,12 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 1. Navigate to "Artworks" in the WordPress admin menu
 2. Click "Add New Artwork"
 3. Fill in the artwork details (title, description)
-4. Use the Location Picker to place the artwork on the map
-5. Associate the artwork with a route
-6. Publish the artwork
+4. **Optional:** Add a Number for artwork identification (e.g., "A1", "001")
+5. **Optional:** Add a Location description (e.g., "Near the town square")
+6. Use the Location Picker to place the artwork on the map
+7. Publish the artwork
+
+**Note:** The Number field, when provided, will be displayed on the map markers instead of sequential numbers, making it easier to identify specific artworks according to your numbering system.
 
 ### Displaying Maps
 

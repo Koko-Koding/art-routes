@@ -100,6 +100,26 @@ function wp_art_routes_register_artwork_meta() {
             return current_user_can('edit_posts');
         },
     ]);
+    
+    // Register new meta fields for artwork number and location
+    register_post_meta('artwork', '_artwork_number', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    register_post_meta('artwork', '_artwork_location', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
 }
 add_action('init', 'wp_art_routes_register_artwork_meta');
 
@@ -164,6 +184,34 @@ function wp_art_routes_register_artwork_rest_fields() {
         },
         'schema' => [
             'description' => __('Artwork longitude coordinate', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    register_rest_field('artwork', 'number', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_number', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_number', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork number', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    register_rest_field('artwork', 'location', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_location', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_location', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork location description', 'wp-art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],

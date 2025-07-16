@@ -4,6 +4,23 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.10.0] - 2025-07-16
+
+### Added
+
+- Added "Number" field to artwork post type - optional text input for artwork identification
+- Added "Location" field to artwork post type - optional text input for location description (e.g., "Near the town square")
+- New fields are available in the WordPress admin when editing artworks
+- Fields are accessible via REST API for external integrations
+- Number and Location fields are specific to artworks only (not available for information points)
+
+### Enhanced
+
+- Improved artwork editing interface with better field organization
+- Enhanced artwork data structure for more detailed information capture
+- Better user experience for administrators managing artwork details
+- **Map markers now display custom artwork numbers**: Artwork markers on route maps now show the custom number from the Number field instead of sequential array indices, making artwork identification more intuitive and consistent with organizational numbering systems
+
 ## [1.9.0] - 2025-07-14
 
 ### Added

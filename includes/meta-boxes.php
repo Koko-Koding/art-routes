@@ -46,7 +46,7 @@ function wp_art_routes_add_meta_boxes() {
     add_meta_box(
         'info_point_location',
         __('Info Point Location', 'wp-art-routes'),
-        'wp_art_routes_render_artwork_location_meta_box', // Reuse the artwork location renderer
+        'wp_art_routes_render_info_point_location_meta_box', // Use dedicated function for info points
         'information_point', // Apply to the new CPT
         'normal',
         'high'
@@ -180,6 +180,55 @@ function wp_art_routes_render_route_path_meta_box($post) {
  * Render Artwork Location meta box
  */
 function wp_art_routes_render_artwork_location_meta_box($post) {
+    // Add nonce for security
+    wp_nonce_field('save_artwork_location', 'artwork_location_nonce');
+    
+    // Get saved values
+    $latitude = get_post_meta($post->ID, '_artwork_latitude', true);
+    $longitude = get_post_meta($post->ID, '_artwork_longitude', true);
+    $number = get_post_meta($post->ID, '_artwork_number', true);
+    $location = get_post_meta($post->ID, '_artwork_location', true);
+    
+    ?>
+    <p>
+        <label for="artwork_number">
+            <?php _e('Number', 'wp-art-routes'); ?>:
+        </label>
+        <input type="text" id="artwork_number" name="artwork_number" value="<?php echo esc_attr($number); ?>" class="regular-text" />
+        <span class="description"><?php _e('Optional artwork number for identification', 'wp-art-routes'); ?></span>
+    </p>
+    
+    <p>
+        <label for="artwork_location">
+            <?php _e('Location', 'wp-art-routes'); ?>:
+        </label>
+        <input type="text" id="artwork_location" name="artwork_location" value="<?php echo esc_attr($location); ?>" class="regular-text" />
+        <span class="description"><?php _e('Optional location description (e.g., "Near the town square")', 'wp-art-routes'); ?></span>
+    </p>
+    
+    <p>
+        <label for="artwork_latitude">
+            <?php _e('Latitude', 'wp-art-routes'); ?>:
+        </label>
+        <input type="text" id="artwork_latitude" name="artwork_latitude" value="<?php echo esc_attr($latitude); ?>" class="regular-text" />
+    </p>
+    
+    <p>
+        <label for="artwork_longitude">
+            <?php _e('Longitude', 'wp-art-routes'); ?>:
+        </label>
+        <input type="text" id="artwork_longitude" name="artwork_longitude" value="<?php echo esc_attr($longitude); ?>" class="regular-text" />
+    </p>
+    
+    <div id="artwork_location_map" style="width: 100%; height: 300px; margin-top: 10px;"></div>
+    <p><button type="button" class="button" id="pick_artwork_location"><?php _e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
+    <?php
+}
+
+/**
+ * Render Info Point Location meta box
+ */
+function wp_art_routes_render_info_point_location_meta_box($post) {
     // Add nonce for security
     wp_nonce_field('save_artwork_location', 'artwork_location_nonce');
     
@@ -533,8 +582,20 @@ function wp_art_routes_save_artwork_location($post_id) {
     if (isset($_POST['artwork_longitude'])) {
         update_post_meta($post_id, '_artwork_longitude', sanitize_text_field($_POST['artwork_longitude']));
     }
+    
+    // Only save number and location for artwork post type
+    if ($post_type === 'artwork') {
+        // Save artwork number
+        if (isset($_POST['artwork_number'])) {
+            update_post_meta($post_id, '_artwork_number', sanitize_text_field($_POST['artwork_number']));
+        }
+        
+        // Save location description
+        if (isset($_POST['artwork_location'])) {
+            update_post_meta($post_id, '_artwork_location', sanitize_text_field($_POST['artwork_location']));
+        }
+    }
 }
-// Hook for both post types
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_location');
 add_action('save_post_information_point', 'wp_art_routes_save_artwork_location');
 
