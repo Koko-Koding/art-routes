@@ -206,7 +206,7 @@ msgstr "Verwijderen"
 
 #: includes/meta-boxes.php:301
 msgid "These posts will be associated with this artwork as artists."
-msgstr ""Deze berichten worden geassocieerd met dit kunstwerk als kunstenaars."
+msgstr "Deze berichten worden geassocieerd met dit kunstwerk als kunstenaars."
 
 #: includes/post-types.php:18 templates/shortcode-multiple-map.php:102
 msgid "Routes"
@@ -441,6 +441,26 @@ msgstr "Inzoomen op Route"
 #: templates/shortcode-multiple-map.php:164
 msgid "Art Routes Map"
 msgstr "Kunstroutes Kaart"
+
+#: templates/single-artwork.php:34
+msgid "Number:"
+msgstr "Nummer:"
+
+#: templates/single-artwork.php:40
+msgid "Location:"
+msgstr "Locatie:"
+
+#: templates/single-artwork.php:67
+msgid "Artists:"
+msgstr "Kunstenaars:"
+
+#: templates/single-artwork.php:69
+msgid "Artist:"
+msgstr "Kunstenaar:"
+
+#: templates/single-artwork.php:96
+msgid "Location on Map"
+msgstr "Locatie op Kaart"
 
 #: templates/shortcode-multiple-map.php:346
 msgid "Show All Routes"

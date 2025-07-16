@@ -49,9 +49,23 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 4. **Optional:** Add a Number for artwork identification (e.g., "A1", "001")
 5. **Optional:** Add a Location description (e.g., "Near the town square")
 6. Use the Location Picker to place the artwork on the map
-7. Publish the artwork
+7. **Optional:** Associate the artwork with artists by linking to existing posts/pages
+8. Set a featured image for the artwork
+9. Publish the artwork
 
 **Note:** The Number field, when provided, will be displayed on the map markers instead of sequential numbers, making it easier to identify specific artworks according to your numbering system.
+
+### Artwork Display
+
+Each artwork has its own dedicated page that displays:
+
+- **Featured Image:** Prominently shown at the top of the page
+- **Artwork Details:** Title, description, and metadata (number, location)
+- **Associated Artists:** Clickable links to artist pages/posts
+- **Interactive Map:** Shows the artwork's location with a custom marker
+- **Responsive Design:** Optimized for both desktop and mobile viewing
+
+The artwork template can be customized by themes by copying `templates/single-artwork.php` to `wp-art-routes/single-artwork.php` in your active theme directory.
 
 ### Displaying Maps
 

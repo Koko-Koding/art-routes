@@ -286,6 +286,29 @@ function wp_art_routes_template_include($template) {
 add_filter('template_include', 'wp_art_routes_template_include');
 
 /**
+ * Handle template redirection for artwork posts
+ */
+function wp_art_routes_single_artwork_template($template) {
+    // Only handle single artwork posts
+    if (is_singular('artwork')) {
+        // Look for template in theme directory first
+        $located = locate_template('wp-art-routes/single-artwork.php');
+        
+        // If not found in theme, use plugin template
+        if (empty($located)) {
+            $located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-artwork.php';
+        }
+        
+        if (file_exists($located)) {
+            return $located;
+        }
+    }
+    
+    return $template;
+}
+add_filter('template_include', 'wp_art_routes_single_artwork_template', 99);
+
+/**
  * Automatically append map to route content
  */
 function wp_art_routes_append_map_to_route_content($content) {

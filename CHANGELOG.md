@@ -4,6 +4,37 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.11.0] - 2025-07-16
+
+### Added
+
+- **Custom Single Artwork Template**: Created a dedicated template for displaying individual artwork posts with enhanced features:
+  - Prominently displays the artwork's featured image
+  - Shows artwork number and location metadata if available
+  - Lists associated artists with clickable links to their respective pages/posts
+  - Includes an interactive location map showing the artwork's position
+  - Fully responsive design optimized for mobile devices
+- **Dutch Translation Support**: Added complete Dutch translations for all new template strings
+  - Added translations for "Number:", "Location:", "Artist(s):", "Location on Map"
+  - Updated and compiled Dutch translation files (.po and .mo)
+  - Fixed syntax errors in existing Dutch translation file
+
+### Enhanced
+
+- **Template System**: Implemented proper template handling that allows theme overrides
+  - Template can be customized by copying to theme's `wp-art-routes/single-artwork.php`
+  - Follows WordPress best practices for template hierarchy
+- **Asset Loading**: Updated script loading to include Leaflet CSS/JS on single artwork pages for map functionality
+- **User Experience**: Artwork pages now provide rich, detailed information instead of basic post content
+
+### Technical Details
+
+- Added `wp_art_routes_single_artwork_template()` function for template redirection
+- Modified `wp_art_routes_is_route_page()` to include single artwork pages
+- Created responsive CSS styling with mobile breakpoints
+- Integrated with existing artist association system
+- Added proper escaping and sanitization for all output
+
 ## [1.10.0] - 2025-07-16
 
 ### Added

@@ -236,6 +236,11 @@ function wp_art_routes_is_route_page() {
         return true;
     }
     
+    // Check if viewing a single artwork post type (for the location map)
+    if (is_singular('artwork')) {
+        return true;
+    }
+    
     // Default to false
     return false;
 }
