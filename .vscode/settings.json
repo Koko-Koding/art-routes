@@ -1,0 +1,6 @@
+{
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit"
+	},
+	"biome.configurationPath": "@route-info-rest-client/biome.json"
+}
