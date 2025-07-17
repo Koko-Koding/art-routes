@@ -4,6 +4,16 @@
  */
 
 (($) => {
+	// Marker display order for zIndexOffset
+	const markerDisplayOrder = {
+		ROUTE_START: 3000,
+		ROUTE_END: 3000,
+		ARTWORK: 2000,
+		INFO_POINT: 1000,
+		DIRECTION_ARROW: 500,
+		USER: 1000,
+	};
+
 	// Map variables
 	let map, userMarker, routeLayer, completedRouteLayer, userToRouteLayer;
 	let userPosition = null;
@@ -273,6 +283,7 @@
 						iconSize: [28, 28],
 						iconAnchor: [14, 14],
 					}),
+					zIndexOffset: isStart ? markerDisplayOrder.ROUTE_START : markerDisplayOrder.ROUTE_END,
 				}).addTo(map);
 				let popupHtml =
 					'<div class="route-point-popup-container"><div class="route-point-popup-content">';
@@ -314,6 +325,7 @@
 							iconSize: [12, 18],
 							iconAnchor: [6, 9],
 						}),
+						zIndexOffset: markerDisplayOrder.DIRECTION_ARROW,
 					}).addTo(map);
 
 					// Add popup for direction info
@@ -352,9 +364,15 @@
 				iconAnchor: iconOptions.iconAnchor,
 			});
 
+			// Set zIndexOffset based on type
+			let zIndexOffset = markerDisplayOrder.INFO_POINT;
+			if (type === "artwork") zIndexOffset = markerDisplayOrder.ARTWORK;
+			if (type === "info-point") zIndexOffset = markerDisplayOrder.INFO_POINT;
+
 			// Create the marker
 			const marker = L.marker([item.latitude, item.longitude], {
 				icon: markerIcon,
+				zIndexOffset: zIndexOffset,
 			}).addTo(map);
 
 			// Generate the popup content

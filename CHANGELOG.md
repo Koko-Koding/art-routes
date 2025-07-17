@@ -4,6 +4,19 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.12.0] - 2025-07-17
+
+### Changed
+
+- Refactored marker stacking order logic for route maps: all marker z-index offsets are now defined centrally in a `markerDisplayOrder` object in `art-route-map.js`.
+- Marker stacking order is now: Route start/end points (top), Artworks, Information points, Directional arrows (bottom).
+- Improved maintainability and clarity for marker display order; future changes can be made by editing a single object.
+
+### Technical Details
+
+- All marker creation code now references the `markerDisplayOrder` object for zIndexOffset values.
+- No functional changes for end users, but developers and maintainers benefit from easier configuration and updates.
+
 ## [1.11.2] - 2025-07-17
 
 ### Changed
