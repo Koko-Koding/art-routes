@@ -56,7 +56,7 @@ $js_data = [
         <div class="route-meta">
             <?php if (!empty($route['length'])) : ?>
                 <span class="route-length">
-                    <?php echo round(floatval($route['length']), 1); ?> km
+                    <?php echo esc_html(wp_art_routes_format_length($route['length'])); ?>
                 </span>
             <?php endif; ?>
             

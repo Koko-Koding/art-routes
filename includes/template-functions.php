@@ -333,7 +333,7 @@ function wp_art_routes_append_map_to_route_content($content) {
             <div class="route-meta">
                 <?php if (!empty($route_data['length'])) : ?>
                     <span class="route-length">
-                        <?php echo number_format(round(floatval($route_data['length']), 1), 1); ?> km
+                        <?php echo esc_html(wp_art_routes_format_length($route_data['length'])); ?>
                     </span>
                 <?php endif; ?>
                 
@@ -421,4 +421,12 @@ function wp_art_routes_format_duration($minutes) {
         $parts[] = sprintf(_n('%d minute', '%d minutes', $mins, 'wp-art-routes'), $mins);
     }
     return implode(' ', $parts);
+}
+
+/**
+ * Format route length in kilometers to a consistent string (e.g. "3.2 km")
+ */
+function wp_art_routes_format_length($km) {
+    $km = floatval($km);
+    return number_format(round($km, 1), 1) . ' km';
 }
