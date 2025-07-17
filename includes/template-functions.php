@@ -338,7 +338,9 @@ function wp_art_routes_append_map_to_route_content($content) {
                 <?php endif; ?>
                 
                 <?php if (!empty($route_data['duration'])) : ?>
-                    <span class="route-duration"><?php echo esc_html($route_data['duration']); ?> <?php _e('minutes', 'wp-art-routes'); ?></span>
+                    <span class="route-duration">
+                        <?php echo esc_html(wp_art_routes_format_duration($route_data['duration'])); ?>
+                    </span>
                 <?php endif; ?>
                 
                 <?php if (!empty($route_data['type'])) : ?>
@@ -402,3 +404,21 @@ function wp_art_routes_append_map_to_route_content($content) {
     return $content . $map_content;
 }
 add_filter('the_content', 'wp_art_routes_append_map_to_route_content');
+
+/**
+ * Format duration in minutes to a readable string (e.g. "2 hours 23 minutes")
+ */
+function wp_art_routes_format_duration($minutes) {
+    $minutes = intval($minutes);
+    if ($minutes < 1) return __('Less than a minute', 'wp-art-routes');
+    $hours = floor($minutes / 60);
+    $mins = $minutes % 60;
+    $parts = array();
+    if ($hours > 0) {
+        $parts[] = sprintf(_n('%d hour', '%d hours', $hours, 'wp-art-routes'), $hours);
+    }
+    if ($mins > 0) {
+        $parts[] = sprintf(_n('%d minute', '%d minutes', $mins, 'wp-art-routes'), $mins);
+    }
+    return implode(' ', $parts);
+}

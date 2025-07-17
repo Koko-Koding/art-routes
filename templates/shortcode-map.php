@@ -61,7 +61,9 @@ $js_data = [
             <?php endif; ?>
             
             <?php if (!empty($route['duration'])) : ?>
-                <span class="route-duration"><?php echo esc_html($route['duration']); ?> <?php _e('minutes', 'wp-art-routes'); ?></span>
+                <span class="route-duration">
+                    <?php echo esc_html(wp_art_routes_format_duration($route['duration'])); ?>
+                </span>
             <?php endif; ?>
             
             <?php if (!empty($route['type'])) : ?>

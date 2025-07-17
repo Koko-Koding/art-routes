@@ -133,7 +133,7 @@ $map_id = 'art-routes-map-' . uniqid();
                             <?php if (!empty($route['duration'])): ?>
                                 <span class="route-duration">
                                     <span class="dashicons dashicons-clock"></span>
-                                    <?php echo esc_html($route['duration']); ?> <?php _e('min', 'wp-art-routes'); ?>
+                                    <?php echo esc_html(wp_art_routes_format_duration($route['duration'])); ?>
                                 </span>
                             <?php endif; ?>
                         </div>
@@ -309,7 +309,7 @@ $map_id = 'art-routes-map-' . uniqid();
                     className: 'artwork-marker',
                     html: `
                         <div class="artwork-marker-inner">
-                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNmNGY0ZjQiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTE5IDNINVYyMUgxOVYzWk02IDEwTDEwLjUgMTQuNUwxMyAxMkwxNyAxNkg2VjEwWiIgZmlsbD0iIzk5OTk5OSIvPgo8L3N2Zz4KPC9zdmc+'}');"></div>
+                            <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiNmNGY0ZjQiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1zbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTE5IDNINVYyMUgxOVYzWk02IDEwTDEwLjUgMTQuNUwxMyAxMkwxNyAxNkg2VjEwWiIgZmlsbD0iIzk5OTk5OSIvPgo8L3N2Zz4KPC9zdmc+'}');"></div>
                             <div class="artwork-marker-overlay"></div>
                             <div class="artwork-marker-number">${artworkIndex + 1}</div>
                         </div>
