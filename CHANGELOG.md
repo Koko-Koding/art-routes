@@ -4,6 +4,18 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.11.2] - 2025-07-17
+
+### Changed
+
+- Standardized route length display formatting across all templates (always one decimal place, e.g. "3.2 km")
+- Implemented readable duration formatting for route display (e.g. "2 hours 23 minutes")
+- Improved responsiveness: added minimum height for route editor map on larger screens
+
+### Fixed
+
+- Route length and duration formatting now consistent for all routes and languages
+
 ## [1.11.1] - 2025-07-16
 
 ### Added
