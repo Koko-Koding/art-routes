@@ -332,7 +332,9 @@ function wp_art_routes_append_map_to_route_content($content) {
         <div class="art-route-details">
             <div class="route-meta">
                 <?php if (!empty($route_data['length'])) : ?>
-                    <span class="route-length"><?php echo esc_html($route_data['length']); ?> km</span>
+                    <span class="route-length">
+                        <?php echo number_format(round(floatval($route_data['length']), 1), 1); ?> km
+                    </span>
                 <?php endif; ?>
                 
                 <?php if (!empty($route_data['duration'])) : ?>

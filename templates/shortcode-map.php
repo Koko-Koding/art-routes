@@ -55,7 +55,9 @@ $js_data = [
     <div class="art-route-details">
         <div class="route-meta">
             <?php if (!empty($route['length'])) : ?>
-                <span class="route-length"><?php echo esc_html($route['length']); ?> km</span>
+                <span class="route-length">
+                    <?php echo round(floatval($route['length']), 1); ?> km
+                </span>
             <?php endif; ?>
             
             <?php if (!empty($route['duration'])) : ?>

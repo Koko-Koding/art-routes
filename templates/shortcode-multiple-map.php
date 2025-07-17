@@ -126,7 +126,7 @@ $map_id = 'art-routes-map-' . uniqid();
                             <?php if (!empty($route['length'])): ?>
                                 <span class="route-length">
                                     <span class="dashicons dashicons-location"></span>
-                                    <?php echo esc_html($route['length']); ?> km
+                                    <?php echo number_format(round(floatval($route['length']), 1), 1); ?> km
                                 </span>
                             <?php endif; ?>
                             
