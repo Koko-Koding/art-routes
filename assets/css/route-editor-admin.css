@@ -109,6 +109,12 @@
     border-radius: 3px;
 }
 
+@media screen and (min-width: 768px) {
+    #route-editor-map {
+        min-height: 520px;
+    }
+}
+
 .route-editor-footer {
     margin-top: 20px;
     display: flex;
