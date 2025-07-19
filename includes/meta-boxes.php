@@ -424,47 +424,87 @@ function wp_art_routes_render_artwork_artists_meta_box($post) {
  */
 function wp_art_routes_render_info_point_icon_meta_box($post) {
     wp_nonce_field('save_info_point_icon', 'info_point_icon_nonce');
-    $icon_url = get_post_meta($post->ID, '_info_point_icon_url', true);
+    
+    // Get the currently selected icon
+    $selected_icon = get_post_meta($post->ID, '_info_point_icon', true);
+    
+    // Get available SVG icons from the assets/icons directory
+    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
+    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+    $available_icons = [];
+    
+    if (is_dir($icons_dir)) {
+        $files = scandir($icons_dir);
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
+                $available_icons[] = $file;
+            }
+        }
+        sort($available_icons);
+    }
+    
     ?>
     <div id="info-point-icon-meta-box">
-        <div style="margin-bottom:8px;">
-            <img id="info-point-icon-preview" src="<?php echo esc_url($icon_url); ?>" style="max-width:100%;max-height:80px;<?php echo $icon_url ? '' : 'display:none;'; ?>border:1px solid #ccc;" />
+        <p>
+            <label for="info_point_icon_select">
+                <?php _e('Select Icon:', 'wp-art-routes'); ?>
+            </label>
+        </p>
+        
+        <select id="info_point_icon_select" name="info_point_icon" style="width: 100%;">
+            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
+            <?php foreach ($available_icons as $icon_file) : 
+                $icon_name = pathinfo($icon_file, PATHINFO_FILENAME);
+                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
+                $display_name = ucwords(trim($display_name));
+            ?>
+                <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
+                    <?php echo esc_html($display_name); ?> (<?php echo esc_html($icon_file); ?>)
+                </option>
+            <?php endforeach; ?>
+        </select>
+        
+        <div id="icon-preview-container" style="margin-top: 15px;">
+            <?php if ($selected_icon && in_array($selected_icon, $available_icons)) : ?>
+                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                    <img id="icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>" 
+                         style="width: 40px; height: 40px; object-fit: contain;" 
+                         alt="<?php echo esc_attr($selected_icon); ?>" />
+                </div>
+            <?php else : ?>
+                <div id="icon-preview" style="display: none;">
+                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                    <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                        <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
-        <input type="hidden" id="info_point_icon_url" name="info_point_icon_url" value="<?php echo esc_url($icon_url); ?>" />
-        <button type="button" class="button" id="select-info-point-icon"><?php _e('Select Image', 'wp-art-routes'); ?></button>
-        <button type="button" class="button" id="remove-info-point-icon" style="<?php echo $icon_url ? '' : 'display:none;'; ?>margin-left:8px;">Remove</button>
     </div>
+    
     <script>
     jQuery(document).ready(function($) {
-        let infoPointIconFrame;
-        $('#select-info-point-icon').on('click', function(e) {
-            e.preventDefault();
-            if (infoPointIconFrame) {
-                infoPointIconFrame.open();
-                return;
+        const iconsUrl = '<?php echo esc_js($icons_url); ?>';
+        
+        $('#info_point_icon_select').on('change', function() {
+            const selectedIcon = $(this).val();
+            const $previewContainer = $('#icon-preview');
+            
+            if (selectedIcon) {
+                const iconUrl = iconsUrl + selectedIcon;
+                $previewContainer.show();
+                $previewContainer.find('img').attr('src', iconUrl).attr('alt', selectedIcon);
+            } else {
+                $previewContainer.hide();
             }
-            infoPointIconFrame = wp.media({
-                title: '<?php echo esc_js(__('Select Icon Image', 'wp-art-routes')); ?>',
-                button: { text: '<?php echo esc_js(__('Use this image', 'wp-art-routes')); ?>' },
-                multiple: false
-            });
-            infoPointIconFrame.on('select', function() {
-                const attachment = infoPointIconFrame.state().get('selection').first().toJSON();
-                $('#info-point-icon-preview').attr('src', attachment.url).show();
-                $('#info_point_icon_url').val(attachment.url);
-                $('#remove-info-point-icon').show();
-            });
-            infoPointIconFrame.open();
-        });
-        $('#remove-info-point-icon').on('click', function(e) {
-            e.preventDefault();
-            $('#info-point-icon-preview').attr('src', '').hide();
-            $('#info_point_icon_url').val('');
-            $(this).hide();
         });
     });
     </script>
-    <p class="description"><?php _e('Select an icon image for this information point. This will be shown on the map if set.', 'wp-art-routes'); ?></p>
+    
+    <p class="description">
+        <?php _e('Select an icon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
+    </p>
     <?php
 }
 
@@ -643,12 +683,14 @@ function wp_art_routes_save_info_point_icon($post_id) {
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
-    if (isset($_POST['info_point_icon_url'])) {
-        $icon_url = esc_url_raw($_POST['info_point_icon_url']);
-        if ($icon_url) {
-            update_post_meta($post_id, '_info_point_icon_url', $icon_url);
+    
+    // Save the selected icon filename
+    if (isset($_POST['info_point_icon'])) {
+        $selected_icon = sanitize_text_field($_POST['info_point_icon']);
+        if (!empty($selected_icon)) {
+            update_post_meta($post_id, '_info_point_icon', $selected_icon);
         } else {
-            delete_post_meta($post_id, '_info_point_icon_url');
+            delete_post_meta($post_id, '_info_point_icon');
         }
     }
 }

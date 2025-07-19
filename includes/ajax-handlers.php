@@ -183,6 +183,7 @@ function wp_ajax_save_route_points() {
                 $post_type = get_post_type($point_id);
                 if ($post_type === 'information_point') {
                     if ($icon_url) {
+                        // For backward compatibility, still save icon_url if provided
                         update_post_meta($point_id, '_info_point_icon_url', $icon_url);
                     } else {
                         delete_post_meta($point_id, '_info_point_icon_url');
@@ -307,7 +308,25 @@ function wp_art_routes_get_associated_points($route_id) {
     foreach ($info_point_posts as $info_post) {
         $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
-        $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
+        
+        // Get icon information - prefer new icon field, fallback to old icon_url, then default
+        $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
+        $icon_url = '';
+        
+        if (!empty($icon_filename)) {
+            // Build URL from filename
+            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+            $icon_url = $icons_url . $icon_filename;
+        } else {
+            // Fallback to old icon_url field for backward compatibility
+            $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
+            
+            // If still no icon, use default
+            if (empty($icon_url)) {
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . 'WB plattegrond-Informatie.svg';
+            }
+        }
 
         if (is_numeric($latitude) && is_numeric($longitude)) {
             $point_data = [

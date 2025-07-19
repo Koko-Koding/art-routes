@@ -378,9 +378,18 @@ $map_id = 'art-routes-map-' . uniqid();
         if (routesData.information_points && routesData.information_points.length > 0) {
             routesData.information_points.forEach(function(infoPoint) {
                 // Create a custom information point marker
+                let iconHtml = '<div class="info-point-marker-inner">i</div>';
+                
+                // Use custom SVG icon if available
+                if (infoPoint.icon_url) {
+                    iconHtml = `<div class="info-point-marker-inner" style="background: none; position: relative;">
+                        <div style="width: 100%; height: 100%; background: url('${infoPoint.icon_url}') center center / contain no-repeat; border-radius: 50%; border: 2px solid #ffc107;"></div>
+                    </div>`;
+                }
+                
                 const infoPointIcon = L.divIcon({
                     className: 'info-point-marker',
-                    html: '<div class="info-point-marker-inner">i</div>',
+                    html: iconHtml,
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 });

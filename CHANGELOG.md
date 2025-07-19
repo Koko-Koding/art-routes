@@ -4,6 +4,23 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.13.0] - 2025-07-19
+
+### Enhanced
+
+- **Improved Information Point Icon Selection**: Replaced the media picker with a dropdown selector for SVG icons from the assets/icons directory
+- **Default Icon Support**: Information points now automatically use "WB plattegrond-Informatie.svg" as the default icon when no custom icon is selected
+- **Better User Experience**: Icon selector shows cleaned-up display names (e.g., "Start" instead of "WB plattegrond-Start.svg") with live preview functionality
+- **Backward Compatibility**: Maintains full compatibility with existing information points that use the old icon_url field
+- **Consistent Icon Display**: All information points now display meaningful icons on maps instead of falling back to generic markers
+
+### Technical Details
+
+- Added new `_info_point_icon` meta field to store icon filenames
+- Updated REST API to compute full icon URLs from filenames with fallback to default icon
+- Enhanced template functions and AJAX handlers to support both new and legacy icon fields
+- Improved map rendering to use custom SVG icons for information points across all map views
+
 ## [1.12.0] - 2025-07-17
 
 ### Changed

@@ -145,6 +145,17 @@ function wp_art_routes_register_information_point_meta() {
             return current_user_can('edit_posts');
         },
     ]);
+    // Register the new icon field (filename instead of URL)
+    register_post_meta('information_point', '_info_point_icon', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    // Keep the old field for backward compatibility during transition
     register_post_meta('information_point', '_info_point_icon_url', [
         'type' => 'string',
         'single' => true,
@@ -251,12 +262,37 @@ function wp_art_routes_register_information_point_rest_fields() {
         ],
     ]);
 
-    register_rest_field('information_point', 'icon_url', [
+    // New icon field (filename)
+    register_rest_field('information_point', 'icon', [
         'get_callback' => function($post) {
-            return get_post_meta($post['id'], '_info_point_icon_url', true);
+            return get_post_meta($post['id'], '_info_point_icon', true);
         },
         'update_callback' => function($value, $post) {
-            return update_post_meta($post->ID, '_info_point_icon_url', esc_url_raw($value));
+            return update_post_meta($post->ID, '_info_point_icon', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Information point icon filename', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    // Icon URL (computed from filename)
+    register_rest_field('information_point', 'icon_url', [
+        'get_callback' => function($post) {
+            $icon_filename = get_post_meta($post['id'], '_info_point_icon', true);
+            if (!empty($icon_filename)) {
+                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+                return $icons_url . $icon_filename;
+            }
+            // Fallback to old icon_url field for backward compatibility
+            $old_icon_url = get_post_meta($post['id'], '_info_point_icon_url', true);
+            if (!empty($old_icon_url)) {
+                return $old_icon_url;
+            }
+            // Default icon if no icon is set
+            $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+            return $icons_url . 'WB plattegrond-Informatie.svg';
         },
         'schema' => [
             'description' => __('Information point icon URL', 'wp-art-routes'),

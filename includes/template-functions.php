@@ -210,6 +210,25 @@ function wp_art_routes_get_all_information_points() {
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
+            // Get icon information - prefer new icon field, fallback to old icon_url, then default
+            $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
+            $icon_url = '';
+            
+            if (!empty($icon_filename)) {
+                // Build URL from filename
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . $icon_filename;
+            } else {
+                // Fallback to old icon_url field for backward compatibility
+                $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
+                
+                // If still no icon, use default
+                if (empty($icon_url)) {
+                    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                    $icon_url = $icons_url . 'WB plattegrond-Informatie.svg';
+                }
+            }
+            
             $info_points[] = [
                 'id' => $info_post->ID,
                 'title' => $info_post->post_title,
@@ -218,7 +237,7 @@ function wp_art_routes_get_all_information_points() {
                 'permalink' => get_permalink($info_post->ID), // Link to the info point post itself
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
-                'icon_url' => get_post_meta($info_post->ID, '_info_point_icon_url', true), // Custom icon URL
+                'icon_url' => $icon_url, // Support both new icon field and old icon_url field
             ];
         }
     }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Laag_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 150 150">
+  <!-- Generator: Adobe Illustrator 29.5.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 141)  -->
+  <defs>
+    <clipPath id="clippath">
+      <rect width="150" height="150" fill="none"/>
+    </clipPath>
+    <clipPath id="clippath-1">
+      <rect width="150" height="150" fill="none"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#clippath)">
+    <g clip-path="url(#clippath-1)">
+      <path d="M75,150c41.4,0,75-33.6,75-75S116.4,0,75,0,0,33.6,0,75s33.6,75,75,75" fill="#ffdf44"/>
+    </g>
+    <text transform="translate(46.8 109.5)" fill="#303f56" font-family="Goldplay-Bold, Goldplay" font-size="99.7" font-weight="700"><tspan x="0" y="0">2</tspan></text>
+  </g>
+</svg>
