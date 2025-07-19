@@ -4,6 +4,11 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.13.1] - 2025-07-19
+
+### Fixed
+- Minor CSS and JS improvements for map display and marker rendering. Patch release for bugfixes and style tweaks.
+
 ## [1.13.0] - 2025-07-19
 
 ### Enhanced
