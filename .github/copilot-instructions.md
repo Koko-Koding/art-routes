@@ -17,3 +17,19 @@ Whenever you make changes to the plugin, make sure to
 3. Update the `README.md` file accordingly.
 4. Update the translation files in the `languages` directory if necessary.
 5. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `vX.Y.Z`.
+
+## GitHub CLI & Repository
+
+You can use the GitHub CLI to manage your repository and perform various tasks directly from the command line.
+
+For example, you can manage issues for the current repository by using the following command:
+
+```bash
+gh issue list
+```
+
+You can also create a new issue with the following command:
+
+```bash
+gh issue create --title "Issue Title" --body "Description of the issue"
+```
