@@ -780,15 +780,22 @@
 }
 
 .map-controls-title::before {
-    content: "⚙️";
-    margin-right: 8px;
+    content: "";
+    display: inline-block;
+    font-family: dashicons;
     font-size: 18px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    content: "\f111";
+    color: #666;
 }
 
 .map-controls-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
+    margin-bottom: 20px;
 }
 
 .map-control-item {
@@ -827,6 +834,54 @@
     flex: 1;
 }
 
+/* Navigation buttons */
+.map-navigation-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+}
+
+.map-nav-button {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border: 2px solid #007cba;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: #007cba;
+}
+
+.map-nav-button:hover {
+    background: #007cba;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 124, 186, 0.2);
+}
+
+.map-nav-button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 124, 186, 0.2);
+}
+
+.map-nav-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.map-nav-button:disabled:hover {
+    background: white;
+    color: #007cba;
+}
+
 /* Checked state styling */
 .map-control-item:has(input[type="checkbox"]:checked) {
     border-color: #3388FF;
@@ -842,9 +897,17 @@
     .map-controls-grid {
         grid-template-columns: 1fr;
         gap: 8px;
+        margin-bottom: 16px;
     }
     
-    .map-control-item {
+    .map-navigation-buttons {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding-top: 16px;
+    }
+    
+    .map-control-item,
+    .map-nav-button {
         padding: 10px 14px;
     }
     

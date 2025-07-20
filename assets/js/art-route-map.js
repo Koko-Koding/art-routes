@@ -861,122 +861,129 @@
 			toggleUserLocationVisibility(this.checked);
 			updateControlItemState(this);
 		});
+
+		// Navigation buttons
+		$("#go-to-my-location").on("click", () => {
+			goToUserLocation();
+		});
+
+		$("#go-to-route").on("click", () => {
+			goToRoute();
+		});
 	}
 
 	/**
-	 * Update control item visual state for browsers that don't support :has()
+	 * Navigate to user's current location
 	 */
-	function updateControlItemState(checkbox) {
-		const controlItem = $(checkbox).closest(".map-control-item");
-		if (checkbox.checked) {
-			controlItem.addClass("checked");
+	function goToUserLocation() {
+		const button = $("#go-to-my-location");
+
+		if (userPosition) {
+			// User location is already available, just center on it
+			map.setView(userPosition, 18);
 		} else {
-			controlItem.removeClass("checked");
+			// Need to get user location first
+			button
+				.prop("disabled", true)
+				.find(".map-control-label")
+				.text(artRouteData.i18n.gettingLocation || "Getting location...");
+
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					(position) => {
+						const lat = position.coords.latitude;
+						const lng = position.coords.longitude;
+
+						// Center map on user location
+						map.setView([lat, lng], 18);
+
+						// Reset button
+						button
+							.prop("disabled", false)
+							.find(".map-control-label")
+							.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+					},
+					(error) => {
+						// Handle error
+						button
+							.prop("disabled", false)
+							.find(".map-control-label")
+							.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+
+						let errorMessage =
+							artRouteData.i18n.locationError || "Could not get your location";
+						switch (error.code) {
+							case error.PERMISSION_DENIED:
+								errorMessage =
+									artRouteData.i18n.locationPermissionDenied ||
+									"Location access denied. Please allow location access in your browser.";
+								break;
+							case error.POSITION_UNAVAILABLE:
+								errorMessage =
+									artRouteData.i18n.locationUnavailable ||
+									"Location information is unavailable.";
+								break;
+							case error.TIMEOUT:
+								errorMessage =
+									artRouteData.i18n.locationTimeout ||
+									"Location request timed out.";
+								break;
+						}
+
+						alert(errorMessage);
+					},
+					{
+						enableHighAccuracy: true,
+						timeout: 10000,
+						maximumAge: 60000,
+					},
+				);
+			} else {
+				// Geolocation not supported
+				button
+					.prop("disabled", false)
+					.find(".map-control-label")
+					.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+				alert(
+					artRouteData.i18n.geolocationNotSupported ||
+						"Geolocation is not supported by this browser.",
+				);
+			}
 		}
 	}
 
 	/**
-	 * Toggle artwork markers visibility
+	 * Navigate to route bounds
 	 */
-	function toggleArtworkVisibility(visible) {
-		artworkMarkers.forEach((markerData) => {
-			if (visible) {
-				if (!map.hasLayer(markerData.marker)) {
-					map.addLayer(markerData.marker);
+	function goToRoute() {
+		if (
+			routeLayer &&
+			routeLayer.getBounds &&
+			routeLayer.getBounds().isValid()
+		) {
+			// Fit the map to the route bounds with animation
+			map.flyToBounds(routeLayer.getBounds(), {
+				padding: [50, 50],
+				duration: 0.8,
+				maxZoom: 16,
+			});
+		} else if (routePath && routePath.length > 0) {
+			// Fallback: create bounds from route path points
+			const bounds = L.latLngBounds();
+			routePath.forEach((point) => {
+				if (Array.isArray(point)) {
+					bounds.extend([point[0], point[1]]);
+				} else if (point.lat && point.lng) {
+					bounds.extend([point.lat, point.lng]);
 				}
-			} else {
-				if (map.hasLayer(markerData.marker)) {
-					map.removeLayer(markerData.marker);
-					// Also close any open popups for this marker
-					if (markerData.popup && map.hasLayer(markerData.popup)) {
-						map.closePopup(markerData.popup);
-					}
-				}
-			}
-		});
-	}
+			});
 
-	/**
-	 * Toggle information point markers visibility
-	 */
-	function toggleInfoPointVisibility(visible) {
-		infoPointMarkers.forEach((markerData) => {
-			if (visible) {
-				if (!map.hasLayer(markerData.marker)) {
-					map.addLayer(markerData.marker);
-				}
-			} else {
-				if (map.hasLayer(markerData.marker)) {
-					map.removeLayer(markerData.marker);
-					// Also close any open popups for this marker
-					if (markerData.popup && map.hasLayer(markerData.popup)) {
-						map.closePopup(markerData.popup);
-					}
-				}
-			}
-		});
-	}
-
-	/**
-	 * Toggle route and route-related elements visibility
-	 */
-	function toggleRouteVisibility(visible) {
-		// Toggle main route layer
-		if (routeLayer) {
-			if (visible) {
-				if (!map.hasLayer(routeLayer)) {
-					map.addLayer(routeLayer);
-				}
-			} else {
-				if (map.hasLayer(routeLayer)) {
-					map.removeLayer(routeLayer);
-				}
-			}
-		}
-
-		// Toggle completed route layer
-		if (completedRouteLayer) {
-			if (visible && showCompletedRoute) {
-				if (!map.hasLayer(completedRouteLayer)) {
-					map.addLayer(completedRouteLayer);
-				}
-			} else {
-				if (map.hasLayer(completedRouteLayer)) {
-					map.removeLayer(completedRouteLayer);
-				}
-			}
-		}
-
-		// Toggle user-to-route connection line
-		if (userToRouteLayer) {
-			if (visible && showCompletedRoute) {
-				if (!map.hasLayer(userToRouteLayer)) {
-					map.addLayer(userToRouteLayer);
-				}
-			} else {
-				if (map.hasLayer(userToRouteLayer)) {
-					map.removeLayer(userToRouteLayer);
-				}
-			}
-		}
-
-		// Note: Start/end markers and direction arrows are currently added directly to the map
-		// In a future update, we could store references to these markers and toggle them too
-	}
-
-	/**
-	 * Toggle user location marker visibility
-	 */
-	function toggleUserLocationVisibility(visible) {
-		if (userMarker) {
-			if (visible) {
-				if (!map.hasLayer(userMarker)) {
-					map.addLayer(userMarker);
-				}
-			} else {
-				if (map.hasLayer(userMarker)) {
-					map.removeLayer(userMarker);
-				}
+			if (bounds.isValid()) {
+				map.flyToBounds(bounds, {
+					padding: [50, 50],
+					duration: 0.8,
+					maxZoom: 16,
+				});
 			}
 		}
 	}

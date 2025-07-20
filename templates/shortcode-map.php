@@ -43,6 +43,14 @@ $js_data = [
         'artists' => __('Artists', 'wp-art-routes'),
         'startPoint' => __('Start Point', 'wp-art-routes'),
         'endPoint' => __('End Point', 'wp-art-routes'),
+        'goToMyLocation' => __('Go to My Location', 'wp-art-routes'),
+        'goToRoute' => __('Go to Route', 'wp-art-routes'),
+        'gettingLocation' => __('Getting location...', 'wp-art-routes'),
+        'locationError' => __('Could not get your location', 'wp-art-routes'),
+        'locationPermissionDenied' => __('Location access denied. Please allow location access in your browser.', 'wp-art-routes'),
+        'locationUnavailable' => __('Location information is unavailable.', 'wp-art-routes'),
+        'locationTimeout' => __('Location request timed out.', 'wp-art-routes'),
+        'geolocationNotSupported' => __('Geolocation is not supported by this browser.', 'wp-art-routes'),
     ],
 ];
 ?>

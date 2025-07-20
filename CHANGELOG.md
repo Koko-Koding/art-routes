@@ -4,6 +4,31 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.15.1] - 2025-07-20
+
+### Changed
+
+- **Professional Icon System**: Replaced informal emoji icons with WordPress Dashicons for a more professional appearance
+  - Artwork toggle: Changed from 🎨 to `dashicons-art`
+  - Information points toggle: Changed from ℹ️ to `dashicons-info`
+  - Route toggle: Changed from 🛣️ to `dashicons-route`
+  - User location toggle: Changed from 📍 to `dashicons-location`
+  - Navigation buttons: Updated "Go to My Location" (🧭 → `dashicons-location-alt`) and "Go to Route" (🗺️ → `dashicons-admin-site`)
+  - Control panel title: Changed from ⚙️ to `dashicons-admin-generic`
+
+### Enhanced
+
+- **Consistent Visual Design**: All map controls now use WordPress's standard icon system for better integration
+- **Improved Accessibility**: Dashicons provide better contrast and recognition compared to emoji
+- **Professional Appearance**: More suitable for business and organizational websites
+- **Better Browser Compatibility**: Dashicons load reliably across all browsers without emoji font dependencies
+
+### Technical Details
+
+- Updated CSS to properly style Dashicons with appropriate sizing and spacing
+- Maintained all existing functionality while improving visual presentation
+- Enhanced mobile responsiveness with proper icon scaling
+
 ## [1.15.0] - 2025-07-20
 
 ### Added

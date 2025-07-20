@@ -452,6 +452,7 @@ function wp_art_routes_display_map_controls($options = []) {
         'show_info_points' => true,
         'show_route' => true,
         'show_user_location' => true,
+        'show_navigation' => true,
         'artworks_checked' => true,
         'info_points_checked' => true,
         'route_checked' => true,
@@ -464,7 +465,7 @@ function wp_art_routes_display_map_controls($options = []) {
     
     // Don't display if no controls are enabled
     if (!$options['show_artworks'] && !$options['show_info_points'] && 
-        !$options['show_route'] && !$options['show_user_location']) {
+        !$options['show_route'] && !$options['show_user_location'] && !$options['show_navigation']) {
         return;
     }
     
@@ -476,7 +477,7 @@ function wp_art_routes_display_map_controls($options = []) {
             <?php if ($options['show_artworks']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-artworks" <?php checked($options['artworks_checked']); ?>>
-                    <span class="map-control-icon">🎨</span>
+                    <span class="map-control-icon dashicons dashicons-art"></span>
                     <span class="map-control-label"><?php _e('Show Artworks', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
@@ -484,7 +485,7 @@ function wp_art_routes_display_map_controls($options = []) {
             <?php if ($options['show_info_points']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-info-points" <?php checked($options['info_points_checked']); ?>>
-                    <span class="map-control-icon">ℹ️</span>
+                    <span class="map-control-icon dashicons dashicons-info"></span>
                     <span class="map-control-label"><?php _e('Show Information Points', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
@@ -492,7 +493,7 @@ function wp_art_routes_display_map_controls($options = []) {
             <?php if ($options['show_route']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-route" <?php checked($options['route_checked']); ?>>
-                    <span class="map-control-icon">🛣️</span>
+                    <span class="map-control-icon dashicons dashicons-chart-line"></span>
                     <span class="map-control-label"><?php _e('Show Route', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
@@ -500,11 +501,25 @@ function wp_art_routes_display_map_controls($options = []) {
             <?php if ($options['show_user_location']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-user-location" <?php checked($options['user_location_checked']); ?>>
-                    <span class="map-control-icon">📍</span>
+                    <span class="map-control-icon dashicons dashicons-location"></span>
                     <span class="map-control-label"><?php _e('Show My Location', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
         </div>
+        
+        <?php if ($options['show_navigation']) : ?>
+            <div class="map-navigation-buttons">
+                <button type="button" id="go-to-my-location" class="map-nav-button">
+                    <span class="map-control-icon dashicons dashicons-location-alt"></span>
+                    <span class="map-control-label"><?php _e('Go to My Location', 'wp-art-routes'); ?></span>
+                </button>
+                
+                <button type="button" id="go-to-route" class="map-nav-button">
+                    <span class="map-control-icon dashicons dashicons-admin-site"></span>
+                    <span class="map-control-label"><?php _e('Go to Route', 'wp-art-routes'); ?></span>
+                </button>
+            </div>
+        <?php endif; ?>
     </div>
     <?php
 }
