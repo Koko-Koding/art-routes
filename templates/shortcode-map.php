@@ -32,11 +32,17 @@ $js_data = [
     'nonce' => wp_create_nonce('wp_art_routes_nonce'),
     'route_path' => $route['route_path'],
     'artworks' => $route['artworks'],
+    'information_points' => $route['information_points'],
     'show_completed_route' => $route['show_completed_route'],
     'show_artwork_toasts' => $route['show_artwork_toasts'],
     'i18n' => [
         'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
         'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
+        'readMore' => __('Read more', 'wp-art-routes'),
+        'artist' => __('Artist', 'wp-art-routes'),
+        'artists' => __('Artists', 'wp-art-routes'),
+        'startPoint' => __('Start Point', 'wp-art-routes'),
+        'endPoint' => __('End Point', 'wp-art-routes'),
     ],
 ];
 ?>
@@ -84,6 +90,11 @@ $js_data = [
     
     <!-- Map container -->
     <div id="art-route-map" class="art-route-map" <?php echo $container_style; ?>></div>
+    
+    <?php 
+    // Display map controls using the reusable template tag
+    wp_art_routes_display_map_controls(); 
+    ?>
     
     <!-- Loading indicator -->
     <div id="map-loading" class="map-loading" style="display: none;">

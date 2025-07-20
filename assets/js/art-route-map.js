@@ -31,6 +31,14 @@
 	// Flag to indicate whether to show artwork toasts
 	let showArtworkToasts = true;
 
+	// Visibility state for map elements
+	const visibilityState = {
+		artworks: true,
+		infoPoints: true,
+		route: true,
+		userLocation: true,
+	};
+
 	// Initialize the map when the DOM is ready
 	$(document).ready(() => {
 		initMap();
@@ -38,6 +46,9 @@
 		$("body").append(
 			'<div id="art-route-toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"></div>',
 		);
+
+		// Initialize map controls
+		initMapControls();
 	});
 
 	/**
@@ -283,7 +294,9 @@
 						iconSize: [28, 28],
 						iconAnchor: [14, 14],
 					}),
-					zIndexOffset: isStart ? markerDisplayOrder.ROUTE_START : markerDisplayOrder.ROUTE_END,
+					zIndexOffset: isStart
+						? markerDisplayOrder.ROUTE_START
+						: markerDisplayOrder.ROUTE_END,
 				}).addTo(map);
 				let popupHtml =
 					'<div class="route-point-popup-container"><div class="route-point-popup-content">';
@@ -418,9 +431,7 @@
 			htmlFn: (artwork) => {
 				// Use artwork number if available, otherwise fall back to index + 1
 				const displayNumber =
-					artwork.number && artwork.number.trim() !== ""
-						? artwork.number
-						: -1;
+					artwork.number && artwork.number.trim() !== "" ? artwork.number : -1;
 
 				// Check if artwork has a custom icon
 				if (artwork.icon_url && artwork.icon_url.trim() !== "") {
@@ -786,7 +797,7 @@
 					showArtworkDetails(item.artwork);
 				}
 
-				// Save visited status
+				// Save
 				saveVisitedArtwork(item.artwork.id);
 			}
 		});
@@ -818,4 +829,155 @@
 			navigator.geolocation.clearWatch(watchId);
 		}
 	});
+
+	/**
+	 * Initialize map controls for toggling visibility
+	 */
+	function initMapControls() {
+		// Toggle artworks visibility
+		$("#toggle-artworks").on("change", function () {
+			visibilityState.artworks = this.checked;
+			toggleArtworkVisibility(this.checked);
+			updateControlItemState(this);
+		});
+
+		// Toggle info points visibility
+		$("#toggle-info-points").on("change", function () {
+			visibilityState.infoPoints = this.checked;
+			toggleInfoPointVisibility(this.checked);
+			updateControlItemState(this);
+		});
+
+		// Toggle route visibility
+		$("#toggle-route").on("change", function () {
+			visibilityState.route = this.checked;
+			toggleRouteVisibility(this.checked);
+			updateControlItemState(this);
+		});
+
+		// Toggle user location visibility
+		$("#toggle-user-location").on("change", function () {
+			visibilityState.userLocation = this.checked;
+			toggleUserLocationVisibility(this.checked);
+			updateControlItemState(this);
+		});
+	}
+
+	/**
+	 * Update control item visual state for browsers that don't support :has()
+	 */
+	function updateControlItemState(checkbox) {
+		const controlItem = $(checkbox).closest(".map-control-item");
+		if (checkbox.checked) {
+			controlItem.addClass("checked");
+		} else {
+			controlItem.removeClass("checked");
+		}
+	}
+
+	/**
+	 * Toggle artwork markers visibility
+	 */
+	function toggleArtworkVisibility(visible) {
+		artworkMarkers.forEach((markerData) => {
+			if (visible) {
+				if (!map.hasLayer(markerData.marker)) {
+					map.addLayer(markerData.marker);
+				}
+			} else {
+				if (map.hasLayer(markerData.marker)) {
+					map.removeLayer(markerData.marker);
+					// Also close any open popups for this marker
+					if (markerData.popup && map.hasLayer(markerData.popup)) {
+						map.closePopup(markerData.popup);
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Toggle information point markers visibility
+	 */
+	function toggleInfoPointVisibility(visible) {
+		infoPointMarkers.forEach((markerData) => {
+			if (visible) {
+				if (!map.hasLayer(markerData.marker)) {
+					map.addLayer(markerData.marker);
+				}
+			} else {
+				if (map.hasLayer(markerData.marker)) {
+					map.removeLayer(markerData.marker);
+					// Also close any open popups for this marker
+					if (markerData.popup && map.hasLayer(markerData.popup)) {
+						map.closePopup(markerData.popup);
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Toggle route and route-related elements visibility
+	 */
+	function toggleRouteVisibility(visible) {
+		// Toggle main route layer
+		if (routeLayer) {
+			if (visible) {
+				if (!map.hasLayer(routeLayer)) {
+					map.addLayer(routeLayer);
+				}
+			} else {
+				if (map.hasLayer(routeLayer)) {
+					map.removeLayer(routeLayer);
+				}
+			}
+		}
+
+		// Toggle completed route layer
+		if (completedRouteLayer) {
+			if (visible && showCompletedRoute) {
+				if (!map.hasLayer(completedRouteLayer)) {
+					map.addLayer(completedRouteLayer);
+				}
+			} else {
+				if (map.hasLayer(completedRouteLayer)) {
+					map.removeLayer(completedRouteLayer);
+				}
+			}
+		}
+
+		// Toggle user-to-route connection line
+		if (userToRouteLayer) {
+			if (visible && showCompletedRoute) {
+				if (!map.hasLayer(userToRouteLayer)) {
+					map.addLayer(userToRouteLayer);
+				}
+			} else {
+				if (map.hasLayer(userToRouteLayer)) {
+					map.removeLayer(userToRouteLayer);
+				}
+			}
+		}
+
+		// Note: Start/end markers and direction arrows are currently added directly to the map
+		// In a future update, we could store references to these markers and toggle them too
+	}
+
+	/**
+	 * Toggle user location marker visibility
+	 */
+	function toggleUserLocationVisibility(visible) {
+		if (userMarker) {
+			if (visible) {
+				if (!map.hasLayer(userMarker)) {
+					map.addLayer(userMarker);
+				}
+			} else {
+				if (map.hasLayer(userMarker)) {
+					map.removeLayer(userMarker);
+				}
+			}
+		}
+	}
 })(jQuery);

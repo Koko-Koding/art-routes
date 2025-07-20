@@ -428,3 +428,43 @@ msgstr ""
 #: templates/shortcode-multiple-map.php:346
 msgid "Show All Routes"
 msgstr ""
+
+#: templates/shortcode-map.php:89
+msgid "Map Display Options"
+msgstr ""
+
+#: templates/shortcode-map.php:92
+msgid "Show Artworks"
+msgstr ""
+
+#: templates/shortcode-map.php:97
+msgid "Show Information Points"
+msgstr ""
+
+#: templates/shortcode-map.php:102
+msgid "Show Route"
+msgstr ""
+
+#: templates/shortcode-map.php:107
+msgid "Show My Location"
+msgstr ""
+
+#: templates/shortcode-map.php:40
+msgid "Read more"
+msgstr ""
+
+#: templates/shortcode-map.php:41
+msgid "Artist"
+msgstr ""
+
+#: templates/shortcode-map.php:42
+msgid "Artists"
+msgstr ""
+
+#: templates/shortcode-map.php:43
+msgid "Start Point"
+msgstr ""
+
+#: templates/shortcode-map.php:44
+msgid "End Point"
+msgstr ""

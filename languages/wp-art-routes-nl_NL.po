@@ -465,3 +465,43 @@ msgstr "Locatie op Kaart"
 #: templates/shortcode-multiple-map.php:346
 msgid "Show All Routes"
 msgstr "Toon Alle Routes"
+
+#: templates/shortcode-map.php:89
+msgid "Map Display Options"
+msgstr "Kaart Weergave Opties"
+
+#: templates/shortcode-map.php:92
+msgid "Show Artworks"
+msgstr "Toon Kunstwerken"
+
+#: templates/shortcode-map.php:97
+msgid "Show Information Points"
+msgstr "Toon Informatiepunten"
+
+#: templates/shortcode-map.php:102
+msgid "Show Route"
+msgstr "Toon Route"
+
+#: templates/shortcode-map.php:107
+msgid "Show My Location"
+msgstr "Toon Mijn Locatie"
+
+#: templates/shortcode-map.php:40
+msgid "Read more"
+msgstr "Lees meer"
+
+#: templates/shortcode-map.php:41
+msgid "Artist"
+msgstr "Kunstenaar"
+
+#: templates/shortcode-map.php:42
+msgid "Artists"
+msgstr "Kunstenaars"
+
+#: templates/shortcode-map.php:43
+msgid "Start Point"
+msgstr "Startpunt"
+
+#: templates/shortcode-map.php:44
+msgid "End Point"
+msgstr "Eindpunt"

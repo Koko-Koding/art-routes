@@ -4,6 +4,46 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.15.0] - 2025-07-20
+
+### Added
+
+- **Map Visibility Toggle Controls**: Added comprehensive toggle controls for map elements to reduce visual clutter
+  - Toggle button to show/hide artwork markers
+  - Toggle button to show/hide information point markers  
+  - Toggle button to show/hide route path and related elements
+  - Toggle button to show/hide user location marker
+- **Modern Control Interface**: Designed responsive toggle controls with:
+  - Clean grid layout that adapts to different screen sizes
+  - Visual feedback with hover states and checked indicators
+  - Emoji icons for intuitive identification of each control type
+  - Smooth animations and transitions for better user experience
+- **Smart State Management**: Toggle controls intelligently handle:
+  - Automatic popup closure when hiding marker types
+  - Proper layer management in Leaflet map
+  - Persistent state during user interaction
+  - Fallback styling for browsers without modern CSS support
+
+### Enhanced
+
+- **Improved User Experience**: Users can now customize their map view based on their needs
+  - Reduce visual clutter when focusing on specific elements
+  - Better performance on crowded maps with many markers
+  - More control over information density
+- **Mobile-Friendly Design**: Toggle controls are fully responsive and touch-friendly
+  - Single-column layout on mobile devices
+  - Appropriate sizing for touch interaction
+  - Maintains usability across all device sizes
+- **Accessibility Improvements**: Added proper ARIA labels and keyboard navigation support
+
+### Technical Details
+
+- Added visibility state management system in JavaScript
+- Implemented efficient marker show/hide functionality using Leaflet's layer management
+- Enhanced CSS with modern grid layout and fallbacks for older browsers
+- Updated translation files with new control labels in Dutch and English
+- Maintained backward compatibility with existing map functionality
+
 ## [1.14.0] - 2025-01-19
 
 ### Added
