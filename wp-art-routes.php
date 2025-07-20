@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Plugin Name: WP Art Routes
  * Plugin URI: https://example.com/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress
- * Version: 1.13.1
+ * Version: 1.13.2
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://example.com
  * License: GPL v2 or later
@@ -18,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', '1.13.1');
+define('WP_ART_ROUTES_VERSION', '1.13.2');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -26,7 +27,8 @@ define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
 /**
  * Load plugin text domain for translations
  */
-function wp_art_routes_load_textdomain() {
+function wp_art_routes_load_textdomain()
+{
     load_plugin_textdomain(
         'wp-art-routes',
         false,
@@ -47,11 +49,12 @@ require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/settings.php';
 /**
  * Activation hook
  */
-function wp_art_routes_activate() {
+function wp_art_routes_activate()
+{
     // Trigger our function that registers the custom post types
     require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/post-types.php';
     wp_art_routes_register_post_types();
-    
+
     // Clear the permalinks after the post types have been registered
     flush_rewrite_rules();
 }
@@ -60,11 +63,12 @@ register_activation_hook(__FILE__, 'wp_art_routes_activate');
 /**
  * Deactivation hook
  */
-function wp_art_routes_deactivate() {
+function wp_art_routes_deactivate()
+{
     // Unregister the post types so the rules are no longer in memory
     unregister_post_type('art_route');
     unregister_post_type('artwork');
-    
+
     // Clear the permalinks
     flush_rewrite_rules();
 }

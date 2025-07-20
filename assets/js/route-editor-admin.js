@@ -20,6 +20,9 @@
 	// Store references to route point markers for easy updating/removal
 	let routePointMarkers = [];
 
+	// Debouncing for updateRouteInfo to prevent rapid multiple calls
+	let updateRouteInfoTimeout = null;
+
 	// Localized data from PHP
 	const ajaxUrl = routeEditorData.ajax_url;
 	const routeId = routeEditorData.route_id;
@@ -160,6 +163,25 @@
 		$("#save-status").text("");
 		$("#adding-point-info").hide();
 		$(".route-editor-controls button").removeClass("active");
+
+		// Clear any pending timeouts
+		if (updateRouteInfoTimeout) {
+			clearTimeout(updateRouteInfoTimeout);
+			updateRouteInfoTimeout = null;
+		}
+
+		// Clean up route point markers with their timeouts
+		routePointMarkers.forEach((marker) => {
+			if (marker && editorMap && editorMap.hasLayer(marker)) {
+				// Clear any pending timeouts/event handlers
+				if (marker._setupTimeout) {
+					clearTimeout(marker._setupTimeout);
+				}
+				editorMap.removeLayer(marker);
+			}
+		});
+		routePointMarkers = [];
+
 		if (editorMap) {
 			drawingLayer.setLatLngs([]);
 			artworkLayer.clearLayers();
@@ -250,7 +272,21 @@
 
 		switch (currentMode) {
 			case "draw":
-				// Add point to route path
+				// Add point to route path - but check for duplicates first
+				const lastPoint = routePoints[routePoints.length - 1];
+				const tolerance = 0.00001; // Small tolerance for coordinate comparison
+
+				if (lastPoint) {
+					const lastLat = lastPoint.lat !== undefined ? lastPoint.lat : lastPoint[0];
+					const lastLng = lastPoint.lng !== undefined ? lastPoint.lng : lastPoint[1];
+
+					// Check if the new point is too close to the last point
+					if (Math.abs(lat - lastLat) < tolerance && Math.abs(lng - lastLng) < tolerance) {
+						console.log("Ignoring duplicate route point at same location");
+						return; // Don't add duplicate point
+					}
+				}
+
 				routePoints.push([lat, lng]);
 				drawingLayer.addLatLng([lat, lng]);
 				updateRouteInfo();
@@ -562,7 +598,7 @@
 					$("#save-status")
 						.text(
 							i18n.errorSavingPoints +
-								(response.data.message ? `: ${response.data.message}` : ""),
+							(response.data.message ? `: ${response.data.message}` : ""),
 						)
 						.css("color", "red");
 				}
@@ -601,7 +637,7 @@
 
 		// Default to walking speed if route type not specified or unknown
 		const speed = speeds[routeType] || speeds['walking'];
-		
+
 		// Calculate duration in hours, then convert to minutes
 		const durationHours = distanceKm / speed;
 		const durationMinutes = Math.round(durationHours * 60);
@@ -618,11 +654,11 @@
 		const distance = calculateRouteLength();
 		const routeTypeField = $("#route_type");
 		const durationField = $("#route_duration");
-		
+
 		if (distance > 0 && routeTypeField.length && durationField.length) {
 			const routeType = routeTypeField.val();
 			const estimatedDuration = calculateEstimatedDuration(distance, routeType);
-			
+
 			// Only update if the duration field is empty or if it's being calculated automatically
 			const currentDuration = durationField.val();
 			if (!currentDuration || currentDuration == 0) {
@@ -670,9 +706,25 @@
 	}
 
 	/**
-	 * Update the route information display (counts, distance)
+	 * Update the route information display (counts, distance) with debouncing
 	 */
 	function updateRouteInfo() {
+		// Clear any pending update
+		if (updateRouteInfoTimeout) {
+			clearTimeout(updateRouteInfoTimeout);
+		}
+
+		// Schedule the actual update with a small delay to debounce rapid calls
+		updateRouteInfoTimeout = setTimeout(() => {
+			updateRouteInfoTimeout = null;
+			doUpdateRouteInfo();
+		}, 10);
+	}
+
+	/**
+	 * Perform the actual route information update
+	 */
+	function doUpdateRouteInfo() {
 		// Route path points
 		$("#point-count").text(routePoints.length);
 		const distance = calculateRouteLength();
@@ -707,17 +759,27 @@
 	 * Draw draggable markers for each route path point
 	 */
 	function drawRoutePointMarkers() {
-		// Remove old markers
-		routePointMarkers.forEach((marker) => editorMap.removeLayer(marker));
+		// Remove old markers more thoroughly
+		routePointMarkers.forEach((marker) => {
+			if (marker && editorMap.hasLayer(marker)) {
+				// Clear any pending timeouts/event handlers
+				if (marker._setupTimeout) {
+					clearTimeout(marker._setupTimeout);
+				}
+				editorMap.removeLayer(marker);
+			}
+		});
 		routePointMarkers = [];
+
 		if (!routePoints || routePoints.length === 0) return;
+
 		routePoints.forEach((pt, idx) => {
 			// Support new metadata: is_start, is_end, notes
 			const pointObj =
 				typeof pt === "object" &&
-				pt !== null &&
-				pt.lat !== undefined &&
-				pt.lng !== undefined
+					pt !== null &&
+					pt.lat !== undefined &&
+					pt.lng !== undefined
 					? pt
 					: { lat: pt[0], lng: pt[1] };
 			// Visual indicator for start/end
@@ -762,6 +824,8 @@
 				draggable: true,
 			}).addTo(editorMap);
 			marker._routeIdx = idx;
+			marker._markerId = `route-point-${idx}-${Date.now()}`; // Unique identifier
+
 			// Drag handler
 			marker.on("drag", (e) => {
 				const newLatLng = e.target.getLatLng();
@@ -784,8 +848,13 @@
 			marker.on("dragend", (e) => {
 				$("#save-status").text("Unsaved changes").css("color", "orange");
 			});
-			// Delete button handler
-			setTimeout(() => {
+
+			// Store the timeout reference for cleanup
+			marker._setupTimeout = setTimeout(() => {
+				// Clear the reference since we're now executing
+				marker._setupTimeout = null;
+
+				// Delete button handler
 				const btn =
 					marker._icon && marker._icon.querySelector(".route-point-delete-btn");
 				if (btn) {
@@ -794,7 +863,7 @@
 						if (routePoints.length <= 2) {
 							alert(
 								i18n.cannotDeleteLastPoints ||
-									"A route must have at least two points.",
+								"A route must have at least two points.",
 							);
 							return;
 						}
@@ -888,7 +957,7 @@
 		}
 
 		drawingLayer.setLatLngs(routePoints.map((pt) => [pt.lat, pt.lng]));
-		
+
 		updateRouteInfo();
 		drawRoutePointMarkers();
 	}
@@ -929,7 +998,7 @@
 					console.error("Error loading points:", response.data.message);
 					alert(
 						i18n.errorLoadingPoints +
-							(response.data.message ? `: ${response.data.message}` : ""),
+						(response.data.message ? `: ${response.data.message}` : ""),
 					);
 					// Fallback if loading points fails: attempt geolocation
 					if (editorMap) {

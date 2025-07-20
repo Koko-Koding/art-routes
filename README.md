@@ -156,6 +156,7 @@ This plugin is licensed under the GPL v2 or later.
 The display order of map markers (which markers appear on top) is now centrally managed in the plugin’s JavaScript. All marker types use the `markerDisplayOrder` object in `assets/js/art-route-map.js` to set their stacking order via Leaflet’s `zIndexOffset` property.
 
 **Default order (top to bottom):**
+
 - Route start/end points (highest)
 - Artworks
 - Information points
@@ -163,6 +164,6 @@ The display order of map markers (which markers appear on top) is now centrally 
 
 To change the stacking order, simply edit the values in the `markerDisplayOrder` object at the top of `art-route-map.js`. All marker creation code references this object, making future adjustments easy and consistent.
 
-## Version 1.13.1
+## Version 1.13.2
 
 Patch release: Minor CSS and JS improvements for map display and marker rendering. See CHANGELOG.md for details.

@@ -4,9 +4,28 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.13.2] - 2025-07-20
+
+### Fixed
+
+- **Route Point Duplication Issue**: Fixed race conditions in route editor that could cause duplicate route points to be added when clicking on the map
+- **Improved Marker Cleanup**: Enhanced marker removal system to properly clean up event handlers and prevent memory leaks
+- **Debounced Route Updates**: Added debouncing to route information updates to prevent rapid multiple calls that could cause rendering issues
+- **Duplicate Point Prevention**: Added coordinate comparison to prevent adding route points at identical locations
+- **Enhanced State Management**: Improved reset functionality to properly clean up all timeouts and markers when closing the editor
+
+### Technical Details
+
+- Added proper timeout reference management for route point marker event handlers
+- Implemented debouncing mechanism for `updateRouteInfo()` function calls
+- Enhanced `drawRoutePointMarkers()` function with more thorough cleanup procedures
+- Added unique marker identification and improved drag handler stability
+- Strengthened `resetEditorState()` function to handle all cleanup scenarios
+
 ## [1.13.1] - 2025-07-19
 
 ### Fixed
+
 - Minor CSS and JS improvements for map display and marker rendering. Patch release for bugfixes and style tweaks.
 
 ## [1.13.0] - 2025-07-19
