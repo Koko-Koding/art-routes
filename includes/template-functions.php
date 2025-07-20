@@ -139,6 +139,16 @@ function wp_art_routes_get_all_artworks() {
         
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
+            // Get icon information - prefer icon field, then fall back to no icon
+            $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
+            $icon_url = '';
+            
+            if (!empty($icon_filename)) {
+                // Build URL from filename
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . $icon_filename;
+            }
+            
             $artwork_data = [
                 'id' => $artwork->ID,
                 'title' => $artwork->post_title,
@@ -149,6 +159,7 @@ function wp_art_routes_get_all_artworks() {
                 'number' => get_post_meta($artwork->ID, '_artwork_number', true),
                 'location' => get_post_meta($artwork->ID, '_artwork_location', true),
                 'permalink' => get_permalink($artwork->ID),
+                'icon_url' => $icon_url ? esc_url($icon_url) : '', // Add icon URL support
             ];
             
             // Get artist information

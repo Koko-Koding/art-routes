@@ -120,6 +120,17 @@ function wp_art_routes_register_artwork_meta() {
             return current_user_can('edit_posts');
         },
     ]);
+    
+    // Register artwork icon field (filename)
+    register_post_meta('artwork', '_artwork_icon', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
 }
 add_action('init', 'wp_art_routes_register_artwork_meta');
 
@@ -224,6 +235,40 @@ function wp_art_routes_register_artwork_rest_fields() {
         'schema' => [
             'description' => __('Artwork location description', 'wp-art-routes'),
             'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+    
+    // Artwork icon field (filename)
+    register_rest_field('artwork', 'icon', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_artwork_icon', true);
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_icon', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork icon filename', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    // Icon URL (computed from filename)
+    register_rest_field('artwork', 'icon_url', [
+        'get_callback' => function($post) {
+            $icon_filename = get_post_meta($post['id'], '_artwork_icon', true);
+            if (!empty($icon_filename)) {
+                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+                return $icons_url . $icon_filename;
+            }
+            // No default icon for artworks - they will use their featured image or a generic marker
+            return '';
+        },
+        'schema' => [
+            'description' => __('Artwork icon URL', 'wp-art-routes'),
+            'type' => 'string',
+            'format' => 'uri',
             'context' => ['view', 'edit'],
         ],
     ]);

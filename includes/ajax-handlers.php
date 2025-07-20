@@ -281,6 +281,16 @@ function wp_art_routes_get_associated_points($route_id) {
         $longitude = get_post_meta($artwork_post->ID, '_artwork_longitude', true);
 
         if (is_numeric($latitude) && is_numeric($longitude)) {
+            // Get icon information - prefer icon field, then fall back to no icon
+            $icon_filename = get_post_meta($artwork_post->ID, '_artwork_icon', true);
+            $icon_url = '';
+            
+            if (!empty($icon_filename)) {
+                // Build URL from filename
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . $icon_filename;
+            }
+            
             $point_data = [
                 'id' => $artwork_post->ID,
                 'title' => $artwork_post->post_title,
@@ -289,6 +299,7 @@ function wp_art_routes_get_associated_points($route_id) {
                 'edit_link' => get_edit_post_link($artwork_post->ID, 'raw'),
                 'type' => 'artwork',
                 'status' => $artwork_post->post_status,
+                'icon_url' => $icon_url ? esc_url($icon_url) : '',
             ];
 
             $points['artworks'][] = $point_data;

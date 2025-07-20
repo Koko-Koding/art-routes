@@ -1193,6 +1193,16 @@
                             <input type="hidden" name="icon_url" value="" />
                         </label>
                     </div>
+                    <div id="artwork-icon-field" style="margin-bottom:8px;display:none;">
+                        <label>Artwork image:<br>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <img id="artwork-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
+                                <button type="button" id="select-artwork-icon" class="button">Select Image</button>
+                                <button type="button" id="remove-artwork-icon" class="button" style="display:none;">Remove</button>
+                            </div>
+                            <input type="hidden" name="artwork_icon_url" value="" />
+                        </label>
+                    </div>
                     <button type="submit" style="background:#1976d2;color:#fff;border:none;padding:6px 16px;border-radius:4px;">Save</button>
                 </form>
             </div>
@@ -1230,6 +1240,38 @@
 			$("#route-point-edit-form [name='icon_url']").val("");
 			$(this).hide();
 		});
+
+		// Media library integration for artwork icon image
+		let artworkIconFrame;
+		$(document).on("click", "#select-artwork-icon", (e) => {
+			e.preventDefault();
+			if (artworkIconFrame) {
+				artworkIconFrame.open();
+				return;
+			}
+			artworkIconFrame = wp.media({
+				title: "Select Artwork Image",
+				button: { text: "Use this image" },
+				multiple: false,
+			});
+			artworkIconFrame.on("select", () => {
+				const attachment = artworkIconFrame
+					.state()
+					.get("selection")
+					.first()
+					.toJSON();
+				$("#artwork-icon-preview").attr("src", attachment.url).show();
+				$("#route-point-edit-form [name='artwork_icon_url']").val(attachment.url);
+				$("#remove-artwork-icon").show();
+			});
+			artworkIconFrame.open();
+		});
+		$(document).on("click", "#remove-artwork-icon", function (e) {
+			e.preventDefault();
+			$("#artwork-icon-preview").attr("src", "").hide();
+			$("#route-point-edit-form [name='artwork_icon_url']").val("");
+			$(this).hide();
+		});
 	}
 
 	// Show modal and populate with current data
@@ -1239,22 +1281,28 @@
 		const modal = $("#route-point-edit-modal");
 		const form = $("#route-point-edit-form");
 		form[0].reset();
-		// Show/hide icon field for info points only
-		if (isObj && pt.type === "information_point") {
-			$("#info-point-icon-field").show();
+		
+		// Show/hide icon field based on point type
+		if (isObj && (pt.type === "information_point" || pt.type === "artwork")) {
+			const fieldId = pt.type === "information_point" ? "#info-point-icon-field" : "#artwork-icon-field";
+			const previewId = pt.type === "information_point" ? "#info-point-icon-preview" : "#artwork-icon-preview";
+			const removeId = pt.type === "information_point" ? "#remove-info-point-icon" : "#remove-artwork-icon";
+			
+			$(fieldId).show();
 			// Set preview and value if present
 			if (pt.icon_url) {
-				$("#info-point-icon-preview").attr("src", pt.icon_url).show();
+				$(previewId).attr("src", pt.icon_url).show();
 				form.find('[name="icon_url"]').val(pt.icon_url);
-				$("#remove-info-point-icon").show();
+				$(removeId).show();
 			} else {
-				$("#info-point-icon-preview").attr("src", "").hide();
+				$(previewId).attr("src", "").hide();
 				form.find('[name="icon_url"]').val("");
-				$("#remove-info-point-icon").hide();
+				$(removeId).hide();
 			}
 		} else {
-			$("#info-point-icon-field").hide();
+			$("#info-point-icon-field, #artwork-icon-field").hide();
 		}
+		
 		if (isObj) {
 			form.find('[name="is_start"]').prop("checked", !!pt.is_start);
 			form.find('[name="is_end"]').prop("checked", !!pt.is_end);

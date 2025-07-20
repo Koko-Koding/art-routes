@@ -4,6 +4,31 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.14.0] - 2025-01-19
+
+### Added
+
+- **Artwork Icon Selection**: Added the ability to select custom SVG icons for artwork markers on maps
+- **Icon Dropdown Interface**: Artworks now have an icon selection meta box in the admin with a dropdown of available SVG icons from the assets/icons directory
+- **Map Rendering Support**: Map markers now check for custom artwork icons and display them instead of the default image+number combination when available
+- **Consistent Icon Experience**: Artwork icon selection follows the same pattern as information points, providing a unified user experience
+- **Route Editor Integration**: The route editor admin interface now supports icon selection for both artworks and information points when adding or editing points
+
+### Enhanced
+
+- **Template Functions**: Updated artwork data structures to include icon_url information for proper map rendering
+- **AJAX Handlers**: Enhanced to include artwork icon data in route point management and map data loading
+- **REST API Fields**: Added artwork icon support to REST API endpoints for external integrations
+- **Backward Compatibility**: Maintained full compatibility with existing artworks that don't have custom icons
+
+### Technical Details
+
+- Added `_artwork_icon` meta field to store icon filenames for artworks
+- Updated template functions to build icon URLs from filenames with proper fallbacks
+- Enhanced JavaScript map rendering to prioritize custom icons over default artwork display
+- Improved admin interface consistency between artwork and information point icon selection
+- Added proper nonce verification and sanitization for artwork icon meta box saving
+
 ## [1.13.2] - 2025-07-20
 
 ### Fixed

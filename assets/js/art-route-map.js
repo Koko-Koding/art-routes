@@ -422,13 +422,23 @@
 						? artwork.number
 						: -1;
 
-				return `
-                    <div class="artwork-marker-inner">
-                        <div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + "assets/images/placeholder.png"}');"></div>
-                        <div class="artwork-marker-overlay"></div>
-                        <div class="artwork-marker-number">${displayNumber}</div>
-                    </div>
-                `;
+				// Check if artwork has a custom icon
+				if (artwork.icon_url && artwork.icon_url.trim() !== "") {
+					return `
+						<div class="artwork-marker-inner">
+							<div class="artwork-marker-icon" style="background-image: url('${artwork.icon_url}'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 100%; height: 100%; border-radius: 50%;"></div>
+						</div>
+					`;
+				} else {
+					// Use default artwork marker with image and number
+					return `
+						<div class="artwork-marker-inner">
+							<div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + "assets/images/placeholder.png"}');"></div>
+							<div class="artwork-marker-overlay"></div>
+							<div class="artwork-marker-number">${displayNumber}</div>
+						</div>
+					`;
+				}
 			},
 			iconSize: [40, 40],
 			iconAnchor: [20, 20],
