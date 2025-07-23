@@ -4,6 +4,26 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.17.0] - 2025-07-23
+
+### Added
+
+- **Route Point Insertion Feature**: New insert button for adding route points between existing points
+  - Added green "+" button next to edit and delete buttons on route point markers
+  - Insert button allows users to add a new route point after the current point
+  - New points are automatically positioned at the midpoint between current and next point
+  - For last points, new points are created with a small geographical offset
+  - Maintains the same object structure as existing route points with proper metadata support
+  - Provides immediate visual feedback and marks changes as unsaved
+  - Significantly improves route editing workflow by allowing precise point insertion
+
+### Enhanced
+
+- **Route Editor User Experience**: Improved route point management capabilities
+  - Better precision when fine-tuning route paths
+  - Eliminates need to delete and redraw route segments for minor adjustments
+  - Streamlined workflow for adding intermediate waypoints
+
 ## [1.16.1] - 2025-07-23
 
 ### Changed

@@ -807,6 +807,7 @@
                     <div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
                     <div class="route-point-button-bar" style="position: absolute; transform: translateX(100%); right: -0px; top: 1px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.125rem; background: rgba(255, 255, 255, 0.8); padding: 2px; border-radius: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
                         <button class="route-point-edit-btn" title="Edit this route point" style="width: 18px; height: 18px; border: none; background: #1976d2; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">✎</button>
+                        <button class="route-point-insert-btn" title="Insert new point after this one" style="width: 18px; height: 18px; border: none; background: #4caf50; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">+</button>
                         <button class="route-point-delete-btn" title="Delete this route point" style="width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
                     </div>
                     ${markerLabel}
@@ -889,6 +890,16 @@
 					editBtn.addEventListener("click", (ev) => {
 						ev.stopPropagation();
 						showRoutePointEditModal(idx);
+					});
+				}
+
+				// Insert button handler
+				const insertBtn =
+					marker._icon && marker._icon.querySelector(".route-point-insert-btn");
+				if (insertBtn) {
+					insertBtn.addEventListener("click", (ev) => {
+						ev.stopPropagation();
+						insertRoutePointAfter(idx);
 					});
 				}
 			}, 0);
@@ -1344,5 +1355,64 @@
 		modal.off("click").on("click", function (e) {
 			if (e.target === this) modal.hide();
 		});
+	}
+
+	/**
+	 * Insert a new route point after the specified index
+	 */
+	function insertRoutePointAfter(idx) {
+		const currentPoint = routePoints[idx];
+		const nextPoint = routePoints[idx + 1];
+
+		if (!currentPoint) {
+			console.warn("Cannot insert point: current point not found");
+			return;
+		}
+
+		let newLat, newLng;
+
+		if (nextPoint) {
+			// Calculate midpoint between current and next point
+			const currentLat = currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
+			const currentLng = currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
+			const nextLat = nextPoint.lat !== undefined ? nextPoint.lat : nextPoint[0];
+			const nextLng = nextPoint.lng !== undefined ? nextPoint.lng : nextPoint[1];
+
+			newLat = (currentLat + nextLat) / 2;
+			newLng = (currentLng + nextLng) / 2;
+		} else {
+			// If this is the last point, create a new point slightly offset
+			const currentLat = currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
+			const currentLng = currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
+
+			// Add a small offset (approximately 50 meters)
+			newLat = currentLat + 0.0005;
+			newLng = currentLng + 0.0005;
+		}
+
+		// Create new point object with same structure as existing points
+		const newPoint = {
+			lat: newLat,
+			lng: newLng,
+			is_start: false,
+			is_end: false,
+			notes: "",
+			arrow_direction: null
+		};
+
+		// Insert the new point after the current index
+		routePoints.splice(idx + 1, 0, newPoint);
+
+		// Update the drawing layer
+		drawingLayer.setLatLngs(routePoints.map((pt) => [
+			pt.lat !== undefined ? pt.lat : pt[0],
+			pt.lng !== undefined ? pt.lng : pt[1]
+		]));
+
+		// Update the display
+		updateRouteInfo();
+		$("#save-status").text("Unsaved changes").css("color", "orange");
+
+		console.log(`Inserted new route point after index ${idx} at coordinates: ${newLat.toFixed(5)}, ${newLng.toFixed(5)}`);
 	}
 })(jQuery);

@@ -151,6 +151,14 @@ This plugin is licensed under the GPL v2 or later.
   - **My Location:** Click this to attempt to center the map on your current browser location.
 - **Search:** Enter a location name or address and click "Search" to pan the map to that area.
 
+- **Route Point Management:**
+  - **Draggable Points:** All route points can be dragged to new positions for precise route adjustment
+  - **Edit Points:** Click the pencil (✎) button on any route point to edit metadata (start/end markers, direction arrows, notes)
+  - **Insert Points:** Click the green plus (+) button to insert a new route point after the current one
+    - New points are automatically positioned at the midpoint between current and next point
+    - For the last point, new points are created with a small geographical offset
+  - **Delete Points:** Click the red × button to remove unwanted route points (minimum 2 points required)
+
 ### Marker Stacking Order (zIndexOffset)
 
 The display order of map markers (which markers appear on top) is now centrally managed in the plugin’s JavaScript. All marker types use the `markerDisplayOrder` object in `assets/js/art-route-map.js` to set their stacking order via Leaflet’s `zIndexOffset` property.
