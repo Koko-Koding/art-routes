@@ -562,10 +562,6 @@
 
 					// Update the main route path textarea in the underlying page
 					$("#route_path").val(formattedPath.trim());
-					// Update route length field if available
-					if ($("#route_length").length) {
-						$("#route_length").val(calculateRouteLength().toFixed(2));
-					}
 
 					// Process newly added points (update temp IDs with real IDs)
 					if (response.data.added && response.data.added.length > 0) {
@@ -654,8 +650,9 @@
 	 */
 	function updateEstimatedDuration() {
 		const distance = calculateRouteLength();
-		const routeTypeField = $("#route_type");
+		const routeLengthField = $("#route_length");
 		const durationField = $("#route_duration");
+		const routeTypeField = $("#route_type");
 
 		if (distance > 0 && routeTypeField.length && durationField.length) {
 			const routeType = routeTypeField.val();
@@ -664,6 +661,12 @@
 			// Update the duration field with the calculated value
 			durationField.val(estimatedDuration);
 			console.log(`Updated duration field to ${estimatedDuration} minutes`);
+
+			// Update distance field too
+			if (distance && distance > 0) {
+				const roundedDistance = Number(distance.toFixed(2));
+				routeLengthField.val(roundedDistance);
+			}
 		}
 	}
 

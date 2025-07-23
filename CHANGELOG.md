@@ -4,6 +4,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.16.1] - 2025-07-23
+
+### Changed
+
+- **Route Length is also updated through button**
+
 ## [1.16.0] - 2025-07-23
 
 ### Changed
