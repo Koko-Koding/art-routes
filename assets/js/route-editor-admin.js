@@ -37,6 +37,8 @@
 			$("body").append(routeEditorData.modalHTML);
 		}
 
+		routePoints = getAndParseRouteFromTextarea();
+
 		// Define custom icons
 		artworkIcon = L.divIcon({
 			className: "artwork-marker-icon",
@@ -110,8 +112,8 @@
 		// Save route and points
 		$("body").on("click", "#save-route", saveChanges);
 
-		// Route type change handler - recalculate duration when route type changes
-		$(document).on("change", "#route_type", () => {
+		// Manual duration calculation button
+		$(document).on("click", "#calculate-duration", () => {
 			updateEstimatedDuration();
 		});
 	}
@@ -659,12 +661,9 @@
 			const routeType = routeTypeField.val();
 			const estimatedDuration = calculateEstimatedDuration(distance, routeType);
 
-			// Only update if the duration field is empty or if it's being calculated automatically
-			const currentDuration = durationField.val();
-			if (!currentDuration || currentDuration == 0) {
-				durationField.val(estimatedDuration);
-				console.log(`Auto-updated duration field to ${estimatedDuration} minutes`);
-			}
+			// Update the duration field with the calculated value
+			durationField.val(estimatedDuration);
+			console.log(`Updated duration field to ${estimatedDuration} minutes`);
 		}
 	}
 
@@ -729,9 +728,6 @@
 		$("#point-count").text(routePoints.length);
 		const distance = calculateRouteLength();
 		$("#route-distance").text(distance.toFixed(2));
-
-		// Update estimated duration when distance changes
-		updateEstimatedDuration();
 
 		// Artwork and Info Point counts (consider current state including changes)
 		let artworkCount = pointsData.artworks.filter(
@@ -897,11 +893,7 @@
 		});
 	}
 
-	/**
-	 * Load existing route path from textarea
-	 */
-	function loadExistingRoutePath() {
-
+	function getAndParseRouteFromTextarea() {
 		const routeText = $("#route_path").val().trim();
 		routePoints = []; // Reset points
 
@@ -927,7 +919,7 @@
 			parsed[0].lng !== undefined
 		) {
 			// New JSON format: preserve all properties
-			routePoints = parsed.map((pt) => ({
+			return parsed.map((pt) => ({
 				lat: parseFloat(pt.lat),
 				lng: parseFloat(pt.lng),
 				is_start: !!pt.is_start,
@@ -949,12 +941,22 @@
 					}
 				}
 			});
-			routePoints = validPoints;
+
 			// Auto-migrate: update textarea to JSON format
 			if (validPoints.length > 0) {
 				$("#route_path").val(JSON.stringify(validPoints, null, 2));
 			}
+
+			return validPoints;
 		}
+	}
+
+	/**
+	 * Load existing route path from textarea
+	 */
+	function loadExistingRoutePath() {
+
+		routePoints = getAndParseRouteFromTextarea();
 
 		drawingLayer.setLatLngs(routePoints.map((pt) => [pt.lat, pt.lng]));
 
@@ -1281,13 +1283,13 @@
 		const modal = $("#route-point-edit-modal");
 		const form = $("#route-point-edit-form");
 		form[0].reset();
-		
+
 		// Show/hide icon field based on point type
 		if (isObj && (pt.type === "information_point" || pt.type === "artwork")) {
 			const fieldId = pt.type === "information_point" ? "#info-point-icon-field" : "#artwork-icon-field";
 			const previewId = pt.type === "information_point" ? "#info-point-icon-preview" : "#artwork-icon-preview";
 			const removeId = pt.type === "information_point" ? "#remove-info-point-icon" : "#remove-artwork-icon";
-			
+
 			$(fieldId).show();
 			// Set preview and value if present
 			if (pt.icon_url) {
@@ -1302,7 +1304,7 @@
 		} else {
 			$("#info-point-icon-field, #artwork-icon-field").hide();
 		}
-		
+
 		if (isObj) {
 			form.find('[name="is_start"]').prop("checked", !!pt.is_start);
 			form.find('[name="is_end"]').prop("checked", !!pt.is_end);

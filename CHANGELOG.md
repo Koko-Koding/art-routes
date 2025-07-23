@@ -4,6 +4,22 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.16.0] - 2025-07-23
+
+### Changed
+
+- **Manual Duration Calculation**: Duration estimation is now a manual action rather than automatic
+  - Removed automatic duration calculation when route type changes or route distance updates
+  - Added "Calculate" button next to the duration field for manual duration estimation
+  - Duration field can now be manually overridden without being automatically recalculated
+  - Users have full control over when duration is calculated and can enter custom values
+
+### Enhanced
+
+- **Translation Support**: Added Dutch translations for new duration calculation button
+  - "Calculate" → "Bereken"
+  - "Calculate estimated duration based on route distance and type" → "Bereken geschatte duur op basis van route afstand en type"
+
 ## [1.15.1] - 2025-07-20
 
 ### Changed

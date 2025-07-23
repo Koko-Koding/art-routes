@@ -95,6 +95,14 @@ msgstr ""
 msgid "Duration (minutes)"
 msgstr ""
 
+#: includes/meta-boxes.php:132
+msgid "Calculate estimated duration based on route distance and type"
+msgstr ""
+
+#: includes/meta-boxes.php:133
+msgid "Calculate"
+msgstr ""
+
 #: includes/meta-boxes.php:116
 msgid "Route Type"
 msgstr ""

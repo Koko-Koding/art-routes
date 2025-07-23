@@ -90,6 +90,14 @@ msgstr "Routelengte (km)"
 msgid "Duration (minutes)"
 msgstr "Duur (minuten)"
 
+#: includes/meta-boxes.php:132
+msgid "Calculate estimated duration based on route distance and type"
+msgstr "Bereken geschatte duur op basis van route afstand en type"
+
+#: includes/meta-boxes.php:133
+msgid "Calculate"
+msgstr "Bereken"
+
 #: includes/meta-boxes.php:116
 msgid "Route Type"
 msgstr "Routetype"
