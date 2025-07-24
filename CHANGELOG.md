@@ -4,6 +4,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.17.1] - 2025-07-24
+
+### Added
+
+- **New Icon**: Added new icon image to the assets/icons directory for enhanced visual options
+
 ## [1.17.0] - 2025-07-23
 
 ### Added
