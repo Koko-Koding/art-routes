@@ -1,0 +1,35 @@
+#!/bin/bash
+# translate: Compile .po to .mo using local msgfmt or Docker fallback
+
+
+# Find all .po files in the repository
+find . -type f -name "*.po" | while read PO_FILE; do
+  MO_FILE="${PO_FILE%.po}.mo"
+  echo "Compiling $PO_FILE -> $MO_FILE"
+
+  # Try local msgfmt
+  if command -v msgfmt >/dev/null 2>&1; then
+    echo "Using local msgfmt..."
+    msgfmt "$PO_FILE" -o "$MO_FILE"
+    continue
+  fi
+
+  # Try Poedit's msgfmt on Windows
+  if [ -n "$WINDIR" ]; then
+    POEDIT_PATH="/c/Program Files/Poedit/bin/msgfmt.exe"
+    if [ -f "$POEDIT_PATH" ]; then
+      echo "Using Poedit's msgfmt.exe..."
+      "$POEDIT_PATH" "$PO_FILE" -o "$MO_FILE"
+      continue
+    fi
+  fi
+
+  # Fallback to Docker
+  if command -v docker >/dev/null 2>&1; then
+    echo "Using Docker container..."
+    docker run --rm -v "$(pwd):/app" po-compiler msgfmt "$PO_FILE" -o "$MO_FILE"
+    continue
+  fi
+
+  echo "No translation tool found (msgfmt, Poedit, or Docker) for $PO_FILE. Please install one."
+done

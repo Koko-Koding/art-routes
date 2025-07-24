@@ -114,6 +114,24 @@ To add new translations:
 3. Translate all strings using a POT/PO editor like Poedit
 4. Generate the `.mo` file and place both files in the `languages` folder
 
+### Translation Automation
+
+Use the `bin/translate` script to automatically compile all `.po` files to `.mo` files. The script will use local tools (`msgfmt` or Poedit) if available, or fallback to Docker.
+
+#### Docker Usage
+
+Build the Docker image:
+
+```sh
+docker build -t po-compiler .
+```
+
+Run the translation script:
+
+```sh
+./bin/translate
+```
+
 ### Commands
 
 Make sure you have wp-cli installed and available in your PATH. You can use the following command to generate the `.po` and `.mo` files:
