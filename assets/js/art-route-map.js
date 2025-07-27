@@ -431,7 +431,7 @@
 			htmlFn: (artwork) => {
 				// Use artwork number if available, otherwise fall back to index + 1
 				const displayNumber =
-					artwork.number && artwork.number.trim() !== "" ? artwork.number : -1;
+					artwork.number && artwork.number.trim() !== "" ? artwork.number : '';
 
 				// Check if artwork has a custom icon
 				if (artwork.icon_url && artwork.icon_url.trim() !== "") {
