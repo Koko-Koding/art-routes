@@ -8,15 +8,19 @@ The map will likely be used on smaller devices, and by non-technical, sometimes 
 
 Please refer to `README.md` and `CHANGELOG.md` for more information about the specific features of the plugin and how to use them. Use semantic versioning for the plugin.
 
-In the languages directory, you will find the translation files for the plugin. The plugin is currently available in English and Dutch. You can add more languages by creating a new `.po` file in the `languages` directory and adding the corresponding translations.
+In the languages directory, you will find the translation files for the plugin. The plugin is currently available in English and Dutch. You can add more languages by creating a new `.po` file in the `languages` directory and adding the corresponding translations. To compile the `.po` file into a, refer to the `bin/translate` script.
 
-Whenever you make changes to the plugin, make sure to
+Whenever you make changes to the plugin, make sure to:
 
 1. Update the version number in the main plugin file (`wp-art-routes.php`)
 2. Add the new version with description in the `CHANGELOG.md` file, and
-3. Update the `README.md` file accordingly.
-4. Update the translation files in the `languages` directory if necessary.
-5. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `vX.Y.Z`.
+
+3. If possible, check if there are any non-documented commits since the last release / tag and add them to the changelog as well.
+
+4. Update the `README.md` file accordingly.
+5. Update the translation files in the `languages` directory if necessary.
+6. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `vX.Y.Z`.
+7. Execute the `bin/build-release` script to build the release files and create a zip file of the plugin.
 
 ## GitHub CLI & Repository
 
