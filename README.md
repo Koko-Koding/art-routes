@@ -153,7 +153,7 @@ wp i18n make-mo languages/wp-art-routes-nl_NL.po
 ## Requirements
 
 - WordPress 5.6 or higher
-- PHP 7.2 or higher
+- PHP 7.4 or higher
 - Browser with geolocation support for tracking features
 
 ## License

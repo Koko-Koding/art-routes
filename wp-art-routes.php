@@ -2,15 +2,19 @@
 
 /**
  * Plugin Name: WP Art Routes
- * Plugin URI: https://example.com/wp-art-routes
- * Description: Interactive art route maps with OpenStreetMap integration for WordPress
+ * Plugin URI: https://github.com/drikusroor/wp-art-routes
+ * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
  * Version: 1.18.0
  * Author: Drikus Roor - Koko Koding
- * Author URI: https://example.com
+ * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-art-routes
  * Domain Path: /languages
+ * Requires at least: 5.6
+ * Tested up to: 6.6
+ * Requires PHP: 7.4
+ * Network: false
  */
 
 // If this file is called directly, abort.
@@ -73,3 +77,21 @@ function wp_art_routes_deactivate()
     flush_rewrite_rules();
 }
 register_deactivation_hook(__FILE__, 'wp_art_routes_deactivate');
+
+/**
+ * Uninstall hook - Clean up plugin data when deleted
+ */
+function wp_art_routes_uninstall()
+{
+    // Remove plugin options
+    delete_option('wp_art_routes_default_route_id');
+    delete_option('wp_art_routes_enable_location_tracking');
+    
+    // Remove user meta data
+    delete_metadata('user', 0, 'wp_art_routes_visited_artworks', '', true);
+    
+    // Note: We don't delete custom post types and their data
+    // as users may want to keep their routes and artworks
+    // even after uninstalling the plugin
+}
+register_uninstall_hook(__FILE__, 'wp_art_routes_uninstall');
