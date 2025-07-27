@@ -4,6 +4,31 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.19.0] - 2025-07-27
+
+### Added
+
+- **Build and Distribution System**: Added comprehensive build tooling for plugin distribution
+  - New `bin/build-release` script to create WordPress.org-ready zip packages
+  - Automated version extraction and zip file creation with proper file filtering
+  - Distribution documentation (`DISTRIBUTION.md`, `WORDPRESS-ORG-PREPARATION.md`)
+  - Build artifacts are excluded from version control via `.gitignore`
+- **Development Infrastructure**: Enhanced project setup for better maintainability
+  - Added `.gitignore` file to exclude build artifacts, development files, and system files
+  - Improved plugin metadata and description for better WordPress.org compatibility
+
+### Fixed
+
+- **Map Display**: Fixed fallback value for artwork display number to use empty string instead of undefined
+  - Prevents display issues when artwork numbers are not set
+  - Improves map marker rendering consistency
+
+### Technical Details
+
+- Added automated build script that creates distribution-ready zip files
+- Enhanced plugin documentation for WordPress.org submission process
+- Improved development workflow with proper gitignore configuration
+
 ## [1.18.0] - 2025-07-26
 
 ### Added
