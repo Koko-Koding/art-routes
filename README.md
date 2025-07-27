@@ -1,5 +1,7 @@
 # WP Art Routes
 
+![WP Art Routes Logo](./assets/plugin-icons/icon.webp)
+
 Interactive art route maps with OpenStreetMap integration for WordPress.
 
 ## Description
