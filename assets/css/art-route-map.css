@@ -565,6 +565,7 @@
 .leaflet-popup-content {
     margin: 0;
     width: 300px !important;
+    min-height: 32px;
 }
 
 .artwork-popup {

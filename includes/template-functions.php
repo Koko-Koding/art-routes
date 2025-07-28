@@ -326,6 +326,29 @@ function wp_art_routes_single_artwork_template($template) {
 add_filter('template_include', 'wp_art_routes_single_artwork_template', 99);
 
 /**
+ * Handle template redirection for information point posts
+ */
+function wp_art_routes_single_information_point_template($template) {
+    // Only handle single information_point posts
+    if (is_singular('information_point')) {
+        // Look for template in theme directory first
+        $located = locate_template('wp-art-routes/single-information_point.php');
+        
+        // If not found in theme, use plugin template
+        if (empty($located)) {
+            $located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-information_point.php';
+        }
+        
+        if (file_exists($located)) {
+            return $located;
+        }
+    }
+    
+    return $template;
+}
+add_filter('template_include', 'wp_art_routes_single_information_point_template', 99);
+
+/**
  * Automatically append map to route content
  */
 function wp_art_routes_append_map_to_route_content($content) {

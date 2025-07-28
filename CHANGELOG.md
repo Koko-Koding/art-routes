@@ -4,6 +4,36 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.20.1] - 2025-07-28
+
+### Fixed
+
+- **Information Point Detail Pages**: Fixed issue where information point single pages were not displaying location maps
+  - Created dedicated single template (`templates/single-information_point.php`) for information point detail pages
+  - Added template loading logic to automatically use the new template for information point pages
+  - Updated script loading conditions to include information point pages for proper Leaflet map functionality
+  - Information point detail pages now display an interactive map showing the point's exact location
+  - Template includes responsive design and consistent styling with artwork pages
+  - Uses custom blue circular marker with "i" icon to distinguish from artwork markers
+
+### Enhanced
+
+- **Template System**: Information points now have the same rich detail page experience as artworks
+  - Featured image display
+  - Full content with proper formatting
+  - Interactive location map with custom markers
+  - Mobile-responsive design
+- **User Experience**: Improved navigation and information discovery for information points
+  - Consistent template hierarchy that allows theme overrides
+  - Professional map display with proper popup functionality
+
+### Technical Details
+
+- Added `wp_art_routes_single_information_point_template()` function for template redirection
+- Modified `wp_art_routes_is_route_page()` to include single information point pages
+- Created responsive CSS styling with mobile breakpoints matching artwork template design
+- Maintained backward compatibility with existing information point functionality
+
 ## [1.20.0] - 2025-07-27
 
 ### Changed

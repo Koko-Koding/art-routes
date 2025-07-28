@@ -241,6 +241,11 @@ function wp_art_routes_is_route_page() {
         return true;
     }
     
+    // Check if viewing a single information_point post type (for the location map)
+    if (is_singular('information_point')) {
+        return true;
+    }
+    
     // Default to false
     return false;
 }
