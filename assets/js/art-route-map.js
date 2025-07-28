@@ -433,23 +433,17 @@
 				const displayNumber =
 					artwork.number && artwork.number.trim() !== "" ? artwork.number : '';
 
-				// Check if artwork has a custom icon
-				if (artwork.icon_url && artwork.icon_url.trim() !== "") {
-					return `
-						<div class="artwork-marker-inner">
-							<div class="artwork-marker-icon" style="background-image: url('${artwork.icon_url}'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 100%; height: 100%; border-radius: 50%;"></div>
+				// Use dashicon instead of SVG or image
+				const iconClass = artwork.icon_class || 'dashicons-art';
+				
+				return `
+					<div class="artwork-marker-inner">
+						<div class="artwork-marker-icon">
+							<span class="dashicons ${iconClass}"></span>
 						</div>
-					`;
-				} else {
-					// Use default artwork marker with image and number
-					return `
-						<div class="artwork-marker-inner">
-							<div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + "assets/images/placeholder.png"}');"></div>
-							<div class="artwork-marker-overlay"></div>
-							<div class="artwork-marker-number">${displayNumber}</div>
-						</div>
-					`;
-				}
+						${displayNumber ? `<div class="artwork-marker-number">${displayNumber}</div>` : ''}
+					</div>
+				`;
 			},
 			iconSize: [40, 40],
 			iconAnchor: [20, 20],
@@ -466,13 +460,16 @@
 		const iconOptions = {
 			className: "info-point-marker",
 			htmlFn: (infoPoint) => {
-				if (infoPoint.icon_url) {
-					return `<div class="info-point-marker-inner" style="background: none; position: relative;">
-                        <div style="width: 100%; height: 100%; background: url('${infoPoint.icon_url}') center center / cover no-repeat;"></div>
-                    </div>`;
-				} else {
-					return '<div class="info-point-marker-inner">i</div>';
-				}
+				// Use dashicon instead of SVG URL
+				const iconClass = infoPoint.icon_class || 'dashicons-info';
+				
+				return `
+					<div class="info-point-marker-inner">
+						<div class="info-point-marker-icon">
+							<span class="dashicons ${iconClass}"></span>
+						</div>
+					</div>
+				`;
 			},
 			iconSize: [30, 30],
 			iconAnchor: [15, 15],

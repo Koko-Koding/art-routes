@@ -239,13 +239,16 @@ $map_id = 'art-routes-map-' . uniqid();
             // Add artwork markers
             if (route.artworks && route.artworks.length > 0) {
                 route.artworks.forEach(function(artwork, artworkIndex) {
-                    // Create a custom artwork marker
+                    // Create a custom artwork marker using dashicons
+                    const iconClass = artwork.icon_class || 'dashicons-art';
+                    
                     const artworkIcon = L.divIcon({
                         className: 'artwork-marker',
                         html: `
-                            <div class="artwork-marker-inner" style="border-color: ${route.color};">
-                                <div class="artwork-marker-image" style="background-image: url('${artwork.image_url}');"></div>
-                                <div class="artwork-marker-overlay" style="background-color: ${route.color}; opacity: 0.3;"></div>
+                            <div class="artwork-marker-inner">
+                                <div class="artwork-marker-icon">
+                                    <span class="dashicons ${iconClass}"></span>
+                                </div>
                                 <div class="artwork-marker-number">${artworkIndex + 1}</div>
                             </div>
                         `,
@@ -377,19 +380,18 @@ $map_id = 'art-routes-map-' . uniqid();
         // Add global information point markers (visible on all routes)
         if (routesData.information_points && routesData.information_points.length > 0) {
             routesData.information_points.forEach(function(infoPoint) {
-                // Create a custom information point marker
-                let iconHtml = '<div class="info-point-marker-inner">i</div>';
-                
-                // Use custom SVG icon if available
-                if (infoPoint.icon_url) {
-                    iconHtml = `<div class="info-point-marker-inner" style="background: none; position: relative;">
-                        <div style="width: 100%; height: 100%; background: url('${infoPoint.icon_url}') center center / contain no-repeat; border-radius: 50%; border: 2px solid #ffc107;"></div>
-                    </div>`;
-                }
+                // Create a custom information point marker using dashicons
+                const iconClass = infoPoint.icon_class || 'dashicons-info';
                 
                 const infoPointIcon = L.divIcon({
                     className: 'info-point-marker',
-                    html: iconHtml,
+                    html: `
+                        <div class="info-point-marker-inner">
+                            <div class="info-point-marker-icon">
+                                <span class="dashicons ${iconClass}"></span>
+                            </div>
+                        </div>
+                    `,
                     iconSize: [30, 30],
                     iconAnchor: [15, 15]
                 });

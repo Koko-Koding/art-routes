@@ -455,20 +455,77 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_artwork_icon', true);
 
-    // Get available SVG icons from the assets/icons directory
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
-    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-    $available_icons = [];
-
-    if (is_dir($icons_dir)) {
-        $files = scandir($icons_dir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
-                $available_icons[] = $file;
-            }
-        }
-        sort($available_icons);
-    }
+    // Available dashicons for artworks
+    $available_icons = [
+        'dashicons-admin-appearance' => __('Paintbrush, large (Appearance)', 'wp-art-routes'),
+        'dashicons-admin-comments' => __('Comments', 'wp-art-routes'),
+        'dashicons-admin-customizer' => __('Paintbrush, small (Customizer)', 'wp-art-routes'),
+        'dashicons-admin-generic' => __('Generic', 'wp-art-routes'),
+        'dashicons-admin-home' => __('Home', 'wp-art-routes'),
+        'dashicons-admin-links' => __('Links', 'wp-art-routes'),
+        'dashicons-admin-media' => __('Media', 'wp-art-routes'),
+        'dashicons-admin-multisite' => __('Houses (Multisite)', 'wp-art-routes'),
+        'dashicons-admin-network' => __('Network / Key', 'wp-art-routes'),
+        'dashicons-admin-page' => __('Page', 'wp-art-routes'),
+        'dashicons-admin-post' => __('Post', 'wp-art-routes'),
+        'dashicons-admin-settings' => __('Settings / Mixer', 'wp-art-routes'),
+        'dashicons-admin-site' => __('Site', 'wp-art-routes'),
+        'dashicons-admin-users' => __('Users', 'wp-art-routes'),
+        'dashicons-archive' => __('Box (Archive)', 'wp-art-routes'),
+        'dashicons-art' => __('Art (default)', 'wp-art-routes'),
+        'dashicons-awards' => __('Award', 'wp-art-routes'),
+        'dashicons-bell' => __('Bell', 'wp-art-routes'),
+        'dashicons-book' => __('Book', 'wp-art-routes'),
+        'dashicons-buddicons-community' => __('Cake (Community)', 'wp-art-routes'),
+        'dashicons-buddicons-groups' => __('Balloons (Groups)', 'wp-art-routes'),
+        'dashicons-buddicons-replies' => __('Bug (Replies)', 'wp-art-routes'),
+        'dashicons-building' => __('Building', 'wp-art-routes'),
+        'dashicons-camera' => __('Camera', 'wp-art-routes'),
+        'dashicons-car' => __('Car', 'wp-art-routes'),
+        'dashicons-cart' => __('Cart', 'wp-art-routes'),
+        'dashicons-category' => __('Category', 'wp-art-routes'),
+        'dashicons-dashboard' => __('Dashboard', 'wp-art-routes'),
+        'dashicons-edit' => __('Pencil (Edit)', 'wp-art-routes'),
+        'dashicons-email-alt' => __('Message', 'wp-art-routes'),
+        'dashicons-flag' => __('Flag', 'wp-art-routes'),
+        'dashicons-format-audio' => __('Audio', 'wp-art-routes'),
+        'dashicons-format-camera-alt' => __('Camera', 'wp-art-routes'),
+        'dashicons-format-chat' => __('Chat', 'wp-art-routes'),
+        'dashicons-format-gallery' => __('Gallery', 'wp-art-routes'),
+        'dashicons-format-image' => __('Image', 'wp-art-routes'),
+        'dashicons-format-quote' => __('Quote', 'wp-art-routes'),
+        'dashicons-format-status' => __('Status', 'wp-art-routes'),
+        'dashicons-format-video' => __('Video', 'wp-art-routes'),
+        'dashicons-hammer' => __('Warning', 'wp-art-routes'),
+        'dashicons-heart' => __('Heart', 'wp-art-routes'),
+        'dashicons-hidden' => __('Hidden', 'wp-art-routes'),
+        'dashicons-images-alt2' => __('Gallery', 'wp-art-routes'),
+        'dashicons-info-outline' => __('Info Outline', 'wp-art-routes'),
+        'dashicons-info' => __('Info (default)', 'wp-art-routes'),
+        'dashicons-lightbulb' => __('Light Bulb', 'wp-art-routes'),
+        'dashicons-location' => __('Location', 'wp-art-routes'),
+        'dashicons-lock' => __('Lock', 'wp-art-routes'),
+        'dashicons-marker' => __('Marker', 'wp-art-routes'),
+        'dashicons-megaphone' => __('Megaphone', 'wp-art-routes'),
+        'dashicons-migrate' => __('Exit (Migrate)', 'wp-art-routes'),
+        'dashicons-palmtree' => __('Palm Tree', 'wp-art-routes'),
+        'dashicons-paperclip' => __('Paperclip', 'wp-art-routes'),
+        'dashicons-post-status' => __('Pin (Post Status)', 'wp-art-routes'),
+        'dashicons-shield' => __('Shield', 'wp-art-routes'),
+        'dashicons-smartphone' => __('Phone', 'wp-art-routes'),
+        'dashicons-smiley' => __('Smiley', 'wp-art-routes'),
+        'dashicons-sos' => __('SOS', 'wp-art-routes'),
+        'dashicons-star-filled' => __('Star', 'wp-art-routes'),
+        'dashicons-sticky' => __('Pin (Sticky)', 'wp-art-routes'),
+        'dashicons-store' => __('Store', 'wp-art-routes'),
+        'dashicons-store' => __('Store', 'wp-art-routes'),
+        'dashicons-tag' => __('Tag', 'wp-art-routes'),
+        'dashicons-tools' => __('Tools', 'wp-art-routes'),
+        'dashicons-trash' => __('Trash', 'wp-art-routes'),
+        'dashicons-unlock' => __('Unlock', 'wp-art-routes'),
+        'dashicons-visibility' => __('Visibility', 'wp-art-routes'),
+        'dashicons-warning' => __('Warning', 'wp-art-routes'),
+    ];
 
 ?>
     <div id="artwork-icon-meta-box">
@@ -479,58 +536,40 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
         </p>
 
         <select id="artwork_icon_select" name="artwork_icon" style="width: 100%;">
-            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
-            <?php foreach ($available_icons as $icon_file) :
-                $icon_name = pathinfo($icon_file, PATHINFO_FILENAME);
-                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
-                $display_name = ucwords(trim($display_name));
-            ?>
-                <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
-                    <?php echo esc_html($display_name); ?> (<?php echo esc_html($icon_file); ?>)
+            <option value=""><?php _e('-- Default (Art) --', 'wp-art-routes'); ?></option>
+            <?php foreach ($available_icons as $icon_class => $icon_label) : ?>
+                <option value="<?php echo esc_attr($icon_class); ?>" <?php selected($selected_icon, $icon_class); ?>>
+                    <?php echo esc_html($icon_label); ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
         <div id="icon-preview-container" style="margin-top: 15px;">
-            <?php if ($selected_icon && in_array($selected_icon, $available_icons)) : ?>
-                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
-                <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                    <img id="icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
-                        style="width: 40px; height: 40px; object-fit: contain;"
-                        alt="<?php echo esc_attr($selected_icon); ?>" />
-                </div>
-            <?php else : ?>
-                <div id="icon-preview" style="display: none;">
-                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
-                    <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                        <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
-                    </div>
-                </div>
-            <?php endif; ?>
+            <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+            <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                <span id="icon-preview" class="dashicons <?php echo esc_attr($selected_icon ?: 'dashicons-art'); ?>" 
+                      style="width: 40px; height: 40px; font-size: 40px; color: #0073aa;"></span>
+            </div>
         </div>
     </div>
 
     <script>
         jQuery(document).ready(function($) {
-            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
-
             $('#artwork_icon_select').on('change', function() {
-                const selectedIcon = $(this).val();
-                const $previewContainer = $('#icon-preview');
-
-                if (selectedIcon) {
-                    const iconUrl = iconsUrl + selectedIcon;
-                    $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrl).attr('alt', selectedIcon);
-                } else {
-                    $previewContainer.hide();
-                }
+                const selectedIcon = $(this).val() || 'dashicons-art';
+                const $preview = $('#icon-preview');
+                
+                // Remove all dashicons classes and add the selected one
+                $preview.removeClass(function (index, className) {
+                    return (className.match(/(^|\s)dashicons-\S+/g) || []).join(' ');
+                });
+                $preview.addClass(selectedIcon);
             });
         });
     </script>
 
     <p class="description">
-        <?php _e('Select an icon for this artwork. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
+        <?php _e('Select a dashicon for this artwork. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
     </p>
 <?php
 }
@@ -545,20 +584,77 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_info_point_icon', true);
 
-    // Get available SVG icons from the assets/icons directory
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
-    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-    $available_icons = [];
-
-    if (is_dir($icons_dir)) {
-        $files = scandir($icons_dir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
-                $available_icons[] = $file;
-            }
-        }
-        sort($available_icons);
-    }
+    // Available dashicons for information points
+    $available_icons = [
+        'dashicons-admin-appearance' => __('Paintbrush, large (Appearance)', 'wp-art-routes'),
+        'dashicons-admin-comments' => __('Comments', 'wp-art-routes'),
+        'dashicons-admin-customizer' => __('Paintbrush, small (Customizer)', 'wp-art-routes'),
+        'dashicons-admin-generic' => __('Generic', 'wp-art-routes'),
+        'dashicons-admin-home' => __('Home', 'wp-art-routes'),
+        'dashicons-admin-links' => __('Links', 'wp-art-routes'),
+        'dashicons-admin-media' => __('Media', 'wp-art-routes'),
+        'dashicons-admin-multisite' => __('Houses (Multisite)', 'wp-art-routes'),
+        'dashicons-admin-network' => __('Network / Key', 'wp-art-routes'),
+        'dashicons-admin-page' => __('Page', 'wp-art-routes'),
+        'dashicons-admin-post' => __('Post', 'wp-art-routes'),
+        'dashicons-admin-settings' => __('Settings / Mixer', 'wp-art-routes'),
+        'dashicons-admin-site' => __('Site', 'wp-art-routes'),
+        'dashicons-admin-users' => __('Users', 'wp-art-routes'),
+        'dashicons-archive' => __('Box (Archive)', 'wp-art-routes'),
+        'dashicons-art' => __('Art (default)', 'wp-art-routes'),
+        'dashicons-awards' => __('Award', 'wp-art-routes'),
+        'dashicons-bell' => __('Bell', 'wp-art-routes'),
+        'dashicons-book' => __('Book', 'wp-art-routes'),
+        'dashicons-buddicons-community' => __('Cake (Community)', 'wp-art-routes'),
+        'dashicons-buddicons-groups' => __('Balloons (Groups)', 'wp-art-routes'),
+        'dashicons-buddicons-replies' => __('Bug (Replies)', 'wp-art-routes'),
+        'dashicons-building' => __('Building', 'wp-art-routes'),
+        'dashicons-camera' => __('Camera', 'wp-art-routes'),
+        'dashicons-car' => __('Car', 'wp-art-routes'),
+        'dashicons-cart' => __('Cart', 'wp-art-routes'),
+        'dashicons-category' => __('Category', 'wp-art-routes'),
+        'dashicons-dashboard' => __('Dashboard', 'wp-art-routes'),
+        'dashicons-edit' => __('Pencil (Edit)', 'wp-art-routes'),
+        'dashicons-email-alt' => __('Message', 'wp-art-routes'),
+        'dashicons-flag' => __('Flag', 'wp-art-routes'),
+        'dashicons-format-audio' => __('Audio', 'wp-art-routes'),
+        'dashicons-format-camera-alt' => __('Camera', 'wp-art-routes'),
+        'dashicons-format-chat' => __('Chat', 'wp-art-routes'),
+        'dashicons-format-gallery' => __('Gallery', 'wp-art-routes'),
+        'dashicons-format-image' => __('Image', 'wp-art-routes'),
+        'dashicons-format-quote' => __('Quote', 'wp-art-routes'),
+        'dashicons-format-status' => __('Status', 'wp-art-routes'),
+        'dashicons-format-video' => __('Video', 'wp-art-routes'),
+        'dashicons-hammer' => __('Warning', 'wp-art-routes'),
+        'dashicons-heart' => __('Heart', 'wp-art-routes'),
+        'dashicons-hidden' => __('Hidden', 'wp-art-routes'),
+        'dashicons-images-alt2' => __('Gallery', 'wp-art-routes'),
+        'dashicons-info-outline' => __('Info Outline', 'wp-art-routes'),
+        'dashicons-info' => __('Info (default)', 'wp-art-routes'),
+        'dashicons-lightbulb' => __('Light Bulb', 'wp-art-routes'),
+        'dashicons-location' => __('Location', 'wp-art-routes'),
+        'dashicons-lock' => __('Lock', 'wp-art-routes'),
+        'dashicons-marker' => __('Marker', 'wp-art-routes'),
+        'dashicons-megaphone' => __('Megaphone', 'wp-art-routes'),
+        'dashicons-migrate' => __('Exit (Migrate)', 'wp-art-routes'),
+        'dashicons-palmtree' => __('Palm Tree', 'wp-art-routes'),
+        'dashicons-paperclip' => __('Paperclip', 'wp-art-routes'),
+        'dashicons-post-status' => __('Pin (Post Status)', 'wp-art-routes'),
+        'dashicons-shield' => __('Shield', 'wp-art-routes'),
+        'dashicons-smartphone' => __('Phone', 'wp-art-routes'),
+        'dashicons-smiley' => __('Smiley', 'wp-art-routes'),
+        'dashicons-sos' => __('SOS', 'wp-art-routes'),
+        'dashicons-star-filled' => __('Star', 'wp-art-routes'),
+        'dashicons-sticky' => __('Pin (Sticky)', 'wp-art-routes'),
+        'dashicons-store' => __('Store', 'wp-art-routes'),
+        'dashicons-store' => __('Store', 'wp-art-routes'),
+        'dashicons-tag' => __('Tag', 'wp-art-routes'),
+        'dashicons-tools' => __('Tools', 'wp-art-routes'),
+        'dashicons-trash' => __('Trash', 'wp-art-routes'),
+        'dashicons-unlock' => __('Unlock', 'wp-art-routes'),
+        'dashicons-visibility' => __('Visibility', 'wp-art-routes'),
+        'dashicons-warning' => __('Warning', 'wp-art-routes'),
+    ];
 
 ?>
     <div id="info-point-icon-meta-box">
@@ -569,58 +665,40 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
         </p>
 
         <select id="info_point_icon_select" name="info_point_icon" style="width: 100%;">
-            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
-            <?php foreach ($available_icons as $icon_file) :
-                $icon_name = pathinfo($icon_file, PATHINFO_FILENAME);
-                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
-                $display_name = ucwords(trim($display_name));
-            ?>
-                <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
-                    <?php echo esc_html($display_name); ?> (<?php echo esc_html($icon_file); ?>)
+            <option value=""><?php _e('-- Default (Info) --', 'wp-art-routes'); ?></option>
+            <?php foreach ($available_icons as $icon_class => $icon_label) : ?>
+                <option value="<?php echo esc_attr($icon_class); ?>" <?php selected($selected_icon, $icon_class); ?>>
+                    <?php echo esc_html($icon_label); ?>
                 </option>
             <?php endforeach; ?>
         </select>
 
         <div id="icon-preview-container" style="margin-top: 15px;">
-            <?php if ($selected_icon && in_array($selected_icon, $available_icons)) : ?>
-                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
-                <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                    <img id="icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
-                        style="width: 40px; height: 40px; object-fit: contain;"
-                        alt="<?php echo esc_attr($selected_icon); ?>" />
-                </div>
-            <?php else : ?>
-                <div id="icon-preview" style="display: none;">
-                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
-                    <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                        <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
-                    </div>
-                </div>
-            <?php endif; ?>
+            <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+            <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                <span id="icon-preview" class="dashicons <?php echo esc_attr($selected_icon ?: 'dashicons-info'); ?>" 
+                      style="width: 40px; height: 40px; font-size: 40px; color: #d63638;"></span>
+            </div>
         </div>
     </div>
 
     <script>
         jQuery(document).ready(function($) {
-            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
-
             $('#info_point_icon_select').on('change', function() {
-                const selectedIcon = $(this).val();
-                const $previewContainer = $('#icon-preview');
-
-                if (selectedIcon) {
-                    const iconUrl = iconsUrl + selectedIcon;
-                    $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrl).attr('alt', selectedIcon);
-                } else {
-                    $previewContainer.hide();
-                }
+                const selectedIcon = $(this).val() || 'dashicons-info';
+                const $preview = $('#icon-preview');
+                
+                // Remove all dashicons classes and add the selected one
+                $preview.removeClass(function (index, className) {
+                    return (className.match(/(^|\s)dashicons-\S+/g) || []).join(' ');
+                });
+                $preview.addClass(selectedIcon);
             });
         });
     </script>
 
     <p class="description">
-        <?php _e('Select an icon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
+        <?php _e('Select a dashicon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
     </p>
 <?php
 }

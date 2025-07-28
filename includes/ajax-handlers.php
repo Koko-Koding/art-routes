@@ -281,14 +281,12 @@ function wp_art_routes_get_associated_points($route_id) {
         $longitude = get_post_meta($artwork_post->ID, '_artwork_longitude', true);
 
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then fall back to no icon
-            $icon_filename = get_post_meta($artwork_post->ID, '_artwork_icon', true);
-            $icon_url = '';
+            // Get icon information - now stored as dashicon class name
+            $icon_class = get_post_meta($artwork_post->ID, '_artwork_icon', true);
             
-            if (!empty($icon_filename)) {
-                // Build URL from filename
-                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
-                $icon_url = $icons_url . $icon_filename;
+            // Use fallback if no icon is set
+            if (empty($icon_class)) {
+                $icon_class = 'dashicons-art';
             }
             
             $point_data = [
@@ -299,7 +297,7 @@ function wp_art_routes_get_associated_points($route_id) {
                 'edit_link' => get_edit_post_link($artwork_post->ID, 'raw'),
                 'type' => 'artwork',
                 'status' => $artwork_post->post_status,
-                'icon_url' => $icon_url ? esc_url($icon_url) : '',
+                'icon_class' => $icon_class, // Changed from icon_url to icon_class
             ];
 
             $points['artworks'][] = $point_data;
@@ -320,23 +318,12 @@ function wp_art_routes_get_associated_points($route_id) {
         $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
         
-        // Get icon information - prefer new icon field, fallback to old icon_url, then default
-        $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
-        $icon_url = '';
+        // Get icon information - now stored as dashicon class name
+        $icon_class = get_post_meta($info_post->ID, '_info_point_icon', true);
         
-        if (!empty($icon_filename)) {
-            // Build URL from filename
-            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
-            $icon_url = $icons_url . $icon_filename;
-        } else {
-            // Fallback to old icon_url field for backward compatibility
-            $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
-            
-            // If still no icon, use default
-            if (empty($icon_url)) {
-                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
-                $icon_url = $icons_url . 'WB plattegrond-Informatie.svg';
-            }
+        // Use fallback if no icon is set
+        if (empty($icon_class)) {
+            $icon_class = 'dashicons-info';
         }
 
         if (is_numeric($latitude) && is_numeric($longitude)) {
@@ -348,7 +335,7 @@ function wp_art_routes_get_associated_points($route_id) {
                 'edit_link' => get_edit_post_link($info_post->ID, 'raw'),
                 'type' => 'information_point',
                 'status' => $info_post->post_status,
-                'icon_url' => $icon_url ? esc_url($icon_url) : '',
+                'icon_class' => $icon_class, // Changed from icon_url to icon_class
             ];
 
             $points['information_points'][] = $point_data;

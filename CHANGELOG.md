@@ -4,6 +4,40 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.20.0] - 2025-07-27
+
+### Changed
+
+- **BREAKING CHANGE: Icon System Migration**: Completely replaced SVG icon system with WordPress Dashicons for professional appearance and better performance
+  - **Artwork Icons**: Admin dropdown now offers curated selection of relevant dashicons (art, image, camera, gallery, heart, star, location, marker, etc.) instead of SVG files
+  - **Information Point Icons**: Admin dropdown now offers curated selection of relevant dashicons (info, info-outline, location, marker, flag, warning, megaphone, etc.) instead of SVG files
+  - **Map Rendering**: All map markers now display dashicons instead of SVG images with proper styling and colors
+  - **REST API**: Updated to use `icon_class` field containing dashicon class names; `icon_url` field deprecated but maintained for backward compatibility
+  - **Template Functions**: Updated to pass `icon_class` instead of `icon_url` to frontend JavaScript
+  - **Admin Interface**: Meta boxes completely redesigned with dashicon previews and better user experience
+
+### Enhanced
+
+- **Performance Improvements**: Dashicons load faster than SVG files and are cached by WordPress core
+- **Consistent Styling**: All icons now use consistent WordPress design language with proper colors and sizing
+- **Better Accessibility**: Dashicons provide better contrast and screen reader support
+- **Mobile Optimization**: Improved touch targets and icon scaling on mobile devices
+- **Professional Appearance**: More suitable for business and organizational websites compared to custom SVG files
+
+### Technical Details
+
+- **Backward Compatibility**: Existing installations will fall back to default dashicons (dashicons-art for artworks, dashicons-info for information points)
+- **Database Migration**: No database migration required - new icon selections will overwrite old SVG references
+- **CSS Updates**: Complete redesign of marker styling to properly display and animate dashicons
+- **JavaScript Updates**: Updated all map rendering code to use dashicon HTML instead of SVG URLs
+- **Admin Updates**: Replaced SVG file dropdowns with curated dashicon selection interfaces
+
+### Migration Notes
+
+- **For Users**: Simply edit your artworks and information points to select new dashicon-based icons from the dropdown
+- **For Developers**: Update any custom code referencing `icon_url` to use `icon_class` instead
+- **For Theme Developers**: Dashicons are loaded by WordPress core, no additional CSS required
+
 ## [1.19.0] - 2025-07-27
 
 ### Added

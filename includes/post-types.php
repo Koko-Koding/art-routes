@@ -254,19 +254,31 @@ function wp_art_routes_register_artwork_rest_fields() {
         ],
     ]);
 
-    // Icon URL (computed from filename)
+    // Icon class name (stored directly)
+    register_rest_field('artwork', 'icon_class', [
+        'get_callback' => function($post) {
+            $icon_class = get_post_meta($post['id'], '_artwork_icon', true);
+            // Use fallback if no icon is set
+            return !empty($icon_class) ? $icon_class : 'dashicons-art';
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_artwork_icon', sanitize_text_field($value));
+        },
+        'schema' => [
+            'description' => __('Artwork icon dashicon class name', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    // Deprecated: Keep icon_url for backward compatibility but make it computed from icon_class
     register_rest_field('artwork', 'icon_url', [
         'get_callback' => function($post) {
-            $icon_filename = get_post_meta($post['id'], '_artwork_icon', true);
-            if (!empty($icon_filename)) {
-                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-                return $icons_url . $icon_filename;
-            }
-            // No default icon for artworks - they will use their featured image or a generic marker
+            // For backward compatibility, return empty string as we no longer use URLs
             return '';
         },
         'schema' => [
-            'description' => __('Artwork icon URL', 'wp-art-routes'),
+            'description' => __('Deprecated: Artwork icon URL (now using dashicons)', 'wp-art-routes'),
             'type' => 'string',
             'format' => 'uri',
             'context' => ['view', 'edit'],
@@ -322,25 +334,31 @@ function wp_art_routes_register_information_point_rest_fields() {
         ],
     ]);
 
-    // Icon URL (computed from filename)
-    register_rest_field('information_point', 'icon_url', [
+    // Icon class name (stored directly)
+    register_rest_field('information_point', 'icon_class', [
         'get_callback' => function($post) {
-            $icon_filename = get_post_meta($post['id'], '_info_point_icon', true);
-            if (!empty($icon_filename)) {
-                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-                return $icons_url . $icon_filename;
-            }
-            // Fallback to old icon_url field for backward compatibility
-            $old_icon_url = get_post_meta($post['id'], '_info_point_icon_url', true);
-            if (!empty($old_icon_url)) {
-                return $old_icon_url;
-            }
-            // Default icon if no icon is set
-            $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-            return $icons_url . 'WB plattegrond-Informatie.svg';
+            $icon_class = get_post_meta($post['id'], '_info_point_icon', true);
+            // Use fallback if no icon is set
+            return !empty($icon_class) ? $icon_class : 'dashicons-info';
+        },
+        'update_callback' => function($value, $post) {
+            return update_post_meta($post->ID, '_info_point_icon', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Information point icon URL', 'wp-art-routes'),
+            'description' => __('Information point icon dashicon class name', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    // Deprecated: Keep icon_url for backward compatibility but return empty string
+    register_rest_field('information_point', 'icon_url', [
+        'get_callback' => function($post) {
+            // For backward compatibility, return empty string as we no longer use URLs
+            return '';
+        },
+        'schema' => [
+            'description' => __('Deprecated: Information point icon URL (now using dashicons)', 'wp-art-routes'),
             'type' => 'string',
             'format' => 'uri',
             'context' => ['view', 'edit'],

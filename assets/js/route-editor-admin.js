@@ -42,14 +42,14 @@
 		// Define custom icons
 		artworkIcon = L.divIcon({
 			className: "artwork-marker-icon",
-			html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06l4.47-4.47a.75.75 0 0 1 1.06 0l3.97 3.97 3.97-3.97a.75.75 0 0 1 1.06 0l4.47 4.47V6a.75.75 0 0 0-.75-.75H3.75a.75.75 0 0 0-.75.75v10.06Z" clip-rule="evenodd" /></svg>',
+			html: '<span class="dashicons dashicons-art" style="font-size: 20px; color: #0073aa;"></span>',
 			iconSize: [24, 24],
 			iconAnchor: [12, 24],
 			popupAnchor: [0, -24],
 		});
 		infoPointIcon = L.divIcon({
 			className: "info-point-marker-icon",
-			html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>',
+			html: '<span class="dashicons dashicons-info" style="font-size: 16px; color: #d63638;"></span>',
 			iconSize: [24, 24],
 			iconAnchor: [12, 24],
 			popupAnchor: [0, -24],
@@ -273,17 +273,22 @@
 		const lng = e.latlng.lng;
 
 		switch (currentMode) {
-			case "draw":
+			case "draw": {
 				// Add point to route path - but check for duplicates first
 				const lastPoint = routePoints[routePoints.length - 1];
 				const tolerance = 0.00001; // Small tolerance for coordinate comparison
 
 				if (lastPoint) {
-					const lastLat = lastPoint.lat !== undefined ? lastPoint.lat : lastPoint[0];
-					const lastLng = lastPoint.lng !== undefined ? lastPoint.lng : lastPoint[1];
+					const lastLat =
+						lastPoint.lat !== undefined ? lastPoint.lat : lastPoint[0];
+					const lastLng =
+						lastPoint.lng !== undefined ? lastPoint.lng : lastPoint[1];
 
 					// Check if the new point is too close to the last point
-					if (Math.abs(lat - lastLat) < tolerance && Math.abs(lng - lastLng) < tolerance) {
+					if (
+						Math.abs(lat - lastLat) < tolerance &&
+						Math.abs(lng - lastLng) < tolerance
+					) {
 						console.log("Ignoring duplicate route point at same location");
 						return; // Don't add duplicate point
 					}
@@ -293,6 +298,7 @@
 				drawingLayer.addLatLng([lat, lng]);
 				updateRouteInfo();
 				break;
+			}
 			case "addArtwork":
 			case "addInfoPoint": {
 				// Add a temporary marker for a new point
@@ -596,7 +602,7 @@
 					$("#save-status")
 						.text(
 							i18n.errorSavingPoints +
-							(response.data.message ? `: ${response.data.message}` : ""),
+								(response.data.message ? `: ${response.data.message}` : ""),
 						)
 						.css("color", "red");
 				}
@@ -627,20 +633,22 @@
 
 		// Average speeds in km/h for different route types
 		const speeds = {
-			'walking': 4.5,      // Average walking speed
-			'cycling': 15,       // Average cycling speed  
-			'wheelchair': 3.5,   // Slower walking speed for wheelchair accessibility
-			'children': 3.0      // Slower pace for child-friendly routes
+			walking: 4.5, // Average walking speed
+			cycling: 15, // Average cycling speed
+			wheelchair: 3.5, // Slower walking speed for wheelchair accessibility
+			children: 3.0, // Slower pace for child-friendly routes
 		};
 
 		// Default to walking speed if route type not specified or unknown
-		const speed = speeds[routeType] || speeds['walking'];
+		const speed = speeds[routeType] || speeds["walking"];
 
 		// Calculate duration in hours, then convert to minutes
 		const durationHours = distanceKm / speed;
 		const durationMinutes = Math.round(durationHours * 60);
 
-		console.log(`Duration calculation: ${distanceKm.toFixed(2)}km at ${speed}km/h = ${durationMinutes} minutes (route type: ${routeType || 'default/walking'})`);
+		console.log(
+			`Duration calculation: ${distanceKm.toFixed(2)}km at ${speed}km/h = ${durationMinutes} minutes (route type: ${routeType || "default/walking"})`,
+		);
 
 		return durationMinutes;
 	}
@@ -776,9 +784,9 @@
 			// Support new metadata: is_start, is_end, notes
 			const pointObj =
 				typeof pt === "object" &&
-					pt !== null &&
-					pt.lat !== undefined &&
-					pt.lng !== undefined
+				pt !== null &&
+				pt.lat !== undefined &&
+				pt.lng !== undefined
 					? pt
 					: { lat: pt[0], lng: pt[1] };
 			// Visual indicator for start/end
@@ -863,7 +871,7 @@
 						if (routePoints.length <= 2) {
 							alert(
 								i18n.cannotDeleteLastPoints ||
-								"A route must have at least two points.",
+									"A route must have at least two points.",
 							);
 							return;
 						}
@@ -969,7 +977,6 @@
 	 * Load existing route path from textarea
 	 */
 	function loadExistingRoutePath() {
-
 		routePoints = getAndParseRouteFromTextarea();
 
 		drawingLayer.setLatLngs(routePoints.map((pt) => [pt.lat, pt.lng]));
@@ -1014,7 +1021,7 @@
 					console.error("Error loading points:", response.data.message);
 					alert(
 						i18n.errorLoadingPoints +
-						(response.data.message ? `: ${response.data.message}` : ""),
+							(response.data.message ? `: ${response.data.message}` : ""),
 					);
 					// Fallback if loading points fails: attempt geolocation
 					if (editorMap) {
@@ -1277,7 +1284,9 @@
 					.first()
 					.toJSON();
 				$("#artwork-icon-preview").attr("src", attachment.url).show();
-				$("#route-point-edit-form [name='artwork_icon_url']").val(attachment.url);
+				$("#route-point-edit-form [name='artwork_icon_url']").val(
+					attachment.url,
+				);
 				$("#remove-artwork-icon").show();
 			});
 			artworkIconFrame.open();
@@ -1300,9 +1309,18 @@
 
 		// Show/hide icon field based on point type
 		if (isObj && (pt.type === "information_point" || pt.type === "artwork")) {
-			const fieldId = pt.type === "information_point" ? "#info-point-icon-field" : "#artwork-icon-field";
-			const previewId = pt.type === "information_point" ? "#info-point-icon-preview" : "#artwork-icon-preview";
-			const removeId = pt.type === "information_point" ? "#remove-info-point-icon" : "#remove-artwork-icon";
+			const fieldId =
+				pt.type === "information_point"
+					? "#info-point-icon-field"
+					: "#artwork-icon-field";
+			const previewId =
+				pt.type === "information_point"
+					? "#info-point-icon-preview"
+					: "#artwork-icon-preview";
+			const removeId =
+				pt.type === "information_point"
+					? "#remove-info-point-icon"
+					: "#remove-artwork-icon";
 
 			$(fieldId).show();
 			// Set preview and value if present
@@ -1373,17 +1391,23 @@
 
 		if (nextPoint) {
 			// Calculate midpoint between current and next point
-			const currentLat = currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
-			const currentLng = currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
-			const nextLat = nextPoint.lat !== undefined ? nextPoint.lat : nextPoint[0];
-			const nextLng = nextPoint.lng !== undefined ? nextPoint.lng : nextPoint[1];
+			const currentLat =
+				currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
+			const currentLng =
+				currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
+			const nextLat =
+				nextPoint.lat !== undefined ? nextPoint.lat : nextPoint[0];
+			const nextLng =
+				nextPoint.lng !== undefined ? nextPoint.lng : nextPoint[1];
 
 			newLat = (currentLat + nextLat) / 2;
 			newLng = (currentLng + nextLng) / 2;
 		} else {
 			// If this is the last point, create a new point slightly offset
-			const currentLat = currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
-			const currentLng = currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
+			const currentLat =
+				currentPoint.lat !== undefined ? currentPoint.lat : currentPoint[0];
+			const currentLng =
+				currentPoint.lng !== undefined ? currentPoint.lng : currentPoint[1];
 
 			// Add a small offset (approximately 50 meters)
 			newLat = currentLat + 0.0005;
@@ -1397,22 +1421,26 @@
 			is_start: false,
 			is_end: false,
 			notes: "",
-			arrow_direction: null
+			arrow_direction: null,
 		};
 
 		// Insert the new point after the current index
 		routePoints.splice(idx + 1, 0, newPoint);
 
 		// Update the drawing layer
-		drawingLayer.setLatLngs(routePoints.map((pt) => [
-			pt.lat !== undefined ? pt.lat : pt[0],
-			pt.lng !== undefined ? pt.lng : pt[1]
-		]));
+		drawingLayer.setLatLngs(
+			routePoints.map((pt) => [
+				pt.lat !== undefined ? pt.lat : pt[0],
+				pt.lng !== undefined ? pt.lng : pt[1],
+			]),
+		);
 
 		// Update the display
 		updateRouteInfo();
 		$("#save-status").text("Unsaved changes").css("color", "orange");
 
-		console.log(`Inserted new route point after index ${idx} at coordinates: ${newLat.toFixed(5)}, ${newLng.toFixed(5)}`);
+		console.log(
+			`Inserted new route point after index ${idx} at coordinates: ${newLat.toFixed(5)}, ${newLng.toFixed(5)}`,
+		);
 	}
 })(jQuery);
