@@ -37,3 +37,7 @@ You can also create a new issue with the following command:
 ```bash
 gh issue create --title "Issue Title" --body "Description of the issue"
 ```
+
+## Code Style & Conventions
+
+- Please don't use unsafe printing functions like `_e()` or `print_r()` in the plugin code. Instead, use `esc_html()`, `esc_attr()`, or other appropriate escaping functions to ensure that the output is safe and secure.
