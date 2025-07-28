@@ -4,6 +4,43 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.21.0] - 2025-07-28
+
+### Added
+
+- **Docker-based Code Quality Tools**: Comprehensive development environment with automated WordPress coding standards enforcement
+  - Added `bin/dev-tools` script for easy access to code quality tools
+  - Integrated PHP_CodeSniffer (PHPCS) with WordPress coding standards
+  - Added `Dockerfile` and `docker-compose.yml` for containerized development
+  - Included `phpcs.xml` configuration tailored for WordPress plugin development
+  - Automatic fixing of unsafe printing functions (`_e()` → `esc_html_e()`)
+  - Security-focused code analysis and validation
+  - Internationalization compliance checking
+  - Translation file compilation tools
+
+### Enhanced
+
+- **Development Workflow**: Streamlined code quality management
+  - `bin/dev-tools check` - Comprehensive code analysis with WordPress standards
+  - `bin/dev-tools fix` - Automatic resolution of coding standard violations
+  - `bin/dev-tools security` - Security-focused vulnerability scanning
+  - `bin/dev-tools compile` - Translation file compilation
+  - Fixed 6,371+ code quality issues automatically across all plugin files
+  - Improved output escaping and input sanitization throughout codebase
+
+- **Documentation**: Enhanced coding guidelines and development instructions
+  - Updated `.github/copilot-instructions.md` with code quality tool documentation
+  - Added comprehensive usage examples and best practices
+  - Clear guidelines for pre-commit code quality checks
+
+### Technical Details
+
+- Automatically resolved unsafe printing functions across templates and includes
+- Enhanced security through proper output escaping and nonce verification
+- Improved code formatting and WordPress coding standard compliance
+- Containerized development environment for consistent code quality across all contributors
+- Zero-configuration setup for automated code quality enforcement
+
 ## [1.20.1] - 2025-07-28
 
 ### Fixed

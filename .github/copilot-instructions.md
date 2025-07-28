@@ -41,3 +41,23 @@ gh issue create --title "Issue Title" --body "Description of the issue"
 ## Code Style & Conventions
 
 - Please don't use unsafe printing functions like `_e()` or `print_r()` in the plugin code. Instead, use `esc_html()`, `esc_attr()`, or other appropriate escaping functions to ensure that the output is safe and secure.
+
+### Code Quality Tools
+
+The plugin includes Docker-based code quality tools that enforce WordPress coding standards and automatically fix common issues:
+
+```bash
+bin/dev-tools check     # See all remaining issues
+bin/dev-tools fix       # Auto-fix what's possible  
+bin/dev-tools security  # Security-focused scan only
+bin/dev-tools compile   # Build translation files
+```
+
+These tools use PHP_CodeSniffer (PHPCS) with WordPress coding standards to:
+- Automatically fix unsafe printing functions like `_e()` → `esc_html_e()`
+- Enforce proper output escaping and input sanitization
+- Check nonce verification and security best practices
+- Validate internationalization compliance
+- Fix code formatting and style issues
+
+Run `bin/dev-tools fix` before committing changes to automatically resolve most coding standard violations. Use `bin/dev-tools security` to focus specifically on security-related issues.

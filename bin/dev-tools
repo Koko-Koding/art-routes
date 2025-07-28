@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# WP Art Routes Plugin Development Tools
+# This script provides easy access to code quality tools via Docker
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Build Docker image if it doesn't exist
+build_image() {
+    if [[ "$(docker images -q wp-dev-tools 2> /dev/null)" == "" ]]; then
+        print_status "Building development tools Docker image..."
+        docker build -t wp-dev-tools .
+        print_success "Docker image built successfully"
+    fi
+}
+
+# Show help
+show_help() {
+    echo "WP Art Routes Plugin Development Tools"
+    echo ""
+    echo "Usage: ./dev-tools.sh [command]"
+    echo ""
+    echo "Commands:"
+    echo "  check         - Run full PHPCS check with WordPress standards"
+    echo "  fix           - Auto-fix code style issues with PHPCBF"
+    echo "  security      - Check for security issues only"
+    echo "  i18n          - Check internationalization compliance"
+    echo "  compile       - Compile .po translation files to .mo"
+    echo "  build         - Build the development tools Docker image"
+    echo "  clean         - Remove development tools Docker image"
+    echo "  shell         - Open interactive shell in container"
+    echo "  help          - Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  ./dev-tools.sh check"
+    echo "  ./dev-tools.sh fix"
+    echo "  ./dev-tools.sh security"
+    echo ""
+}
+
+# Main script logic
+case "$1" in
+    "check")
+        build_image
+        print_status "Running PHPCS check with WordPress standards..."
+        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check
+        ;;
+    "fix")
+        build_image
+        print_status "Running PHPCBF auto-fix..."
+        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools fix
+        print_success "Auto-fix completed"
+        ;;
+    "security")
+        build_image
+        print_status "Running security-focused checks..."
+        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check-security
+        ;;
+    "i18n")
+        build_image
+        print_status "Running internationalization checks..."
+        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check-i18n
+        ;;
+    "compile")
+        build_image
+        print_status "Compiling .po files to .mo..."
+        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools compile-po
+        print_success "Translation files compiled"
+        ;;
+    "build")
+        print_status "Building development tools Docker image..."
+        docker build -t wp-dev-tools .
+        print_success "Docker image built successfully"
+        ;;
+    "clean")
+        print_status "Removing development tools Docker image..."
+        docker rmi wp-dev-tools 2>/dev/null || print_warning "Image not found"
+        print_success "Cleanup completed"
+        ;;
+    "shell")
+        build_image
+        print_status "Opening interactive shell..."
+        docker run --rm -it -v "${PWD}:/app" wp-dev-tools bash
+        ;;
+    "help"|"")
+        show_help
+        ;;
+    *)
+        print_error "Unknown command: $1"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac

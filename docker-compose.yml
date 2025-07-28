@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  wp-dev-tools:
+    build: .
+    container_name: wp-art-routes-dev
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - TERM=xterm-256color
+    profiles:
+      - tools
+
+  # Quick service aliases for common tasks
+  phpcs-check:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: wp-tools check
+    profiles:
+      - never  # Use with docker-compose run
+
+  phpcs-fix:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: wp-tools fix
+    profiles:
+      - never  # Use with docker-compose run
+
+  security-check:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: wp-tools check-security
+    profiles:
+      - never  # Use with docker-compose run
+
+  i18n-check:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: wp-tools check-i18n
+    profiles:
+      - never  # Use with docker-compose run
+
+  compile-translations:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: wp-tools compile-po
+    profiles:
+      - never  # Use with docker-compose run

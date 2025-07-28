@@ -4,254 +4,269 @@
  */
 
 // If this file is called directly, abort.
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 /**
  * AJAX handler for marking an artwork as visited
  */
 function wp_art_routes_ajax_mark_artwork_visited() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wp_art_routes_nonce')) {
-        wp_send_json_error('Invalid nonce');
-        die();
-    }
-    
-    // Check user is logged in (optional)
-    if (!is_user_logged_in()) {
-        // For anonymous users, you might store in a cookie or session
-        // This depends on your requirements
-        wp_send_json_success([
-            'status' => 'anonymous',
-            'message' => 'Stored in session',
-        ]);
-        die();
-    }
-    
-    // Get data
-    $artwork_id = isset($_POST['artwork_id']) ? intval($_POST['artwork_id']) : 0;
-    $user_id = get_current_user_id();
-    
-    if ($artwork_id <= 0) {
-        wp_send_json_error('Invalid artwork ID');
-        die();
-    }
-    
-    // Get user's visited artworks
-    $visited = get_user_meta($user_id, 'wp_art_routes_visited_artworks', true);
-    
-    if (!is_array($visited)) {
-        $visited = [];
-    }
-    
-    // Add current artwork if not already visited
-    if (!in_array($artwork_id, $visited)) {
-        $visited[] = $artwork_id;
-        update_user_meta($user_id, 'wp_art_routes_visited_artworks', $visited);
-    }
-    
-    wp_send_json_success([
-        'status' => 'success',
-        'message' => 'Artwork marked as visited',
-    ]);
-    die();
+	// Verify nonce
+	if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'wp_art_routes_nonce' ) ) {
+		wp_send_json_error( 'Invalid nonce' );
+		die();
+	}
+
+	// Check user is logged in (optional)
+	if ( ! is_user_logged_in() ) {
+		// For anonymous users, you might store in a cookie or session
+		// This depends on your requirements
+		wp_send_json_success(
+			array(
+				'status' => 'anonymous',
+				'message' => 'Stored in session',
+			)
+		);
+		die();
+	}
+
+	// Get data
+	$artwork_id = isset( $_POST['artwork_id'] ) ? intval( $_POST['artwork_id'] ) : 0;
+	$user_id    = get_current_user_id();
+
+	if ( $artwork_id <= 0 ) {
+		wp_send_json_error( 'Invalid artwork ID' );
+		die();
+	}
+
+	// Get user's visited artworks
+	$visited = get_user_meta( $user_id, 'wp_art_routes_visited_artworks', true );
+
+	if ( ! is_array( $visited ) ) {
+		$visited = array();
+	}
+
+	// Add current artwork if not already visited
+	if ( ! in_array( $artwork_id, $visited ) ) {
+		$visited[] = $artwork_id;
+		update_user_meta( $user_id, 'wp_art_routes_visited_artworks', $visited );
+	}
+
+	wp_send_json_success(
+		array(
+			'status' => 'success',
+			'message' => 'Artwork marked as visited',
+		)
+	);
+	die();
 }
-add_action('wp_ajax_wp_art_routes_mark_artwork_visited', 'wp_art_routes_ajax_mark_artwork_visited');
-add_action('wp_ajax_nopriv_wp_art_routes_mark_artwork_visited', 'wp_art_routes_ajax_mark_artwork_visited');
+add_action( 'wp_ajax_wp_art_routes_mark_artwork_visited', 'wp_art_routes_ajax_mark_artwork_visited' );
+add_action( 'wp_ajax_nopriv_wp_art_routes_mark_artwork_visited', 'wp_art_routes_ajax_mark_artwork_visited' );
 
 /**
  * AJAX handler for searching posts for artist association
  */
 function wp_art_routes_search_posts_for_artist() {
-    // Verify nonce
-    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'artist_search_nonce')) {
-        wp_send_json_error('Invalid nonce');
-        die();
-    }
-    
-    $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
-    $post_type = isset($_GET['post_type']) ? sanitize_text_field($_GET['post_type']) : '';
-    
-    if (empty($term)) {
-        wp_send_json([]);
-        die();
-    }
-    
-    // Prepare query arguments
-    $args = array(
-        'post_status' => 'publish',
-        'posts_per_page' => 10,
-        's' => $term,
-    );
-    
-    // If specific post type is requested
-    if (!empty($post_type)) {
-        $args['post_type'] = $post_type;
-    } else {
-        // Get all public post types except excluded ones
-        $excluded_post_types = array('revision', 'attachment', 'nav_menu_item', 'custom_css', 
-                                    'customize_changeset', 'oembed_cache', 'user_request', 
-                                    'wp_block', 'art_route', 'artwork');
-        $post_types = get_post_types(array('public' => true), 'names');
-        $filtered_post_types = array_diff($post_types, $excluded_post_types);
-        
-        $args['post_type'] = $filtered_post_types;
-    }
-    
-    $search_query = new WP_Query($args);
-    $results = array();
-    
-    if ($search_query->have_posts()) {
-        while ($search_query->have_posts()) {
-            $search_query->the_post();
-            $post_id = get_the_ID();
-            $post_type_obj = get_post_type_object(get_post_type());
-            $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : get_post_type();
-            
-            $results[] = array(
-                'id' => $post_id,
-                'label' => get_the_title(),
-                'post_type' => get_post_type(),
-                'post_type_label' => $post_type_label
-            );
-        }
-    }
-    
-    wp_reset_postdata();
-    wp_send_json($results);
-    die();
+	// Verify nonce
+	if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( $_GET['nonce'], 'artist_search_nonce' ) ) {
+		wp_send_json_error( 'Invalid nonce' );
+		die();
+	}
+
+	$term      = isset( $_GET['term'] ) ? sanitize_text_field( $_GET['term'] ) : '';
+	$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '';
+
+	if ( empty( $term ) ) {
+		wp_send_json( array() );
+		die();
+	}
+
+	// Prepare query arguments
+	$args = array(
+		'post_status' => 'publish',
+		'posts_per_page' => 10,
+		's' => $term,
+	);
+
+	// If specific post type is requested
+	if ( ! empty( $post_type ) ) {
+		$args['post_type'] = $post_type;
+	} else {
+		// Get all public post types except excluded ones
+		$excluded_post_types = array(
+			'revision',
+			'attachment',
+			'nav_menu_item',
+			'custom_css',
+			'customize_changeset',
+			'oembed_cache',
+			'user_request',
+			'wp_block',
+			'art_route',
+			'artwork',
+		);
+		$post_types          = get_post_types( array( 'public' => true ), 'names' );
+		$filtered_post_types = array_diff( $post_types, $excluded_post_types );
+
+		$args['post_type'] = $filtered_post_types;
+	}
+
+	$search_query = new WP_Query( $args );
+	$results      = array();
+
+	if ( $search_query->have_posts() ) {
+		while ( $search_query->have_posts() ) {
+			$search_query->the_post();
+			$post_id         = get_the_ID();
+			$post_type_obj   = get_post_type_object( get_post_type() );
+			$post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : get_post_type();
+
+			$results[] = array(
+				'id' => $post_id,
+				'label' => get_the_title(),
+				'post_type' => get_post_type(),
+				'post_type_label' => $post_type_label,
+			);
+		}
+	}
+
+	wp_reset_postdata();
+	wp_send_json( $results );
+	die();
 }
-add_action('wp_ajax_search_posts_for_artist', 'wp_art_routes_search_posts_for_artist');
+add_action( 'wp_ajax_search_posts_for_artist', 'wp_art_routes_search_posts_for_artist' );
 
 /**
  * AJAX handler to get artworks and info points for a specific route
  */
 function wp_ajax_get_route_points() {
-    check_ajax_referer('get_route_points_nonce', 'nonce');
+	check_ajax_referer( 'get_route_points_nonce', 'nonce' );
 
-    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
-        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
-    }
+	if ( ! isset( $_POST['route_id'] ) || ! current_user_can( 'edit_post', intval( $_POST['route_id'] ) ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid request or permissions.', 'wp-art-routes' ) ) );
+	}
 
-    $route_id = intval($_POST['route_id']);
-    $points = wp_art_routes_get_associated_points($route_id);
+	$route_id = intval( $_POST['route_id'] );
+	$points   = wp_art_routes_get_associated_points( $route_id );
 
-    wp_send_json_success($points);
+	wp_send_json_success( $points );
 }
-add_action('wp_ajax_get_route_points', 'wp_ajax_get_route_points');
+add_action( 'wp_ajax_get_route_points', 'wp_ajax_get_route_points' );
 
 /**
  * AJAX handler to save route path and associated points (artworks/info points)
  */
 function wp_ajax_save_route_points() {
-    check_ajax_referer('save_route_points_nonce', 'nonce');
+	check_ajax_referer( 'save_route_points_nonce', 'nonce' );
 
-    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
-        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
-    }
+	if ( ! isset( $_POST['route_id'] ) || ! current_user_can( 'edit_post', intval( $_POST['route_id'] ) ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid request or permissions.', 'wp-art-routes' ) ) );
+	}
 
-    $route_id = intval($_POST['route_id']);
-    $results = [];
+	$route_id = intval( $_POST['route_id'] );
+	$results  = array();
 
-    // 1. Save Route Path
-    if (isset($_POST['route_path'])) {
-        $sanitized_path = sanitize_textarea_field($_POST['route_path']);
-        update_post_meta($route_id, '_route_path', $sanitized_path);
-        $results['path_saved'] = true;
-    }
+	// 1. Save Route Path
+	if ( isset( $_POST['route_path'] ) ) {
+		$sanitized_path = sanitize_textarea_field( $_POST['route_path'] );
+		update_post_meta( $route_id, '_route_path', $sanitized_path );
+		$results['path_saved'] = true;
+	}
 
-    // 2. Save Route Length (calculated client-side, passed here)
-    if (isset($_POST['route_length'])) {
-        update_post_meta($route_id, '_route_length', sanitize_text_field($_POST['route_length']));
-        $results['length_saved'] = true;
-    }
+	// 2. Save Route Length (calculated client-side, passed here)
+	if ( isset( $_POST['route_length'] ) ) {
+		update_post_meta( $route_id, '_route_length', sanitize_text_field( $_POST['route_length'] ) );
+		$results['length_saved'] = true;
+	}
 
-    // 3. Handle Point Updates (Moved Points)
-    if (isset($_POST['updated_points']) && is_array($_POST['updated_points'])) {
-        $results['updated'] = [];
-        foreach ($_POST['updated_points'] as $point) {
-            $point_id = isset($point['id']) ? intval($point['id']) : 0;
-            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
-            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
-            $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
+	// 3. Handle Point Updates (Moved Points)
+	if ( isset( $_POST['updated_points'] ) && is_array( $_POST['updated_points'] ) ) {
+		$results['updated'] = array();
+		foreach ( $_POST['updated_points'] as $point ) {
+			$point_id = isset( $point['id'] ) ? intval( $point['id'] ) : 0;
+			$lat      = isset( $point['lat'] ) ? sanitize_text_field( $point['lat'] ) : null;
+			$lng      = isset( $point['lng'] ) ? sanitize_text_field( $point['lng'] ) : null;
+			$icon_url = isset( $point['icon_url'] ) ? esc_url_raw( $point['icon_url'] ) : null;
 
-            if ($point_id > 0 && $lat !== null && $lng !== null && current_user_can('edit_post', $point_id)) {
-                update_post_meta($point_id, '_artwork_latitude', $lat);
-                update_post_meta($point_id, '_artwork_longitude', $lng);
-                // Save icon_url for info points
-                $post_type = get_post_type($point_id);
-                if ($post_type === 'information_point') {
-                    if ($icon_url) {
-                        // For backward compatibility, still save icon_url if provided
-                        update_post_meta($point_id, '_info_point_icon_url', $icon_url);
-                    } else {
-                        delete_post_meta($point_id, '_info_point_icon_url');
-                    }
-                }
-                $results['updated'][] = $point_id;
-            }
-        }
-    }
+			if ( $point_id > 0 && $lat !== null && $lng !== null && current_user_can( 'edit_post', $point_id ) ) {
+				update_post_meta( $point_id, '_artwork_latitude', $lat );
+				update_post_meta( $point_id, '_artwork_longitude', $lng );
+				// Save icon_url for info points
+				$post_type = get_post_type( $point_id );
+				if ( $post_type === 'information_point' ) {
+					if ( $icon_url ) {
+						// For backward compatibility, still save icon_url if provided
+						update_post_meta( $point_id, '_info_point_icon_url', $icon_url );
+					} else {
+						delete_post_meta( $point_id, '_info_point_icon_url' );
+					}
+				}
+				$results['updated'][] = $point_id;
+			}
+		}
+	}
 
-    // 4. Handle Point Removals (Delete from system - no longer just disassociate)
-    if (isset($_POST['removed_points']) && is_array($_POST['removed_points'])) {
-        $results['removed'] = [];
-        foreach ($_POST['removed_points'] as $point_id_raw) {
-            $point_id = intval($point_id_raw);
-            if ($point_id > 0 && current_user_can('edit_post', $point_id)) {
-                // Since points are now global, we just note them as removed from the editor
-                // The actual posts remain in the system
-                $results['removed'][] = $point_id;
-            }
-        }
-    }
+	// 4. Handle Point Removals (Delete from system - no longer just disassociate)
+	if ( isset( $_POST['removed_points'] ) && is_array( $_POST['removed_points'] ) ) {
+		$results['removed'] = array();
+		foreach ( $_POST['removed_points'] as $point_id_raw ) {
+			$point_id = intval( $point_id_raw );
+			if ( $point_id > 0 && current_user_can( 'edit_post', $point_id ) ) {
+				// Since points are now global, we just note them as removed from the editor
+				// The actual posts remain in the system
+				$results['removed'][] = $point_id;
+			}
+		}
+	}
 
-    // 5. Handle New Points (Create Draft Posts)
-    if (isset($_POST['new_points']) && is_array($_POST['new_points'])) {
-        $results['added'] = [];
-        foreach ($_POST['new_points'] as $point) {
-            $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
-            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
-            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
-            $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
+	// 5. Handle New Points (Create Draft Posts)
+	if ( isset( $_POST['new_points'] ) && is_array( $_POST['new_points'] ) ) {
+		$results['added'] = array();
+		foreach ( $_POST['new_points'] as $point ) {
+			$type     = isset( $point['type'] ) ? sanitize_text_field( $point['type'] ) : null;
+			$lat      = isset( $point['lat'] ) ? sanitize_text_field( $point['lat'] ) : null;
+			$lng      = isset( $point['lng'] ) ? sanitize_text_field( $point['lng'] ) : null;
+			$icon_url = isset( $point['icon_url'] ) ? esc_url_raw( $point['icon_url'] ) : null;
 
-            if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
-                $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
-                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %s, %s', 'wp-art-routes'), $lat, $lng) : sprintf(__('New Info Point near %s, %s', 'wp-art-routes'), $lat, $lng);
+			if ( ( $type === 'artwork' || $type === 'information_point' ) && $lat !== null && $lng !== null ) {
+				$post_type  = ( $type === 'artwork' ) ? 'artwork' : 'information_point';
+				$post_title = ( $type === 'artwork' ) ? sprintf( __( 'New Artwork near %1$s, %2$s', 'wp-art-routes' ), $lat, $lng ) : sprintf( __( 'New Info Point near %1$s, %2$s', 'wp-art-routes' ), $lat, $lng );
 
-                $new_post_id = wp_insert_post([
-                    'post_title' => $post_title,
-                    'post_type' => $post_type,
-                    'post_status' => 'draft', // Create as draft initially
-                    'post_author' => get_current_user_id(),
-                ]);
+				$new_post_id = wp_insert_post(
+					array(
+						'post_title' => $post_title,
+						'post_type' => $post_type,
+						'post_status' => 'draft', // Create as draft initially
+						'post_author' => get_current_user_id(),
+					)
+				);
 
-                if ($new_post_id && !is_wp_error($new_post_id)) {
-                    // Save location
-                    update_post_meta($new_post_id, '_artwork_latitude', $lat);
-                    update_post_meta($new_post_id, '_artwork_longitude', $lng);
-                    // Save icon_url for info points
-                    if ($type === 'information_point' && $icon_url) {
-                        update_post_meta($new_post_id, '_info_point_icon_url', $icon_url);
-                    }
-                    // No longer associate any points with routes - both artworks and info points are global
-                    $results['added'][] = [
-                        'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
-                        'new_id' => $new_post_id,
-                        'type' => $type,
-                        'edit_link' => get_edit_post_link($new_post_id, 'raw')
-                    ];
-                } else {
-                    // Log error if needed
-                }
-            }
-        }
-    }
+				if ( $new_post_id && ! is_wp_error( $new_post_id ) ) {
+					// Save location
+					update_post_meta( $new_post_id, '_artwork_latitude', $lat );
+					update_post_meta( $new_post_id, '_artwork_longitude', $lng );
+					// Save icon_url for info points
+					if ( $type === 'information_point' && $icon_url ) {
+						update_post_meta( $new_post_id, '_info_point_icon_url', $icon_url );
+					}
+					// No longer associate any points with routes - both artworks and info points are global
+					$results['added'][] = array(
+						'temp_id' => isset( $point['temp_id'] ) ? $point['temp_id'] : null,
+						'new_id' => $new_post_id,
+						'type' => $type,
+						'edit_link' => get_edit_post_link( $new_post_id, 'raw' ),
+					);
+				} else {
+					// Log error if needed
+				}
+			}
+		}
+	}
 
-    wp_send_json_success($results);
+	wp_send_json_success( $results );
 }
-add_action('wp_ajax_save_route_points', 'wp_ajax_save_route_points');
+add_action( 'wp_ajax_save_route_points', 'wp_ajax_save_route_points' );
 
 /**
  * Helper function to get associated artworks and info points for a route
@@ -260,87 +275,87 @@ add_action('wp_ajax_save_route_points', 'wp_ajax_save_route_points');
  * @param int $route_id The ID of the route post.
  * @return array An array containing 'artworks' and 'information_points'.
  */
-function wp_art_routes_get_associated_points($route_id) {
-    $points = [
-        'artworks' => [],
-        'information_points' => [],
-    ];
+function wp_art_routes_get_associated_points( $route_id ) {
+	$points = array(
+		'artworks' => array(),
+		'information_points' => array(),
+	);
 
-    // Get all artworks (no longer tied to specific routes)
-    $artwork_query_args = [
-        'post_type' => 'artwork',
-        'posts_per_page' => -1,
-        'post_status' => ['publish', 'draft'],
-        'orderby' => 'title',
-        'order' => 'ASC',
-    ];
+	// Get all artworks (no longer tied to specific routes)
+	$artwork_query_args = array(
+		'post_type' => 'artwork',
+		'posts_per_page' => -1,
+		'post_status' => array( 'publish', 'draft' ),
+		'orderby' => 'title',
+		'order' => 'ASC',
+	);
 
-    $artwork_posts = get_posts($artwork_query_args);
-    foreach ($artwork_posts as $artwork_post) {
-        $latitude = get_post_meta($artwork_post->ID, '_artwork_latitude', true);
-        $longitude = get_post_meta($artwork_post->ID, '_artwork_longitude', true);
+	$artwork_posts = get_posts( $artwork_query_args );
+	foreach ( $artwork_posts as $artwork_post ) {
+		$latitude  = get_post_meta( $artwork_post->ID, '_artwork_latitude', true );
+		$longitude = get_post_meta( $artwork_post->ID, '_artwork_longitude', true );
 
-        if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - now stored as dashicon class name
-            $icon_class = get_post_meta($artwork_post->ID, '_artwork_icon', true);
-            
-            // Use fallback if no icon is set
-            if (empty($icon_class)) {
-                $icon_class = 'dashicons-art';
-            }
-            
-            $point_data = [
-                'id' => $artwork_post->ID,
-                'title' => $artwork_post->post_title,
-                'lat' => floatval($latitude),
-                'lng' => floatval($longitude),
-                'edit_link' => get_edit_post_link($artwork_post->ID, 'raw'),
-                'type' => 'artwork',
-                'status' => $artwork_post->post_status,
-                'icon_class' => $icon_class, // Changed from icon_url to icon_class
-            ];
+		if ( is_numeric( $latitude ) && is_numeric( $longitude ) ) {
+			// Get icon information - now stored as dashicon class name
+			$icon_class = get_post_meta( $artwork_post->ID, '_artwork_icon', true );
 
-            $points['artworks'][] = $point_data;
-        }
-    }
+			// Use fallback if no icon is set
+			if ( empty( $icon_class ) ) {
+				$icon_class = 'dashicons-art';
+			}
 
-    // Get all information points (no longer tied to specific routes)
-    $info_point_query_args = [
-        'post_type' => 'information_point',
-        'posts_per_page' => -1,
-        'post_status' => ['publish', 'draft'],
-        'orderby' => 'title',
-        'order' => 'ASC',
-    ];
+			$point_data = array(
+				'id' => $artwork_post->ID,
+				'title' => $artwork_post->post_title,
+				'lat' => floatval( $latitude ),
+				'lng' => floatval( $longitude ),
+				'edit_link' => get_edit_post_link( $artwork_post->ID, 'raw' ),
+				'type' => 'artwork',
+				'status' => $artwork_post->post_status,
+				'icon_class' => $icon_class, // Changed from icon_url to icon_class
+			);
 
-    $info_point_posts = get_posts($info_point_query_args);
-    foreach ($info_point_posts as $info_post) {
-        $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
-        $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
-        
-        // Get icon information - now stored as dashicon class name
-        $icon_class = get_post_meta($info_post->ID, '_info_point_icon', true);
-        
-        // Use fallback if no icon is set
-        if (empty($icon_class)) {
-            $icon_class = 'dashicons-info';
-        }
+			$points['artworks'][] = $point_data;
+		}
+	}
 
-        if (is_numeric($latitude) && is_numeric($longitude)) {
-            $point_data = [
-                'id' => $info_post->ID,
-                'title' => $info_post->post_title,
-                'lat' => floatval($latitude),
-                'lng' => floatval($longitude),
-                'edit_link' => get_edit_post_link($info_post->ID, 'raw'),
-                'type' => 'information_point',
-                'status' => $info_post->post_status,
-                'icon_class' => $icon_class, // Changed from icon_url to icon_class
-            ];
+	// Get all information points (no longer tied to specific routes)
+	$info_point_query_args = array(
+		'post_type' => 'information_point',
+		'posts_per_page' => -1,
+		'post_status' => array( 'publish', 'draft' ),
+		'orderby' => 'title',
+		'order' => 'ASC',
+	);
 
-            $points['information_points'][] = $point_data;
-        }
-    }
+	$info_point_posts = get_posts( $info_point_query_args );
+	foreach ( $info_point_posts as $info_post ) {
+		$latitude  = get_post_meta( $info_post->ID, '_artwork_latitude', true );
+		$longitude = get_post_meta( $info_post->ID, '_artwork_longitude', true );
 
-    return $points;
+		// Get icon information - now stored as dashicon class name
+		$icon_class = get_post_meta( $info_post->ID, '_info_point_icon', true );
+
+		// Use fallback if no icon is set
+		if ( empty( $icon_class ) ) {
+			$icon_class = 'dashicons-info';
+		}
+
+		if ( is_numeric( $latitude ) && is_numeric( $longitude ) ) {
+			$point_data = array(
+				'id' => $info_post->ID,
+				'title' => $info_post->post_title,
+				'lat' => floatval( $latitude ),
+				'lng' => floatval( $longitude ),
+				'edit_link' => get_edit_post_link( $info_post->ID, 'raw' ),
+				'type' => 'information_point',
+				'status' => $info_post->post_status,
+				'icon_class' => $icon_class, // Changed from icon_url to icon_class
+			);
+
+			$points['information_points'][] = $point_data;
+		}
+	}
+
+	return $points;
 }
