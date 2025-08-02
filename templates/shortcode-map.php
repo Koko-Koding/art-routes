@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template for the art_route_map shortcode
  *
@@ -59,13 +60,13 @@ $js_data = array(
 	<?php if ( $atts['show_title'] ) : ?>
 		<h2 class="art-route-title"><?php echo esc_html( $route['title'] ); ?></h2>
 	<?php endif; ?>
-	
+
 	<?php if ( $atts['show_description'] && ! empty( $route['description'] ) ) : ?>
 		<div class="art-route-description">
 			<?php echo wp_kses_post( $route['description'] ); ?>
 		</div>
 	<?php endif; ?>
-	
+
 	<div class="art-route-details">
 		<div class="route-meta">
 			<?php if ( ! empty( $route['length'] ) ) : ?>
@@ -73,13 +74,13 @@ $js_data = array(
 					<?php echo esc_html( wp_art_routes_format_length( $route['length'] ) ); ?>
 				</span>
 			<?php endif; ?>
-			
+
 			<?php if ( ! empty( $route['duration'] ) ) : ?>
 				<span class="route-duration">
 					<?php echo esc_html( wp_art_routes_format_duration( $route['duration'] ) ); ?>
 				</span>
 			<?php endif; ?>
-			
+
 			<?php if ( ! empty( $route['type'] ) ) : ?>
 				<span class="route-type">
 					<?php
@@ -95,27 +96,27 @@ $js_data = array(
 			<?php endif; ?>
 		</div>
 	</div>
-	
+
 	<!-- Map container -->
 	<div id="art-route-map" class="art-route-map" <?php echo wp_kses( $container_style, array( 'style' => array() ) ); ?>></div>
-	
+
 	<?php
 	// Display map controls using the reusable template tag
 	wp_art_routes_display_map_controls();
 	?>
-	
+
 	<!-- Loading indicator -->
 	<div id="map-loading" class="map-loading" style="display: none;">
 		<div class="spinner"></div>
 		<p><?php esc_html_e( 'Loading map...', 'wp-art-routes' ); ?></p>
 	</div>
-	
+
 	<!-- Location error message -->
 	<div id="location-error" class="map-error" style="display: none;">
 		<p></p>
 		<button id="retry-location" class="button"><?php esc_html_e( 'Retry', 'wp-art-routes' ); ?></button>
 	</div>
-	
+
 	<!-- Route progress -->
 	<div class="route-progress" style="display: none;">
 		<h3><?php esc_html_e( 'Progress', 'wp-art-routes' ); ?></h3>
@@ -124,7 +125,7 @@ $js_data = array(
 		</div>
 		<p><?php esc_html_e( 'You have completed', 'wp-art-routes' ); ?> <span id="progress-percentage">0</span>% <?php esc_html_e( 'of this route', 'wp-art-routes' ); ?></p>
 	</div>
-	
+
 	<!-- Artwork modal -->
 	<div id="artwork-modal" class="artwork-modal" style="display: none;">
 		<div class="artwork-modal-content">
@@ -142,5 +143,5 @@ $js_data = array(
 
 <!-- Map data passed to JavaScript -->
 <script type="text/javascript">
-	var artRouteData = <?php echo json_encode( $js_data ); ?>;
+	var artRouteData = <?php echo wp_json_encode( $js_data ); ?>;
 </script>

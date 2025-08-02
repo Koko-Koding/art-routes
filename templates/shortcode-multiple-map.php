@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template for the art_routes_map shortcode
  * Displays multiple routes on a single map with color coding
@@ -130,7 +131,7 @@ $map_id = 'art-routes-map-' . uniqid();
 								<span class="dashicons dashicons-arrow-right-alt2"></span>
 							</a>
 						</div>
-						
+
 						<div class="route-meta multiple">
 							<?php if ( ! empty( $route['type'] ) && isset( $route_types[ $route['type'] ] ) ) : ?>
 								<span class="route-type">
@@ -138,14 +139,14 @@ $map_id = 'art-routes-map-' . uniqid();
 									<?php echo esc_html( $route_types[ $route['type'] ]['label'] ); ?>
 								</span>
 							<?php endif; ?>
-							
+
 							<?php if ( ! empty( $route['length'] ) ) : ?>
 								<span class="route-length">
 									<span class="dashicons dashicons-location"></span>
 									<?php echo esc_html( wp_art_routes_format_length( $route['length'] ) ); ?>
 								</span>
 							<?php endif; ?>
-							
+
 							<?php if ( ! empty( $route['duration'] ) ) : ?>
 								<span class="route-duration">
 									<span class="dashicons dashicons-clock"></span>
@@ -153,7 +154,7 @@ $map_id = 'art-routes-map-' . uniqid();
 								</span>
 							<?php endif; ?>
 						</div>
-						
+
 						<?php if ( $atts['show_description'] ) : ?>
 							<div class="route-description">
 								<?php
@@ -166,7 +167,7 @@ $map_id = 'art-routes-map-' . uniqid();
 								?>
 							</div>
 						<?php endif; ?>
-						
+
 						<button class="zoom-to-route-button" data-route-index="<?php echo esc_attr( $index ); ?>">
 							<span class="dashicons dashicons-search"></span>
 							<?php esc_html_e( 'Zoom to Route', 'wp-art-routes' ); ?>
@@ -176,15 +177,15 @@ $map_id = 'art-routes-map-' . uniqid();
 			</ul>
 		</div>
 	<?php endif; ?>
-	
+
 	<div class="art-routes-map-container">
 		<?php if ( $atts['show_title'] ) : ?>
 			<h2 class="art-routes-map-title"><?php esc_html_e( 'Art Routes Map', 'wp-art-routes' ); ?></h2>
 		<?php endif; ?>
-		
+
 		<!-- Map container -->
 		<div id="<?php echo esc_attr( $map_id ); ?>" class="art-routes-map" <?php echo wp_kses( $container_style, array( 'style' => array() ) ); ?>></div>
-		
+
 		<!-- Loading indicator -->
 		<div id="map-loading-<?php echo esc_attr( $map_id ); ?>" class="map-loading" style="display: none;">
 			<div class="spinner"></div>
@@ -198,42 +199,44 @@ $map_id = 'art-routes-map-' . uniqid();
 	document.addEventListener('DOMContentLoaded', function() {
 		const mapId = '<?php echo esc_js( $map_id ); ?>';
 		const artRoutesData = <?php echo json_encode( $js_data ); ?>;
-		
+
 		// Initialize the multiple routes map
 		initializeMultipleRoutesMap(mapId, artRoutesData);
 	});
-	
+
 	/**
 	 * Initialize multiple routes map
 	 */
 	function initializeMultipleRoutesMap(mapId, routesData) {
 		// Show loading indicator
 		document.getElementById('map-loading-' + mapId).style.display = 'block';
-		
+
 		// Map variables
-		let map, routeLayers = [], routeBounds = [], artworkMarkers = [];
-		
+		let map, routeLayers = [],
+			routeBounds = [],
+			artworkMarkers = [];
+
 		// Create the map
 		map = L.map(mapId);
-		
+
 		// Add the OpenStreetMap tile layer
 		L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			maxZoom: 19
 		}).addTo(map);
-		
+
 		// Create a bounds object for all routes
 		const allBounds = L.latLngBounds();
 		let hasValidCoordinates = false;
-		
+
 		// Process each route
 		routesData.routes.forEach(function(route, index) {
 			// Create a layer group for this route
 			routeLayers[index] = L.layerGroup().addTo(map);
-			
+
 			// Create bounds for this specific route
 			routeBounds[index] = L.latLngBounds();
-			
+
 			// Add route path if it exists
 			if (route.route_path && route.route_path.length > 0) {
 				// Create polyline with the route's color
@@ -243,7 +246,7 @@ $map_id = 'art-routes-map-' . uniqid();
 					opacity: 0.7,
 					lineJoin: 'round'
 				}).addTo(routeLayers[index]);
-				
+
 				// Add points to both the global bounds and this route's bounds
 				route.route_path.forEach(function(point) {
 					allBounds.extend(point);
@@ -251,13 +254,13 @@ $map_id = 'art-routes-map-' . uniqid();
 					hasValidCoordinates = true;
 				});
 			}
-			
+
 			// Add artwork markers
 			if (route.artworks && route.artworks.length > 0) {
 				route.artworks.forEach(function(artwork, artworkIndex) {
 					// Create a custom artwork marker using dashicons
 					const iconClass = artwork.icon_class || 'dashicons-art';
-					
+
 					const artworkIcon = L.divIcon({
 						className: 'artwork-marker',
 						html: `
@@ -271,16 +274,16 @@ $map_id = 'art-routes-map-' . uniqid();
 						iconSize: [40, 40],
 						iconAnchor: [20, 20]
 					});
-					
+
 					// Create marker
 					const marker = L.marker([artwork.latitude, artwork.longitude], {
 						icon: artworkIcon
 					}).addTo(routeLayers[index]);
-					
+
 					// Add to global bounds and this route's bounds
 					allBounds.extend([artwork.latitude, artwork.longitude]);
 					routeBounds[index].extend([artwork.latitude, artwork.longitude]);
-					
+
 					// Prepare popup content
 					const popupContent = `
 						<div class="artwork-popup">
@@ -295,7 +298,7 @@ $map_id = 'art-routes-map-' . uniqid();
 							</div>
 						</div>
 					`;
-					
+
 					// Create popup
 					const popup = L.popup({
 						maxWidth: 300,
@@ -304,12 +307,12 @@ $map_id = 'art-routes-map-' . uniqid();
 						autoClose: false,
 						closeOnEscapeKey: true
 					}).setContent(popupContent);
-					
+
 					// Add click event
 					marker.on('click', function() {
 						popup.setLatLng(marker.getLatLng()).openOn(map);
 					});
-					
+
 					// Add to artwork markers array
 					artworkMarkers.push({
 						marker: marker,
@@ -319,7 +322,7 @@ $map_id = 'art-routes-map-' . uniqid();
 				});
 			}
 		});
-		
+
 		// Add global artwork markers (visible on all routes)
 		if (routesData.artworks && routesData.artworks.length > 0) {
 			routesData.artworks.forEach(function(artwork, artworkIndex) {
@@ -336,16 +339,16 @@ $map_id = 'art-routes-map-' . uniqid();
 					iconSize: [40, 40],
 					iconAnchor: [20, 20]
 				});
-				
+
 				// Create marker
 				const marker = L.marker([artwork.latitude, artwork.longitude], {
 					icon: artworkIcon
 				}).addTo(map); // Add directly to map, not to route layers
-				
+
 				// Add to global bounds
 				allBounds.extend([artwork.latitude, artwork.longitude]);
 				hasValidCoordinates = true;
-				
+
 				// Prepare popup content
 				let popupContent = '<div class="artwork-popup">';
 				if (artwork.image_url) {
@@ -362,7 +365,7 @@ $map_id = 'art-routes-map-' . uniqid();
 							${artwork.description}
 						</div>
 				`;
-				
+
 				// Add artist information if available
 				if (artwork.artists && artwork.artists.length > 0) {
 					popupContent += '<div class="artwork-artists"><strong>Artist(s):</strong><ul>';
@@ -371,12 +374,12 @@ $map_id = 'art-routes-map-' . uniqid();
 					});
 					popupContent += '</ul></div>';
 				}
-				
+
 				popupContent += `
 					</div>
 				</div>
 				`;
-				
+
 				// Create popup
 				const popup = L.popup({
 					maxWidth: 300,
@@ -385,20 +388,20 @@ $map_id = 'art-routes-map-' . uniqid();
 					autoClose: false,
 					closeOnEscapeKey: true
 				}).setContent(popupContent);
-				
+
 				// Add click event
 				marker.on('click', function() {
 					popup.setLatLng(marker.getLatLng()).openOn(map);
 				});
 			});
 		}
-		
+
 		// Add global information point markers (visible on all routes)
 		if (routesData.information_points && routesData.information_points.length > 0) {
 			routesData.information_points.forEach(function(infoPoint) {
 				// Create a custom information point marker using dashicons
 				const iconClass = infoPoint.icon_class || 'dashicons-info';
-				
+
 				const infoPointIcon = L.divIcon({
 					className: 'info-point-marker',
 					html: `
@@ -411,16 +414,16 @@ $map_id = 'art-routes-map-' . uniqid();
 					iconSize: [30, 30],
 					iconAnchor: [15, 15]
 				});
-				
+
 				// Create marker
 				const marker = L.marker([infoPoint.latitude, infoPoint.longitude], {
 					icon: infoPointIcon
 				}).addTo(map); // Add directly to map, not to route layers
-				
+
 				// Add to global bounds
 				allBounds.extend([infoPoint.latitude, infoPoint.longitude]);
 				hasValidCoordinates = true;
-				
+
 				// Prepare popup content
 				let popupContent = '<div class="info-point-popup">';
 				if (infoPoint.image_url) {
@@ -440,7 +443,7 @@ $map_id = 'art-routes-map-' . uniqid();
 					</div>
 				`;
 				popupContent += '</div>';
-				
+
 				// Create popup
 				const popup = L.popup({
 					maxWidth: 300,
@@ -449,14 +452,14 @@ $map_id = 'art-routes-map-' . uniqid();
 					autoClose: false,
 					closeOnEscapeKey: true
 				}).setContent(popupContent);
-				
+
 				// Add click event
 				marker.on('click', function() {
 					popup.setLatLng(marker.getLatLng()).openOn(map);
 				});
 			});
 		}
-		
+
 		// Set map view based on attributes or all routes
 		if (routesData.mapSettings.center_lat && routesData.mapSettings.center_lng && routesData.mapSettings.zoom) {
 			// Use specified center and zoom
@@ -473,13 +476,13 @@ $map_id = 'art-routes-map-' . uniqid();
 			// Default view (Netherlands)
 			map.setView([52.1326, 5.2913], 7);
 		}
-		
+
 		// Add zoom to route functionality
 		const zoomButtons = document.querySelectorAll('.zoom-to-route-button');
 		zoomButtons.forEach(function(button) {
 			button.addEventListener('click', function() {
 				const routeIndex = parseInt(this.getAttribute('data-route-index'));
-				
+
 				// Make sure this route has valid bounds
 				if (routeBounds[routeIndex] && routeBounds[routeIndex].isValid()) {
 					// Fit the map to this route's bounds with animation
@@ -487,22 +490,22 @@ $map_id = 'art-routes-map-' . uniqid();
 						padding: [30, 30],
 						duration: 0.8 // Animation duration in seconds
 					});
-					
+
 					// Apply visual feedback to the button that was clicked
 					zoomButtons.forEach(btn => btn.classList.remove('active'));
 					this.classList.add('active');
 				}
 			});
 		});
-		
+
 		// Add a button to zoom out to show all routes
 		const legendElement = document.querySelector('.art-routes-legend');
 		if (legendElement && hasValidCoordinates) {
 			const allRoutesButton = document.createElement('button');
 			allRoutesButton.className = 'zoom-to-all-routes-button';
-			allRoutesButton.innerHTML = '<span class="dashicons dashicons-admin-site"></span>' + 
-										'<?php esc_html_e( 'Show All Routes', 'wp-art-routes' ); ?>';
-			
+			allRoutesButton.innerHTML = '<span class="dashicons dashicons-admin-site"></span>' +
+				'<?php esc_html_e( 'Show All Routes', 'wp-art-routes' ); ?>';
+
 			// Insert button at the top of the legend
 			const legendTitle = legendElement.querySelector('h3');
 			if (legendTitle) {
@@ -510,7 +513,7 @@ $map_id = 'art-routes-map-' . uniqid();
 			} else {
 				legendElement.insertAdjacentElement('afterbegin', allRoutesButton);
 			}
-			
+
 			// Add event listener
 			allRoutesButton.addEventListener('click', function() {
 				if (allBounds.isValid()) {
@@ -518,13 +521,13 @@ $map_id = 'art-routes-map-' . uniqid();
 						padding: [30, 30],
 						duration: 0.8
 					});
-					
+
 					// Remove active state from all zoom buttons
 					zoomButtons.forEach(btn => btn.classList.remove('active'));
 				}
 			});
 		}
-		
+
 		// Hide loading indicator
 		document.getElementById('map-loading-' + mapId).style.display = 'none';
 	}
