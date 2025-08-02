@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Check if routes data exists
 if ( empty( $routes ) ) {
-	echo '<p class="wp-art-routes-error">' . __( 'No routes found.', 'wp-art-routes' ) . '</p>';
+	echo '<p class="wp-art-routes-error">' . esc_html( __( 'No routes found.', 'wp-art-routes' ) ) . '</p>';
 	return;
 }
 
@@ -183,7 +183,7 @@ $map_id = 'art-routes-map-' . uniqid();
 		<?php endif; ?>
 		
 		<!-- Map container -->
-		<div id="<?php echo esc_attr( $map_id ); ?>" class="art-routes-map" <?php echo $container_style; ?>></div>
+		<div id="<?php echo esc_attr( $map_id ); ?>" class="art-routes-map" <?php echo wp_kses( $container_style, array( 'style' => array() ) ); ?>></div>
 		
 		<!-- Loading indicator -->
 		<div id="map-loading-<?php echo esc_attr( $map_id ); ?>" class="map-loading" style="display: none;">

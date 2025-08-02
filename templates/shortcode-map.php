@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Check if route data exists
 if ( empty( $route ) ) {
-	echo '<p class="wp-art-routes-error">' . __( 'Route not found.', 'wp-art-routes' ) . '</p>';
+	echo '<p class="wp-art-routes-error">' . esc_html( __( 'Route not found.', 'wp-art-routes' ) ) . '</p>';
 	return;
 }
 
@@ -89,7 +89,7 @@ $js_data = array(
 						'wheelchair' => __( 'Wheelchair friendly', 'wp-art-routes' ),
 						'children' => __( 'Child-friendly route', 'wp-art-routes' ),
 					);
-					echo isset( $route_types[ $route['type'] ] ) ? $route_types[ $route['type'] ] : $route['type'];
+					echo isset( $route_types[ $route['type'] ] ) ? esc_html( $route_types[ $route['type'] ] ) : esc_html( $route['type'] );
 					?>
 				</span>
 			<?php endif; ?>
@@ -97,7 +97,7 @@ $js_data = array(
 	</div>
 	
 	<!-- Map container -->
-	<div id="art-route-map" class="art-route-map" <?php echo $container_style; ?>></div>
+	<div id="art-route-map" class="art-route-map" <?php echo wp_kses( $container_style, array( 'style' => array() ) ); ?>></div>
 	
 	<?php
 	// Display map controls using the reusable template tag

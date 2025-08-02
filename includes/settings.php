@@ -100,7 +100,7 @@ function wp_art_routes_render_settings_page() {
 
 						if ( ! empty( $routes ) ) {
 							echo '<select name="wp_art_routes_default_route_id" id="wp_art_routes_default_route_id">';
-							echo '<option value="0">' . __( 'Select a default route', 'wp-art-routes' ) . '</option>';
+							echo '<option value="0">' . esc_html( __( 'Select a default route', 'wp-art-routes' ) ) . '</option>';
 
 							foreach ( $routes as $route ) {
 								echo '<option value="' . esc_attr( $route->ID ) . '" ' . selected( $default_route_id, $route->ID, false ) . '>';
@@ -109,9 +109,9 @@ function wp_art_routes_render_settings_page() {
 							}
 
 							echo '</select>';
-							echo '<p class="description">' . __( 'This route will be used when no specific route is selected.', 'wp-art-routes' ) . '</p>';
+							echo '<p class="description">' . esc_html( __( 'This route will be used when no specific route is selected.', 'wp-art-routes' ) ) . '</p>';
 						} else {
-							echo '<p>' . __( 'No routes available. Please create a route first.', 'wp-art-routes' ) . '</p>';
+							echo '<p>' . esc_html( __( 'No routes available. Please create a route first.', 'wp-art-routes' ) ) . '</p>';
 						}
 						?>
 					</td>

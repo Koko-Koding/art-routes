@@ -398,7 +398,7 @@ function wp_art_routes_append_map_to_route_content( $content ) {
 							'wheelchair' => __( 'Wheelchair friendly', 'wp-art-routes' ),
 							'children' => __( 'Child-friendly route', 'wp-art-routes' ),
 						);
-						echo isset( $route_types[ $route_data['type'] ] ) ? $route_types[ $route_data['type'] ] : $route_data['type'];
+						echo isset( $route_types[ $route_data['type'] ] ) ? esc_html( $route_types[ $route_data['type'] ] ) : esc_html( $route_data['type'] );
 						?>
 					</span>
 				<?php endif; ?>
