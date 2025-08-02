@@ -3,10 +3,7 @@
 		"source.fixAll.biome": "explicit"
 	},
 	"biome.configurationPath": "@route-info-rest-client/biome.json",
-	"files.eol": "\n""editor.insertSpaces": true,
+	"files.eol": "\n",
+	"editor.insertSpaces": true,
 	"editor.tabSize": 4,
-	"[php]": {
-		"editor.insertSpaces": true,
-		"editor.tabSize": 4
-	}
 }
