@@ -116,7 +116,7 @@ function wp_art_routes_get_route_path( $route_id ) {
 /**
  * Get artworks for a specific route
  */
-function wp_art_routes_get_route_artworks( $route_id ) {
+function wp_art_routes_get_route_artworks() {
 	// Now return ALL artworks instead of filtering by route
 	return wp_art_routes_get_all_artworks();
 }
@@ -198,7 +198,7 @@ function wp_art_routes_get_all_artworks() {
 /**
  * Get information points for a specific route
  */
-function wp_art_routes_get_route_information_points( $route_id ) {
+function wp_art_routes_get_route_information_points() {
 	// Now return ALL information points instead of filtering by route
 	return wp_art_routes_get_all_information_points();
 }
