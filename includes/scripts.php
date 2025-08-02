@@ -58,7 +58,11 @@ function wp_art_routes_enqueue_scripts()
 	if (is_singular('art_route')) {
 		$route_id = get_the_ID();
 	} elseif (is_page_template('art-route-map-template.php')) {
-		$route_id = isset($_GET['route_id']) ? intval($_GET['route_id']) : get_option('wp_art_routes_default_route', 0);
+		if (isset($_GET['route_id']) && isset($_GET['_wpnonce']) && wp_verify_nonce($_GET['_wpnonce'], 'art_route_map_nonce')) {
+			$route_id = intval($_GET['route_id']);
+		} else {
+			$route_id = get_option('wp_art_routes_default_route', 0);
+		}
 	} else {
 		// Attempt to find route_id if shortcode is present on a non-singular/non-template page
 		global $post;

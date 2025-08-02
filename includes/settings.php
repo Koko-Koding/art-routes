@@ -59,12 +59,21 @@ function wp_art_routes_render_settings_page() {
 
 	// Save settings if form was submitted
 	if ( isset( $_GET['settings-updated'] ) ) {
-		add_settings_error(
-			'wp_art_routes_messages',
-			'wp_art_routes_message',
-			__( 'Settings saved.', 'wp-art-routes' ),
-			'updated'
-		);
+		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wp_art_routes_settings_nonce' ) ) {
+			add_settings_error(
+				'wp_art_routes_messages',
+				'wp_art_routes_message',
+				__( 'Settings saved.', 'wp-art-routes' ),
+				'updated'
+			);
+		} else {
+			add_settings_error(
+				'wp_art_routes_messages',
+				'wp_art_routes_message',
+				__( 'Security check failed. Please try again.', 'wp-art-routes' ),
+				'error'
+			);
+		}
 	}
 	?>
 	<div class="wrap">
@@ -73,6 +82,7 @@ function wp_art_routes_render_settings_page() {
 		<?php settings_errors( 'wp_art_routes_messages' ); ?>
 		
 		<form method="post" action="options.php">
+			<?php wp_nonce_field( 'wp_art_routes_settings_nonce' ); ?>
 			<?php
 			settings_fields( 'wp_art_routes_options' );
 			?>
