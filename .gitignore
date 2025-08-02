@@ -12,7 +12,6 @@ node_modules/
 Thumbs.db
 
 # IDE files
-.vscode/
 .idea/
 *.swp
 *.swo
