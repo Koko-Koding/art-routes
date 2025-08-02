@@ -4,6 +4,24 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.21.1] - 2025-08-03
+
+### Fixed
+
+- Refactored code to remove unused parameters and improve readability.
+- Enhanced security by sanitizing and unslashing nonce values, using strict in_array, removing extract(), and adding nonce verification for forms and templates.
+- Replaced deprecated json_encode() with wp_json_encode() for better compatibility.
+- Renamed single-information_point.php to single-information-point.php for consistency.
+- Updated PHP_CodeSniffer to version 3.7.2 and fixed code style issues.
+- Updated Docker volume path syntax for consistency.
+- Updated VSCode and development environment settings for improved formatting and consistency.
+- Escaped output in meta boxes, settings, and templates for improved security.
+- Enhanced shortcode functionality to support ids and exclude_ids attributes for displaying multiple routes.
+- Loaded Leaflet assets from the local plugin directory instead of CDN for WordPress compliance.
+- Added .editorconfig, .gitattributes, and updated .gitignore for consistent coding standards.
+- Removed unnecessary fields and text domain loading from plugin header.
+- Updated documentation and copilot instructions to emphasize conventional commit messages.
+
 ## [1.21.0] - 2025-07-28
 
 ### Added
