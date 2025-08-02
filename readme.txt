@@ -36,7 +36,7 @@ Display a specific route map:
 `[art_route_map route="123" height="500px"]`
 
 Display multiple routes on a single map:
-`[art_routes_map height="600px"]`
+`[art_routes_map height="600px" ids="1,2,3" exclude_ids="2"]`
 
 = Requirements =
 
@@ -69,9 +69,11 @@ Display multiple routes on a single map:
 3. Fill in the artwork details and use the Location Picker to place it on the map
 4. Artworks are now global and will appear on all route maps
 
-= Can I display multiple routes on one map? =
+ = Can I display multiple routes on one map? =
 
-Yes! Use the `[art_routes_map]` shortcode to display all routes on a single interactive map with toggle controls.
+Yes! Use the `[art_routes_map]` shortcode to display all routes on a single interactive map with toggle controls. You can also use the `ids` and `exclude_ids` attributes to include or exclude specific routes:
+
+`[art_routes_map height="600px" ids="1,2,3" exclude_ids="2"]`
 
 = Is the plugin mobile-friendly? =
 

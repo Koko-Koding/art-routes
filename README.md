@@ -79,10 +79,10 @@ Use the shortcode `[art_route_map]` to display a specific route map:
 [art_route_map route="123" height="500px"]
 ```
 
-Or use `[art_routes_map]` to display multiple routes on a single map:
+Or use `[art_routes_map]` to display multiple routes on a single map. You can now exclude specific routes using the `exclude_ids` attribute:
 
 ```shortcode
-[art_routes_map height="600px"]
+[art_routes_map height="600px" ids="1,2,3" exclude_ids="2"]
 ```
 
 ## Shortcode Parameters
@@ -101,6 +101,8 @@ Or use `[art_routes_map]` to display multiple routes on a single map:
 - `zoom`: Initial zoom level (default: 12)
 - `center_lat`: Center latitude (default: auto)
 - `center_lng`: Center longitude (default: auto)
+- `ids`: Comma-separated route IDs to include (optional)
+- `exclude_ids`: Comma-separated route IDs to exclude (optional)
 
 ## Translations
 
