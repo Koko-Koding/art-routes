@@ -14,7 +14,6 @@
  * Requires at least: 5.6
  * Tested up to: 6.6
  * Requires PHP: 7.4
- * Network: false
  */
 
 // If this file is called directly, abort.
