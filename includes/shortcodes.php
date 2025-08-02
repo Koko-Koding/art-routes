@@ -5,29 +5,27 @@
  */
 
 // If this file is called directly, abort.
-if (! defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
  * Register the art route map shortcode
  */
-function wp_art_routes_register_shortcodes()
-{
-	add_shortcode('art_route_map', 'wp_art_routes_map_shortcode');
-	add_shortcode('art_routes_map', 'wp_art_routes_multiple_map_shortcode');
+function wp_art_routes_register_shortcodes() {
+	add_shortcode( 'art_route_map', 'wp_art_routes_map_shortcode' );
+	add_shortcode( 'art_routes_map', 'wp_art_routes_multiple_map_shortcode' );
 }
-add_action('init', 'wp_art_routes_register_shortcodes');
+add_action( 'init', 'wp_art_routes_register_shortcodes' );
 
 /**
  * Shortcode to display the art route map
  */
-function wp_art_routes_map_shortcode($atts)
-{
+function wp_art_routes_map_shortcode( $atts ) {
 	// Parse attributes
 	$atts = shortcode_atts(
 		array(
-			'route_id' => get_option('wp_art_routes_default_route_id', 1),
+			'route_id' => get_option( 'wp_art_routes_default_route_id', 1 ),
 			'height' => '600px',
 			'show_title' => 'true',
 			'show_description' => 'true',
@@ -36,9 +34,9 @@ function wp_art_routes_map_shortcode($atts)
 	);
 
 	// Convert string values to their appropriate types
-	$atts['route_id']         = intval($atts['route_id']);
-	$atts['show_title']       = ($atts['show_title'] === 'true');
-	$atts['show_description'] = ($atts['show_description'] === 'true');
+	$atts['route_id']         = intval( $atts['route_id'] );
+	$atts['show_title']       = ( $atts['show_title'] === 'true' );
+	$atts['show_description'] = ( $atts['show_description'] === 'true' );
 
 	// Start output buffering
 	ob_start();
@@ -48,7 +46,7 @@ function wp_art_routes_map_shortcode($atts)
 		'shortcode-map',
 		array(
 			'atts' => $atts,
-			'route' => wp_art_routes_get_route_data($atts['route_id']),
+			'route' => wp_art_routes_get_route_data( $atts['route_id'] ),
 		)
 	);
 
@@ -59,8 +57,7 @@ function wp_art_routes_map_shortcode($atts)
 /**
  * Shortcode to display multiple art routes on a single map
  */
-function wp_art_routes_multiple_map_shortcode($atts)
-{
+function wp_art_routes_multiple_map_shortcode( $atts ) {
 	// Parse attributes
 	$atts = shortcode_atts(
 		array(
@@ -78,24 +75,24 @@ function wp_art_routes_multiple_map_shortcode($atts)
 	);
 
 	// Convert string values to their appropriate types
-	$atts['show_title']       = ($atts['show_title'] === 'true');
-	$atts['show_description'] = ($atts['show_description'] === 'true');
-	$atts['show_legend']      = ($atts['show_legend'] === 'true');
+	$atts['show_title']       = ( $atts['show_title'] === 'true' );
+	$atts['show_description'] = ( $atts['show_description'] === 'true' );
+	$atts['show_legend']      = ( $atts['show_legend'] === 'true' );
 
 	// Get route IDs
 	$route_ids = array();
-	if (! empty($atts['ids'])) {
-		$route_ids = array_map('intval', explode(',', $atts['ids']));
+	if ( ! empty( $atts['ids'] ) ) {
+		$route_ids = array_map( 'intval', explode( ',', $atts['ids'] ) );
 	}
 
 	// Get exclude IDs
 	$exclude_ids = array();
-	if (! empty($atts['exclude_ids'])) {
-		$exclude_ids = array_map('intval', explode(',', $atts['exclude_ids']));
+	if ( ! empty( $atts['exclude_ids'] ) ) {
+		$exclude_ids = array_map( 'intval', explode( ',', $atts['exclude_ids'] ) );
 	}
 
 	// Get routes
-	$routes = wp_art_routes_get_multiple_routes($route_ids, $exclude_ids);
+	$routes = wp_art_routes_get_multiple_routes( $route_ids, $exclude_ids );
 
 	// Start output buffering
 	ob_start();
@@ -120,8 +117,7 @@ function wp_art_routes_multiple_map_shortcode($atts)
  * @param array $exclude_ids Optional array of route IDs to exclude
  * @return array Array of route data
  */
-function wp_art_routes_get_multiple_routes($route_ids = array(), $exclude_ids = array())
-{
+function wp_art_routes_get_multiple_routes( $route_ids = array(), $exclude_ids = array() ) {
 	$args = array(
 		'post_type'      => 'art_route',
 		'post_status'    => 'publish',
@@ -131,20 +127,20 @@ function wp_art_routes_get_multiple_routes($route_ids = array(), $exclude_ids = 
 	);
 
 	// Filter by specific IDs if provided
-	if (! empty($route_ids)) {
+	if ( ! empty( $route_ids ) ) {
 		$args['post__in'] = $route_ids;
 	}
 
 	// Do NOT use post__not_in, filter excluded IDs in PHP instead
-	$route_posts = get_posts($args);
+	$route_posts = get_posts( $args );
 	$routes      = array();
 
-	foreach ($route_posts as $route_post) {
+	foreach ( $route_posts as $route_post ) {
 		// Skip excluded IDs
-		if (! empty($exclude_ids) && in_array($route_post->ID, $exclude_ids, true)) {
+		if ( ! empty( $exclude_ids ) && in_array( $route_post->ID, $exclude_ids, true ) ) {
 			continue;
 		}
-		$routes[] = wp_art_routes_get_route_data($route_post->ID);
+		$routes[] = wp_art_routes_get_route_data( $route_post->ID );
 	}
 
 	return $routes;
