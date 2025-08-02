@@ -21,7 +21,7 @@ WORKDIR /app
 RUN composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
 
 # Install PHP_CodeSniffer and WordPress Coding Standards with all dependencies
-RUN composer global require "squizlabs/php_codesniffer:^3.7" && \
+RUN composer global require "squizlabs/php_codesniffer:^3.7.2" && \
     composer global require "wp-coding-standards/wpcs:^3.0" && \
     composer global require "dealerdirect/phpcodesniffer-composer-installer:^1.0" && \
     composer global require "phpcsstandards/phpcsutils:^1.0" && \
