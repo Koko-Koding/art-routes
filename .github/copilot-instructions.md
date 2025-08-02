@@ -17,7 +17,7 @@ Whenever you make changes to the plugin, make sure to:
 
 3. If possible, check if there are any non-documented commits since the last release / tag and add them to the changelog as well.
 
-4. Update the `README.md` file accordingly.
+4. Update the `README.md` and `readme.txt` files accordingly.
 5. Update the translation files in the `languages` directory if necessary.
 6. You can also propose to commit the changes to the `main` branch of the repository with a descriptive and "conventional" commit message and subsequently tag the commit with the new version number in the format of `vX.Y.Z`.
 7. Execute the `bin/build-release` script to build the release files and create a zip file of the plugin.

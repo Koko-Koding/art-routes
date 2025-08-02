@@ -4,6 +4,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.21.2] - 2025-08-03
+
+### Fixed
+
+- Add missing toggle visibility functions
+
 ## [1.21.1] - 2025-08-03
 
 ### Fixed

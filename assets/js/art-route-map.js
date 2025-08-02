@@ -435,7 +435,7 @@
 
 				// Use dashicon instead of SVG or image
 				const iconClass = artwork.icon_class || 'dashicons-art';
-				
+
 				return `
 					<div class="artwork-marker-inner">
 						<div class="artwork-marker-icon">
@@ -462,7 +462,7 @@
 			htmlFn: (infoPoint) => {
 				// Use dashicon instead of SVG URL
 				const iconClass = infoPoint.icon_class || 'dashicons-info';
-				
+
 				return `
 					<div class="info-point-marker-inner">
 						<div class="info-point-marker-icon">
@@ -500,10 +500,10 @@
 		let imageHtml = "";
 		if (imageUrl) {
 			imageHtml = `
-                <div class="${type}-popup-image">
-                    <img src="${imageUrl}" alt="${title}">
-                </div>
-            `;
+				<div class="${type}-popup-image">
+					<img src="${imageUrl}" alt="${title}">
+				</div>
+			`;
 		}
 
 		// Build artists HTML only for artworks
@@ -519,18 +519,18 @@
 		}
 
 		return `
-            <div class="${type}-popup">
-                ${imageHtml}
-                <div class="${type}-popup-content">
-                    <h3>${title}</h3>
-                    <div class="${type === "artwork" ? "artwork-description" : "info-point-excerpt"}">
-                        ${content}
-                    </div>
-                    ${artistsHtml}
-                    ${permalink && readMore ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ""}
-                </div>
-            </div>
-        `;
+			<div class="${type}-popup">
+				${imageHtml}
+				<div class="${type}-popup-content">
+					<h3>${title}</h3>
+					<div class="${type === "artwork" ? "artwork-description" : "info-point-excerpt"}">
+						${content}
+					</div>
+					${artistsHtml}
+					${permalink && readMore ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ""}
+				</div>
+			</div>
+		`;
 	}
 
 	/**
@@ -564,30 +564,30 @@
 
 		// Create a toast instead of showing modal
 		const toast = $(`
-            <div class="art-route-toast" style="
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                margin-bottom: 10px;
-                max-width: 320px;
-                overflow: hidden;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;">
-                <div style="position: relative;">
-                    <img src="${artwork.image_url}" alt="${artwork.title}" style="width: 100%; height: 160px; object-fit: cover;">
-                    <div style="position: absolute; top: 10px; right: 10px; cursor: pointer; background-color: rgba(255,255,255,0.7); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" class="toast-close">
-                        &times;
-                    </div>
-                </div>
-                <div style="padding: 16px;">
-                    <h3 style="margin: 0 0 8px; font-size: 18px;">${artwork.title}</h3>
-                    <div style="font-size: 14px; max-height: 100px; overflow-y: auto; margin-bottom: 8px;">
-                        ${artwork.description}
-                    </div>
-                    ${artistsHtml}
-                </div>
-            </div>
-        `);
+			<div class="art-route-toast" style="
+				background-color: white;
+				border-radius: 8px;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+				margin-bottom: 10px;
+				max-width: 320px;
+				overflow: hidden;
+				transform: translateX(400px);
+				transition: transform 0.3s ease;">
+				<div style="position: relative;">
+					<img src="${artwork.image_url}" alt="${artwork.title}" style="width: 100%; height: 160px; object-fit: cover;">
+					<div style="position: absolute; top: 10px; right: 10px; cursor: pointer; background-color: rgba(255,255,255,0.7); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;" class="toast-close">
+						&times;
+					</div>
+				</div>
+				<div style="padding: 16px;">
+					<h3 style="margin: 0 0 8px; font-size: 18px;">${artwork.title}</h3>
+					<div style="font-size: 14px; max-height: 100px; overflow-y: auto; margin-bottom: 8px;">
+						${artwork.description}
+					</div>
+					${artistsHtml}
+				</div>
+			</div>
+		`);
 
 		// Add to queue
 		toastQueue.push(toast);
@@ -828,6 +828,79 @@
 	});
 
 	/**
+	 * Toggle visibility of artwork markers
+	 */
+	function toggleArtworkVisibility(show) {
+		artworkMarkers.forEach((item) => {
+			if (show) {
+				map.addLayer(item.marker);
+			} else {
+				map.removeLayer(item.marker);
+			}
+		});
+	}
+
+	/**
+	 * Toggle visibility of info point markers
+	 */
+	function toggleInfoPointVisibility(show) {
+		infoPointMarkers.forEach((item) => {
+			if (show) {
+				map.addLayer(item.marker);
+			} else {
+				map.removeLayer(item.marker);
+			}
+		});
+	}
+
+	/**
+	 * Toggle visibility of route and completed route layers
+	 */
+	function toggleRouteVisibility(show) {
+		if (routeLayer) {
+			if (show) {
+				map.addLayer(routeLayer);
+			} else {
+				map.removeLayer(routeLayer);
+			}
+		}
+		if (completedRouteLayer) {
+			if (show) {
+				map.addLayer(completedRouteLayer);
+			} else {
+				map.removeLayer(completedRouteLayer);
+			}
+		}
+		if (userToRouteLayer) {
+			if (show) {
+				map.addLayer(userToRouteLayer);
+			} else {
+				map.removeLayer(userToRouteLayer);
+			}
+		}
+	}
+
+	/**
+	 * Toggle visibility of user location marker and line
+	 */
+	function toggleUserLocationVisibility(show) {
+		if (userMarker) {
+			if (show) {
+				map.addLayer(userMarker);
+			} else {
+				map.removeLayer(userMarker);
+			}
+		}
+		if (userToRouteLayer) {
+			if (show) {
+				map.addLayer(userToRouteLayer);
+			} else {
+				map.removeLayer(userToRouteLayer);
+			}
+		}
+	}
+
+	/**
 	 * Initialize map controls for toggling visibility
 	 */
 	function initMapControls() {
@@ -943,7 +1016,7 @@
 					.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
 				alert(
 					artRouteData.i18n.geolocationNotSupported ||
-						"Geolocation is not supported by this browser.",
+					"Geolocation is not supported by this browser.",
 				);
 			}
 		}
