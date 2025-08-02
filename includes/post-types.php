@@ -344,7 +344,7 @@ function wp_art_routes_register_artwork_rest_fields() {
 		'artwork',
 		'icon_url',
 		array(
-			'get_callback' => function ( $post ) {
+			'get_callback' => function () {
 				// For backward compatibility, return empty string as we no longer use URLs
 				return '';
 			},
@@ -444,7 +444,7 @@ function wp_art_routes_register_information_point_rest_fields() {
 		'information_point',
 		'icon_url',
 		array(
-			'get_callback' => function ( $post ) {
+			'get_callback' => function () {
 				// For backward compatibility, return empty string as we no longer use URLs
 				return '';
 			},
