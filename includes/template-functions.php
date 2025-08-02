@@ -339,11 +339,11 @@ function wp_art_routes_single_information_point_template( $template ) {
 	// Only handle single information_point posts
 	if ( is_singular( 'information_point' ) ) {
 		// Look for template in theme directory first
-		$located = locate_template( 'wp-art-routes/single-information_point.php' );
+		$located = locate_template( 'wp-art-routes/single-information-point.php' );
 
 		// If not found in theme, use plugin template
 		if ( empty( $located ) ) {
-			$located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-information_point.php';
+			$located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-information-point.php';
 		}
 
 		if ( file_exists( $located ) ) {

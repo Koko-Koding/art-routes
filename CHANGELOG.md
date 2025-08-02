@@ -46,7 +46,7 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ### Fixed
 
 - **Information Point Detail Pages**: Fixed issue where information point single pages were not displaying location maps
-  - Created dedicated single template (`templates/single-information_point.php`) for information point detail pages
+  - Created dedicated single template (`templates/single-information-point.php`) for information point detail pages
   - Added template loading logic to automatically use the new template for information point pages
   - Updated script loading conditions to include information point pages for proper Leaflet map functionality
   - Information point detail pages now display an interactive map showing the point's exact location
