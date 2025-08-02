@@ -311,7 +311,7 @@ function wp_art_routes_render_artwork_artists_meta_box( $post ) {
 								<?php echo esc_html( $type->labels->singular_name ); ?>
 							</option>
 							<?php
-					endif;
+						endif;
 					endforeach;
 					?>
 				</select>
@@ -544,8 +544,8 @@ function wp_art_routes_render_artwork_icon_meta_box( $post ) {
 		<div id="icon-preview-container" style="margin-top: 15px;">
 			<p><strong><?php esc_html_e( 'Preview:', 'wp-art-routes' ); ?></strong></p>
 			<div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-				<span id="icon-preview" class="dashicons <?php echo esc_attr( $selected_icon ?: 'dashicons-art' ); ?>" 
-						style="width: 40px; height: 40px; font-size: 40px; color: #0073aa;"></span>
+				<span id="icon-preview" class="dashicons <?php echo esc_attr( $selected_icon ?: 'dashicons-art' ); ?>"
+					style="width: 40px; height: 40px; font-size: 40px; color: #0073aa;"></span>
 			</div>
 		</div>
 	</div>
@@ -555,9 +555,9 @@ function wp_art_routes_render_artwork_icon_meta_box( $post ) {
 			$('#artwork_icon_select').on('change', function() {
 				const selectedIcon = $(this).val() || 'dashicons-art';
 				const $preview = $('#icon-preview');
-				
+
 				// Remove all dashicons classes and add the selected one
-				$preview.removeClass(function (index, className) {
+				$preview.removeClass(function(index, className) {
 					return (className.match(/(^|\s)dashicons-\S+/g) || []).join(' ');
 				});
 				$preview.addClass(selectedIcon);
@@ -672,8 +672,8 @@ function wp_art_routes_render_info_point_icon_meta_box( $post ) {
 		<div id="icon-preview-container" style="margin-top: 15px;">
 			<p><strong><?php esc_html_e( 'Preview:', 'wp-art-routes' ); ?></strong></p>
 			<div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-				<span id="icon-preview" class="dashicons <?php echo esc_attr( $selected_icon ?: 'dashicons-info' ); ?>" 
-						style="width: 40px; height: 40px; font-size: 40px; color: #d63638;"></span>
+				<span id="icon-preview" class="dashicons <?php echo esc_attr( $selected_icon ?: 'dashicons-info' ); ?>"
+					style="width: 40px; height: 40px; font-size: 40px; color: #d63638;"></span>
 			</div>
 		</div>
 	</div>
@@ -683,9 +683,9 @@ function wp_art_routes_render_info_point_icon_meta_box( $post ) {
 			$('#info_point_icon_select').on('change', function() {
 				const selectedIcon = $(this).val() || 'dashicons-info';
 				const $preview = $('#icon-preview');
-				
+
 				// Remove all dashicons classes and add the selected one
-				$preview.removeClass(function (index, className) {
+				$preview.removeClass(function(index, className) {
 					return (className.match(/(^|\s)dashicons-\S+/g) || []).join(' ');
 				});
 				$preview.addClass(selectedIcon);
@@ -765,7 +765,7 @@ function wp_art_routes_save_route_path( $post_id ) {
 		$json = json_decode( $raw, true );
 		if ( is_array( $json ) && isset( $json[0]['lat'] ) && isset( $json[0]['lng'] ) ) {
 			// Already valid JSON format
-			$to_save = json_encode( $json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+			$to_save = wp_json_encode( $json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		} else {
 			// Try to parse as old format and convert
 			$lines  = explode( "\n", $raw );
@@ -783,7 +783,7 @@ function wp_art_routes_save_route_path( $post_id ) {
 					}
 				}
 			}
-			$to_save = json_encode( $points, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+			$to_save = wp_json_encode( $points, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 		}
 		update_post_meta( $post_id, '_route_path', $to_save );
 	}

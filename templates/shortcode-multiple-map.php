@@ -198,7 +198,7 @@ $map_id = 'art-routes-map-' . uniqid();
 <script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
 		const mapId = '<?php echo esc_js( $map_id ); ?>';
-		const artRoutesData = <?php echo json_encode( $js_data ); ?>;
+		const artRoutesData = <?php echo wp_json_encode( $js_data ); ?>;
 
 		// Initialize the multiple routes map
 		initializeMultipleRoutesMap(mapId, artRoutesData);
