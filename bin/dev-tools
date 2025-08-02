@@ -60,6 +60,7 @@ show_help() {
     echo "  ./dev-tools.sh fix"
     echo "  ./dev-tools.sh security"
     echo ""
+    echo "Current path: ${PWD}"
 }
 
 # Main script logic
@@ -67,28 +68,28 @@ case "$1" in
     "check")
         build_image
         print_status "Running PHPCS check with WordPress standards..."
-        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check
+        docker run --rm -v "/${PWD}:/app" wp-dev-tools wp-tools check
         ;;
     "fix")
         build_image
         print_status "Running PHPCBF auto-fix..."
-        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools fix
+        docker run --rm -v "/${PWD}:/app" wp-dev-tools wp-tools fix
         print_success "Auto-fix completed"
         ;;
     "security")
         build_image
         print_status "Running security-focused checks..."
-        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check-security
+        docker run --rm -v "/${PWD}:/app" wp-dev-tools wp-tools check-security
         ;;
     "i18n")
         build_image
         print_status "Running internationalization checks..."
-        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools check-i18n
+        docker run --rm -v "/${PWD}:/app" wp-dev-tools wp-tools check-i18n
         ;;
     "compile")
         build_image
         print_status "Compiling .po files to .mo..."
-        docker run --rm -v "${PWD}:/app" wp-dev-tools wp-tools compile-po
+        docker run --rm -v "/${PWD}:/app" wp-dev-tools wp-tools compile-po
         print_success "Translation files compiled"
         ;;
     "build")
@@ -104,7 +105,7 @@ case "$1" in
     "shell")
         build_image
         print_status "Opening interactive shell..."
-        docker run --rm -it -v "${PWD}:/app" wp-dev-tools bash
+        docker run --rm -it -v "/${PWD}:/app" wp-dev-tools bash
         ;;
     "help"|"")
         show_help
