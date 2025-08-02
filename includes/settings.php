@@ -59,7 +59,7 @@ function wp_art_routes_render_settings_page() {
 
 	// Save settings if form was submitted
 	if ( isset( $_GET['settings-updated'] ) ) {
-		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wp_art_routes_settings_nonce' ) ) {
+		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'wp_art_routes_settings_nonce' ) ) {
 			add_settings_error(
 				'wp_art_routes_messages',
 				'wp_art_routes_message',

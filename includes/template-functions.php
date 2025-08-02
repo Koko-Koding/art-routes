@@ -258,7 +258,9 @@ function wp_art_routes_get_all_information_points() {
  */
 function wp_art_routes_get_template_part( $template_name, $args = array() ) {
 	if ( ! empty( $args ) && is_array( $args ) ) {
-		extract( $args );
+		// Manually assign variables from $args for safety
+		$route_id = isset( $args['route_id'] ) ? $args['route_id'] : null;
+		// ...add other expected keys as needed...
 	}
 
 	// Look for template in theme first

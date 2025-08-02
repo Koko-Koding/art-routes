@@ -8,7 +8,7 @@
  */
 
 // Get the current route ID (falls back to default if not set), with nonce verification
-if ( isset( $_GET['route_id'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'art_route_map_nonce' ) ) {
+if ( isset( $_GET['route_id'] ) && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'art_route_map_nonce' ) ) {
 	$route_id = intval( $_GET['route_id'] );
 } else {
 	$route_id = get_option( 'wp_art_routes_default_route_id', 1 );
