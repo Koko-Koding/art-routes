@@ -4,6 +4,21 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file.
 
+## [1.21.3] - 2025-08-04
+
+### Changed
+
+**feat(route): change default for show_completed_route and show_artwork_toasts to unchecked for new routes (admin, backend, frontend JS)**
+
+- Changed the default state for "Show completed route" and "Show artwork notifications" to unchecked (false) for new routes.
+- This affects the admin UI, backend PHP logic, and frontend JavaScript, ensuring new routes do not have these features enabled by default.
+
+### Fixed
+
+**fix: Fix non-existent route not being initialized as array correctly**
+
+- Fixed a bug where a non-existent route was not initialized as an array, improving data handling and preventing
+
 ## [1.21.2] - 2025-08-03
 
 ### Fixed
