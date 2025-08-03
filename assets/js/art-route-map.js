@@ -26,10 +26,10 @@
 	// Add toast container and queue
 	const toastQueue = [];
 	let toastDisplaying = false;
-	// Flag to indicate whether to show completed route
-	let showCompletedRoute = true;
-	// Flag to indicate whether to show artwork toasts
-	let showArtworkToasts = true;
+	// Flag to indicate whether to show completed route (default: false for new routes)
+	let showCompletedRoute = false;
+	// Flag to indicate whether to show artwork toasts (default: false for new routes)
+	let showArtworkToasts = false;
 
 	// Visibility state for map elements
 	const visibilityState = {
@@ -81,7 +81,7 @@
 		showArtworkToasts =
 			artRouteData.show_artwork_toasts !== undefined
 				? artRouteData.show_artwork_toasts
-				: true;
+				: false;
 
 		// Add the route to the map
 		drawRoute();

@@ -811,17 +811,17 @@
 				}
 			}
 			const iconHtml = `
-                <div class="route-point-marker-dot" style="position: relative; width: 18px; height: 18px;">
-                    <div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
-                    <div class="route-point-button-bar" style="position: absolute; transform: translateX(100%); right: -0px; top: 1px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.125rem; background: rgba(255, 255, 255, 0.8); padding: 2px; border-radius: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
-                        <button class="route-point-edit-btn" title="Edit this route point" style="width: 18px; height: 18px; border: none; background: #1976d2; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">✎</button>
-                        <button class="route-point-insert-btn" title="Insert new point after this one" style="width: 18px; height: 18px; border: none; background: #4caf50; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">+</button>
-                        <button class="route-point-delete-btn" title="Delete this route point" style="width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
-                    </div>
-                    ${markerLabel}
-                    ${arrowIndicator}
-                </div>
-            `;
+				<div class="route-point-marker-dot" style="position: relative; width: 18px; height: 18px;">
+					<div style="width: 14px; height: 14px; background: #3388FF; border: 2px solid #fff; border-radius: 50%; position: absolute; left: 2px; top: 2px;"></div>
+					<div class="route-point-button-bar" style="position: absolute; transform: translateX(100%); right: -0px; top: 1px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.125rem; background: rgba(255, 255, 255, 0.8); padding: 2px; border-radius: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">
+						<button class="route-point-edit-btn" title="Edit this route point" style="width: 18px; height: 18px; border: none; background: #1976d2; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">✎</button>
+						<button class="route-point-insert-btn" title="Insert new point after this one" style="width: 18px; height: 18px; border: none; background: #4caf50; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">+</button>
+						<button class="route-point-delete-btn" title="Delete this route point" style="width: 18px; height: 18px; border: none; background: #e53935; color: #fff; border-radius: 50%; font-size: 14px; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;">&times;</button>
+					</div>
+					${markerLabel}
+					${arrowIndicator}
+				</div>
+			`;
 			const marker = L.marker([pointObj.lat, pointObj.lng], {
 				icon: L.divIcon({
 					className: "route-point-marker",
@@ -1190,48 +1190,48 @@
 	// Add modal HTML for editing route point metadata
 	if ($("#route-point-edit-modal").length === 0) {
 		$("body").append(`
-        <div id="route-point-edit-modal" class="route-point-edit-modal">
-            <div class="route-point-edit-content">
-                <button id="close-route-point-edit-modal" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
-                <h3 style="margin-top:0;font-size:1.1em;">Edit Route Point</h3>
-                <form id="route-point-edit-form" class="route-point-edit-form">
-                    <div style="margin-bottom:8px;">
-                        <label><input type="checkbox" name="is_start"> Start point</label>
-                        <label style="margin-left:12px;"><input type="checkbox" name="is_end"> End point</label>
-                    </div>
-                    <div style="margin-bottom:8px;">
-                        <label>Arrow Direction (0-360°):<br>
-                            <input type="number" name="arrow_direction" min="0" max="360" step="1" style="width:80px;" placeholder="None" />
-                            <span style="font-size:0.9em;color:#666;margin-left:8px;">Leave empty for no arrow</span>
-                        </label>
-                    </div>
-                    <div style="margin-bottom:8px;">
-                        <label>Notes:<br><textarea name="notes" rows="2" style="width:100%;resize:vertical;"></textarea></label>
-                    </div>
-                    <div id="info-point-icon-field" style="margin-bottom:8px;display:none;">
-                        <label>Icon image:<br>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <img id="info-point-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
-                                <button type="button" id="select-info-point-icon" class="button">Select Image</button>
-                                <button type="button" id="remove-info-point-icon" class="button" style="display:none;">Remove</button>
-                            </div>
-                            <input type="hidden" name="icon_url" value="" />
-                        </label>
-                    </div>
-                    <div id="artwork-icon-field" style="margin-bottom:8px;display:none;">
-                        <label>Artwork image:<br>
-                            <div style="display:flex;align-items:center;gap:8px;">
-                                <img id="artwork-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
-                                <button type="button" id="select-artwork-icon" class="button">Select Image</button>
-                                <button type="button" id="remove-artwork-icon" class="button" style="display:none;">Remove</button>
-                            </div>
-                            <input type="hidden" name="artwork_icon_url" value="" />
-                        </label>
-                    </div>
-                    <button type="submit" style="background:#1976d2;color:#fff;border:none;padding:6px 16px;border-radius:4px;">Save</button>
-                </form>
-            </div>
-        </div>
+		<div id="route-point-edit-modal" class="route-point-edit-modal">
+			<div class="route-point-edit-content">
+				<button id="close-route-point-edit-modal" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
+				<h3 style="margin-top:0;font-size:1.1em;">Edit Route Point</h3>
+				<form id="route-point-edit-form" class="route-point-edit-form">
+					<div style="margin-bottom:8px;">
+						<label><input type="checkbox" name="is_start"> Start point</label>
+						<label style="margin-left:12px;"><input type="checkbox" name="is_end"> End point</label>
+					</div>
+					<div style="margin-bottom:8px;">
+						<label>Arrow Direction (0-360°):<br>
+							<input type="number" name="arrow_direction" min="0" max="360" step="1" style="width:80px;" placeholder="None" />
+							<span style="font-size:0.9em;color:#666;margin-left:8px;">Leave empty for no arrow</span>
+						</label>
+					</div>
+					<div style="margin-bottom:8px;">
+						<label>Notes:<br><textarea name="notes" rows="2" style="width:100%;resize:vertical;"></textarea></label>
+					</div>
+					<div id="info-point-icon-field" style="margin-bottom:8px;display:none;">
+						<label>Icon image:<br>
+							<div style="display:flex;align-items:center;gap:8px;">
+								<img id="info-point-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
+								<button type="button" id="select-info-point-icon" class="button">Select Image</button>
+								<button type="button" id="remove-info-point-icon" class="button" style="display:none;">Remove</button>
+							</div>
+							<input type="hidden" name="icon_url" value="" />
+						</label>
+					</div>
+					<div id="artwork-icon-field" style="margin-bottom:8px;display:none;">
+						<label>Artwork image:<br>
+							<div style="display:flex;align-items:center;gap:8px;">
+								<img id="artwork-icon-preview" src="" alt="" style="max-width:48px;max-height:48px;display:none;border:1px solid #ccc;" />
+								<button type="button" id="select-artwork-icon" class="button">Select Image</button>
+								<button type="button" id="remove-artwork-icon" class="button" style="display:none;">Remove</button>
+							</div>
+							<input type="hidden" name="artwork_icon_url" value="" />
+						</label>
+					</div>
+					<button type="submit" style="background:#1976d2;color:#fff;border:none;padding:6px 16px;border-radius:4px;">Save</button>
+				</form>
+			</div>
+		</div>
 `);
 
 		// Media library integration for icon image

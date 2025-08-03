@@ -99,14 +99,14 @@ function wp_art_routes_render_route_details_meta_box( $post ) {
 	$show_completed_route = get_post_meta( $post->ID, '_show_completed_route', true );
 	$show_artwork_toasts  = get_post_meta( $post->ID, '_show_artwork_toasts', true );
 
-	// Default to true if not set
+	// Default to false if not set
 	if ( $show_completed_route === '' ) {
-		$show_completed_route = '1';
+		$show_completed_route = '0';
 	}
 
-	// Default to true if not set
+	// Default to false if not set
 	if ( $show_artwork_toasts === '' ) {
-		$show_artwork_toasts = '1';
+		$show_artwork_toasts = '0';
 	}
 
 	// Route types
