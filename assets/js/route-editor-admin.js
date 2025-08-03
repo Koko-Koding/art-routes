@@ -602,7 +602,7 @@
 					$("#save-status")
 						.text(
 							i18n.errorSavingPoints +
-								(response.data.message ? `: ${response.data.message}` : ""),
+							(response.data.message ? `: ${response.data.message}` : ""),
 						)
 						.css("color", "red");
 				}
@@ -784,9 +784,9 @@
 			// Support new metadata: is_start, is_end, notes
 			const pointObj =
 				typeof pt === "object" &&
-				pt !== null &&
-				pt.lat !== undefined &&
-				pt.lng !== undefined
+					pt !== null &&
+					pt.lat !== undefined &&
+					pt.lng !== undefined
 					? pt
 					: { lat: pt[0], lng: pt[1] };
 			// Visual indicator for start/end
@@ -871,7 +871,7 @@
 						if (routePoints.length <= 2) {
 							alert(
 								i18n.cannotDeleteLastPoints ||
-									"A route must have at least two points.",
+								"A route must have at least two points.",
 							);
 							return;
 						}
@@ -920,9 +920,11 @@
 		routePoints = []; // Reset points
 
 		if (!routeText) {
-			drawingLayer.setLatLngs([]);
-			updateRouteInfo();
-			return;
+			if (drawingLayer) {
+				drawingLayer.setLatLngs([]);
+				updateRouteInfo();
+			}
+			return []; // No route defined
 		}
 
 		let parsed = null;
@@ -930,7 +932,7 @@
 		try {
 			parsed = JSON.parse(routeText);
 		} catch (e) {
-			parsed = null;
+			parsed = [];
 		}
 
 		if (
@@ -1021,7 +1023,7 @@
 					console.error("Error loading points:", response.data.message);
 					alert(
 						i18n.errorLoadingPoints +
-							(response.data.message ? `: ${response.data.message}` : ""),
+						(response.data.message ? `: ${response.data.message}` : ""),
 					);
 					// Fallback if loading points fails: attempt geolocation
 					if (editorMap) {
