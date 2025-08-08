@@ -987,4 +987,49 @@
 			}
 		}
 	}
+
+	// Add these functions to support map display toggles
+	function toggleArtworkVisibility(show) {
+		artworkMarkers.forEach(item => {
+			if (show) {
+				if (!map.hasLayer(item.marker)) map.addLayer(item.marker);
+			} else {
+				if (map.hasLayer(item.marker)) map.removeLayer(item.marker);
+			}
+		});
+	}
+
+	function toggleInfoPointVisibility(show) {
+		infoPointMarkers.forEach(item => {
+			if (show) {
+				if (!map.hasLayer(item.marker)) map.addLayer(item.marker);
+			} else {
+				if (map.hasLayer(item.marker)) map.removeLayer(item.marker);
+			}
+		});
+	}
+
+	function toggleRouteVisibility(show) {
+		if (routeLayer) {
+			if (show) {
+				if (!map.hasLayer(routeLayer)) map.addLayer(routeLayer);
+				if (showCompletedRoute && completedRouteLayer && !map.hasLayer(completedRouteLayer)) map.addLayer(completedRouteLayer);
+				if (showCompletedRoute && userToRouteLayer && !map.hasLayer(userToRouteLayer)) map.addLayer(userToRouteLayer);
+			} else {
+				if (map.hasLayer(routeLayer)) map.removeLayer(routeLayer);
+				if (completedRouteLayer && map.hasLayer(completedRouteLayer)) map.removeLayer(completedRouteLayer);
+				if (userToRouteLayer && map.hasLayer(userToRouteLayer)) map.removeLayer(userToRouteLayer);
+			}
+		}
+	}
+
+	function toggleUserLocationVisibility(show) {
+		if (userMarker) {
+			if (show) {
+				if (!map.hasLayer(userMarker)) map.addLayer(userMarker);
+			} else {
+				if (map.hasLayer(userMarker)) map.removeLayer(userMarker);
+			}
+		}
+	}
 })(jQuery);

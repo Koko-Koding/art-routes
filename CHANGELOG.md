@@ -2,7 +2,15 @@
 
 [← Go back](README.md).
 
-All notable changes to the WP Art Routes plugin will be documented in this file. 
+All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
+
+## [wenb-1.19.2] - 2025-08-08
+
+### Fixed
+- Map display option buttons (Show Artworks, Show Information Points, Show Route, Show My Location) now work as intended. Added missing toggle functions for map element visibility in JavaScript.
+
+### Technical Details
+- Implemented `toggleArtworkVisibility`, `toggleInfoPointVisibility`, `toggleRouteVisibility`, and `toggleUserLocationVisibility` in `assets/js/art-route-map.js` to support map display toggles.
 
 ## [1.19.1] - 2025-07-27
 
