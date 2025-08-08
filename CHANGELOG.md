@@ -2,7 +2,13 @@
 
 [← Go back](README.md).
 
-All notable changes to the WP Art Routes plugin will be documented in this file.
+All notable changes to the WP Art Routes plugin will be documented in this file. 
+
+## [1.19.1] - 2025-07-27
+
+### Added
+
+- Prepare plugin for generalization of plugin and distribution
 
 ## [1.19.0] - 2025-07-27
 
