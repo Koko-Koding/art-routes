@@ -4,6 +4,11 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.20.1] - 2025-08-08
+
+### Fixed
+- The "Go to Route" button and initial map fit now only focus on the route bounds and never include the user location. This prevents the map from zooming out to show both the route and the user's position, improving usability for all users.
+
 ## [wenb-1.20.0] - 2025-08-08
 
 ### Added

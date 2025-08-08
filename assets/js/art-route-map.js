@@ -158,19 +158,9 @@
 				zIndexOffset: 1000,
 			}).addTo(map);
 
-			// Now fit both the route and user location in view when user is first located
-			if (routeLayer) {
-				// Create a bounds object that includes both the route and the user's position
-				const combinedBounds = routeLayer.getBounds();
-				combinedBounds.extend([latitude, longitude]);
-
-				// Fit the map to these combined bounds with some padding
-				map.fitBounds(combinedBounds, {
-					padding: [50, 50],
-					maxZoom: 19, // Limit how far it can zoom out
-				});
-			} else {
-				// If there's no route, just center on user
+			// Do NOT fit bounds to combined route and user location here
+			// Only center on user if no route is present
+			if (!routeLayer) {
 				map.setView([latitude, longitude], 19);
 			}
 
