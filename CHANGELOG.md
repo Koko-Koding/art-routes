@@ -4,6 +4,12 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.20.0] - 2025-08-08
+
+### Added
+
+- Show "Read more" link in information point popups if the content is cut off due to length restrictions. This allows users to access the full content of the information point directly from the popup.
+
 ## [wenb-1.19.2] - 2025-08-08
 
 ### Fixed

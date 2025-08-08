@@ -4,7 +4,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://github.com/drikusroor/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
- * Version: wenb-1.19.2
+ * Version: wenb-1.20.0
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later

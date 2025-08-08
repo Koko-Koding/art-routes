@@ -479,7 +479,7 @@
 		};
 
 		addMapMarkers(infoPoints, "info-point", infoPointMarkers, iconOptions, {
-			readMore: false,
+			readMore: true, // Always show the read more link if a permalink exists
 		});
 	}
 
@@ -521,6 +521,10 @@
 			artistsHtml += "</ul></div>";
 		}
 
+		// Only show read more for info points if excerpt ends with '...'
+		const showReadMore =
+			type === "info-point" && content.trim().endsWith("...") && permalink && readMore;
+
 		return `
             <div class="${type}-popup">
                 ${imageHtml}
@@ -530,7 +534,7 @@
                         ${content}
                     </div>
                     ${artistsHtml}
-                    ${permalink && readMore ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ""}
+                    ${showReadMore || (type === "artwork" && permalink && readMore) ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ""}
                 </div>
             </div>
         `;
