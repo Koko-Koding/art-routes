@@ -83,6 +83,16 @@ function wp_art_routes_add_meta_boxes()
         'side',
         'default'
     );
+
+    // Route Icon meta box
+    add_meta_box(
+        'route_icon',
+        __('Route Icon', 'wp-art-routes'),
+        'wp_art_routes_render_route_icon_meta_box',
+        'art_route',
+        'side',
+        'default'
+    );
 }
 add_action('add_meta_boxes', 'wp_art_routes_add_meta_boxes');
 
@@ -626,6 +636,79 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
 }
 
 /**
+ * Render Route Icon meta box
+ */
+function wp_art_routes_render_route_icon_meta_box($post)
+{
+    wp_nonce_field('save_route_icon', 'route_icon_nonce');
+
+    // Get the currently selected icon
+    $selected_icon = get_post_meta($post->ID, '_route_icon', true);
+
+    // Only allow these three icons
+    $allowed_icons = [
+        'WB plattegrond-39.svg',
+        'WB plattegrond-40.svg',
+        'WB plattegrond-41.svg',
+    ];
+    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+
+?>
+    <div id="route-icon-meta-box">
+        <p>
+            <label for="route_icon_select">
+                <?php _e('Select Icon:', 'wp-art-routes'); ?>
+            </label>
+        </p>
+        <select id="route_icon_select" name="route_icon" style="width: 100%;">
+            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
+            <?php foreach ($allowed_icons as $icon_file) : ?>
+                <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
+                    <?php echo esc_html($icon_file); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <div id="route-icon-preview-container" style="margin-top: 15px;">
+            <?php if ($selected_icon && in_array($selected_icon, $allowed_icons)) : ?>
+                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                    <img id="route-icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
+                        style="width: 40px; height: 40px; object-fit: contain;"
+                        alt="<?php echo esc_attr($selected_icon); ?>" />
+                </div>
+            <?php else : ?>
+                <div id="route-icon-preview" style="display: none;">
+                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                    <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
+                        <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <script>
+        jQuery(document).ready(function($) {
+            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
+            $('#route_icon_select').on('change', function() {
+                const selectedIcon = $(this).val();
+                const $previewContainer = $('#route-icon-preview');
+                if (selectedIcon) {
+                    const iconUrl = iconsUrl + selectedIcon;
+                    $previewContainer.show();
+                    $previewContainer.attr('src', iconUrl).attr('alt', selectedIcon);
+                } else {
+                    $previewContainer.hide();
+                }
+            });
+        });
+    </script>
+    <p class="description">
+        <?php _e('Select an icon for this route. The icon will be shown on the route overview page.', 'wp-art-routes'); ?>
+    </p>
+<?php
+}
+
+/**
  * Save route details meta box data
  */
 function wp_art_routes_save_route_details($post_id)
@@ -844,3 +927,31 @@ function wp_art_routes_save_info_point_icon($post_id)
     }
 }
 add_action('save_post_information_point', 'wp_art_routes_save_info_point_icon');
+
+/**
+ * Save route icon meta box data
+ */
+function wp_art_routes_save_route_icon($post_id)
+{
+    if (!isset($_POST['route_icon_nonce']) || !wp_verify_nonce($_POST['route_icon_nonce'], 'save_route_icon')) {
+        return;
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    // Only allow the three icons
+    $allowed_icons = [
+        'WB plattegrond-39.svg',
+        'WB plattegrond-40.svg',
+        'WB plattegrond-41.svg',
+    ];
+    if (isset($_POST['route_icon']) && in_array($_POST['route_icon'], $allowed_icons)) {
+        update_post_meta($post_id, '_route_icon', sanitize_text_field($_POST['route_icon']));
+    } else {
+        delete_post_meta($post_id, '_route_icon');
+    }
+}
+add_action('save_post_art_route', 'wp_art_routes_save_route_icon');
