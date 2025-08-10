@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 function wp_art_routes_register_shortcodes() {
     add_shortcode('art_route_map', 'wp_art_routes_map_shortcode');
     add_shortcode('art_routes_map', 'wp_art_routes_multiple_map_shortcode');
+    add_shortcode('art_route_icons', 'wp_art_routes_icons_shortcode'); // NEW
 }
 add_action('init', 'wp_art_routes_register_shortcodes');
 
@@ -94,6 +95,19 @@ function wp_art_routes_multiple_map_shortcode($atts) {
     ]);
     
     // Return the buffered content
+    return ob_get_clean();
+}
+
+/**
+ * Shortcode to display all route icons as links
+ */
+function wp_art_routes_icons_shortcode($atts) {
+    // No attributes for now, but could add filtering later
+    $routes = wp_art_routes_get_multiple_routes();
+    ob_start();
+    wp_art_routes_get_template_part('shortcode-route-icons', [
+        'routes' => $routes,
+    ]);
     return ob_get_clean();
 }
 
