@@ -348,3 +348,39 @@ function wp_art_routes_register_information_point_rest_fields() {
     ]);
 }
 add_action('rest_api_init', 'wp_art_routes_register_information_point_rest_fields');
+
+// Add custom column to show artwork number in admin list
+add_filter('manage_artwork_posts_columns', function($columns) {
+    $new_columns = [];
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        if ($key === 'title') {
+            $new_columns['artwork_number'] = __('Number', 'wp-art-routes');
+        }
+    }
+    return $new_columns;
+});
+
+add_action('manage_artwork_posts_custom_column', function($column, $post_id) {
+    if ($column === 'artwork_number') {
+        $number = get_post_meta($post_id, '_artwork_number', true);
+        echo esc_html($number);
+    }
+}, 10, 2);
+
+// Make the artwork number column sortable
+add_filter('manage_edit-artwork_sortable_columns', function($columns) {
+    $columns['artwork_number'] = 'artwork_number';
+    return $columns;
+});
+
+add_action('pre_get_posts', function($query) {
+    if (!is_admin() || !$query->is_main_query()) {
+        return;
+    }
+    $orderby = $query->get('orderby');
+    if ('artwork_number' === $orderby && $query->get('post_type') === 'artwork') {
+        $query->set('meta_key', '_artwork_number');
+        $query->set('orderby', 'meta_value');
+    }
+});
