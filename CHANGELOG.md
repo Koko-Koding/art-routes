@@ -4,6 +4,15 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.20.2] - 2025-08-17
+
+### Added
+- The "Number" column in the Artworks admin overview is now sortable. You can click the column header to sort artworks by their number, making it easier to organize and find artworks by their identification number.
+
+### Technical Details
+- Added a custom column for artwork number to the admin list table for the artwork post type.
+- Made the column sortable using meta_value ordering for the _artwork_number field.
+
 ## [wenb-1.20.1] - 2025-08-08
 
 ### Fixed
