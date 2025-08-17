@@ -216,6 +216,8 @@ function wp_art_routes_render_artwork_location_meta_box($post)
     $longitude = get_post_meta($post->ID, '_artwork_longitude', true);
     $number = get_post_meta($post->ID, '_artwork_number', true);
     $location = get_post_meta($post->ID, '_artwork_location', true);
+    $wheelchair_accessible = get_post_meta($post->ID, '_wheelchair_accessible', true);
+    $stroller_accessible = get_post_meta($post->ID, '_stroller_accessible', true);
 
 ?>
     <p>
@@ -232,6 +234,23 @@ function wp_art_routes_render_artwork_location_meta_box($post)
         </label>
         <input type="text" id="artwork_location" name="artwork_location" value="<?php echo esc_attr($location); ?>" class="regular-text" />
         <span class="description"><?php _e('Optional location description (e.g., "Near the town square")', 'wp-art-routes'); ?></span>
+    </p>
+
+    <p>
+        <label for="wheelchair_accessible">
+            <input type="checkbox" id="wheelchair_accessible" name="wheelchair_accessible" value="1" <?php checked($wheelchair_accessible, '1'); ?> />
+            <?php _e('Wheelchair accessible', 'wp-art-routes'); ?>
+        </label>
+        <br>
+        <span class="description"><?php _e('Check if this artwork is accessible by wheelchair.', 'wp-art-routes'); ?></span>
+    </p>
+    <p>
+        <label for="stroller_accessible">
+            <input type="checkbox" id="stroller_accessible" name="stroller_accessible" value="1" <?php checked($stroller_accessible, '1'); ?> />
+            <?php _e('Stroller accessible', 'wp-art-routes'); ?>
+        </label>
+        <br>
+        <span class="description"><?php _e('Check if this artwork is accessible by stroller.', 'wp-art-routes'); ?></span>
     </p>
 
     <p>
@@ -837,6 +856,14 @@ function wp_art_routes_save_artwork_location($post_id)
         if (isset($_POST['artwork_location'])) {
             update_post_meta($post_id, '_artwork_location', sanitize_text_field($_POST['artwork_location']));
         }
+
+        // Save wheelchair accessible setting (checkbox)
+        $wheelchair_accessible = isset($_POST['wheelchair_accessible']) ? '1' : '0';
+        update_post_meta($post_id, '_wheelchair_accessible', $wheelchair_accessible);
+
+        // Save stroller accessible setting (checkbox)
+        $stroller_accessible = isset($_POST['stroller_accessible']) ? '1' : '0';
+        update_post_meta($post_id, '_stroller_accessible', $stroller_accessible);
     }
 }
 add_action('save_post_artwork', 'wp_art_routes_save_artwork_location');

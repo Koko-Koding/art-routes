@@ -131,6 +131,26 @@ function wp_art_routes_register_artwork_meta() {
             return current_user_can('edit_posts');
         },
     ]);
+
+    // Register accessibility meta fields for artworks
+    register_post_meta('artwork', '_wheelchair_accessible', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
+    register_post_meta('artwork', '_stroller_accessible', [
+        'type' => 'string',
+        'single' => true,
+        'show_in_rest' => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback' => function() {
+            return current_user_can('edit_posts');
+        },
+    ]);
 }
 add_action('init', 'wp_art_routes_register_artwork_meta');
 
@@ -269,6 +289,28 @@ function wp_art_routes_register_artwork_rest_fields() {
             'description' => __('Artwork icon URL', 'wp-art-routes'),
             'type' => 'string',
             'format' => 'uri',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+
+    // Accessibility fields (expose as non-underscore fields for frontend)
+    register_rest_field('artwork', 'wheelchair_accessible', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_wheelchair_accessible', true);
+        },
+        'schema' => [
+            'description' => __('Wheelchair accessible', 'wp-art-routes'),
+            'type' => 'string',
+            'context' => ['view', 'edit'],
+        ],
+    ]);
+    register_rest_field('artwork', 'stroller_accessible', [
+        'get_callback' => function($post) {
+            return get_post_meta($post['id'], '_stroller_accessible', true);
+        },
+        'schema' => [
+            'description' => __('Stroller accessible', 'wp-art-routes'),
+            'type' => 'string',
             'context' => ['view', 'edit'],
         ],
     ]);

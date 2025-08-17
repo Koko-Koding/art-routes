@@ -511,6 +511,23 @@
 			artistsHtml += "</ul></div>";
 		}
 
+		// Build accessibility icons HTML for artworks
+		let accessibilityHtml = "";
+		if (type === "artwork") {
+			const wheelchair = item.wheelchair_accessible === true || item.wheelchair_accessible === "1";
+			const stroller = item.stroller_accessible === true || item.stroller_accessible === "1";
+			if (wheelchair || stroller) {
+				accessibilityHtml = '<div class="artwork-accessibility" style="margin: 12px 0 0 0; display: flex; gap: 18px; align-items: center;">';
+				if (wheelchair) {
+					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRouteData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\"><img src=\"${artRouteData.plugin_url}assets/icons/WB%20plattegrond-Rolstoel.svg\" alt=\"${artRouteData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
+				}
+				if (stroller) {
+					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRouteData.i18n.strollerAccessible || 'Stroller accessible'}\"><img src=\"${artRouteData.plugin_url}assets/icons/WB%20plattegrond-Kinderwagen.svg\" alt=\"${artRouteData.i18n.strollerAccessible || 'Stroller accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
+				}
+				accessibilityHtml += '</div>';
+			}
+		}
+
 		// Only show read more for info points if excerpt ends with '...'
 		const showReadMore =
 			type === "info-point" && content.trim().endsWith("...") && permalink && readMore;
@@ -523,6 +540,7 @@
                     <div class="${type === "artwork" ? "artwork-description" : "info-point-excerpt"}">
                         ${content}
                     </div>
+                    ${accessibilityHtml}
                     ${artistsHtml}
                     ${showReadMore || (type === "artwork" && permalink && readMore) ? `<a href="${permalink}" target="_blank" class="${type}-link">${readMoreText}</a>` : ""}
                 </div>

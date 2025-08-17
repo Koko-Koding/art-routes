@@ -160,6 +160,8 @@ function wp_art_routes_get_all_artworks() {
                 'location' => get_post_meta($artwork->ID, '_artwork_location', true),
                 'permalink' => get_permalink($artwork->ID),
                 'icon_url' => $icon_url ? esc_url($icon_url) : '', // Add icon URL support
+                'wheelchair_accessible' => get_post_meta($artwork->ID, '_wheelchair_accessible', true),
+                'stroller_accessible' => get_post_meta($artwork->ID, '_stroller_accessible', true),
             ];
             
             // Get artist information

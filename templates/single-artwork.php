@@ -56,6 +56,28 @@ get_header();
             </div>
 
             <?php
+            // Accessibility icons (wheelchair & stroller)
+            $wheelchair_accessible = get_post_meta(get_the_ID(), '_wheelchair_accessible', true);
+            $stroller_accessible = get_post_meta(get_the_ID(), '_stroller_accessible', true);
+            if ($wheelchair_accessible === '1' || $stroller_accessible === '1') :
+            ?>
+                <div class="artwork-accessibility" style="margin-bottom: 30px; display: flex; gap: 24px; align-items: center;">
+                    <?php if ($wheelchair_accessible === '1') : ?>
+                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>">
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/WB plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
+                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php _e('Wheelchair accessible', 'wp-art-routes'); ?></span>
+                        </span>
+                    <?php endif; ?>
+                    <?php if ($stroller_accessible === '1') : ?>
+                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>">
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/WB plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
+                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php _e('Stroller accessible', 'wp-art-routes'); ?></span>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php
             // Display associated artists
             $artist_ids = get_post_meta(get_the_ID(), '_artwork_artist_ids', true);
             

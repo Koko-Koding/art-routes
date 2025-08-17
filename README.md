@@ -67,6 +67,7 @@ Each artwork has its own dedicated page that displays:
 - **Artwork Details:** Title, description, and metadata (number, location)
 - **Associated Artists:** Clickable links to artist pages/posts
 - **Interactive Map:** Shows the artwork's location with a custom marker
+- **Accessibility Info:** Artworks now include wheelchair and stroller accessibility information, shown as icons/text in map popups if configured in the admin.
 - **Responsive Design:** Optimized for both desktop and mobile viewing
 
 The artwork template can be customized by themes by copying `templates/single-artwork.php` to `wp-art-routes/single-artwork.php` in your active theme directory.
