@@ -484,8 +484,16 @@
 		const { readMore = true } = options;
 		const imageUrl = item.image_url; // Get the image URL, might be null/undefined
 		const title = item.title || "";
-		const content =
-			type === "artwork" ? item.description || "" : item.excerpt || "";
+		let content = "";
+
+		if (item.excerpt) {
+			content = item.excerpt.trim();
+		} else if (item.description) {
+			const maxWords = 30;
+			const words = item.description.trim().split(/\s+/);
+			content = words.length > maxWords ? words.slice(0, maxWords).join(' ') + '...' : item.description.trim();
+		}
+
 		const permalink = item.permalink || "";
 		const readMoreText = artRouteData.i18n.readMore || "Lees meer"; // Use translated string or default
 
@@ -958,7 +966,7 @@
 					.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
 				alert(
 					artRouteData.i18n.geolocationNotSupported ||
-						"Geolocation is not supported by this browser.",
+					"Geolocation is not supported by this browser.",
 				);
 			}
 		}

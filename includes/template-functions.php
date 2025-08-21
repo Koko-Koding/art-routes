@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template Functions for the Art Routes Plugin
  */
@@ -11,7 +12,8 @@ if (!defined('ABSPATH')) {
 /**
  * Get all art routes
  */
-function wp_art_routes_get_routes() {
+function wp_art_routes_get_routes()
+{
     return get_posts([
         'post_type' => 'art_route',
         'posts_per_page' => -1,
@@ -23,26 +25,27 @@ function wp_art_routes_get_routes() {
 /**
  * Get route data for a specific route
  */
-function wp_art_routes_get_route_data($route_id) {
+function wp_art_routes_get_route_data($route_id)
+{
     $route = get_post($route_id);
-    
+
     if (!$route || $route->post_type !== 'art_route') {
         return null;
     }
-    
+
     $show_completed_route = get_post_meta($route_id, '_show_completed_route', true);
     $show_artwork_toasts = get_post_meta($route_id, '_show_artwork_toasts', true);
-    
+
     // Default to true if not set
     if ($show_completed_route === '') {
         $show_completed_route = '1';
     }
-    
+
     // Default to true if not set
     if ($show_artwork_toasts === '') {
         $show_artwork_toasts = '1';
     }
-    
+
     $route_data = [
         'id' => $route->ID,
         'title' => $route->post_title,
@@ -55,23 +58,24 @@ function wp_art_routes_get_route_data($route_id) {
         'show_completed_route' => $show_completed_route === '1',
         'show_artwork_toasts' => $show_artwork_toasts === '1',
     ];
-    
+
     // Get route path
     $route_data['route_path'] = wp_art_routes_get_route_path($route_id);
-    
+
     // Get artworks
     $route_data['artworks'] = wp_art_routes_get_route_artworks($route_id);
-    
+
     // Get information points
     $route_data['information_points'] = wp_art_routes_get_route_information_points($route_id);
-    
+
     return $route_data;
 }
 
 /**
  * Get route path for a specific route
  */
-function wp_art_routes_get_route_path($route_id) {
+function wp_art_routes_get_route_path($route_id)
+{
     $path_string = get_post_meta($route_id, '_route_path', true);
     if (empty($path_string)) {
         return [];
@@ -103,7 +107,7 @@ function wp_art_routes_get_route_path($route_id) {
             $lat = trim($parts[0]);
             $lng = trim($parts[1]);
             if (is_numeric($lat) && is_numeric($lng)) {
-                $path[] = [ (float)$lat, (float)$lng ];
+                $path[] = [(float)$lat, (float)$lng];
             }
         }
     }
@@ -113,7 +117,8 @@ function wp_art_routes_get_route_path($route_id) {
 /**
  * Get artworks for a specific route
  */
-function wp_art_routes_get_route_artworks($route_id) {
+function wp_art_routes_get_route_artworks($route_id)
+{
     // Now return ALL artworks instead of filtering by route
     return wp_art_routes_get_all_artworks();
 }
@@ -121,7 +126,8 @@ function wp_art_routes_get_route_artworks($route_id) {
 /**
  * Get all artworks (not tied to specific routes)
  */
-function wp_art_routes_get_all_artworks() {
+function wp_art_routes_get_all_artworks()
+{
     // Query all published artworks
     $artworks = get_posts([
         'post_type' => 'artwork',
@@ -130,29 +136,30 @@ function wp_art_routes_get_all_artworks() {
         'orderby' => 'title',
         'order' => 'ASC',
     ]);
-    
+
     $result = [];
-    
+
     foreach ($artworks as $artwork) {
         $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
-        
+
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
             // Get icon information - prefer icon field, then fall back to no icon
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
-            
+
             if (!empty($icon_filename)) {
                 // Build URL from filename
                 $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
                 $icon_url = $icons_url . $icon_filename;
             }
-            
+
             $artwork_data = [
                 'id' => $artwork->ID,
                 'title' => $artwork->post_title,
                 'description' => $artwork->post_content,
+                'excerpt' => $artwork->post_excerpt,
                 'image_url' => get_the_post_thumbnail_url($artwork->ID, 'large'),
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
@@ -163,18 +170,18 @@ function wp_art_routes_get_all_artworks() {
                 'wheelchair_accessible' => get_post_meta($artwork->ID, '_wheelchair_accessible', true),
                 'stroller_accessible' => get_post_meta($artwork->ID, '_stroller_accessible', true),
             ];
-            
+
             // Get artist information
             $artist_ids = get_post_meta($artwork->ID, '_artwork_artist_ids', true);
             $artists = [];
-            
+
             if (is_array($artist_ids) && !empty($artist_ids)) {
                 foreach ($artist_ids as $artist_id) {
                     $artist_post = get_post($artist_id);
                     if ($artist_post) {
                         $post_type_obj = get_post_type_object($artist_post->post_type);
                         $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $artist_post->post_type;
-                        
+
                         $artists[] = [
                             'id' => $artist_id,
                             'title' => $artist_post->post_title,
@@ -185,19 +192,20 @@ function wp_art_routes_get_all_artworks() {
                     }
                 }
             }
-            
+
             $artwork_data['artists'] = $artists;
             $result[] = $artwork_data;
         }
     }
-    
+
     return $result;
 }
 
 /**
  * Get information points for a specific route
  */
-function wp_art_routes_get_route_information_points($route_id) {
+function wp_art_routes_get_route_information_points($route_id)
+{
     // Now return ALL information points instead of filtering by route
     return wp_art_routes_get_all_information_points();
 }
@@ -205,7 +213,8 @@ function wp_art_routes_get_route_information_points($route_id) {
 /**
  * Get all information points (not tied to specific routes)
  */
-function wp_art_routes_get_all_information_points() {
+function wp_art_routes_get_all_information_points()
+{
     // Query all published information points
     $info_point_posts = get_posts([
         'post_type' => 'information_point',
@@ -226,7 +235,7 @@ function wp_art_routes_get_all_information_points() {
             // Get icon information - prefer new icon field, fallback to old icon_url, then default
             $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
             $icon_url = '';
-            
+
             if (!empty($icon_filename)) {
                 // Build URL from filename
                 $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
@@ -234,14 +243,14 @@ function wp_art_routes_get_all_information_points() {
             } else {
                 // Fallback to old icon_url field for backward compatibility
                 $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
-                
+
                 // If still no icon, use default
                 if (empty($icon_url)) {
                     $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
                     $icon_url = $icons_url . 'WB plattegrond-Informatie.svg';
                 }
             }
-            
+
             $info_points[] = [
                 'id' => $info_post->ID,
                 'title' => $info_post->post_title,
@@ -264,19 +273,20 @@ function wp_art_routes_get_all_information_points() {
  * First checks in the theme directory for an override
  * then falls back to the plugin template
  */
-function wp_art_routes_get_template_part($template_name, $args = []) {
+function wp_art_routes_get_template_part($template_name, $args = [])
+{
     if (!empty($args) && is_array($args)) {
         extract($args);
     }
 
     // Look for template in theme first
     $template = locate_template('wp-art-routes/' . $template_name . '.php');
-    
+
     // If not found in theme, load from plugin
     if (empty($template)) {
         $template = WP_ART_ROUTES_PLUGIN_DIR . 'templates/' . $template_name . '.php';
     }
-    
+
     if (file_exists($template)) {
         include $template;
     }
@@ -285,7 +295,8 @@ function wp_art_routes_get_template_part($template_name, $args = []) {
 /**
  * Register the art route template with WordPress
  */
-function wp_art_routes_register_templates($templates) {
+function wp_art_routes_register_templates($templates)
+{
     $templates['art-route-map-template.php'] = 'Art Route Map Template';
     return $templates;
 }
@@ -294,24 +305,25 @@ add_filter('theme_page_templates', 'wp_art_routes_register_templates', 10, 1);
 /**
  * Handle template redirection for our custom template
  */
-function wp_art_routes_template_include($template) {
+function wp_art_routes_template_include($template)
+{
     // Return early if not a single page or not using our template
     if (!is_singular() || get_page_template_slug() !== 'art-route-map-template.php') {
         return $template;
     }
-    
+
     // Look for template in theme directory first
     $located = locate_template('wp-art-routes/art-route-map-template.php');
-    
+
     // If not found in theme, use plugin template
     if (empty($located)) {
         $located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/art-route-map-template.php';
     }
-    
+
     if (file_exists($located)) {
         return $located;
     }
-    
+
     // Fall back to original template if ours doesn't exist
     return $template;
 }
@@ -320,22 +332,23 @@ add_filter('template_include', 'wp_art_routes_template_include');
 /**
  * Handle template redirection for artwork posts
  */
-function wp_art_routes_single_artwork_template($template) {
+function wp_art_routes_single_artwork_template($template)
+{
     // Only handle single artwork posts
     if (is_singular('artwork')) {
         // Look for template in theme directory first
         $located = locate_template('wp-art-routes/single-artwork.php');
-        
+
         // If not found in theme, use plugin template
         if (empty($located)) {
             $located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-artwork.php';
         }
-        
+
         if (file_exists($located)) {
             return $located;
         }
     }
-    
+
     return $template;
 }
 add_filter('template_include', 'wp_art_routes_single_artwork_template', 99);
@@ -343,23 +356,24 @@ add_filter('template_include', 'wp_art_routes_single_artwork_template', 99);
 /**
  * Automatically append map to route content
  */
-function wp_art_routes_append_map_to_route_content($content) {
+function wp_art_routes_append_map_to_route_content($content)
+{
     // Only apply on singular art_route pages
     if (!is_singular('art_route')) {
         return $content;
     }
-    
+
     // Get the current post ID
     $route_id = get_the_ID();
     $route_data = wp_art_routes_get_route_data($route_id);
-    
+
     if (!$route_data) {
         return $content;
     }
-    
+
     // Generate the HTML for the map
     ob_start();
-    ?>
+?>
     <div class="art-route-container">
         <div class="art-route-details">
             <div class="route-meta">
@@ -368,49 +382,49 @@ function wp_art_routes_append_map_to_route_content($content) {
                         <?php echo esc_html(wp_art_routes_format_length($route_data['length'])); ?>
                     </span>
                 <?php endif; ?>
-                
+
                 <?php if (!empty($route_data['duration'])) : ?>
                     <span class="route-duration">
                         <?php echo esc_html(wp_art_routes_format_duration($route_data['duration'])); ?>
                     </span>
                 <?php endif; ?>
-                
+
                 <?php if (!empty($route_data['type'])) : ?>
                     <span class="route-type">
-                        <?php 
+                        <?php
                         $route_types = [
                             'walking' => __('Walking route', 'wp-art-routes'),
                             'cycling' => __('Bicycle route', 'wp-art-routes'),
                             'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
                             'children' => __('Child-friendly route', 'wp-art-routes'),
                         ];
-                        echo isset($route_types[$route_data['type']]) ? $route_types[$route_data['type']] : $route_data['type']; 
+                        echo isset($route_types[$route_data['type']]) ? $route_types[$route_data['type']] : $route_data['type'];
                         ?>
                     </span>
                 <?php endif; ?>
             </div>
         </div>
-        
+
         <!-- Map container -->
         <div id="art-route-map" class="art-route-map" style="height: 600px;"></div>
-        
-        <?php 
+
+        <?php
         // Display map controls using the reusable template tag
-        wp_art_routes_display_map_controls(); 
+        wp_art_routes_display_map_controls();
         ?>
-        
+
         <!-- Loading indicator -->
         <div id="map-loading" class="map-loading" style="display: none;">
             <div class="spinner"></div>
             <p><?php _e('Loading map...', 'wp-art-routes'); ?></p>
         </div>
-        
+
         <!-- Location error message -->
         <div id="location-error" class="map-error" style="display: none;">
             <p></p>
             <button id="retry-location" class="button"><?php _e('Retry', 'wp-art-routes'); ?></button>
         </div>
-        
+
         <!-- Route progress -->
         <div class="route-progress" style="display: none;">
             <h3><?php _e('Progress', 'wp-art-routes'); ?></h3>
@@ -419,7 +433,7 @@ function wp_art_routes_append_map_to_route_content($content) {
             </div>
             <p><?php _e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php _e('of this route', 'wp-art-routes'); ?></p>
         </div>
-        
+
         <!-- Artwork modal -->
         <div id="artwork-modal" class="artwork-modal" style="display: none;">
             <div class="artwork-modal-content">
@@ -434,9 +448,9 @@ function wp_art_routes_append_map_to_route_content($content) {
             </div>
         </div>
     </div>
-    <?php
+<?php
     $map_content = ob_get_clean();
-    
+
     // Append the map to the content
     return $content . $map_content;
 }
@@ -447,7 +461,8 @@ add_filter('the_content', 'wp_art_routes_append_map_to_route_content');
  * 
  * @param array $options Configuration options for the controls
  */
-function wp_art_routes_display_map_controls($options = []) {
+function wp_art_routes_display_map_controls($options = [])
+{
     // Default options
     $defaults = [
         'show_artworks' => true,
@@ -462,16 +477,18 @@ function wp_art_routes_display_map_controls($options = []) {
         'css_class' => 'map-controls',
         'title' => __('Map Display Options', 'wp-art-routes'),
     ];
-    
+
     $options = wp_parse_args($options, $defaults);
-    
+
     // Don't display if no controls are enabled
-    if (!$options['show_artworks'] && !$options['show_info_points'] && 
-        !$options['show_route'] && !$options['show_user_location'] && !$options['show_navigation']) {
+    if (
+        !$options['show_artworks'] && !$options['show_info_points'] &&
+        !$options['show_route'] && !$options['show_user_location'] && !$options['show_navigation']
+    ) {
         return;
     }
-    
-    ?>
+
+?>
     <!-- Map Controls -->
     <div class="<?php echo esc_attr($options['css_class']); ?>">
         <h4 class="map-controls-title"><?php echo esc_html($options['title']); ?></h4>
@@ -483,7 +500,7 @@ function wp_art_routes_display_map_controls($options = []) {
                     <span class="map-control-label"><?php _e('Show Artworks', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
-            
+
             <?php if ($options['show_info_points']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-info-points" <?php checked($options['info_points_checked']); ?>>
@@ -491,7 +508,7 @@ function wp_art_routes_display_map_controls($options = []) {
                     <span class="map-control-label"><?php _e('Show Information Points', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
-            
+
             <?php if ($options['show_route']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-route" <?php checked($options['route_checked']); ?>>
@@ -499,7 +516,7 @@ function wp_art_routes_display_map_controls($options = []) {
                     <span class="map-control-label"><?php _e('Show Route', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
-            
+
             <?php if ($options['show_user_location']) : ?>
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-user-location" <?php checked($options['user_location_checked']); ?>>
@@ -508,14 +525,14 @@ function wp_art_routes_display_map_controls($options = []) {
                 </label>
             <?php endif; ?>
         </div>
-        
+
         <?php if ($options['show_navigation']) : ?>
             <div class="map-navigation-buttons">
                 <button type="button" id="go-to-my-location" class="map-nav-button">
                     <span class="map-control-icon dashicons dashicons-location-alt"></span>
                     <span class="map-control-label"><?php _e('Go to My Location', 'wp-art-routes'); ?></span>
                 </button>
-                
+
                 <button type="button" id="go-to-route" class="map-nav-button">
                     <span class="map-control-icon dashicons dashicons-admin-site"></span>
                     <span class="map-control-label"><?php _e('Go to Route', 'wp-art-routes'); ?></span>
@@ -523,13 +540,14 @@ function wp_art_routes_display_map_controls($options = []) {
             </div>
         <?php endif; ?>
     </div>
-    <?php
+<?php
 }
 
 /**
  * Format duration in minutes to a readable string (e.g. "2 hours 23 minutes")
  */
-function wp_art_routes_format_duration($minutes) {
+function wp_art_routes_format_duration($minutes)
+{
     $minutes = intval($minutes);
     if ($minutes < 1) return __('Less than a minute', 'wp-art-routes');
     $hours = floor($minutes / 60);
@@ -547,7 +565,8 @@ function wp_art_routes_format_duration($minutes) {
 /**
  * Format route length in kilometers to a consistent string (e.g. "3.2 km")
  */
-function wp_art_routes_format_length($km) {
+function wp_art_routes_format_length($km)
+{
     $km = floatval($km);
     return number_format(round($km, 1), 1) . ' km';
 }
