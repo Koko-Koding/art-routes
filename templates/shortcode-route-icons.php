@@ -41,13 +41,13 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
         align-items: center;
         margin: 24px auto;
         max-width: 900px;
-        place-items: center;
+        1 place-items: center;
     }
 
     .art-route-icon-link {
         display: block;
         width: 100%;
-        max-width: 240px;
+        max-width: 360px;
         aspect-ratio: 1 / 1;
         text-align: center;
         margin: 0 auto;
@@ -62,8 +62,8 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
     .art-route-icon-img {
         width: 100%;
         height: auto;
-        max-width: 320px;
-        max-height: 320px;
+        max-width: 360px;
+        max-height: 360px;
         object-fit: contain;
         display: block;
         margin: 0 auto;
@@ -78,8 +78,8 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
         color: #bbb;
         display: block;
         width: 100%;
-        height: 240px;
-        line-height: 240px;
+        height: 360px;
+        line-height: 360px;
         text-align: center;
         background: none;
         border: none;
@@ -91,10 +91,12 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
         justify-content: center;
     }
 
-    /* Pop out the center tile */
-    .art-route-icons-list .art-route-icon-link.center-tile {
-        transform: scale(1.10);
-        z-index: 2;
+    /* Pop out the center tile on larger screens */
+    @media (min-width: 768px) {
+        .art-route-icons-list .art-route-icon-link.center-tile {
+            transform: scale(1.10);
+            z-index: 2;
+        }
     }
 
     .art-route-icon-link:hover,
@@ -104,23 +106,23 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
         outline: none;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 767px) {
         .art-route-icons-list {
             grid-template-columns: 1fr;
-            max-width: 260px;
+            max-width: 360px;
             gap: 24px;
         }
 
         .art-route-icon-link {
-            max-width: 360px;
+            max-width: 480px;
         }
 
         .art-route-icon-img,
         .art-route-icon-fallback {
-            max-width: 360px;
-            max-height: 360px;
+            max-width: 480px;
+            max-height: 480px;
             height: auto;
-            line-height: 360px;
+            line-height: 480px;
         }
     }
 </style>
