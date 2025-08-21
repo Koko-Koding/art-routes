@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Register Custom Post Types and Taxonomies
  */
@@ -11,7 +12,8 @@ if (!defined('ABSPATH')) {
 /**
  * Register custom post types for routes and artworks
  */
-function wp_art_routes_register_post_types() {
+function wp_art_routes_register_post_types()
+{
     // Register Routes post type
     register_post_type('art_route', [
         'labels' => [
@@ -31,7 +33,7 @@ function wp_art_routes_register_post_types() {
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'art-route'],
     ]);
-    
+
     // Register Artworks post type
     register_post_type('artwork', [
         'labels' => [
@@ -52,7 +54,7 @@ function wp_art_routes_register_post_types() {
         'rewrite' => ['slug' => 'artwork'],
         'show_in_menu' => 'edit.php?post_type=art_route', // Add under the main Routes menu
     ]);
-    
+
     // Register Information Points post type
     register_post_type('information_point', [
         'labels' => [
@@ -73,21 +75,21 @@ function wp_art_routes_register_post_types() {
         'rewrite' => ['slug' => 'info-point'],
         'show_in_menu' => 'edit.php?post_type=art_route', // Add under the main Routes menu
     ]);
-
 }
 add_action('init', 'wp_art_routes_register_post_types');
 
 /**
  * Register REST API meta for artworks and information points
  */
-function wp_art_routes_register_artwork_meta() {
+function wp_art_routes_register_artwork_meta()
+{
     // Register meta for artwork post type
     register_post_meta('artwork', '_artwork_latitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -96,18 +98,18 @@ function wp_art_routes_register_artwork_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
-    
+
     // Register new meta fields for artwork number and location
     register_post_meta('artwork', '_artwork_number', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -116,18 +118,18 @@ function wp_art_routes_register_artwork_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
-    
+
     // Register artwork icon field (filename)
     register_post_meta('artwork', '_artwork_icon', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -138,7 +140,7 @@ function wp_art_routes_register_artwork_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -147,7 +149,7 @@ function wp_art_routes_register_artwork_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -157,13 +159,14 @@ add_action('init', 'wp_art_routes_register_artwork_meta');
 /**
  * Register REST API meta for information points
  */
-function wp_art_routes_register_information_point_meta() {
+function wp_art_routes_register_information_point_meta()
+{
     register_post_meta('information_point', '_artwork_latitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -172,7 +175,7 @@ function wp_art_routes_register_information_point_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -182,7 +185,7 @@ function wp_art_routes_register_information_point_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'sanitize_text_field',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -192,7 +195,7 @@ function wp_art_routes_register_information_point_meta() {
         'single' => true,
         'show_in_rest' => true,
         'sanitize_callback' => 'esc_url_raw',
-        'auth_callback' => function() {
+        'auth_callback' => function () {
             return current_user_can('edit_posts');
         },
     ]);
@@ -202,12 +205,13 @@ add_action('init', 'wp_art_routes_register_information_point_meta');
 /**
  * Register REST fields for artwork meta data
  */
-function wp_art_routes_register_artwork_rest_fields() {
+function wp_art_routes_register_artwork_rest_fields()
+{
     register_rest_field('artwork', 'latitude', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_latitude', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
         },
         'schema' => [
@@ -218,10 +222,10 @@ function wp_art_routes_register_artwork_rest_fields() {
     ]);
 
     register_rest_field('artwork', 'longitude', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_longitude', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
         },
         'schema' => [
@@ -232,10 +236,10 @@ function wp_art_routes_register_artwork_rest_fields() {
     ]);
 
     register_rest_field('artwork', 'number', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_number', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_number', sanitize_text_field($value));
         },
         'schema' => [
@@ -246,10 +250,10 @@ function wp_art_routes_register_artwork_rest_fields() {
     ]);
 
     register_rest_field('artwork', 'location', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_location', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_location', sanitize_text_field($value));
         },
         'schema' => [
@@ -258,13 +262,13 @@ function wp_art_routes_register_artwork_rest_fields() {
             'context' => ['view', 'edit'],
         ],
     ]);
-    
+
     // Artwork icon field (filename)
     register_rest_field('artwork', 'icon', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_icon', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_icon', sanitize_text_field($value));
         },
         'schema' => [
@@ -276,7 +280,7 @@ function wp_art_routes_register_artwork_rest_fields() {
 
     // Icon URL (computed from filename)
     register_rest_field('artwork', 'icon_url', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_artwork_icon', true);
             if (!empty($icon_filename)) {
                 $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
@@ -295,7 +299,7 @@ function wp_art_routes_register_artwork_rest_fields() {
 
     // Accessibility fields (expose as non-underscore fields for frontend)
     register_rest_field('artwork', 'wheelchair_accessible', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_wheelchair_accessible', true);
         },
         'schema' => [
@@ -305,7 +309,7 @@ function wp_art_routes_register_artwork_rest_fields() {
         ],
     ]);
     register_rest_field('artwork', 'stroller_accessible', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_stroller_accessible', true);
         },
         'schema' => [
@@ -320,12 +324,13 @@ add_action('rest_api_init', 'wp_art_routes_register_artwork_rest_fields');
 /**
  * Register REST fields for information point meta data
  */
-function wp_art_routes_register_information_point_rest_fields() {
+function wp_art_routes_register_information_point_rest_fields()
+{
     register_rest_field('information_point', 'latitude', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_latitude', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
         },
         'schema' => [
@@ -336,10 +341,10 @@ function wp_art_routes_register_information_point_rest_fields() {
     ]);
 
     register_rest_field('information_point', 'longitude', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_longitude', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
         },
         'schema' => [
@@ -351,10 +356,10 @@ function wp_art_routes_register_information_point_rest_fields() {
 
     // New icon field (filename)
     register_rest_field('information_point', 'icon', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_info_point_icon', true);
         },
-        'update_callback' => function($value, $post) {
+        'update_callback' => function ($value, $post) {
             return update_post_meta($post->ID, '_info_point_icon', sanitize_text_field($value));
         },
         'schema' => [
@@ -366,7 +371,7 @@ function wp_art_routes_register_information_point_rest_fields() {
 
     // Icon URL (computed from filename)
     register_rest_field('information_point', 'icon_url', [
-        'get_callback' => function($post) {
+        'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_info_point_icon', true);
             if (!empty($icon_filename)) {
                 $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
@@ -392,31 +397,45 @@ function wp_art_routes_register_information_point_rest_fields() {
 add_action('rest_api_init', 'wp_art_routes_register_information_point_rest_fields');
 
 // Add custom column to show artwork number in admin list
-add_filter('manage_artwork_posts_columns', function($columns) {
+add_filter('manage_artwork_posts_columns', function ($columns) {
     $new_columns = [];
     foreach ($columns as $key => $label) {
         $new_columns[$key] = $label;
         if ($key === 'title') {
             $new_columns['artwork_number'] = __('Number', 'wp-art-routes');
+            $new_columns['artwork_artists'] = __('Artists', 'wp-art-routes');
         }
     }
     return $new_columns;
 });
 
-add_action('manage_artwork_posts_custom_column', function($column, $post_id) {
+add_action('manage_artwork_posts_custom_column', function ($column, $post_id) {
     if ($column === 'artwork_number') {
         $number = get_post_meta($post_id, '_artwork_number', true);
         echo esc_html($number);
+    } elseif ($column === 'artwork_artists') {
+        $artist_ids = get_post_meta($post_id, '_artwork_artist_ids', true);
+        if (!is_array($artist_ids)) {
+            $artist_ids = empty($artist_ids) ? array() : array($artist_ids);
+        }
+        $artist_titles = [];
+        foreach ($artist_ids as $artist_id) {
+            $artist_post = get_post($artist_id);
+            if ($artist_post) {
+                $artist_titles[] = esc_html($artist_post->post_title);
+            }
+        }
+        echo implode(', ', $artist_titles);
     }
 }, 10, 2);
 
 // Make the artwork number column sortable
-add_filter('manage_edit-artwork_sortable_columns', function($columns) {
+add_filter('manage_edit-artwork_sortable_columns', function ($columns) {
     $columns['artwork_number'] = 'artwork_number';
     return $columns;
 });
 
-add_action('pre_get_posts', function($query) {
+add_action('pre_get_posts', function ($query) {
     if (!is_admin() || !$query->is_main_query()) {
         return;
     }
