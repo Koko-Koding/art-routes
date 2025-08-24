@@ -4,6 +4,20 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.22.0] - 2025-08-24
+
+### Added
+- Show related artists, pages and/or posts column in the artworks admin overview page for easier management and overview.
+- Enhanced artwork content display with excerpt truncation for improved readability in listings and popups.
+
+### Fixed
+- Handled NaN progress percentage in route progress calculation to prevent display errors.
+
+### Changed
+- Updated icon dimensions and layout for better responsiveness across devices.
+- Made route tiles bigger on larger screens for improved usability.
+- Moved route info REST project to the bin directory for better project organization.
+
 ## [wenb-1.21.0] - 2025-08-17
 
 ### Added
