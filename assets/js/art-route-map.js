@@ -693,10 +693,17 @@
 		// Calculate and update progress
 		const totalDistance = calculateRouteDistance(routePath);
 		const completedDistance = calculateRouteDistance(completedPath);
-		const progressPercent = Math.min(
+		let progressPercent = Math.min(
 			Math.round((completedDistance / totalDistance) * 100),
 			100,
 		);
+
+		// If progressPercent is not a number, set to 0 and hide progress UI
+		if (isNaN(progressPercent)) {
+			progressPercent = 0;
+			$(".route-progress").hide();
+			return;
+		}
 
 		// Update progress UI only if showing completed route is enabled
 		$(".route-progress").show();
