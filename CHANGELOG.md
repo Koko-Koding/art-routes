@@ -4,16 +4,34 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.23.0] - 2025-08-24
+
+### Added
+
+- Shortcode `[related_artworks]` to display artworks related to the current post/artist, with featured image, title, excerpt, and link.
+- New template and responsive CSS for related artworks section, styled to match the "artwork-artists" section.
+
+### Fixed
+
+- Meta query for related artworks now correctly matches post IDs in `_artwork_artist_ids` (fixes missing related artworks).
+
+### Changed
+
+- Improved visual consistency for related artworks section.
+
 ## [wenb-1.22.0] - 2025-08-24
 
 ### Added
+
 - Show related artists, pages and/or posts column in the artworks admin overview page for easier management and overview.
 - Enhanced artwork content display with excerpt truncation for improved readability in listings and popups.
 
 ### Fixed
+
 - Handled NaN progress percentage in route progress calculation to prevent display errors.
 
 ### Changed
+
 - Updated icon dimensions and layout for better responsiveness across devices.
 - Made route tiles bigger on larger screens for improved usability.
 - Moved route info REST project to the bin directory for better project organization.
@@ -21,20 +39,24 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [wenb-1.21.0] - 2025-08-17
 
 ### Added
+
 - Artworks in map data now include `wheelchair_accessible` and `stroller_accessible` fields, allowing accessibility icons and text to be shown in marker popups and details.
 
 ## [wenb-1.20.2] - 2025-08-17
 
 ### Added
+
 - The "Number" column in the Artworks admin overview is now sortable. You can click the column header to sort artworks by their number, making it easier to organize and find artworks by their identification number.
 
 ### Technical Details
+
 - Added a custom column for artwork number to the admin list table for the artwork post type.
-- Made the column sortable using meta_value ordering for the _artwork_number field.
+- Made the column sortable using meta_value ordering for the_artwork_number field.
 
 ## [wenb-1.20.1] - 2025-08-08
 
 ### Fixed
+
 - The "Go to Route" button and initial map fit now only focus on the route bounds and never include the user location. This prevents the map from zooming out to show both the route and the user's position, improving usability for all users.
 
 ## [wenb-1.20.0] - 2025-08-08
@@ -46,9 +68,11 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 ## [wenb-1.19.2] - 2025-08-08
 
 ### Fixed
+
 - Map display option buttons (Show Artworks, Show Information Points, Show Route, Show My Location) now work as intended. Added missing toggle functions for map element visibility in JavaScript.
 
 ### Technical Details
+
 - Implemented `toggleArtworkVisibility`, `toggleInfoPointVisibility`, `toggleRouteVisibility`, and `toggleUserLocationVisibility` in `assets/js/art-route-map.js` to support map display toggles.
 
 ## [1.19.1] - 2025-07-27

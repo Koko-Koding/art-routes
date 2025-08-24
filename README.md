@@ -192,7 +192,3 @@ The display order of map markers (which markers appear on top) is now centrally 
 - Directional arrows (lowest)
 
 To change the stacking order, simply edit the values in the `markerDisplayOrder` object at the top of `art-route-map.js`. All marker creation code references this object, making future adjustments easy and consistent.
-
-## Version 1.13.2
-
-Patch release: Minor CSS and JS improvements for map display and marker rendering. See CHANGELOG.md for details.
