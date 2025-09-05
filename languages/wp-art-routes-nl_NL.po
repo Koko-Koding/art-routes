@@ -490,9 +490,21 @@ msgstr "Toon Informatiepunten"
 msgid "Show Route"
 msgstr "Toon Route"
 
-#: templates/shortcode-map.php:107
-msgid "Show My Location"
-msgstr "Toon Mijn Locatie"
+#: templates/shortcode-map.php:85
+msgid "Export to GPX"
+msgstr "Exporteer naar GPX"
+
+#: includes/ajax-handlers.php:345
+msgid "Security check failed"
+msgstr "Beveiligingscontrole mislukt"
+
+#: includes/ajax-handlers.php:352
+msgid "Invalid route ID"
+msgstr "Ongeldig route ID"
+
+#: includes/ajax-handlers.php:359
+msgid "Route not found"
+msgstr "Route niet gevonden"
 
 #: templates/shortcode-map.php:40
 msgid "Read more"
@@ -513,14 +525,6 @@ msgstr "Startpunt"
 #: templates/shortcode-map.php:44
 msgid "End Point"
 msgstr "Eindpunt"
-
-#: templates/shortcode-map.php:45
-msgid "Go to My Location"
-msgstr "Ga naar mijn locatie"
-
-#: templates/shortcode-map.php:46
-msgid "Go to Route"
-msgstr "Ga naar route"
 
 #: templates/shortcode-map.php:47
 msgid "Getting location..."

@@ -226,6 +226,47 @@
     color: #333;
 }
 
+/* Route Actions (GPX Export etc.) */
+.route-actions {
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.gpx-export-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #0073aa;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.gpx-export-button:hover {
+    background: #005a87;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 115, 170, 0.3);
+}
+
+.gpx-export-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.3);
+}
+
+.gpx-export-button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
 /* Multiple routes variant */
 .route-meta.multiple {
     gap: 10px;

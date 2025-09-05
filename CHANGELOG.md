@@ -4,6 +4,34 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.24.0] - 2025-09-05
+
+### Added
+
+- **GPX Export Feature**: Added the ability to export routes as GPX files for use with GPS devices and mapping applications
+  - Export button appears on all route pages (shortcode maps and single route pages)
+  - GPX files include the complete route path as a track for navigation
+  - All artworks are included as individual waypoints with names, descriptions, and numbering
+  - Information points are included as waypoints with proper descriptions
+  - Files are automatically named after the route title for easy identification
+  - Secure download with proper nonce verification and file headers
+  - Compatible with all standard GPS devices and mapping applications that support GPX format
+
+### Enhanced
+
+- **Route Portability**: Routes can now be used offline and with external GPS applications
+- **Mobile GPS Integration**: Perfect for users who want to follow routes using dedicated GPS apps
+- **Professional Export**: Clean GPX XML format following GPX 1.1 specifications
+- **Multi-language Support**: Added Dutch and English translations for export functionality
+
+### Technical Details
+
+- Added `wp_art_routes_ajax_export_gpx()` AJAX handler for secure file generation
+- Implemented `wp_art_routes_generate_gpx()` function with proper coordinate validation
+- Enhanced route path processing to handle both legacy and modern coordinate formats
+- Added responsive CSS styling for the export button with hover effects
+- Updated translation files with new GPX export strings
+
 ## [wenb-1.23.0] - 2025-08-24
 
 ### Added

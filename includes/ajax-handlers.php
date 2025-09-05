@@ -357,3 +357,144 @@ function wp_art_routes_get_associated_points($route_id) {
 
     return $points;
 }
+
+/**
+ * AJAX handler for exporting route to GPX format
+ */
+function wp_art_routes_ajax_export_gpx() {
+    // Verify nonce - for GET requests, the nonce is in the URL parameter
+    $nonce = isset($_GET['_wpnonce']) ? $_GET['_wpnonce'] : '';
+    if (!wp_verify_nonce($nonce, 'wp_art_routes_export_gpx')) {
+        wp_die(__('Security check failed', 'wp-art-routes'));
+    }
+    
+    $route_id = isset($_GET['route_id']) ? intval($_GET['route_id']) : 0;
+    
+    if ($route_id <= 0) {
+        wp_die(__('Invalid route ID', 'wp-art-routes'));
+    }
+    
+    // Get route data
+    $route_data = wp_art_routes_get_route_data($route_id);
+    
+    if (!$route_data) {
+        wp_die(__('Route not found', 'wp-art-routes'));
+    }
+    
+    // Generate GPX content
+    $gpx_content = wp_art_routes_generate_gpx($route_data);
+    
+    // Set headers for file download
+    $filename = sanitize_file_name($route_data['title']) . '.gpx';
+    header('Content-Type: application/gpx+xml; charset=utf-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Length: ' . strlen($gpx_content));
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Pragma: no-cache');
+    
+    // Output GPX content and exit
+    echo $gpx_content;
+    exit;
+}
+add_action('wp_ajax_wp_art_routes_export_gpx', 'wp_art_routes_ajax_export_gpx');
+add_action('wp_ajax_nopriv_wp_art_routes_export_gpx', 'wp_art_routes_ajax_export_gpx');
+
+/**
+ * Generate GPX XML content for a route
+ *
+ * @param array $route_data Route data from wp_art_routes_get_route_data()
+ * @return string GPX XML content
+ */
+function wp_art_routes_generate_gpx($route_data) {
+    $route_title = esc_html($route_data['title']);
+    $route_description = esc_html(strip_tags($route_data['description']));
+    $creation_time = gmdate('Y-m-d\TH:i:s\Z');
+    
+    // Start GPX XML
+    $gpx = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+    $gpx .= '<gpx version="1.1" creator="WP Art Routes Plugin" xmlns="http://www.topografix.com/GPX/1/1">' . "\n";
+    $gpx .= '  <metadata>' . "\n";
+    $gpx .= '    <name>' . $route_title . '</name>' . "\n";
+    $gpx .= '    <desc>' . $route_description . '</desc>' . "\n";
+    $gpx .= '    <time>' . $creation_time . '</time>' . "\n";
+    $gpx .= '  </metadata>' . "\n";
+    
+    // Add route path as a track
+    if (!empty($route_data['route_path'])) {
+        $gpx .= '  <trk>' . "\n";
+        $gpx .= '    <name>' . $route_title . ' - Route Path</name>' . "\n";
+        $gpx .= '    <desc>Main route path</desc>' . "\n";
+        $gpx .= '    <trkseg>' . "\n";
+        
+        foreach ($route_data['route_path'] as $point) {
+            // Handle both old array format [lat, lng] and new object format {lat: x, lng: y}
+            if (is_array($point) && isset($point[0]) && isset($point[1])) {
+                // Old format: [lat, lng]
+                $lat = $point[0];
+                $lng = $point[1];
+            } elseif (is_object($point) || is_array($point)) {
+                // New format: {lat: x, lng: y} or associative array
+                $point = (array) $point; // Convert object to array if needed
+                $lat = isset($point['lat']) ? $point['lat'] : '';
+                $lng = isset($point['lng']) ? $point['lng'] : '';
+            } else {
+                // Skip invalid points
+                continue;
+            }
+            
+            // Only add valid coordinates
+            if (is_numeric($lat) && is_numeric($lng) && $lat != '' && $lng != '') {
+                $gpx .= '      <trkpt lat="' . esc_attr($lat) . '" lon="' . esc_attr($lng) . '">' . "\n";
+                $gpx .= '      </trkpt>' . "\n";
+            }
+        }
+        
+        $gpx .= '    </trkseg>' . "\n";
+        $gpx .= '  </trk>' . "\n";
+    }
+    
+    // Add artworks as waypoints
+    if (!empty($route_data['artworks'])) {
+        foreach ($route_data['artworks'] as $index => $artwork) {
+            $artwork_name = esc_html($artwork['title']);
+            $artwork_desc = esc_html(strip_tags($artwork['description'] ?? $artwork['excerpt'] ?? ''));
+            $artwork_number = !empty($artwork['number']) ? esc_html($artwork['number']) : ($index + 1);
+            
+            // Only add waypoint if coordinates are valid
+            if (isset($artwork['latitude']) && isset($artwork['longitude']) && 
+                is_numeric($artwork['latitude']) && is_numeric($artwork['longitude'])) {
+                $gpx .= '  <wpt lat="' . esc_attr($artwork['latitude']) . '" lon="' . esc_attr($artwork['longitude']) . '">' . "\n";
+                $gpx .= '    <name>Artwork ' . $artwork_number . ': ' . $artwork_name . '</name>' . "\n";
+                if ($artwork_desc) {
+                    $gpx .= '    <desc>' . $artwork_desc . '</desc>' . "\n";
+                }
+                $gpx .= '    <type>Artwork</type>' . "\n";
+                $gpx .= '  </wpt>' . "\n";
+            }
+        }
+    }
+    
+    // Add information points as waypoints
+    if (!empty($route_data['information_points'])) {
+        foreach ($route_data['information_points'] as $index => $info_point) {
+            $info_name = esc_html($info_point['title']);
+            $info_desc = esc_html(strip_tags($info_point['description'] ?? $info_point['excerpt'] ?? ''));
+            
+            // Only add waypoint if coordinates are valid
+            if (isset($info_point['latitude']) && isset($info_point['longitude']) && 
+                is_numeric($info_point['latitude']) && is_numeric($info_point['longitude'])) {
+                $gpx .= '  <wpt lat="' . esc_attr($info_point['latitude']) . '" lon="' . esc_attr($info_point['longitude']) . '">' . "\n";
+                $gpx .= '    <name>Info: ' . $info_name . '</name>' . "\n";
+                if ($info_desc) {
+                    $gpx .= '    <desc>' . $info_desc . '</desc>' . "\n";
+                }
+                $gpx .= '    <type>Information Point</type>' . "\n";
+                $gpx .= '  </wpt>' . "\n";
+            }
+        }
+    }
+    
+    $gpx .= '</gpx>' . "\n";
+    
+    return $gpx;
+}

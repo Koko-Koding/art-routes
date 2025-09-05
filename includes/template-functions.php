@@ -403,6 +403,16 @@ function wp_art_routes_append_map_to_route_content($content)
                     </span>
                 <?php endif; ?>
             </div>
+            
+            <!-- GPX Export Button -->
+            <div class="route-actions">
+                <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin-ajax.php?action=wp_art_routes_export_gpx&route_id=' . $route_id), 'wp_art_routes_export_gpx')); ?>" 
+                   class="gpx-export-button" 
+                   download="<?php echo esc_attr(sanitize_file_name($route_data['title'])); ?>.gpx">
+                    <span class="dashicons dashicons-download"></span>
+                    <?php _e('Export to GPX', 'wp-art-routes'); ?>
+                </a>
+            </div>
         </div>
 
         <!-- Map container -->

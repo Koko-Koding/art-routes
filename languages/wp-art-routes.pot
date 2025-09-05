@@ -457,54 +457,26 @@ msgstr ""
 msgid "Show My Location"
 msgstr ""
 
-#: templates/shortcode-map.php:40
-msgid "Read more"
-msgstr ""
-
-#: templates/shortcode-map.php:41
-msgid "Artist"
-msgstr ""
-
-#: templates/shortcode-map.php:42
-msgid "Artists"
-msgstr ""
-
-#: templates/shortcode-map.php:43
-msgid "Start Point"
-msgstr ""
-
-#: templates/shortcode-map.php:44
-msgid "End Point"
-msgstr ""
-
-#: templates/shortcode-map.php:45
+#: templates/shortcode-map.php:113
 msgid "Go to My Location"
 msgstr ""
 
-#: templates/shortcode-map.php:46
+#: templates/shortcode-map.php:118
 msgid "Go to Route"
 msgstr ""
 
-#: templates/shortcode-map.php:47
-msgid "Getting location..."
+#: templates/shortcode-map.php:85
+msgid "Export to GPX"
 msgstr ""
 
-#: templates/shortcode-map.php:48
-msgid "Could not get your location"
+#: includes/ajax-handlers.php:345
+msgid "Security check failed"
 msgstr ""
 
-#: templates/shortcode-map.php:49
-msgid "Location access denied. Please allow location access in your browser."
+#: includes/ajax-handlers.php:352
+msgid "Invalid route ID"
 msgstr ""
 
-#: templates/shortcode-map.php:50
-msgid "Location information is unavailable."
-msgstr ""
-
-#: templates/shortcode-map.php:51
-msgid "Location request timed out."
-msgstr ""
-
-#: templates/shortcode-map.php:52
-msgid "Geolocation is not supported by this browser."
+#: includes/ajax-handlers.php:359
+msgid "Route not found"
 msgstr ""

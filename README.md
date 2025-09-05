@@ -86,6 +86,31 @@ Or use `[art_routes_map]` to display multiple routes on a single map:
 [art_routes_map height="600px"]
 ```
 
+### GPX Export
+
+Routes can be exported as GPX files for use with GPS devices and mapping applications:
+
+- **Export Button:** A "Export to GPX" button appears on all route pages
+- **Complete Route Data:** GPX files include the route path as a track plus all artworks and information points as waypoints
+- **GPS Compatibility:** Compatible with all standard GPS devices and apps that support GPX format
+- **Offline Use:** Perfect for users who want to follow routes using dedicated GPS applications
+- **Auto-naming:** Files are automatically named after the route title (e.g., "My Art Route.gpx")
+
+The exported GPX files contain:
+- **Track:** The main route path for navigation
+- **Waypoints:** Individual markers for each artwork with descriptions and numbering
+- **Info Points:** Information points along the route with descriptions
+
+### Route Icons Display
+
+Use the shortcode `[art_route_icons]` to display a grid of route icons:
+
+```shortcode
+[art_route_icons]
+```
+
+This creates a visual grid of route icons that link to their respective route pages. Perfect for route overview pages.
+
 ## Shortcode Parameters
 
 ### [art_route_map]
