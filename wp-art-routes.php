@@ -4,7 +4,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://github.com/Koko-Koding/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
- * Version: wenb-1.24.0
+ * Version: wenb-1.24.2
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', 'wenb-1.24.0');
+define('WP_ART_ROUTES_VERSION', 'wenb-1.24.2');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -86,10 +86,10 @@ function wp_art_routes_uninstall()
     // Remove plugin options
     delete_option('wp_art_routes_default_route_id');
     delete_option('wp_art_routes_enable_location_tracking');
-    
+
     // Remove user meta data
     delete_metadata('user', 0, 'wp_art_routes_visited_artworks', '', true);
-    
+
     // Note: We don't delete custom post types and their data
     // as users may want to keep their routes and artworks
     // even after uninstalling the plugin

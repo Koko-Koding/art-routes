@@ -4,6 +4,26 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.24.2] - 2025-09-14
+
+### Fixed
+
+- **GPX Element Order Compliance**: Fixed GPX export to follow strict GPX 1.1 specification element ordering
+  - Moved waypoints (`<wpt>`) before track elements (`<trk>`) per GPX schema requirements
+  - Ensures proper element sequence: metadata, waypoints, routes, tracks, extensions
+  - Resolves Garmin BaseCamp validation errors about invalid elements after tracks
+  - Improved compatibility with professional GPS software and GPX validators
+
+## [wenb-1.24.1] - 2025-09-14
+
+### Fixed
+
+- **GPX Export Compatibility**: Updated GPX export format to be fully compatible with Garmin BaseCamp and other GPS software
+  - Added `standalone="no"` attribute to XML declaration
+  - Added `xmlns:xsi` namespace declaration for XML Schema instance
+  - Added `xsi:schemaLocation` attribute with proper GPX 1.1 schema reference
+  - GPX files now follow the exact format structure that works with professional GPS software
+
 ## [wenb-1.24.0] - 2025-09-05
 
 ### Added
