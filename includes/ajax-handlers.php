@@ -416,6 +416,59 @@ add_action('wp_ajax_wp_art_routes_export_gpx', 'wp_art_routes_ajax_export_gpx');
 add_action('wp_ajax_nopriv_wp_art_routes_export_gpx', 'wp_art_routes_ajax_export_gpx');
 
 /**
+ * Sanitize content for GPX XML format
+ * 
+ * Removes WordPress shortcodes, HTML entities, and ensures valid XML
+ *
+ * @param string $content Content to sanitize
+ * @return string Sanitized content safe for GPX XML
+ */
+function wp_art_routes_sanitize_for_gpx($content) {
+    if (empty($content)) {
+        return '';
+    }
+    
+    // Remove WordPress shortcodes (video, audio, gallery, etc.)
+    $content = strip_shortcodes($content);
+    
+    // Strip HTML tags
+    $content = strip_tags($content);
+    
+    // Decode HTML entities first to get the actual characters
+    $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    
+    // Replace problematic characters with XML-safe alternatives
+    $replacements = [
+        '&nbsp;' => ' ',      // Non-breaking space
+        '&mdash;' => '—',     // Em dash
+        '&ndash;' => '–',     // En dash
+        '&hellip;' => '…',    // Ellipsis
+        '&rsquo;' => "'",     // Right single quotation mark
+        '&lsquo;' => "'",     // Left single quotation mark
+        '&rdquo;' => '"',     // Right double quotation mark
+        '&ldquo;' => '"',     // Left double quotation mark
+        '&amp;' => '&',       // Ampersand
+    ];
+    
+    foreach ($replacements as $entity => $replacement) {
+        $content = str_replace($entity, $replacement, $content);
+    }
+    
+    // Remove any remaining HTML entities that weren't decoded
+    $content = preg_replace('/&[a-zA-Z0-9#]+;/', '', $content);
+    
+    // Trim whitespace and normalize line breaks
+    $content = trim($content);
+    $content = preg_replace('/\s+/', ' ', $content);
+    
+    // Finally, escape special XML characters properly
+    // This converts &, <, >, ", ' to their XML entity equivalents
+    $content = htmlspecialchars($content, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    
+    return $content;
+}
+
+/**
  * Generate GPX XML content for a route
  *
  * @param array $route_data Route data from wp_art_routes_get_route_data()
@@ -423,8 +476,8 @@ add_action('wp_ajax_nopriv_wp_art_routes_export_gpx', 'wp_art_routes_ajax_export
  */
 function wp_art_routes_generate_gpx($route_data)
 {
-    $route_title = esc_html($route_data['title']);
-    $route_description = esc_html(strip_tags($route_data['description']));
+    $route_title = wp_art_routes_sanitize_for_gpx($route_data['title']);
+    $route_description = wp_art_routes_sanitize_for_gpx($route_data['description']);
     $creation_time = gmdate('Y-m-d\TH:i:s\Z');
 
     // Start GPX XML
@@ -441,9 +494,9 @@ function wp_art_routes_generate_gpx($route_data)
     // Add artworks as waypoints FIRST (per GPX 1.1 spec: metadata, waypoints, routes, tracks, extensions)
     if (!empty($route_data['artworks'])) {
         foreach ($route_data['artworks'] as $index => $artwork) {
-            $artwork_name = esc_html($artwork['title']);
-            $artwork_desc = esc_html(strip_tags($artwork['description'] ?? $artwork['excerpt'] ?? ''));
-            $artwork_number = !empty($artwork['number']) ? esc_html($artwork['number']) : ($index + 1);
+            $artwork_name = wp_art_routes_sanitize_for_gpx($artwork['title']);
+            $artwork_desc = wp_art_routes_sanitize_for_gpx($artwork['description'] ?? $artwork['excerpt'] ?? '');
+            $artwork_number = !empty($artwork['number']) ? wp_art_routes_sanitize_for_gpx($artwork['number']) : ($index + 1);
 
             // Only add waypoint if coordinates are valid
             if (
@@ -464,8 +517,8 @@ function wp_art_routes_generate_gpx($route_data)
     // Add information points as waypoints
     if (!empty($route_data['information_points'])) {
         foreach ($route_data['information_points'] as $index => $info_point) {
-            $info_name = esc_html($info_point['title']);
-            $info_desc = esc_html(strip_tags($info_point['description'] ?? $info_point['excerpt'] ?? ''));
+            $info_name = wp_art_routes_sanitize_for_gpx($info_point['title']);
+            $info_desc = wp_art_routes_sanitize_for_gpx($info_point['description'] ?? $info_point['excerpt'] ?? '');
 
             // Only add waypoint if coordinates are valid
             if (

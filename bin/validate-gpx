@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# GPX Validation Script
+# Validates GPX files against GPX 1.0 and 1.1 schemas
+
+PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+GPX_DIR="$PLUGIN_DIR/gpx"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "GPX File Validator"
+echo "=================="
+echo ""
+
+# Find GPX files
+find "$GPX_DIR" -name "*.gpx" -type f | while IFS= read -r gpx_file; do
+    filename=$(basename "$gpx_file")
+    echo -e "${YELLOW}Validating: $filename${NC}"
+    
+    # Check for common issues first
+    echo "  Checking for common issues..."
+    
+    # Check for &nbsp; entities
+    if grep -q "&nbsp;" "$gpx_file"; then
+        echo -e "  ${RED}✗ Found invalid &nbsp; HTML entities${NC}"
+        echo "    Line(s):"
+        grep -n "&nbsp;" "$gpx_file" | head -5
+    fi
+    
+    # Check for other HTML entities
+    if grep -qE "&(mdash|ndash|hellip|rsquo|lsquo|rdquo|ldquo);" "$gpx_file"; then
+        echo -e "  ${RED}✗ Found invalid HTML entities${NC}"
+        echo "    These need to be replaced with XML-safe alternatives"
+    fi
+    
+    # Check for video/audio shortcodes (WordPress-specific, not valid XML)
+    if grep -qE "\[(video|audio)" "$gpx_file"; then
+        echo -e "  ${RED}✗ Found WordPress shortcodes (not valid in GPX)${NC}"
+        echo "    Line(s):"
+        grep -nE "\[(video|audio)" "$gpx_file" | head -5
+    fi
+    
+    # Validate against GPX 1.0 schema
+    if [ -f "$GPX_DIR/gpx-strict.xsd.xml" ]; then
+        echo "  Validating against GPX 1.0 schema..."
+        if xmllint --noout --schema "$GPX_DIR/gpx-strict.xsd.xml" "$gpx_file" 2>&1 | grep -q "validates"; then
+            echo -e "  ${GREEN}✓ Valid GPX 1.0${NC}"
+        else
+            echo -e "  ${RED}✗ Invalid GPX 1.0${NC}"
+            xmllint --noout --schema "$GPX_DIR/gpx-strict.xsd.xml" "$gpx_file" 2>&1 | head -10
+        fi
+    fi
+    
+    # Validate against GPX 1.1 schema
+    if [ -f "$GPX_DIR/gpx-strict.xsd-2.xml" ]; then
+        echo "  Validating against GPX 1.1 schema..."
+        if xmllint --noout --schema "$GPX_DIR/gpx-strict.xsd-2.xml" "$gpx_file" 2>&1 | grep -q "validates"; then
+            echo -e "  ${GREEN}✓ Valid GPX 1.1${NC}"
+        else
+            echo -e "  ${RED}✗ Invalid GPX 1.1${NC}"
+            xmllint --noout --schema "$GPX_DIR/gpx-strict.xsd-2.xml" "$gpx_file" 2>&1 | head -10
+        fi
+    fi
+    
+    echo ""
+done
+
+echo "Validation complete!"

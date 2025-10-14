@@ -4,6 +4,25 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.24.3] - 2025-10-14
+
+### Fixed
+
+- **GPX Export Validation**: Fixed GPX file generation to properly sanitize content for XML format
+  - Added new `wp_art_routes_sanitize_for_gpx()` helper function for proper content sanitization
+  - Removes WordPress shortcodes (`[video]`, `[audio]`, etc.) from GPX descriptions
+  - Properly handles HTML entities like `&nbsp;`, `&mdash;`, etc. by converting them to valid characters
+  - Strips all HTML tags and normalizes whitespace in descriptions
+  - Ensures all special XML characters are properly escaped
+  - Exported GPX files now pass strict XML validation and are compatible with all GPS software
+  - Fixes "Entity 'nbsp' not defined" XML parser errors
+
+### Technical Details
+
+- Implemented comprehensive content sanitization pipeline: shortcode removal → HTML stripping → entity decoding → character replacement → XML escaping
+- Used `strip_shortcodes()`, `html_entity_decode()`, and `htmlspecialchars()` with proper XML flags
+- Updated `wp_art_routes_generate_gpx()` to use new sanitization function for all text content
+
 ## [wenb-1.24.2] - 2025-09-14
 
 ### Fixed
