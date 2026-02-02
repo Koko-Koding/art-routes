@@ -1,0 +1,459 @@
+<?php
+/**
+ * Edition Custom Post Type for WP Art Routes Plugin
+ *
+ * Editions are containers that group routes, locations, and info points
+ * for specific events or time periods (e.g., "Gluren bij de Buren 2024").
+ */
+
+// If this file is called directly, abort.
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Register the Edition custom post type
+ */
+function wp_art_routes_register_edition_post_type()
+{
+    register_post_type('edition', [
+        'labels' => [
+            'name'               => __('Editions', 'wp-art-routes'),
+            'singular_name'      => __('Edition', 'wp-art-routes'),
+            'add_new'            => __('Add New Edition', 'wp-art-routes'),
+            'add_new_item'       => __('Add New Edition', 'wp-art-routes'),
+            'edit_item'          => __('Edit Edition', 'wp-art-routes'),
+            'new_item'           => __('New Edition', 'wp-art-routes'),
+            'view_item'          => __('View Edition', 'wp-art-routes'),
+            'view_items'         => __('View Editions', 'wp-art-routes'),
+            'search_items'       => __('Search Editions', 'wp-art-routes'),
+            'not_found'          => __('No editions found', 'wp-art-routes'),
+            'not_found_in_trash' => __('No editions found in Trash', 'wp-art-routes'),
+            'all_items'          => __('All Editions', 'wp-art-routes'),
+            'archives'           => __('Edition Archives', 'wp-art-routes'),
+            'attributes'         => __('Edition Attributes', 'wp-art-routes'),
+            'menu_name'          => __('Editions', 'wp-art-routes'),
+        ],
+        'public'             => true,
+        'has_archive'        => true,
+        'supports'           => ['title', 'editor', 'excerpt', 'thumbnail'],
+        'menu_icon'          => 'dashicons-calendar-alt',
+        'menu_position'      => 5,
+        'show_in_rest'       => true,
+        'rewrite'            => ['slug' => 'edition'],
+    ]);
+}
+add_action('init', 'wp_art_routes_register_edition_post_type');
+
+/**
+ * Register Edition meta fields for REST API
+ */
+function wp_art_routes_register_edition_meta()
+{
+    // Edition terminology overrides
+    register_post_meta('edition', '_edition_terminology', [
+        'type'              => 'array',
+        'single'            => true,
+        'show_in_rest'      => [
+            'schema' => [
+                'type'  => 'object',
+                'items' => [
+                    'type' => 'object',
+                ],
+            ],
+        ],
+        'sanitize_callback' => 'wp_art_routes_sanitize_edition_terminology',
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+    // Edition start date
+    register_post_meta('edition', '_edition_start_date', [
+        'type'              => 'string',
+        'single'            => true,
+        'show_in_rest'      => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
+
+    // Edition end date
+    register_post_meta('edition', '_edition_end_date', [
+        'type'              => 'string',
+        'single'            => true,
+        'show_in_rest'      => true,
+        'sanitize_callback' => 'sanitize_text_field',
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
+}
+add_action('init', 'wp_art_routes_register_edition_meta');
+
+/**
+ * Sanitize edition terminology array
+ *
+ * @param mixed $value The value to sanitize
+ * @return array Sanitized terminology array
+ */
+function wp_art_routes_sanitize_edition_terminology($value)
+{
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $sanitized = [];
+    $allowed_types = ['route', 'location', 'info_point', 'creator'];
+    $allowed_keys = ['singular', 'plural'];
+
+    foreach ($value as $type => $fields) {
+        if (!in_array($type, $allowed_types, true)) {
+            continue;
+        }
+        if (!is_array($fields)) {
+            continue;
+        }
+
+        $sanitized[$type] = [];
+        foreach ($fields as $key => $field_value) {
+            if (in_array($key, $allowed_keys, true)) {
+                $sanitized[$type][$key] = sanitize_text_field($field_value);
+            }
+        }
+    }
+
+    return $sanitized;
+}
+
+/**
+ * Add meta boxes for Edition post type
+ */
+function wp_art_routes_add_edition_meta_boxes()
+{
+    // Terminology Overrides meta box
+    add_meta_box(
+        'edition_terminology',
+        __('Terminology Overrides', 'wp-art-routes'),
+        'wp_art_routes_render_edition_terminology_meta_box',
+        'edition',
+        'normal',
+        'high'
+    );
+
+    // Event Dates meta box
+    add_meta_box(
+        'edition_dates',
+        __('Event Dates', 'wp-art-routes'),
+        'wp_art_routes_render_edition_dates_meta_box',
+        'edition',
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'wp_art_routes_add_edition_meta_boxes');
+
+/**
+ * Render Terminology Overrides meta box
+ *
+ * @param WP_Post $post The post object
+ */
+function wp_art_routes_render_edition_terminology_meta_box($post)
+{
+    // Add nonce for security
+    wp_nonce_field('save_edition_terminology', 'edition_terminology_nonce');
+
+    // Get saved terminology overrides
+    $terminology = get_post_meta($post->ID, '_edition_terminology', true);
+    if (!is_array($terminology)) {
+        $terminology = [];
+    }
+
+    // Get global terminology for placeholders
+    $global = wp_art_routes_get_global_terminology();
+
+    // Define the terminology types and their fields
+    $types = [
+        'route' => [
+            'label' => __('Route', 'wp-art-routes'),
+            'description' => __('The main paths users follow', 'wp-art-routes'),
+        ],
+        'location' => [
+            'label' => __('Location', 'wp-art-routes'),
+            'description' => __('Main content items (artworks, performances, etc.)', 'wp-art-routes'),
+        ],
+        'info_point' => [
+            'label' => __('Info Point', 'wp-art-routes'),
+            'description' => __('Information markers along routes', 'wp-art-routes'),
+        ],
+        'creator' => [
+            'label' => __('Creator', 'wp-art-routes'),
+            'description' => __('People/entities associated with locations (artists, performers, etc.)', 'wp-art-routes'),
+        ],
+    ];
+
+    ?>
+    <p class="description">
+        <?php _e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?>
+    </p>
+
+    <table class="form-table" role="presentation">
+        <?php foreach ($types as $type => $config) : ?>
+            <tr>
+                <th scope="row">
+                    <?php echo esc_html($config['label']); ?>
+                    <p class="description" style="font-weight: normal;">
+                        <?php echo esc_html($config['description']); ?>
+                    </p>
+                </th>
+                <td>
+                    <p>
+                        <label for="edition_terminology_<?php echo esc_attr($type); ?>_singular">
+                            <?php _e('Singular:', 'wp-art-routes'); ?>
+                        </label>
+                        <input type="text"
+                               id="edition_terminology_<?php echo esc_attr($type); ?>_singular"
+                               name="edition_terminology[<?php echo esc_attr($type); ?>][singular]"
+                               value="<?php echo esc_attr($terminology[$type]['singular'] ?? ''); ?>"
+                               placeholder="<?php echo esc_attr($global[$type]['singular'] ?? ''); ?>"
+                               class="regular-text" />
+                    </p>
+                    <p>
+                        <label for="edition_terminology_<?php echo esc_attr($type); ?>_plural">
+                            <?php _e('Plural:', 'wp-art-routes'); ?>
+                        </label>
+                        <input type="text"
+                               id="edition_terminology_<?php echo esc_attr($type); ?>_plural"
+                               name="edition_terminology[<?php echo esc_attr($type); ?>][plural]"
+                               value="<?php echo esc_attr($terminology[$type]['plural'] ?? ''); ?>"
+                               placeholder="<?php echo esc_attr($global[$type]['plural'] ?? ''); ?>"
+                               class="regular-text" />
+                    </p>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    <?php
+}
+
+/**
+ * Render Event Dates meta box
+ *
+ * @param WP_Post $post The post object
+ */
+function wp_art_routes_render_edition_dates_meta_box($post)
+{
+    // Add nonce for security
+    wp_nonce_field('save_edition_dates', 'edition_dates_nonce');
+
+    // Get saved dates
+    $start_date = get_post_meta($post->ID, '_edition_start_date', true);
+    $end_date = get_post_meta($post->ID, '_edition_end_date', true);
+
+    ?>
+    <p>
+        <label for="edition_start_date">
+            <?php _e('Start Date:', 'wp-art-routes'); ?>
+        </label>
+        <input type="date"
+               id="edition_start_date"
+               name="edition_start_date"
+               value="<?php echo esc_attr($start_date); ?>"
+               class="widefat" />
+    </p>
+
+    <p>
+        <label for="edition_end_date">
+            <?php _e('End Date:', 'wp-art-routes'); ?>
+        </label>
+        <input type="date"
+               id="edition_end_date"
+               name="edition_end_date"
+               value="<?php echo esc_attr($end_date); ?>"
+               class="widefat" />
+    </p>
+
+    <p class="description">
+        <?php _e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?>
+    </p>
+    <?php
+}
+
+/**
+ * Save Edition terminology meta box data
+ *
+ * @param int $post_id The post ID
+ */
+function wp_art_routes_save_edition_terminology($post_id)
+{
+    // Verify nonce
+    if (!isset($_POST['edition_terminology_nonce']) || !wp_verify_nonce($_POST['edition_terminology_nonce'], 'save_edition_terminology')) {
+        return;
+    }
+
+    // Check autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Save terminology overrides
+    if (isset($_POST['edition_terminology']) && is_array($_POST['edition_terminology'])) {
+        $terminology = wp_art_routes_sanitize_edition_terminology($_POST['edition_terminology']);
+        update_post_meta($post_id, '_edition_terminology', $terminology);
+    } else {
+        delete_post_meta($post_id, '_edition_terminology');
+    }
+}
+add_action('save_post_edition', 'wp_art_routes_save_edition_terminology');
+
+/**
+ * Save Edition dates meta box data
+ *
+ * @param int $post_id The post ID
+ */
+function wp_art_routes_save_edition_dates($post_id)
+{
+    // Verify nonce
+    if (!isset($_POST['edition_dates_nonce']) || !wp_verify_nonce($_POST['edition_dates_nonce'], 'save_edition_dates')) {
+        return;
+    }
+
+    // Check autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Save start date
+    if (isset($_POST['edition_start_date'])) {
+        $start_date = sanitize_text_field($_POST['edition_start_date']);
+        // Validate date format (Y-m-d)
+        if (empty($start_date) || preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date)) {
+            if (!empty($start_date)) {
+                update_post_meta($post_id, '_edition_start_date', $start_date);
+            } else {
+                delete_post_meta($post_id, '_edition_start_date');
+            }
+        }
+    }
+
+    // Save end date
+    if (isset($_POST['edition_end_date'])) {
+        $end_date = sanitize_text_field($_POST['edition_end_date']);
+        // Validate date format (Y-m-d)
+        if (empty($end_date) || preg_match('/^\d{4}-\d{2}-\d{2}$/', $end_date)) {
+            if (!empty($end_date)) {
+                update_post_meta($post_id, '_edition_end_date', $end_date);
+            } else {
+                delete_post_meta($post_id, '_edition_end_date');
+            }
+        }
+    }
+}
+add_action('save_post_edition', 'wp_art_routes_save_edition_dates');
+
+/**
+ * Get all published editions
+ *
+ * @param array $args Optional. Additional query arguments.
+ * @return WP_Post[] Array of edition post objects
+ */
+function wp_art_routes_get_editions($args = [])
+{
+    $default_args = [
+        'post_type'      => 'edition',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+    ];
+
+    $query_args = wp_parse_args($args, $default_args);
+
+    return get_posts($query_args);
+}
+
+/**
+ * Get edition data by ID
+ *
+ * Returns a structured array containing all edition data including
+ * post data, terminology overrides, and dates.
+ *
+ * @param int $edition_id The edition post ID
+ * @return array|null Edition data array or null if not found
+ */
+function wp_art_routes_get_edition_data($edition_id)
+{
+    $edition = get_post($edition_id);
+
+    if (!$edition || $edition->post_type !== 'edition') {
+        return null;
+    }
+
+    $terminology = get_post_meta($edition_id, '_edition_terminology', true);
+    if (!is_array($terminology)) {
+        $terminology = [];
+    }
+
+    return [
+        'id'          => $edition->ID,
+        'title'       => $edition->post_title,
+        'content'     => $edition->post_content,
+        'excerpt'     => $edition->post_excerpt,
+        'permalink'   => get_permalink($edition->ID),
+        'thumbnail'   => get_post_thumbnail_id($edition->ID),
+        'start_date'  => get_post_meta($edition_id, '_edition_start_date', true),
+        'end_date'    => get_post_meta($edition_id, '_edition_end_date', true),
+        'terminology' => $terminology,
+        'status'      => $edition->post_status,
+    ];
+}
+
+/**
+ * Get the edition assigned to a post
+ *
+ * @param int $post_id The post ID
+ * @return int|null Edition ID or null if not assigned
+ */
+function wp_art_routes_get_post_edition($post_id)
+{
+    $edition_id = get_post_meta($post_id, '_edition_id', true);
+
+    if (empty($edition_id)) {
+        return null;
+    }
+
+    // Verify the edition exists and is published
+    $edition = get_post($edition_id);
+    if (!$edition || $edition->post_type !== 'edition' || $edition->post_status !== 'publish') {
+        return null;
+    }
+
+    return (int) $edition_id;
+}
+
+/**
+ * Get edition-aware label
+ *
+ * Convenience function that checks edition overrides first, then falls back
+ * to global settings, then to hardcoded defaults.
+ *
+ * @param string   $type       The terminology type: 'route', 'location', 'info_point', 'creator'
+ * @param bool     $plural     Whether to return the plural form (default: false)
+ * @param int|null $edition_id Optional edition ID to check for overrides
+ * @return string The label for the requested type
+ */
+function wp_art_routes_edition_label($type, $plural = false, $edition_id = null)
+{
+    return wp_art_routes_label($type, $plural, $edition_id);
+}
