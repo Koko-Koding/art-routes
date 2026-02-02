@@ -20,7 +20,7 @@ function wp_art_routes_register_edition_post_type()
         'labels' => [
             'name'               => __('Editions', 'wp-art-routes'),
             'singular_name'      => __('Edition', 'wp-art-routes'),
-            'add_new'            => __('Add New Edition', 'wp-art-routes'),
+            'add_new'            => __('Add New', 'wp-art-routes'),
             'add_new_item'       => __('Add New Edition', 'wp-art-routes'),
             'edit_item'          => __('Edit Edition', 'wp-art-routes'),
             'new_item'           => __('New Edition', 'wp-art-routes'),
@@ -29,7 +29,7 @@ function wp_art_routes_register_edition_post_type()
             'search_items'       => __('Search Editions', 'wp-art-routes'),
             'not_found'          => __('No editions found', 'wp-art-routes'),
             'not_found_in_trash' => __('No editions found in Trash', 'wp-art-routes'),
-            'all_items'          => __('All Editions', 'wp-art-routes'),
+            'all_items'          => __('Editions', 'wp-art-routes'),
             'archives'           => __('Edition Archives', 'wp-art-routes'),
             'attributes'         => __('Edition Attributes', 'wp-art-routes'),
             'menu_name'          => __('Editions', 'wp-art-routes'),
@@ -44,6 +44,18 @@ function wp_art_routes_register_edition_post_type()
     ]);
 }
 add_action('init', 'wp_art_routes_register_edition_post_type');
+
+/**
+ * Remove "Add New" submenu item from Editions menu
+ *
+ * Editions should only be created deliberately, not from the menu.
+ * Users can still create editions from the list table "Add New" button if needed.
+ */
+function wp_art_routes_remove_edition_add_new_submenu()
+{
+    remove_submenu_page('edit.php?post_type=edition', 'post-new.php?post_type=edition');
+}
+add_action('admin_menu', 'wp_art_routes_remove_edition_add_new_submenu', 999);
 
 /**
  * Register Edition meta fields for REST API
