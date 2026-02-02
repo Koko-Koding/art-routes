@@ -425,3 +425,125 @@ function wp_art_routes_dashboard_get_items()
     ]);
 }
 add_action('wp_ajax_wp_art_routes_dashboard_get_items', 'wp_art_routes_dashboard_get_items');
+
+/**
+ * AJAX handler for updating a single item field
+ */
+function wp_art_routes_dashboard_update_item()
+{
+    // Verify nonce
+    if (!check_ajax_referer('wp_art_routes_dashboard', 'nonce', false)) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check capabilities
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('You do not have permission to update this item.', 'wp-art-routes')]);
+    }
+
+    // Get parameters
+    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
+    $field = isset($_POST['field']) ? sanitize_key($_POST['field']) : '';
+    $value = isset($_POST['value']) ? $_POST['value'] : '';
+
+    // Validate post ID
+    if (!$post_id) {
+        wp_send_json_error(['message' => __('Invalid post ID.', 'wp-art-routes')]);
+    }
+
+    // Verify post exists and is one of our allowed post types
+    $post = get_post($post_id);
+    if (!$post) {
+        wp_send_json_error(['message' => __('Post not found.', 'wp-art-routes')]);
+    }
+
+    $allowed_post_types = ['art_route', 'artwork', 'information_point'];
+    if (!in_array($post->post_type, $allowed_post_types, true)) {
+        wp_send_json_error(['message' => __('Invalid post type.', 'wp-art-routes')]);
+    }
+
+    // Validate field
+    if (empty($field)) {
+        wp_send_json_error(['message' => __('Invalid field.', 'wp-art-routes')]);
+    }
+
+    // Handle each field type
+    $response_data = [];
+
+    switch ($field) {
+        case 'title':
+            $sanitized_value = sanitize_text_field($value);
+            $result = wp_update_post([
+                'ID' => $post_id,
+                'post_title' => $sanitized_value,
+            ], true);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(['message' => $result->get_error_message()]);
+            }
+            $response_data['title'] = $sanitized_value;
+            break;
+
+        case 'status':
+            // Only allow publish or draft
+            if (!in_array($value, ['publish', 'draft'], true)) {
+                wp_send_json_error(['message' => __('Invalid status value. Must be "publish" or "draft".', 'wp-art-routes')]);
+            }
+
+            $result = wp_update_post([
+                'ID' => $post_id,
+                'post_status' => $value,
+            ], true);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(['message' => $result->get_error_message()]);
+            }
+            $response_data['status'] = $value;
+            break;
+
+        case 'number':
+            $sanitized_value = sanitize_text_field($value);
+            update_post_meta($post_id, '_artwork_number', $sanitized_value);
+            $response_data['number'] = $sanitized_value;
+            break;
+
+        case 'latitude':
+            $float_value = floatval($value);
+            // Validate latitude range (-90 to 90)
+            if ($float_value < -90 || $float_value > 90) {
+                wp_send_json_error(['message' => __('Latitude must be between -90 and 90.', 'wp-art-routes')]);
+            }
+            update_post_meta($post_id, '_artwork_latitude', $float_value);
+            $response_data['latitude'] = $float_value;
+            break;
+
+        case 'longitude':
+            $float_value = floatval($value);
+            // Validate longitude range (-180 to 180)
+            if ($float_value < -180 || $float_value > 180) {
+                wp_send_json_error(['message' => __('Longitude must be between -180 and 180.', 'wp-art-routes')]);
+            }
+            update_post_meta($post_id, '_artwork_longitude', $float_value);
+            $response_data['longitude'] = $float_value;
+            break;
+
+        case 'icon':
+            $sanitized_value = sanitize_file_name($value);
+
+            // Use different meta key based on post type
+            $meta_key = ($post->post_type === 'information_point') ? '_info_point_icon' : '_artwork_icon';
+            update_post_meta($post_id, $meta_key, $sanitized_value);
+
+            // Return icon URL in response
+            $icons_url = plugins_url('assets/icons/', dirname(__FILE__));
+            $response_data['icon'] = $sanitized_value;
+            $response_data['icon_url'] = $sanitized_value ? $icons_url . $sanitized_value : '';
+            break;
+
+        default:
+            wp_send_json_error(['message' => __('Unknown field type.', 'wp-art-routes')]);
+    }
+
+    wp_send_json_success($response_data);
+}
+add_action('wp_ajax_wp_art_routes_dashboard_update_item', 'wp_art_routes_dashboard_update_item');
