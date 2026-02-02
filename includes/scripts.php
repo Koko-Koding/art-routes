@@ -238,11 +238,30 @@ add_action('admin_enqueue_scripts', 'wp_art_routes_enqueue_admin_scripts');
  */
 function wp_art_routes_is_route_page()
 {
-    // Check for shortcode in content
     global $post;
 
-    if (is_singular() && isset($post->post_content) && has_shortcode($post->post_content, 'art_route_map')) {
-        return true;
+    // Check for shortcodes and blocks in post content
+    if (isset($post->post_content)) {
+        // Check for art_route_map shortcode
+        if (has_shortcode($post->post_content, 'art_route_map')) {
+            return true;
+        }
+        // Check for edition_map shortcode
+        if (has_shortcode($post->post_content, 'edition_map')) {
+            return true;
+        }
+        // Check for art_routes_map shortcode (multiple routes)
+        if (has_shortcode($post->post_content, 'art_routes_map')) {
+            return true;
+        }
+        // Check for Edition Map Gutenberg block
+        if (has_block('wp-art-routes/edition-map', $post->post_content)) {
+            return true;
+        }
+        // Check for Routes Map Gutenberg block
+        if (has_block('wp-art-routes/routes-map', $post->post_content)) {
+            return true;
+        }
     }
 
     // Check for our template
