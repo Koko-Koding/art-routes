@@ -1,0 +1,216 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Verification Script for WP Art Routes Editions System
+ *
+ * This script verifies that the Editions system is properly integrated:
+ * - All required files exist
+ * - Required functions are defined
+ * - Expected structures are in place
+ *
+ * Usage: php bin/verify-editions-system.php
+ *
+ * @package WP Art Routes
+ */
+
+// Set script mode
+define('VERIFICATION_SCRIPT', true);
+
+// Change to plugin root directory
+chdir(dirname(__DIR__));
+
+echo "===========================================\n";
+echo "WP Art Routes - Editions System Verification\n";
+echo "===========================================\n\n";
+
+$errors = [];
+$warnings = [];
+$success = [];
+
+// 1. Check required files exist
+echo "1. Checking required files...\n";
+$required_files = [
+    'includes/terminology.php' => 'Terminology system',
+    'includes/editions.php' => 'Edition CPT',
+    'includes/blocks.php' => 'Gutenberg blocks',
+    'includes/import-export.php' => 'Import/Export admin page',
+    'wp-art-routes.php' => 'Main plugin file',
+    'templates/single-edition.php' => 'Edition single template',
+    'assets/js/blocks/edition-map-block.js' => 'Edition map block JS',
+    'assets/css/blocks/edition-map-block-editor.css' => 'Edition map block editor CSS',
+];
+
+foreach ($required_files as $file => $description) {
+    if (file_exists($file)) {
+        $success[] = "  [OK] {$description}: {$file}";
+    } else {
+        $errors[] = "  [ERROR] Missing {$description}: {$file}";
+    }
+}
+
+// 2. Check main plugin file includes all required files
+echo "2. Checking file requirements in wp-art-routes.php...\n";
+$main_plugin_content = file_get_contents('wp-art-routes.php');
+
+$required_includes = [
+    'includes/terminology.php',
+    'includes/editions.php',
+    'includes/blocks.php',
+    'includes/import-export.php',
+];
+
+foreach ($required_includes as $include) {
+    if (strpos($main_plugin_content, $include) !== false) {
+        $success[] = "  [OK] Main plugin requires: {$include}";
+    } else {
+        $errors[] = "  [ERROR] Main plugin missing require for: {$include}";
+    }
+}
+
+// 3. Check activation hook includes Edition CPT registration
+echo "3. Checking activation hook...\n";
+if (strpos($main_plugin_content, 'wp_art_routes_register_edition_post_type') !== false) {
+    $success[] = "  [OK] Activation hook registers Edition CPT";
+} else {
+    $errors[] = "  [ERROR] Activation hook does not register Edition CPT";
+}
+
+// 4. Check deactivation hook unregisters Edition CPT
+echo "4. Checking deactivation hook...\n";
+if (strpos($main_plugin_content, "unregister_post_type('edition')") !== false) {
+    $success[] = "  [OK] Deactivation hook unregisters Edition CPT";
+} else {
+    $warnings[] = "  [WARNING] Deactivation hook may not unregister Edition CPT";
+}
+
+// 5. Check terminology.php has required functions
+echo "5. Checking terminology.php functions...\n";
+$terminology_content = file_exists('includes/terminology.php')
+    ? file_get_contents('includes/terminology.php')
+    : '';
+
+$required_terminology_functions = [
+    'wp_art_routes_get_default_terminology',
+    'wp_art_routes_get_global_terminology',
+    'wp_art_routes_label',
+];
+
+foreach ($required_terminology_functions as $func) {
+    if (strpos($terminology_content, "function {$func}") !== false) {
+        $success[] = "  [OK] Function defined: {$func}()";
+    } else {
+        $errors[] = "  [ERROR] Function missing: {$func}()";
+    }
+}
+
+// 6. Check editions.php has required functions
+echo "6. Checking editions.php functions...\n";
+$editions_content = file_exists('includes/editions.php')
+    ? file_get_contents('includes/editions.php')
+    : '';
+
+$required_editions_functions = [
+    'wp_art_routes_register_edition_post_type',
+    'wp_art_routes_register_edition_meta',
+    'wp_art_routes_get_editions',
+    'wp_art_routes_get_edition_data',
+    'wp_art_routes_get_post_edition',
+    'wp_art_routes_edition_label',
+];
+
+foreach ($required_editions_functions as $func) {
+    if (strpos($editions_content, "function {$func}") !== false) {
+        $success[] = "  [OK] Function defined: {$func}()";
+    } else {
+        $errors[] = "  [ERROR] Function missing: {$func}()";
+    }
+}
+
+// 7. Check editions.php registers meta fields
+echo "7. Checking Edition meta field registration...\n";
+$required_meta_fields = [
+    '_edition_terminology',
+    '_edition_start_date',
+    '_edition_end_date',
+];
+
+foreach ($required_meta_fields as $meta) {
+    if (strpos($editions_content, "'{$meta}'") !== false) {
+        $success[] = "  [OK] Meta field registered: {$meta}";
+    } else {
+        $errors[] = "  [ERROR] Meta field missing: {$meta}";
+    }
+}
+
+// 8. Check blocks.php has block registration
+echo "8. Checking Gutenberg block registration...\n";
+$blocks_content = file_exists('includes/blocks.php')
+    ? file_get_contents('includes/blocks.php')
+    : '';
+
+if (strpos($blocks_content, "register_block_type") !== false) {
+    $success[] = "  [OK] Block type registration found";
+} else {
+    $errors[] = "  [ERROR] Block type registration missing";
+}
+
+if (strpos($blocks_content, 'wp-art-routes/edition-map') !== false) {
+    $success[] = "  [OK] Edition map block name found";
+} else {
+    $warnings[] = "  [WARNING] Edition map block name not found (may use different name)";
+}
+
+// 9. Check import-export.php has admin page
+echo "9. Checking Import/Export admin page...\n";
+$import_export_content = file_exists('includes/import-export.php')
+    ? file_get_contents('includes/import-export.php')
+    : '';
+
+if (strpos($import_export_content, 'add_submenu_page') !== false) {
+    $success[] = "  [OK] Import/Export submenu page registered";
+} else {
+    $errors[] = "  [ERROR] Import/Export submenu page not registered";
+}
+
+// 10. Check Edition CPT is configured with REST API support
+echo "10. Checking Edition CPT REST API support...\n";
+if (strpos($editions_content, "'show_in_rest'") !== false) {
+    $success[] = "  [OK] Edition CPT has REST API support";
+} else {
+    $warnings[] = "  [WARNING] Edition CPT may not have REST API support";
+}
+
+// Print results
+echo "\n===========================================\n";
+echo "Results Summary\n";
+echo "===========================================\n\n";
+
+if (!empty($errors)) {
+    echo "ERRORS (" . count($errors) . "):\n";
+    foreach ($errors as $error) {
+        echo $error . "\n";
+    }
+    echo "\n";
+}
+
+if (!empty($warnings)) {
+    echo "WARNINGS (" . count($warnings) . "):\n";
+    foreach ($warnings as $warning) {
+        echo $warning . "\n";
+    }
+    echo "\n";
+}
+
+echo "SUCCESS (" . count($success) . " checks passed):\n";
+foreach ($success as $item) {
+    echo $item . "\n";
+}
+
+echo "\n===========================================\n";
+if (empty($errors)) {
+    echo "VERIFICATION PASSED - Editions system is properly integrated!\n";
+    exit(0);
+} else {
+    echo "VERIFICATION FAILED - Please fix the errors above.\n";
+    exit(1);
+}

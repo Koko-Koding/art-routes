@@ -63,6 +63,10 @@ function wp_art_routes_activate()
     require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/post-types.php';
     wp_art_routes_register_post_types();
 
+    // Register the Edition CPT
+    require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/editions.php';
+    wp_art_routes_register_edition_post_type();
+
     // Clear the permalinks after the post types have been registered
     flush_rewrite_rules();
 }
@@ -76,6 +80,8 @@ function wp_art_routes_deactivate()
     // Unregister the post types so the rules are no longer in memory
     unregister_post_type('art_route');
     unregister_post_type('artwork');
+    unregister_post_type('information_point');
+    unregister_post_type('edition');
 
     // Clear the permalinks
     flush_rewrite_rules();
@@ -90,6 +96,7 @@ function wp_art_routes_uninstall()
     // Remove plugin options
     delete_option('wp_art_routes_default_route_id');
     delete_option('wp_art_routes_enable_location_tracking');
+    delete_option('wp_art_routes_terminology');
 
     // Remove user meta data
     delete_metadata('user', 0, 'wp_art_routes_visited_artworks', '', true);

@@ -23,6 +23,9 @@ WP Art Routes is a flexible WordPress plugin for organizations managing cultural
 # Validate GPX export files
 ./bin/validate-gpx
 
+# Verify Editions system integration
+./bin/verify-editions-system
+
 # Generate POT file for translations
 wp i18n make-pot . languages/wp-art-routes.pot
 
