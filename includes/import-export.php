@@ -747,9 +747,9 @@ function wp_art_routes_handle_gpx_import()
         return new WP_Error('upload_error', $error_message);
     }
 
-    // Verify file type
-    $file_info = wp_check_filetype($_FILES['import_gpx_file']['name']);
-    if ($file_info['ext'] !== 'gpx') {
+    // Verify file type - check extension directly since GPX is not in WordPress's default allowed types
+    $file_extension = strtolower(pathinfo($_FILES['import_gpx_file']['name'], PATHINFO_EXTENSION));
+    if ($file_extension !== 'gpx') {
         return new WP_Error('invalid_file_type', __('Please upload a GPX file.', 'wp-art-routes'));
     }
 
