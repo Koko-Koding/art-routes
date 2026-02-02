@@ -53,6 +53,7 @@ require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/terminology.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/editions.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/blocks.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/import-export.php';
+require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/edition-dashboard.php';
 
 /**
  * Activation hook
