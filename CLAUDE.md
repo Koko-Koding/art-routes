@@ -178,12 +178,37 @@ Located at Editions → Import/Export (`includes/import-export.php`):
 - Export edition's routes as tracks
 - Export locations and info points as waypoints
 
+### Edition Dashboard
+
+Located at Editions → Dashboard (`includes/edition-dashboard.php`):
+
+**Features:**
+- Overview map showing all edition content (routes as polylines, locations/info points as markers)
+- Draft items shown at 50% opacity on map
+- Collapsible sections for Routes, Locations, Info Points
+- Inline editing for title, number, coordinates
+- Status toggle (click badge to publish/draft)
+- Icon selector dropdown
+- Bulk actions: publish, draft, delete selected
+- Quick selection: Select All, Select None, Select Drafts
+
+**JavaScript:** `assets/js/edition-dashboard.js`
+**CSS:** `assets/css/edition-dashboard.css`
+
+**AJAX Endpoints:**
+| Action | Purpose |
+|--------|---------|
+| `wp_art_routes_dashboard_get_items` | Fetch all routes/locations/info points for edition (including drafts) |
+| `wp_art_routes_dashboard_update_item` | Update single field (title, status, number, lat, lng, icon) |
+| `wp_art_routes_dashboard_bulk_action` | Bulk publish/draft/delete |
+
 ### Core PHP Files (includes/)
 
 | File | Purpose |
 |------|---------|
 | `terminology.php` | **Centralized terminology system** - labels, slugs, cascade logic, helper functions |
 | `editions.php` | Edition CPT registration, meta boxes, terminology overrides, helper functions |
+| `edition-dashboard.php` | Edition Dashboard admin page - bulk management UI with map |
 | `blocks.php` | Gutenberg block registration (Edition Map block) |
 | `import-export.php` | Import/Export admin page - CSV and GPX import/export |
 | `post-types.php` | Registers art_route, artwork, information_point CPTs with edition linking |
