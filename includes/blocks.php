@@ -73,6 +73,17 @@ function wp_art_routes_register_blocks()
             'heightHelp' => __('Enter a CSS value (e.g., 500px, 50vh)', 'wp-art-routes'),
             'previewNote' => __('Note: The map preview may differ from the frontend display.', 'wp-art-routes'),
             'noEditionSelected' => __('Please select an Edition or the block will auto-detect from the page context.', 'wp-art-routes'),
+            // Editor preview strings
+            'autoDetect' => __('Auto-detect from page', 'wp-art-routes'),
+            'unknownEdition' => __('Unknown Edition', 'wp-art-routes'),
+            'routes' => __('Routes', 'wp-art-routes'),
+            'locations' => __('Locations', 'wp-art-routes'),
+            'infoPoints' => __('Info Points', 'wp-art-routes'),
+            'legend' => __('Legend', 'wp-art-routes'),
+            'nothingSelected' => __('Nothing selected', 'wp-art-routes'),
+            'editorPreview' => __('Interactive map preview', 'wp-art-routes'),
+            'showingLabel' => __('Showing', 'wp-art-routes'),
+            'previewHint' => __('The interactive map will appear on the published page', 'wp-art-routes'),
         ],
     ]);
 
