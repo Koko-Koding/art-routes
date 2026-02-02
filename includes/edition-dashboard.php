@@ -547,3 +547,129 @@ function wp_art_routes_dashboard_update_item()
     wp_send_json_success($response_data);
 }
 add_action('wp_ajax_wp_art_routes_dashboard_update_item', 'wp_art_routes_dashboard_update_item');
+
+/**
+ * AJAX handler for bulk actions on dashboard items
+ */
+function wp_art_routes_dashboard_bulk_action()
+{
+    // Verify nonce
+    if (!check_ajax_referer('wp_art_routes_dashboard', 'nonce', false)) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check capabilities
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('You do not have permission to perform this action.', 'wp-art-routes')]);
+    }
+
+    // Get parameters
+    $bulk_action = isset($_POST['bulk_action']) ? sanitize_key($_POST['bulk_action']) : '';
+    $post_ids = isset($_POST['post_ids']) ? array_map('absint', (array) $_POST['post_ids']) : [];
+
+    // Validate action
+    $allowed_actions = ['publish', 'draft', 'delete'];
+    if (!in_array($bulk_action, $allowed_actions, true)) {
+        wp_send_json_error(['message' => __('Invalid bulk action.', 'wp-art-routes')]);
+    }
+
+    // Validate post IDs
+    if (empty($post_ids)) {
+        wp_send_json_error(['message' => __('No items selected.', 'wp-art-routes')]);
+    }
+
+    // Allowed post types for bulk operations
+    $allowed_post_types = ['art_route', 'artwork', 'information_point'];
+
+    // Track results
+    $success_count = 0;
+    $error_count = 0;
+
+    // Process each post
+    foreach ($post_ids as $post_id) {
+        // Verify post exists
+        $post = get_post($post_id);
+        if (!$post) {
+            $error_count++;
+            continue;
+        }
+
+        // Verify post type is allowed
+        if (!in_array($post->post_type, $allowed_post_types, true)) {
+            $error_count++;
+            continue;
+        }
+
+        // Perform the action
+        switch ($bulk_action) {
+            case 'publish':
+            case 'draft':
+                $result = wp_update_post([
+                    'ID' => $post_id,
+                    'post_status' => $bulk_action,
+                ], true);
+
+                if (is_wp_error($result)) {
+                    $error_count++;
+                } else {
+                    $success_count++;
+                }
+                break;
+
+            case 'delete':
+                // Force delete (skip trash)
+                $result = wp_delete_post($post_id, true);
+
+                if ($result === false || $result === null) {
+                    $error_count++;
+                } else {
+                    $success_count++;
+                }
+                break;
+        }
+    }
+
+    // Build response message
+    $message = '';
+    if ($success_count > 0) {
+        switch ($bulk_action) {
+            case 'publish':
+                $message = sprintf(
+                    /* translators: %d: number of items */
+                    _n('%d item published.', '%d items published.', $success_count, 'wp-art-routes'),
+                    $success_count
+                );
+                break;
+            case 'draft':
+                $message = sprintf(
+                    /* translators: %d: number of items */
+                    _n('%d item set to draft.', '%d items set to draft.', $success_count, 'wp-art-routes'),
+                    $success_count
+                );
+                break;
+            case 'delete':
+                $message = sprintf(
+                    /* translators: %d: number of items */
+                    _n('%d item deleted.', '%d items deleted.', $success_count, 'wp-art-routes'),
+                    $success_count
+                );
+                break;
+        }
+    }
+
+    if ($error_count > 0) {
+        $error_message = sprintf(
+            /* translators: %d: number of items */
+            _n('%d item could not be processed.', '%d items could not be processed.', $error_count, 'wp-art-routes'),
+            $error_count
+        );
+        $message = $message ? $message . ' ' . $error_message : $error_message;
+    }
+
+    wp_send_json_success([
+        'message' => $message,
+        'success_count' => $success_count,
+        'error_count' => $error_count,
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_dashboard_bulk_action', 'wp_art_routes_dashboard_bulk_action');
