@@ -294,16 +294,577 @@
     }
 
     /**
-     * Bind table events (placeholder for Task 8)
+     * Bind table interaction events
      */
     function bindTableEvents() {
-        // Task 8: Will implement inline editing, delete handlers, checkbox handlers
+        // Unbind first to prevent duplicates
+        $(document).off('.dashboard');
+
+        // Editable cells - click to edit
+        $(document).on('click.dashboard', '.editable-cell:not(.editing)', startEditing);
+
+        // Status badge click - toggle status
+        $(document).on('click.dashboard', '.status-badge', toggleStatus);
+
+        // Delete button
+        $(document).on('click.dashboard', '.row-actions .delete', deleteItem);
+
+        // Checkbox header - select all in section
+        $(document).on('change.dashboard', '.select-all-checkbox', selectAllInSection);
+
+        // Selection buttons
+        $(document).on('click.dashboard', '.select-all', function() {
+            selectItems($(this).closest('.dashboard-section'), 'all');
+        });
+        $(document).on('click.dashboard', '.select-none', function() {
+            selectItems($(this).closest('.dashboard-section'), 'none');
+        });
+        $(document).on('click.dashboard', '.select-drafts', function() {
+            selectItems($(this).closest('.dashboard-section'), 'drafts');
+        });
+
+        // Bulk action apply
+        $(document).on('click.dashboard', '.bulk-apply', applyBulkAction);
+
+        // Icon cell click
+        $(document).on('click.dashboard', '.icon-cell', showIconSelector);
     }
 
-    // Placeholder functions (will be implemented in subsequent tasks)
+    /**
+     * Start inline editing
+     */
+    function startEditing() {
+        const $cell = $(this);
+        if ($cell.hasClass('editing')) return;
+
+        const currentValue = $cell.data('value') || '';
+        const field = $cell.data('field');
+
+        $cell.addClass('editing');
+        $cell.html(`<input type="text" value="${escapeHtml(currentValue)}" data-original="${escapeHtml(currentValue)}" />`);
+
+        const $input = $cell.find('input');
+        $input.focus().select();
+
+        // Save on blur or Enter
+        $input.on('blur', function() {
+            finishEditing($cell, $(this).val());
+        });
+
+        $input.on('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $(this).blur();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelEditing($cell, $(this).data('original'));
+            }
+        });
+    }
+
+    /**
+     * Finish inline editing and save
+     */
+    function finishEditing($cell, newValue) {
+        const originalValue = $cell.find('input').data('original');
+        const field = $cell.data('field');
+        const postId = $cell.closest('tr').data('id');
+
+        // If value hasn't changed, just restore display
+        if (newValue === originalValue) {
+            $cell.removeClass('editing');
+            $cell.html(newValue || '—');
+            $cell.data('value', newValue);
+            return;
+        }
+
+        // Show saving state
+        $cell.addClass('saving');
+        $cell.removeClass('editing');
+        $cell.html(newValue || '—');
+        $cell.data('value', newValue);
+
+        // Save via AJAX
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'wp_art_routes_dashboard_update_item',
+                nonce: wpArtRoutesDashboard.nonce,
+                post_id: postId,
+                field: field,
+                value: newValue
+            },
+            success: function(response) {
+                $cell.removeClass('saving');
+                if (response.success) {
+                    $cell.addClass('saved');
+                    setTimeout(() => $cell.removeClass('saved'), 500);
+
+                    // Update local state
+                    updateLocalState(postId, field, newValue);
+
+                    // Update map if coordinates changed
+                    if (field === 'latitude' || field === 'longitude') {
+                        updateMap();
+                    }
+                } else {
+                    $cell.addClass('error');
+                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                    // Restore original value
+                    $cell.html(originalValue || '—');
+                    $cell.data('value', originalValue);
+                    setTimeout(() => $cell.removeClass('error'), 2000);
+                }
+            },
+            error: function() {
+                $cell.removeClass('saving');
+                $cell.addClass('error');
+                alert(wpArtRoutesDashboard.strings.error);
+                $cell.html(originalValue || '—');
+                $cell.data('value', originalValue);
+                setTimeout(() => $cell.removeClass('error'), 2000);
+            }
+        });
+    }
+
+    /**
+     * Cancel editing
+     */
+    function cancelEditing($cell, originalValue) {
+        $cell.removeClass('editing');
+        $cell.html(originalValue || '—');
+    }
+
+    /**
+     * Toggle item status (publish/draft)
+     */
+    function toggleStatus() {
+        const $badge = $(this);
+        const postId = $badge.data('id');
+        const $row = $badge.closest('tr');
+        const currentStatus = $badge.hasClass('publish') ? 'publish' : 'draft';
+        const newStatus = currentStatus === 'publish' ? 'draft' : 'publish';
+
+        // Optimistic UI update
+        $badge.removeClass(currentStatus).addClass(newStatus);
+        $badge.text(newStatus === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft');
+        $row.find('.item-checkbox').data('status', newStatus);
+
+        // Save via AJAX
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'wp_art_routes_dashboard_update_item',
+                nonce: wpArtRoutesDashboard.nonce,
+                post_id: postId,
+                field: 'status',
+                value: newStatus
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update local state
+                    updateLocalState(postId, 'status', newStatus);
+                    updateSectionCounts();
+                    updateMap();
+                } else {
+                    // Revert on error
+                    $badge.removeClass(newStatus).addClass(currentStatus);
+                    $badge.text(currentStatus === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft');
+                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                }
+            },
+            error: function() {
+                // Revert on error
+                $badge.removeClass(newStatus).addClass(currentStatus);
+                $badge.text(currentStatus === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft');
+                alert(wpArtRoutesDashboard.strings.error);
+            }
+        });
+    }
+
+    /**
+     * Update local state after edit
+     */
+    function updateLocalState(postId, field, value) {
+        // Find and update in routes
+        const route = state.routes.find(r => r.id === postId);
+        if (route) {
+            route[field] = value;
+            return;
+        }
+
+        // Find and update in locations
+        const location = state.locations.find(l => l.id === postId);
+        if (location) {
+            location[field] = value;
+            return;
+        }
+
+        // Find and update in info points
+        const infoPoint = state.infoPoints.find(i => i.id === postId);
+        if (infoPoint) {
+            infoPoint[field] = value;
+        }
+    }
+
+    /**
+     * Delete single item
+     */
+    function deleteItem(e) {
+        e.preventDefault();
+        const postId = $(this).data('id');
+
+        if (!confirm(wpArtRoutesDashboard.strings.confirmDeleteSingle)) {
+            return;
+        }
+
+        const $row = $(this).closest('tr');
+        $row.css('opacity', '0.5');
+
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'wp_art_routes_dashboard_bulk_action',
+                nonce: wpArtRoutesDashboard.nonce,
+                bulk_action: 'delete',
+                post_ids: [postId]
+            },
+            success: function(response) {
+                if (response.success) {
+                    $row.fadeOut(300, function() {
+                        $(this).remove();
+                        removeFromLocalState(postId);
+                        updateSectionCounts();
+                        updateMap();
+                    });
+                } else {
+                    $row.css('opacity', '1');
+                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                }
+            },
+            error: function() {
+                $row.css('opacity', '1');
+                alert(wpArtRoutesDashboard.strings.error);
+            }
+        });
+    }
+
+    /**
+     * Remove item from local state
+     */
+    function removeFromLocalState(postId) {
+        state.routes = state.routes.filter(r => r.id !== postId);
+        state.locations = state.locations.filter(l => l.id !== postId);
+        state.infoPoints = state.infoPoints.filter(i => i.id !== postId);
+    }
+
+    /**
+     * Select all items in section via header checkbox
+     */
+    function selectAllInSection() {
+        const $section = $(this).closest('.dashboard-section');
+        const isChecked = $(this).is(':checked');
+        $section.find('.item-checkbox').prop('checked', isChecked);
+    }
+
+    /**
+     * Select items by criteria
+     */
+    function selectItems($section, criteria) {
+        const $checkboxes = $section.find('.item-checkbox');
+
+        switch (criteria) {
+            case 'all':
+                $checkboxes.prop('checked', true);
+                $section.find('.select-all-checkbox').prop('checked', true);
+                break;
+            case 'none':
+                $checkboxes.prop('checked', false);
+                $section.find('.select-all-checkbox').prop('checked', false);
+                break;
+            case 'drafts':
+                $checkboxes.each(function() {
+                    const isDraft = $(this).data('status') === 'draft';
+                    $(this).prop('checked', isDraft);
+                });
+                break;
+        }
+    }
+
+    /**
+     * Apply bulk action
+     */
+    function applyBulkAction() {
+        const $section = $(this).closest('.dashboard-section');
+        const action = $section.find('.bulk-action-select').val();
+        const $checked = $section.find('.item-checkbox:checked');
+        const postIds = $checked.map(function() { return $(this).val(); }).get();
+
+        if (!action) {
+            return;
+        }
+
+        if (postIds.length === 0) {
+            alert(wpArtRoutesDashboard.strings.noItemsSelected);
+            return;
+        }
+
+        // Confirm delete
+        if (action === 'delete') {
+            if (!confirm(wpArtRoutesDashboard.strings.confirmDelete)) {
+                return;
+            }
+        }
+
+        // Disable UI during request
+        const $button = $(this);
+        $button.prop('disabled', true).text(wpArtRoutesDashboard.strings.saving);
+        $checked.closest('tr').css('opacity', '0.5');
+
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'wp_art_routes_dashboard_bulk_action',
+                nonce: wpArtRoutesDashboard.nonce,
+                bulk_action: action,
+                post_ids: postIds
+            },
+            success: function(response) {
+                $button.prop('disabled', false).text($button.closest('.bulk-actions').find('.bulk-action-select option:first').text().replace('Bulk Actions', 'Apply'));
+
+                if (response.success) {
+                    // Reload edition data to refresh tables
+                    loadEdition(state.editionId);
+                } else {
+                    $checked.closest('tr').css('opacity', '1');
+                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                }
+            },
+            error: function() {
+                $button.prop('disabled', false);
+                $checked.closest('tr').css('opacity', '1');
+                alert(wpArtRoutesDashboard.strings.error);
+            }
+        });
+
+        // Reset select
+        $section.find('.bulk-action-select').val('');
+    }
+
+    /**
+     * Show icon selector dropdown
+     */
+    function showIconSelector() {
+        const $cell = $(this);
+        const currentIcon = $cell.data('icon') || '';
+        const postId = $cell.data('id');
+        const $row = $cell.closest('tr');
+        const postType = $row.data('type');
+
+        // Build dropdown HTML
+        let optionsHtml = '<option value="">— No Icon —</option>';
+        state.availableIcons.forEach(function(icon) {
+            const selected = icon.filename === currentIcon ? 'selected' : '';
+            optionsHtml += `<option value="${escapeHtml(icon.filename)}" ${selected}>${escapeHtml(icon.display_name)}</option>`;
+        });
+
+        // Replace cell with select
+        const originalHtml = $cell.html();
+        $cell.html(`<select class="icon-select">${optionsHtml}</select>`);
+
+        const $select = $cell.find('select');
+        $select.focus();
+
+        $select.on('change', function() {
+            const newIcon = $(this).val();
+            saveIcon($cell, postId, newIcon, originalHtml);
+        });
+
+        $select.on('blur', function() {
+            // Restore original if no change
+            setTimeout(function() {
+                if ($cell.find('select').length) {
+                    $cell.html(originalHtml);
+                }
+            }, 200);
+        });
+    }
+
+    /**
+     * Save icon selection
+     */
+    function saveIcon($cell, postId, newIcon, originalHtml) {
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'wp_art_routes_dashboard_update_item',
+                nonce: wpArtRoutesDashboard.nonce,
+                post_id: postId,
+                field: 'icon',
+                value: newIcon
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Update cell with new icon
+                    const iconHtml = response.data.icon_url
+                        ? `<img src="${response.data.icon_url}" class="icon-preview" alt="" />`
+                        : '—';
+                    $cell.html(iconHtml);
+                    $cell.data('icon', newIcon);
+
+                    // Update local state
+                    updateLocalState(postId, 'icon', newIcon);
+                    updateLocalState(postId, 'icon_url', response.data.icon_url);
+                } else {
+                    $cell.html(originalHtml);
+                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                }
+            },
+            error: function() {
+                $cell.html(originalHtml);
+                alert(wpArtRoutesDashboard.strings.error);
+            }
+        });
+    }
+
+    /**
+     * Initialize the map
+     */
     function initMap() {
-        // Task 10
-        console.log('initMap: TODO');
+        // Destroy existing map if any
+        if (state.map) {
+            state.map.remove();
+            state.map = null;
+        }
+
+        // Create map
+        state.map = L.map('dashboard-map', {
+            scrollWheelZoom: false
+        });
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(state.map);
+
+        // Render markers
+        updateMap();
+    }
+
+    /**
+     * Update map markers
+     */
+    function updateMap() {
+        if (!state.map) return;
+
+        // Clear existing layers
+        if (state.mapLayers.routes) {
+            state.map.removeLayer(state.mapLayers.routes);
+        }
+        if (state.mapLayers.locations) {
+            state.map.removeLayer(state.mapLayers.locations);
+        }
+        if (state.mapLayers.infoPoints) {
+            state.map.removeLayer(state.mapLayers.infoPoints);
+        }
+
+        // Create layer groups
+        state.mapLayers.routes = L.layerGroup();
+        state.mapLayers.locations = L.layerGroup();
+        state.mapLayers.infoPoints = L.layerGroup();
+
+        const bounds = L.latLngBounds();
+        let hasPoints = false;
+
+        // Add routes as polylines
+        state.routes.forEach(function(route) {
+            if (route.route_path && route.route_path.length > 0) {
+                const latLngs = route.route_path.map(function(point) {
+                    // Handle both array format [lat, lng] and object format {lat, lng}
+                    if (Array.isArray(point)) {
+                        return [point[0], point[1]];
+                    } else {
+                        return [point.lat, point.lng];
+                    }
+                });
+
+                const opacity = route.status === 'publish' ? 1 : 0.4;
+                const polyline = L.polyline(latLngs, {
+                    color: '#3388ff',
+                    weight: 4,
+                    opacity: opacity
+                });
+
+                polyline.bindTooltip(route.title);
+                polyline.addTo(state.mapLayers.routes);
+
+                latLngs.forEach(function(ll) {
+                    bounds.extend(ll);
+                    hasPoints = true;
+                });
+            }
+        });
+
+        // Add locations as markers
+        state.locations.forEach(function(location) {
+            if (location.latitude && location.longitude) {
+                const opacity = location.status === 'publish' ? 1 : 0.5;
+                const marker = L.circleMarker([location.latitude, location.longitude], {
+                    radius: 8,
+                    fillColor: '#2ecc71',
+                    color: '#27ae60',
+                    weight: 2,
+                    opacity: opacity,
+                    fillOpacity: opacity * 0.8
+                });
+
+                const label = location.number ? `${location.number}: ${location.title}` : location.title;
+                marker.bindTooltip(label);
+                marker.addTo(state.mapLayers.locations);
+
+                bounds.extend([location.latitude, location.longitude]);
+                hasPoints = true;
+            }
+        });
+
+        // Add info points as markers
+        state.infoPoints.forEach(function(infoPoint) {
+            if (infoPoint.latitude && infoPoint.longitude) {
+                const opacity = infoPoint.status === 'publish' ? 1 : 0.5;
+                const marker = L.circleMarker([infoPoint.latitude, infoPoint.longitude], {
+                    radius: 6,
+                    fillColor: '#e67e22',
+                    color: '#d35400',
+                    weight: 2,
+                    opacity: opacity,
+                    fillOpacity: opacity * 0.8
+                });
+
+                marker.bindTooltip(infoPoint.title);
+                marker.addTo(state.mapLayers.infoPoints);
+
+                bounds.extend([infoPoint.latitude, infoPoint.longitude]);
+                hasPoints = true;
+            }
+        });
+
+        // Add layers to map
+        state.mapLayers.routes.addTo(state.map);
+        state.mapLayers.locations.addTo(state.map);
+        state.mapLayers.infoPoints.addTo(state.map);
+
+        // Fit bounds
+        if (hasPoints) {
+            state.map.fitBounds(bounds, { padding: [20, 20] });
+        } else {
+            // Default view (Netherlands)
+            state.map.setView([52.1326, 5.2913], 7);
+        }
     }
 
     $(document).ready(init);
