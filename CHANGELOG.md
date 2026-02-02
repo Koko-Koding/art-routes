@@ -4,6 +4,56 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.25.0] - 2026-02-02
+
+### Added
+
+- **Editions System**: New organizational layer for grouping content by events/time periods
+  - Edition custom post type for cultural events (e.g., "Gluren bij de Buren 2026", "Kunstroute 2025")
+  - Per-edition terminology overrides (Route, Location, Info Point, Creator labels)
+  - Edition linking via `_edition_id` meta field on Routes, Locations, and Info Points
+  - Edition column and dropdown filter in admin list tables
+  - Edition selector meta box on content edit screens
+  - Edition single page template with map, routes grid, locations grid, and info points list
+
+- **Terminology System**: Centralized customizable labels with cascade logic
+  - Global terminology settings (General → Terminology tab)
+  - Edition-specific overrides that fall back to global, then to defaults
+  - Helper functions: `wp_art_routes_label()`, `wp_art_routes_slug()`, `wp_art_routes_get_edition_terminology()`
+
+- **Edition Map Block**: New Gutenberg block (`wp-art-routes/edition-map`)
+  - Server-side rendered for dynamic content
+  - Auto-detects edition on single edition pages
+  - Configurable: show/hide routes, locations, info points, legend
+  - Custom height setting
+
+- **Edition Map Shortcode**: `[edition_map]` with full attribute support
+  - `edition_id`, `routes`, `show_locations`, `show_info_points`, `show_legend`, `height`
+  - Auto-detection on edition single pages
+
+- **Import/Export Admin Page** (Editions → Import/Export)
+  - CSV import for Locations and Info Points with template download
+  - GPX import with three modes: route path only, route + waypoints, waypoints only
+  - CSV export for edition content
+  - GPX export with routes as tracks and locations/info points as waypoints
+
+- **Admin Menu Restructure**: All content types now under Editions top-level menu
+  - Editions, Routes, Locations, Info Points, Import/Export, Settings
+
+- **Verification Script**: `./bin/verify-editions-system` to validate integration
+
+### Changed
+
+- Settings page reorganized with tabbed interface (General, Terminology)
+- Menu structure consolidated under Editions for better organization
+
+### Fixed
+
+- Edition menu now shows "Editions" instead of "All Editions"
+- Removed "Add New Edition" from submenu (editions created deliberately)
+- Leaflet.js properly enqueued for edition_map shortcode and Edition Map block
+- Map container existence check before initialization
+
 ## [wenb-1.24.3] - 2025-10-14
 
 ### Fixed
