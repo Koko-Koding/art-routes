@@ -4,6 +4,34 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.26.0] - 2026-02-02
+
+### Added
+
+- **Edition Dashboard**: New comprehensive admin page for bulk managing edition content
+  - Overview map showing all routes (polylines), locations, and info points (markers)
+  - Draft items displayed at 50% opacity on map
+  - Collapsible sections for Routes, Locations, Info Points with counts
+  - Inline editing for title, number, and GPS coordinates
+  - Status toggle (click badge to instantly publish/draft)
+  - Icon selector dropdown for locations and info points
+  - Bulk actions: Publish, Draft, Delete selected items
+  - Quick selection buttons: Select All, Select None, Select Drafts
+  - Section collapse state persisted per edition in localStorage
+
+### Changed
+
+- **Edition Map Block**: Improved editor preview showing current settings instead of blank
+  - Displays selected edition name or "Auto-detect from page"
+  - Shows visible content summary (Routes, Locations, Info Points, Legend)
+  - Shows configured map height
+  - Visual gradient design with hint that interactive map appears on publish
+
+### Fixed
+
+- GPX import now correctly validates file type using extension check instead of MIME type
+- Renamed top-level admin menu from "Editions" to "Art Routes" for clarity
+
 ## [wenb-1.25.0] - 2026-02-02
 
 ### Added
