@@ -278,3 +278,150 @@ function wp_art_routes_render_dashboard_page()
     </div>
     <?php
 }
+
+/**
+ * AJAX handler for fetching edition data (routes, locations, info points)
+ */
+function wp_art_routes_dashboard_get_items()
+{
+    // Verify nonce
+    if (!check_ajax_referer('wp_art_routes_dashboard', 'nonce', false)) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check capabilities
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('You do not have permission to access this data.', 'wp-art-routes')]);
+    }
+
+    // Get and validate edition ID
+    $edition_id = isset($_POST['edition_id']) ? absint($_POST['edition_id']) : 0;
+
+    if (!$edition_id) {
+        wp_send_json_error(['message' => __('No edition selected.', 'wp-art-routes')]);
+    }
+
+    // Verify edition exists and is correct post type
+    $edition = get_post($edition_id);
+    if (!$edition || $edition->post_type !== 'edition') {
+        wp_send_json_error(['message' => __('Invalid edition.', 'wp-art-routes')]);
+    }
+
+    // Get icons directory info
+    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
+    $icons_url = plugins_url('assets/icons/', dirname(__FILE__));
+
+    // Get available icons
+    $available_icons = [];
+    if (is_dir($icons_dir)) {
+        $files = scandir($icons_dir);
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
+                $icon_name = pathinfo($file, PATHINFO_FILENAME);
+                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
+                $display_name = ucwords(trim($display_name));
+                $available_icons[] = [
+                    'filename' => $file,
+                    'display_name' => $display_name,
+                    'url' => $icons_url . $file,
+                ];
+            }
+        }
+        // Sort by display name
+        usort($available_icons, function ($a, $b) {
+            return strcmp($a['display_name'], $b['display_name']);
+        });
+    }
+
+    // Query routes for this edition
+    $routes_query = new WP_Query([
+        'post_type' => 'art_route',
+        'post_status' => ['publish', 'draft'],
+        'posts_per_page' => -1,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $routes = [];
+    foreach ($routes_query->posts as $route) {
+        $route_path = wp_art_routes_get_route_path($route->ID);
+        $routes[] = [
+            'id' => $route->ID,
+            'title' => $route->post_title,
+            'status' => $route->post_status,
+            'edit_url' => get_edit_post_link($route->ID, 'raw'),
+            'route_path' => $route_path,
+        ];
+    }
+
+    // Query locations (artworks) for this edition
+    $locations_query = new WP_Query([
+        'post_type' => 'artwork',
+        'post_status' => ['publish', 'draft'],
+        'posts_per_page' => -1,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $locations = [];
+    foreach ($locations_query->posts as $location) {
+        $icon = get_post_meta($location->ID, '_artwork_icon', true);
+        $locations[] = [
+            'id' => $location->ID,
+            'title' => $location->post_title,
+            'status' => $location->post_status,
+            'number' => get_post_meta($location->ID, '_artwork_number', true),
+            'latitude' => get_post_meta($location->ID, '_artwork_latitude', true),
+            'longitude' => get_post_meta($location->ID, '_artwork_longitude', true),
+            'icon' => $icon,
+            'icon_url' => $icon ? $icons_url . $icon : '',
+            'edit_url' => get_edit_post_link($location->ID, 'raw'),
+        ];
+    }
+
+    // Query info points for this edition
+    $info_points_query = new WP_Query([
+        'post_type' => 'information_point',
+        'post_status' => ['publish', 'draft'],
+        'posts_per_page' => -1,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $info_points = [];
+    foreach ($info_points_query->posts as $info_point) {
+        $icon = get_post_meta($info_point->ID, '_info_point_icon', true);
+        $info_points[] = [
+            'id' => $info_point->ID,
+            'title' => $info_point->post_title,
+            'status' => $info_point->post_status,
+            'latitude' => get_post_meta($info_point->ID, '_artwork_latitude', true),
+            'longitude' => get_post_meta($info_point->ID, '_artwork_longitude', true),
+            'icon' => $icon,
+            'icon_url' => $icon ? $icons_url . $icon : '',
+            'edit_url' => get_edit_post_link($info_point->ID, 'raw'),
+        ];
+    }
+
+    // Build response
+    wp_send_json_success([
+        'edition' => [
+            'id' => $edition->ID,
+            'title' => $edition->post_title,
+            'status' => $edition->post_status,
+            'permalink' => get_permalink($edition->ID),
+            'edit_url' => get_edit_post_link($edition->ID, 'raw'),
+        ],
+        'routes' => $routes,
+        'locations' => $locations,
+        'info_points' => $info_points,
+        'available_icons' => $available_icons,
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_dashboard_get_items', 'wp_art_routes_dashboard_get_items');
