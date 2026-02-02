@@ -50,10 +50,10 @@ wp i18n make-mo languages/wp-art-routes-nl_NL.po
 
 ### Admin Menu Structure
 
-The plugin uses a centralized menu under **Editions**:
+The plugin uses a centralized menu under **Art Routes** (translatable to "Kunstroutes" in Dutch):
 
 ```
-Editions (top-level, dashicons-calendar-alt)
+Art Routes (top-level, dashicons-location-alt)
 ├── Editions          (list of editions)
 ├── Routes            (art_route CPT)
 ├── Locations         (artwork CPT)
