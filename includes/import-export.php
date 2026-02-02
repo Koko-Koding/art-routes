@@ -41,6 +41,11 @@ function wp_art_routes_render_import_export_page()
         $import_result = wp_art_routes_handle_csv_import();
     }
 
+    // Handle GPX import if form was submitted
+    if (isset($_POST['wp_art_routes_import_gpx']) && isset($_POST['_wpnonce_gpx'])) {
+        $import_result = wp_art_routes_handle_gpx_import();
+    }
+
     // Determine current tab
     $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'import';
 
@@ -241,6 +246,106 @@ function wp_art_routes_render_import_tab()
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="card" style="max-width: 800px; margin-bottom: 20px;">
+        <h2><?php _e('Import from GPX', 'wp-art-routes'); ?></h2>
+
+        <p class="description">
+            <?php _e('Upload a GPX file to import route paths and/or waypoints. Routes will be created as drafts for review.', 'wp-art-routes'); ?>
+        </p>
+
+        <form method="post" enctype="multipart/form-data">
+            <?php wp_nonce_field('wp_art_routes_import_gpx', '_wpnonce_gpx'); ?>
+
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row">
+                        <label for="gpx_import_edition_id"><?php _e('Edition', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                    </th>
+                    <td>
+                        <?php if (!empty($editions)) : ?>
+                            <select name="gpx_import_edition_id" id="gpx_import_edition_id" required>
+                                <option value=""><?php _e('Select an edition', 'wp-art-routes'); ?></option>
+                                <?php foreach ($editions as $edition) : ?>
+                                    <option value="<?php echo esc_attr($edition->ID); ?>">
+                                        <?php echo esc_html($edition->post_title); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="description">
+                                <?php _e('All imported items will be assigned to this edition.', 'wp-art-routes'); ?>
+                            </p>
+                        <?php else : ?>
+                            <p class="description" style="color: #d63638;">
+                                <?php _e('No editions found. Please create an edition first.', 'wp-art-routes'); ?>
+                            </p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="import_gpx_file"><?php _e('GPX File', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                    </th>
+                    <td>
+                        <input type="file" name="import_gpx_file" id="import_gpx_file" accept=".gpx" required <?php echo empty($editions) ? 'disabled' : ''; ?> />
+                        <p class="description">
+                            <?php _e('Select a GPX file containing tracks and/or waypoints.', 'wp-art-routes'); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="gpx_import_mode"><?php _e('Import Mode', 'wp-art-routes'); ?></label>
+                    </th>
+                    <td>
+                        <fieldset>
+                            <label>
+                                <input type="radio" name="gpx_import_mode" value="route_only" checked />
+                                <?php _e('Route path only', 'wp-art-routes'); ?>
+                                <p class="description" style="margin-left: 24px; margin-top: 4px;">
+                                    <?php _e('Import tracks as route paths. Waypoints are ignored.', 'wp-art-routes'); ?>
+                                </p>
+                            </label>
+                            <br />
+                            <label>
+                                <input type="radio" name="gpx_import_mode" value="route_and_waypoints" />
+                                <?php printf(
+                                    /* translators: %s: locations label */
+                                    __('Route path + waypoints as %s', 'wp-art-routes'),
+                                    esc_html($location_label)
+                                ); ?>
+                                <p class="description" style="margin-left: 24px; margin-top: 4px;">
+                                    <?php printf(
+                                        /* translators: %s: locations label */
+                                        __('Import tracks as route paths and waypoints as %s.', 'wp-art-routes'),
+                                        esc_html($location_label)
+                                    ); ?>
+                                </p>
+                            </label>
+                            <br />
+                            <label>
+                                <input type="radio" name="gpx_import_mode" value="waypoints_only" />
+                                <?php printf(
+                                    /* translators: %s: locations label */
+                                    __('Waypoints as %s only', 'wp-art-routes'),
+                                    esc_html($location_label)
+                                ); ?>
+                                <p class="description" style="margin-left: 24px; margin-top: 4px;">
+                                    <?php _e('Ignore track data, only import waypoints.', 'wp-art-routes'); ?>
+                                </p>
+                            </label>
+                        </fieldset>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="submit">
+                <input type="submit" name="wp_art_routes_import_gpx" class="button button-primary"
+                       value="<?php esc_attr_e('Import GPX', 'wp-art-routes'); ?>"
+                       <?php echo empty($editions) ? 'disabled' : ''; ?> />
+            </p>
+        </form>
     </div>
     <?php
 }
@@ -585,6 +690,339 @@ function wp_art_routes_handle_csv_import()
         );
         // Log errors for debugging
         error_log('WP Art Routes CSV Import Errors: ' . implode('; ', $errors));
+    }
+
+    return $message;
+}
+
+/**
+ * Handle GPX import
+ *
+ * @return string|WP_Error Success message or error
+ */
+function wp_art_routes_handle_gpx_import()
+{
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['_wpnonce_gpx'], 'wp_art_routes_import_gpx')) {
+        return new WP_Error('invalid_nonce', __('Security check failed. Please try again.', 'wp-art-routes'));
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        return new WP_Error('insufficient_permissions', __('You do not have permission to import data.', 'wp-art-routes'));
+    }
+
+    // Check edition ID
+    $edition_id = isset($_POST['gpx_import_edition_id']) ? absint($_POST['gpx_import_edition_id']) : 0;
+    if (!$edition_id) {
+        return new WP_Error('missing_edition', __('Please select an edition.', 'wp-art-routes'));
+    }
+
+    // Verify edition exists
+    $edition = get_post($edition_id);
+    if (!$edition || $edition->post_type !== 'edition') {
+        return new WP_Error('invalid_edition', __('Selected edition does not exist.', 'wp-art-routes'));
+    }
+
+    // Get import mode
+    $import_mode = isset($_POST['gpx_import_mode']) ? sanitize_key($_POST['gpx_import_mode']) : 'route_only';
+    if (!in_array($import_mode, ['route_only', 'route_and_waypoints', 'waypoints_only'], true)) {
+        $import_mode = 'route_only';
+    }
+
+    // Check file upload
+    if (!isset($_FILES['import_gpx_file']) || $_FILES['import_gpx_file']['error'] !== UPLOAD_ERR_OK) {
+        $error_message = __('File upload failed.', 'wp-art-routes');
+        if (isset($_FILES['import_gpx_file']['error'])) {
+            switch ($_FILES['import_gpx_file']['error']) {
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $error_message = __('The file is too large.', 'wp-art-routes');
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $error_message = __('No file was uploaded.', 'wp-art-routes');
+                    break;
+            }
+        }
+        return new WP_Error('upload_error', $error_message);
+    }
+
+    // Verify file type
+    $file_info = wp_check_filetype($_FILES['import_gpx_file']['name']);
+    if ($file_info['ext'] !== 'gpx') {
+        return new WP_Error('invalid_file_type', __('Please upload a GPX file.', 'wp-art-routes'));
+    }
+
+    // Read GPX file
+    $gpx_content = file_get_contents($_FILES['import_gpx_file']['tmp_name']);
+    if (!$gpx_content) {
+        return new WP_Error('file_read_error', __('Could not read the uploaded file.', 'wp-art-routes'));
+    }
+
+    // Parse GPX
+    libxml_use_internal_errors(true);
+    $gpx = simplexml_load_string($gpx_content);
+    if (!$gpx) {
+        $xml_errors = libxml_get_errors();
+        libxml_clear_errors();
+        return new WP_Error('xml_parse_error', __('Invalid GPX file. Could not parse XML.', 'wp-art-routes'));
+    }
+
+    // Register namespaces
+    $gpx->registerXPathNamespace('gpx', 'http://www.topografix.com/GPX/1/1');
+    $gpx->registerXPathNamespace('gpx10', 'http://www.topografix.com/GPX/1/0');
+
+    $routes_created = 0;
+    $locations_created = 0;
+    $errors = [];
+
+    // Import tracks as routes (if not waypoints_only mode)
+    if ($import_mode !== 'waypoints_only') {
+        // Try GPX 1.1 namespace first, then 1.0, then no namespace
+        $tracks = $gpx->xpath('//gpx:trk');
+        if (empty($tracks)) {
+            $tracks = $gpx->xpath('//gpx10:trk');
+        }
+        if (empty($tracks)) {
+            $tracks = $gpx->trk;
+        }
+
+        foreach ($tracks as $track) {
+            // Get track name
+            $track_name = isset($track->name) ? sanitize_text_field((string) $track->name) : '';
+            if (empty($track_name)) {
+                $track_name = sprintf(
+                    /* translators: %d: route number */
+                    __('Imported Route %d', 'wp-art-routes'),
+                    $routes_created + 1
+                );
+            }
+
+            // Get track description
+            $track_desc = isset($track->desc) ? wp_kses_post((string) $track->desc) : '';
+
+            // Collect all track points from all segments
+            $route_path = [];
+            foreach ($track->trkseg as $segment) {
+                foreach ($segment->trkpt as $point) {
+                    $lat = (float) $point['lat'];
+                    $lon = (float) $point['lon'];
+
+                    if (is_numeric($lat) && is_numeric($lon) &&
+                        $lat >= -90 && $lat <= 90 &&
+                        $lon >= -180 && $lon <= 180) {
+                        $route_path[] = [$lat, $lon];
+                    }
+                }
+            }
+
+            if (empty($route_path)) {
+                $errors[] = sprintf(
+                    /* translators: %s: track name */
+                    __('Track "%s" has no valid points and was skipped.', 'wp-art-routes'),
+                    $track_name
+                );
+                continue;
+            }
+
+            // Create route post
+            $post_data = [
+                'post_title'   => $track_name,
+                'post_content' => $track_desc,
+                'post_type'    => 'art_route',
+                'post_status'  => 'draft',
+                'post_author'  => get_current_user_id(),
+            ];
+
+            $post_id = wp_insert_post($post_data);
+
+            if (is_wp_error($post_id)) {
+                $errors[] = sprintf(
+                    /* translators: %1$s: track name, %2$s: error message */
+                    __('Failed to create route "%1$s": %2$s', 'wp-art-routes'),
+                    $track_name,
+                    $post_id->get_error_message()
+                );
+                continue;
+            }
+
+            // Save route path as JSON
+            update_post_meta($post_id, '_route_path', wp_json_encode($route_path));
+            update_post_meta($post_id, '_edition_id', $edition_id);
+
+            $routes_created++;
+        }
+
+        // Also check for <rte> elements (routes without segments)
+        $rte_routes = $gpx->xpath('//gpx:rte');
+        if (empty($rte_routes)) {
+            $rte_routes = $gpx->xpath('//gpx10:rte');
+        }
+        if (empty($rte_routes)) {
+            $rte_routes = $gpx->rte;
+        }
+
+        foreach ($rte_routes as $rte) {
+            $rte_name = isset($rte->name) ? sanitize_text_field((string) $rte->name) : '';
+            if (empty($rte_name)) {
+                $rte_name = sprintf(
+                    /* translators: %d: route number */
+                    __('Imported Route %d', 'wp-art-routes'),
+                    $routes_created + 1
+                );
+            }
+
+            $rte_desc = isset($rte->desc) ? wp_kses_post((string) $rte->desc) : '';
+
+            $route_path = [];
+            foreach ($rte->rtept as $point) {
+                $lat = (float) $point['lat'];
+                $lon = (float) $point['lon'];
+
+                if (is_numeric($lat) && is_numeric($lon) &&
+                    $lat >= -90 && $lat <= 90 &&
+                    $lon >= -180 && $lon <= 180) {
+                    $route_path[] = [$lat, $lon];
+                }
+            }
+
+            if (empty($route_path)) {
+                continue;
+            }
+
+            $post_data = [
+                'post_title'   => $rte_name,
+                'post_content' => $rte_desc,
+                'post_type'    => 'art_route',
+                'post_status'  => 'draft',
+                'post_author'  => get_current_user_id(),
+            ];
+
+            $post_id = wp_insert_post($post_data);
+
+            if (!is_wp_error($post_id)) {
+                update_post_meta($post_id, '_route_path', wp_json_encode($route_path));
+                update_post_meta($post_id, '_edition_id', $edition_id);
+                $routes_created++;
+            }
+        }
+    }
+
+    // Import waypoints as locations (if not route_only mode)
+    if ($import_mode !== 'route_only') {
+        $waypoints = $gpx->xpath('//gpx:wpt');
+        if (empty($waypoints)) {
+            $waypoints = $gpx->xpath('//gpx10:wpt');
+        }
+        if (empty($waypoints)) {
+            $waypoints = $gpx->wpt;
+        }
+
+        foreach ($waypoints as $wpt) {
+            $lat = (float) $wpt['lat'];
+            $lon = (float) $wpt['lon'];
+
+            // Validate coordinates
+            if (!is_numeric($lat) || !is_numeric($lon) ||
+                $lat < -90 || $lat > 90 ||
+                $lon < -180 || $lon > 180) {
+                continue;
+            }
+
+            // Get waypoint name
+            $wpt_name = isset($wpt->name) ? sanitize_text_field((string) $wpt->name) : '';
+            if (empty($wpt_name)) {
+                $wpt_name = sprintf(
+                    /* translators: %d: location number */
+                    __('Imported Location %d', 'wp-art-routes'),
+                    $locations_created + 1
+                );
+            }
+
+            // Get waypoint description (try desc, then cmt)
+            $wpt_desc = '';
+            if (isset($wpt->desc) && !empty((string) $wpt->desc)) {
+                $wpt_desc = wp_kses_post((string) $wpt->desc);
+            } elseif (isset($wpt->cmt) && !empty((string) $wpt->cmt)) {
+                $wpt_desc = wp_kses_post((string) $wpt->cmt);
+            }
+
+            // Create location post
+            $post_data = [
+                'post_title'   => $wpt_name,
+                'post_content' => $wpt_desc,
+                'post_type'    => 'artwork',
+                'post_status'  => 'draft',
+                'post_author'  => get_current_user_id(),
+            ];
+
+            $post_id = wp_insert_post($post_data);
+
+            if (is_wp_error($post_id)) {
+                $errors[] = sprintf(
+                    /* translators: %1$s: waypoint name, %2$s: error message */
+                    __('Failed to create location "%1$s": %2$s', 'wp-art-routes'),
+                    $wpt_name,
+                    $post_id->get_error_message()
+                );
+                continue;
+            }
+
+            // Save meta fields
+            update_post_meta($post_id, '_artwork_latitude', $lat);
+            update_post_meta($post_id, '_artwork_longitude', $lon);
+            update_post_meta($post_id, '_edition_id', $edition_id);
+
+            // Try to get number from waypoint type or sym
+            if (isset($wpt->type)) {
+                $type = sanitize_text_field((string) $wpt->type);
+                // Extract number if type contains one
+                if (preg_match('/(\d+)/', $type, $matches)) {
+                    update_post_meta($post_id, '_artwork_number', $matches[1]);
+                }
+            }
+
+            $locations_created++;
+        }
+    }
+
+    // Build result message
+    $route_label = wp_art_routes_label('route', $routes_created !== 1);
+    $location_label = wp_art_routes_label('location', $locations_created !== 1);
+
+    $message_parts = [];
+
+    if ($import_mode !== 'waypoints_only') {
+        $message_parts[] = sprintf(
+            /* translators: %1$d: number of routes, %2$s: route label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $routes_created,
+            $route_label
+        );
+    }
+
+    if ($import_mode !== 'route_only') {
+        $message_parts[] = sprintf(
+            /* translators: %1$d: number of locations, %2$s: location label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $locations_created,
+            $location_label
+        );
+    }
+
+    $message = sprintf(
+        /* translators: %s: items created summary */
+        __('GPX import complete: %s created as drafts.', 'wp-art-routes'),
+        implode(' ' . __('and', 'wp-art-routes') . ' ', $message_parts)
+    );
+
+    if (!empty($errors)) {
+        $message .= ' ' . sprintf(
+            /* translators: %d: number of errors */
+            _n('%d item had errors.', '%d items had errors.', count($errors), 'wp-art-routes'),
+            count($errors)
+        );
+        error_log('WP Art Routes GPX Import Errors: ' . implode('; ', $errors));
     }
 
     return $message;
