@@ -39,7 +39,7 @@ add_action('admin_init', 'wp_art_routes_register_settings');
  */
 function wp_art_routes_add_settings_page() {
     add_submenu_page(
-        'edit.php?post_type=art_route',
+        'edit.php?post_type=edition',
         __('Art Routes Settings', 'wp-art-routes'),
         __('Settings', 'wp-art-routes'),
         'manage_options',

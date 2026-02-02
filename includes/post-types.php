@@ -32,6 +32,7 @@ function wp_art_routes_register_post_types()
         'menu_icon' => 'dashicons-location-alt',
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'art-route'],
+        'show_in_menu' => 'edit.php?post_type=edition',
     ]);
 
     // Register Artworks post type
@@ -52,7 +53,7 @@ function wp_art_routes_register_post_types()
         'menu_icon' => 'dashicons-format-image',
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'artwork'],
-        'show_in_menu' => 'edit.php?post_type=art_route', // Add under the main Routes menu
+        'show_in_menu' => 'edit.php?post_type=edition', // Add under the main Editions menu
     ]);
 
     // Register Information Points post type
@@ -73,7 +74,7 @@ function wp_art_routes_register_post_types()
         'menu_icon' => 'dashicons-info', // Use an info icon
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'info-point'],
-        'show_in_menu' => 'edit.php?post_type=art_route', // Add under the main Routes menu
+        'show_in_menu' => 'edit.php?post_type=edition', // Add under the main Editions menu
     ]);
 }
 add_action('init', 'wp_art_routes_register_post_types');
