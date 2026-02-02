@@ -93,6 +93,19 @@ function wp_art_routes_add_meta_boxes()
         'side',
         'default'
     );
+
+    // Edition selector for all content types
+    $edition_post_types = ['art_route', 'artwork', 'information_point'];
+    foreach ($edition_post_types as $post_type) {
+        add_meta_box(
+            'edition_selector',
+            __('Edition', 'wp-art-routes'),
+            'wp_art_routes_render_edition_selector_meta_box',
+            $post_type,
+            'side',
+            'high'
+        );
+    }
 }
 add_action('add_meta_boxes', 'wp_art_routes_add_meta_boxes');
 
@@ -982,3 +995,59 @@ function wp_art_routes_save_route_icon($post_id)
     }
 }
 add_action('save_post_art_route', 'wp_art_routes_save_route_icon');
+
+/**
+ * Render Edition selector meta box
+ */
+function wp_art_routes_render_edition_selector_meta_box($post) {
+    wp_nonce_field('save_edition_selector', 'edition_selector_nonce');
+
+    $current_edition_id = get_post_meta($post->ID, '_edition_id', true);
+    $editions = wp_art_routes_get_editions();
+
+    ?>
+    <p>
+        <select name="edition_id" id="edition_id" class="widefat">
+            <option value="0"><?php _e('— No Edition —', 'wp-art-routes'); ?></option>
+            <?php foreach ($editions as $edition) : ?>
+                <option value="<?php echo esc_attr($edition->ID); ?>" <?php selected($current_edition_id, $edition->ID); ?>>
+                    <?php echo esc_html($edition->post_title); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+    <p class="description">
+        <?php _e('Assign this content to an edition.', 'wp-art-routes'); ?>
+    </p>
+    <?php
+}
+
+/**
+ * Save Edition selector
+ */
+function wp_art_routes_save_edition_selector($post_id) {
+    if (!isset($_POST['edition_selector_nonce']) ||
+        !wp_verify_nonce($_POST['edition_selector_nonce'], 'save_edition_selector')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if (isset($_POST['edition_id'])) {
+        $edition_id = absint($_POST['edition_id']);
+        if ($edition_id > 0) {
+            update_post_meta($post_id, '_edition_id', $edition_id);
+        } else {
+            delete_post_meta($post_id, '_edition_id');
+        }
+    }
+}
+add_action('save_post_art_route', 'wp_art_routes_save_edition_selector');
+add_action('save_post_artwork', 'wp_art_routes_save_edition_selector');
+add_action('save_post_information_point', 'wp_art_routes_save_edition_selector');

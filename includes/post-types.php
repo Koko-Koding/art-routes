@@ -157,6 +157,26 @@ function wp_art_routes_register_artwork_meta()
 add_action('init', 'wp_art_routes_register_artwork_meta');
 
 /**
+ * Register _edition_id meta for all content post types
+ */
+function wp_art_routes_register_edition_id_meta() {
+    $post_types = ['art_route', 'artwork', 'information_point'];
+
+    foreach ($post_types as $post_type) {
+        register_post_meta($post_type, '_edition_id', [
+            'type' => 'integer',
+            'single' => true,
+            'show_in_rest' => true,
+            'sanitize_callback' => 'absint',
+            'auth_callback' => function() {
+                return current_user_can('edit_posts');
+            },
+        ]);
+    }
+}
+add_action('init', 'wp_art_routes_register_edition_id_meta');
+
+/**
  * Register REST API meta for information points
  */
 function wp_art_routes_register_information_point_meta()
