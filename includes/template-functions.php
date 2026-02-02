@@ -580,3 +580,189 @@ function wp_art_routes_format_length($km)
     $km = floatval($km);
     return number_format(round($km, 1), 1) . ' km';
 }
+
+/**
+ * Get all routes for a specific edition
+ *
+ * @param int $edition_id The edition ID to filter by
+ * @return array Array of route data
+ */
+function wp_art_routes_get_edition_routes($edition_id)
+{
+    if (!$edition_id) {
+        return [];
+    }
+
+    $routes = get_posts([
+        'post_type' => 'art_route',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $result = [];
+    foreach ($routes as $route) {
+        $result[] = wp_art_routes_get_route_data($route->ID);
+    }
+
+    return $result;
+}
+
+/**
+ * Get all artworks for a specific edition
+ *
+ * @param int $edition_id The edition ID to filter by
+ * @return array Array of artwork data with id, title, description, excerpt, image_url,
+ *               latitude, longitude, number, location, permalink, icon_url,
+ *               wheelchair_accessible, stroller_accessible, artists
+ */
+function wp_art_routes_get_edition_artworks($edition_id)
+{
+    if (!$edition_id) {
+        return [];
+    }
+
+    // Query artworks filtered by edition
+    $artworks = get_posts([
+        'post_type' => 'artwork',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $result = [];
+
+    foreach ($artworks as $artwork) {
+        $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
+        $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
+
+        // Ensure location data exists
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            // Get icon information - prefer icon field, then fall back to no icon
+            $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
+            $icon_url = '';
+
+            if (!empty($icon_filename)) {
+                // Build URL from filename
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . $icon_filename;
+            }
+
+            $artwork_data = [
+                'id' => $artwork->ID,
+                'title' => $artwork->post_title,
+                'description' => $artwork->post_content,
+                'excerpt' => $artwork->post_excerpt,
+                'image_url' => get_the_post_thumbnail_url($artwork->ID, 'large'),
+                'latitude' => (float)$latitude,
+                'longitude' => (float)$longitude,
+                'number' => get_post_meta($artwork->ID, '_artwork_number', true),
+                'location' => get_post_meta($artwork->ID, '_artwork_location', true),
+                'permalink' => get_permalink($artwork->ID),
+                'icon_url' => $icon_url ? esc_url($icon_url) : '',
+                'wheelchair_accessible' => get_post_meta($artwork->ID, '_wheelchair_accessible', true),
+                'stroller_accessible' => get_post_meta($artwork->ID, '_stroller_accessible', true),
+            ];
+
+            // Get artist information
+            $artist_ids = get_post_meta($artwork->ID, '_artwork_artist_ids', true);
+            $artists = [];
+
+            if (is_array($artist_ids) && !empty($artist_ids)) {
+                foreach ($artist_ids as $artist_id) {
+                    $artist_post = get_post($artist_id);
+                    if ($artist_post) {
+                        $post_type_obj = get_post_type_object($artist_post->post_type);
+                        $post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $artist_post->post_type;
+
+                        $artists[] = [
+                            'id' => $artist_id,
+                            'title' => $artist_post->post_title,
+                            'url' => get_permalink($artist_id),
+                            'post_type' => $artist_post->post_type,
+                            'post_type_label' => $post_type_label
+                        ];
+                    }
+                }
+            }
+
+            $artwork_data['artists'] = $artists;
+            $result[] = $artwork_data;
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Get all information points for a specific edition
+ *
+ * @param int $edition_id The edition ID to filter by
+ * @return array Array of information point data with id, title, excerpt, image_url,
+ *               permalink, latitude, longitude, icon_url
+ */
+function wp_art_routes_get_edition_information_points($edition_id)
+{
+    if (!$edition_id) {
+        return [];
+    }
+
+    // Query information points filtered by edition
+    $info_point_posts = get_posts([
+        'post_type' => 'information_point',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $info_points = [];
+
+    foreach ($info_point_posts as $info_post) {
+        $latitude = get_post_meta($info_post->ID, '_artwork_latitude', true);
+        $longitude = get_post_meta($info_post->ID, '_artwork_longitude', true);
+
+        // Ensure location data exists
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            // Get icon information - prefer new icon field, fallback to old icon_url, then default
+            $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
+            $icon_url = '';
+
+            if (!empty($icon_filename)) {
+                // Build URL from filename
+                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                $icon_url = $icons_url . $icon_filename;
+            } else {
+                // Fallback to old icon_url field for backward compatibility
+                $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
+
+                // If still no icon, use default
+                if (empty($icon_url)) {
+                    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                    $icon_url = $icons_url . 'WB plattegrond-Informatie.svg';
+                }
+            }
+
+            $info_points[] = [
+                'id' => $info_post->ID,
+                'title' => $info_post->post_title,
+                'excerpt' => has_excerpt($info_post->ID) ? get_the_excerpt($info_post->ID) : wp_trim_words($info_post->post_content, 30, '...'),
+                'image_url' => get_the_post_thumbnail_url($info_post->ID, 'medium'),
+                'permalink' => get_permalink($info_post->ID),
+                'latitude' => (float)$latitude,
+                'longitude' => (float)$longitude,
+                'icon_url' => $icon_url,
+            ];
+        }
+    }
+
+    return $info_points;
+}
