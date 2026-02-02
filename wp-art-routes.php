@@ -51,6 +51,7 @@ require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/ajax-handlers.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/settings.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/terminology.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/editions.php';
+require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/blocks.php';
 
 /**
  * Activation hook
