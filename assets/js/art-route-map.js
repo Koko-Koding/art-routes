@@ -55,6 +55,11 @@
 	 * Initialize the OpenStreetMap with Leaflet
 	 */
 	function initMap() {
+		// Check if the map container exists
+		if (!document.getElementById("art-route-map")) {
+			return;
+		}
+
 		// Show loading indicator
 		$("#map-loading").show();
 
