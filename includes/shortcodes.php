@@ -18,6 +18,7 @@ function wp_art_routes_register_shortcodes()
     add_shortcode('art_routes_map', 'wp_art_routes_multiple_map_shortcode');
     add_shortcode('art_route_icons', 'wp_art_routes_icons_shortcode'); // NEW
     add_shortcode('related_artworks', 'wp_art_routes_related_artworks_shortcode');
+    add_shortcode('edition_map', 'wp_art_routes_edition_map_shortcode');
 }
 add_action('init', 'wp_art_routes_register_shortcodes');
 /**
@@ -190,4 +191,101 @@ function wp_art_routes_get_multiple_routes($route_ids = [], $exclude_ids = [])
     }
 
     return $routes;
+}
+
+/**
+ * Shortcode to display an Edition map
+ *
+ * Displays a map with routes, locations, and info points from a specific edition.
+ * If no edition_id is provided, it will attempt to auto-detect from the current context.
+ *
+ * Usage: [edition_map edition_id="123" routes="all" show_locations="true" show_info_points="true" show_legend="true" height="500px"]
+ *
+ * @param array $atts Shortcode attributes
+ * @return string HTML output for the map
+ */
+function wp_art_routes_edition_map_shortcode($atts)
+{
+    // Parse attributes
+    $atts = shortcode_atts([
+        'edition_id' => 0,                // 0 = auto-detect
+        'routes' => 'all',                // all, none, or comma-separated IDs
+        'show_locations' => 'true',       // Show location markers
+        'show_info_points' => 'true',     // Show info point markers
+        'show_legend' => 'true',          // Show legend/toggle controls
+        'height' => '500px',              // Map height
+    ], $atts);
+
+    // Convert string booleans to actual booleans
+    $atts['show_locations'] = ($atts['show_locations'] === 'true');
+    $atts['show_info_points'] = ($atts['show_info_points'] === 'true');
+    $atts['show_legend'] = ($atts['show_legend'] === 'true');
+
+    // Auto-detect edition if not specified
+    $edition_id = intval($atts['edition_id']);
+    if (!$edition_id) {
+        $edition_id = wp_art_routes_detect_edition_context();
+    }
+
+    // Still no edition? Show placeholder
+    if (!$edition_id) {
+        return '<div class="edition-map-placeholder"><p>' . __('Please select an Edition.', 'wp-art-routes') . '</p></div>';
+    }
+
+    // Get edition data to verify it exists
+    $edition = wp_art_routes_get_edition_data($edition_id);
+    if (!$edition) {
+        return '<div class="edition-map-placeholder"><p>' . __('Edition not found.', 'wp-art-routes') . '</p></div>';
+    }
+
+    // Get routes based on parameter
+    $routes = [];
+    if ($atts['routes'] !== 'none') {
+        $all_routes = wp_art_routes_get_edition_routes($edition_id);
+
+        if ($atts['routes'] === 'all') {
+            $routes = $all_routes;
+        } else {
+            // Filter by specific route IDs
+            $route_ids = array_map('intval', explode(',', $atts['routes']));
+            foreach ($all_routes as $route) {
+                if (in_array($route['id'], $route_ids)) {
+                    $routes[] = $route;
+                }
+            }
+        }
+    }
+
+    // Get artworks if show_locations is true
+    $artworks = [];
+    if ($atts['show_locations']) {
+        $artworks = wp_art_routes_get_edition_artworks($edition_id);
+    }
+
+    // Get info points if show_info_points is true
+    $info_points = [];
+    if ($atts['show_info_points']) {
+        $info_points = wp_art_routes_get_edition_information_points($edition_id);
+    }
+
+    // Check if there's any content to display
+    if (empty($routes) && empty($artworks) && empty($info_points)) {
+        return '<div class="edition-map-placeholder"><p>' . __('No map content found for this edition.', 'wp-art-routes') . '</p></div>';
+    }
+
+    // Start output buffering
+    ob_start();
+
+    // Load shortcode template
+    wp_art_routes_get_template_part('shortcode-edition-map', [
+        'atts' => $atts,
+        'edition_id' => $edition_id,
+        'edition' => $edition,
+        'routes' => $routes,
+        'artworks' => $artworks,
+        'info_points' => $info_points,
+    ]);
+
+    // Return the buffered content
+    return ob_get_clean();
 }
