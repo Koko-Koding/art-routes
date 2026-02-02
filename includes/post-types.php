@@ -465,3 +465,138 @@ add_action('pre_get_posts', function ($query) {
         $query->set('orderby', 'meta_value');
     }
 });
+
+/**
+ * Add Edition column to admin list tables for routes, artworks, and info points
+ *
+ * @param array $columns Existing columns.
+ * @return array Modified columns.
+ */
+function wp_art_routes_add_edition_column($columns) {
+    $new_columns = [];
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        if ($key === 'title') {
+            $new_columns['edition'] = __('Edition', 'wp-art-routes');
+        }
+    }
+    return $new_columns;
+}
+add_filter('manage_art_route_posts_columns', 'wp_art_routes_add_edition_column');
+add_filter('manage_information_point_posts_columns', 'wp_art_routes_add_edition_column');
+
+// For artwork, we need to insert edition after the existing title-related columns
+add_filter('manage_artwork_posts_columns', function($columns) {
+    $new_columns = [];
+    foreach ($columns as $key => $label) {
+        $new_columns[$key] = $label;
+        // Insert edition after artwork_artists (which comes after title)
+        if ($key === 'artwork_artists') {
+            $new_columns['edition'] = __('Edition', 'wp-art-routes');
+        }
+    }
+    return $new_columns;
+}, 11); // Priority 11 to run after the artwork_number/artwork_artists columns are added
+
+/**
+ * Render Edition column content
+ *
+ * @param string $column  Column name.
+ * @param int    $post_id Post ID.
+ */
+function wp_art_routes_render_edition_column($column, $post_id) {
+    if ($column === 'edition') {
+        $edition_id = get_post_meta($post_id, '_edition_id', true);
+        if ($edition_id) {
+            $edition = get_post($edition_id);
+            if ($edition) {
+                echo '<a href="' . esc_url(get_edit_post_link($edition_id)) . '">';
+                echo esc_html($edition->post_title);
+                echo '</a>';
+            } else {
+                echo '—';
+            }
+        } else {
+            echo '<span style="color:#999;">— ' . esc_html__('None', 'wp-art-routes') . ' —</span>';
+        }
+    }
+}
+add_action('manage_art_route_posts_custom_column', 'wp_art_routes_render_edition_column', 10, 2);
+add_action('manage_artwork_posts_custom_column', 'wp_art_routes_render_edition_column', 10, 2);
+add_action('manage_information_point_posts_custom_column', 'wp_art_routes_render_edition_column', 10, 2);
+
+/**
+ * Add Edition filter dropdown to admin list tables
+ */
+function wp_art_routes_add_edition_filter() {
+    global $typenow;
+
+    if (!in_array($typenow, ['art_route', 'artwork', 'information_point'])) {
+        return;
+    }
+
+    $editions = wp_art_routes_get_editions();
+    $current_edition = isset($_GET['edition_filter']) ? absint($_GET['edition_filter']) : 0;
+
+    ?>
+    <select name="edition_filter">
+        <option value="0"><?php esc_html_e('All Editions', 'wp-art-routes'); ?></option>
+        <option value="-1" <?php selected($current_edition, -1); ?>><?php esc_html_e('No Edition', 'wp-art-routes'); ?></option>
+        <?php foreach ($editions as $edition) : ?>
+            <option value="<?php echo esc_attr($edition->ID); ?>" <?php selected($current_edition, $edition->ID); ?>>
+                <?php echo esc_html($edition->post_title); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+add_action('restrict_manage_posts', 'wp_art_routes_add_edition_filter');
+
+/**
+ * Filter admin list queries by edition
+ *
+ * @param WP_Query $query The query object.
+ */
+function wp_art_routes_filter_by_edition($query) {
+    global $pagenow, $typenow;
+
+    if (!is_admin() || $pagenow !== 'edit.php') {
+        return;
+    }
+
+    if (!in_array($typenow, ['art_route', 'artwork', 'information_point'])) {
+        return;
+    }
+
+    if (!isset($_GET['edition_filter']) || $_GET['edition_filter'] === '0') {
+        return;
+    }
+
+    $edition_filter = intval($_GET['edition_filter']);
+
+    if ($edition_filter === -1) {
+        // No edition
+        $query->set('meta_query', [
+            'relation' => 'OR',
+            [
+                'key' => '_edition_id',
+                'compare' => 'NOT EXISTS',
+            ],
+            [
+                'key' => '_edition_id',
+                'value' => '',
+                'compare' => '=',
+            ],
+            [
+                'key' => '_edition_id',
+                'value' => '0',
+                'compare' => '=',
+            ],
+        ]);
+    } else {
+        // Specific edition
+        $query->set('meta_key', '_edition_id');
+        $query->set('meta_value', $edition_filter);
+    }
+}
+add_action('pre_get_posts', 'wp_art_routes_filter_by_edition');
