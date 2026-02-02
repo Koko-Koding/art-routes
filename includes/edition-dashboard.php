@@ -28,6 +28,83 @@ function wp_art_routes_add_dashboard_page()
 add_action('admin_menu', 'wp_art_routes_add_dashboard_page');
 
 /**
+ * Enqueue assets for the Edition Dashboard page
+ *
+ * @param string $hook The current admin page hook.
+ */
+function wp_art_routes_enqueue_dashboard_assets($hook)
+{
+    // Only load on the dashboard page
+    if ('edition_page_wp-art-routes-dashboard' !== $hook) {
+        return;
+    }
+
+    // Enqueue Leaflet CSS
+    wp_enqueue_style(
+        'leaflet',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+        array(),
+        '1.9.4'
+    );
+
+    // Enqueue Leaflet JS
+    wp_enqueue_script(
+        'leaflet',
+        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+        array(),
+        '1.9.4',
+        true
+    );
+
+    // Enqueue dashboard CSS
+    wp_enqueue_style(
+        'wp-art-routes-dashboard',
+        plugins_url('assets/css/edition-dashboard.css', dirname(__FILE__)),
+        array('leaflet'),
+        filemtime(plugin_dir_path(dirname(__FILE__)) . 'assets/css/edition-dashboard.css')
+    );
+
+    // Enqueue dashboard JS
+    wp_enqueue_script(
+        'wp-art-routes-dashboard',
+        plugins_url('assets/js/edition-dashboard.js', dirname(__FILE__)),
+        array('jquery', 'leaflet'),
+        filemtime(plugin_dir_path(dirname(__FILE__)) . 'assets/js/edition-dashboard.js'),
+        true
+    );
+
+    // Localize script with data and strings
+    wp_localize_script('wp-art-routes-dashboard', 'wpArtRoutesDashboard', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wp_art_routes_dashboard'),
+        'iconsUrl' => plugins_url('assets/icons/', dirname(__FILE__)),
+        'strings' => array(
+            'loading' => __('Loading...', 'wp-art-routes'),
+            'noItems' => __('No items found.', 'wp-art-routes'),
+            'noEditionSelected' => __('Select an edition to manage its content.', 'wp-art-routes'),
+            'confirmDelete' => __('Are you sure you want to delete this item?', 'wp-art-routes'),
+            'confirmBulkDelete' => __('Are you sure you want to delete the selected items?', 'wp-art-routes'),
+            'saving' => __('Saving...', 'wp-art-routes'),
+            'saved' => __('Saved', 'wp-art-routes'),
+            'error' => __('Error', 'wp-art-routes'),
+            'selectAction' => __('Please select an action.', 'wp-art-routes'),
+            'selectItems' => __('Please select at least one item.', 'wp-art-routes'),
+            'publish' => __('Publish', 'wp-art-routes'),
+            'draft' => __('Draft', 'wp-art-routes'),
+            'edit' => __('Edit', 'wp-art-routes'),
+            'view' => __('View', 'wp-art-routes'),
+            'delete' => __('Delete', 'wp-art-routes'),
+            'routes' => __('Routes', 'wp-art-routes'),
+            'locations' => __('Locations', 'wp-art-routes'),
+            'infoPoints' => __('Info Points', 'wp-art-routes'),
+            'published' => __('published', 'wp-art-routes'),
+            'drafts' => __('drafts', 'wp-art-routes'),
+        ),
+    ));
+}
+add_action('admin_enqueue_scripts', 'wp_art_routes_enqueue_dashboard_assets');
+
+/**
  * Render the Edition Dashboard admin page
  */
 function wp_art_routes_render_dashboard_page()
