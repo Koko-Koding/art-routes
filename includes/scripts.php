@@ -260,6 +260,11 @@ function wp_art_routes_is_route_page()
         return true;
     }
 
+    // Check if viewing a single edition post type (for the edition map)
+    if (is_singular('edition')) {
+        return true;
+    }
+
     // Default to false
     return false;
 }

@@ -766,3 +766,69 @@ function wp_art_routes_get_edition_information_points($edition_id)
 
     return $info_points;
 }
+
+/**
+ * Template include filter for Edition single pages
+ *
+ * Loads the single-edition.php template from the plugin or theme override.
+ *
+ * @param string $template The path of the template to include
+ * @return string The path of the template to include
+ */
+function wp_art_routes_single_edition_template($template)
+{
+    if (is_singular('edition')) {
+        // Look for template in theme directory first
+        $located = locate_template('wp-art-routes/single-edition.php');
+
+        // If not found in theme, use plugin template
+        if (empty($located)) {
+            $located = WP_ART_ROUTES_PLUGIN_DIR . 'templates/single-edition.php';
+        }
+
+        if (file_exists($located)) {
+            return $located;
+        }
+    }
+
+    return $template;
+}
+add_filter('template_include', 'wp_art_routes_single_edition_template', 99);
+
+/**
+ * Prepare map data for Edition single page
+ *
+ * Formats routes, artworks, and info points data for JavaScript map initialization.
+ *
+ * @param int   $edition_id  The edition ID
+ * @param array $routes      Array of route data from wp_art_routes_get_edition_routes()
+ * @param array $artworks    Array of artwork data from wp_art_routes_get_edition_artworks()
+ * @param array $info_points Array of info point data from wp_art_routes_get_edition_information_points()
+ * @return array Formatted data for JavaScript
+ */
+function wp_art_routes_prepare_edition_map_data($edition_id, $routes, $artworks, $info_points)
+{
+    $map_data = [
+        'edition_id' => $edition_id,
+        'routes' => [],
+        'artworks' => $artworks,
+        'info_points' => $info_points,
+    ];
+
+    // Process routes
+    if (!empty($routes)) {
+        foreach ($routes as $route) {
+            $map_data['routes'][] = [
+                'id' => $route['id'],
+                'title' => $route['title'],
+                'route_path' => $route['route_path'],
+                'length' => $route['length'],
+                'duration' => $route['duration'],
+                'type' => $route['type'],
+                'url' => get_permalink($route['id']),
+            ];
+        }
+    }
+
+    return $map_data;
+}
