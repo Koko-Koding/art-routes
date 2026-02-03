@@ -606,3 +606,99 @@ function wp_art_routes_ajax_delete_edition_only() {
     ]);
 }
 add_action('wp_ajax_wp_art_routes_delete_edition_only', 'wp_art_routes_ajax_delete_edition_only');
+
+/**
+ * AJAX handler to delete editions AND all linked content
+ * Permanently deletes routes, locations, and info points linked to the edition
+ */
+function wp_art_routes_ajax_delete_edition_all() {
+    check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
+
+    if (!current_user_can('delete_posts')) {
+        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+    }
+
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+
+    if (empty($edition_ids)) {
+        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+    }
+
+    $deleted_editions = 0;
+    $deleted_routes = 0;
+    $deleted_locations = 0;
+    $deleted_info_points = 0;
+
+    foreach ($edition_ids as $edition_id) {
+        // Verify this is an edition
+        if (get_post_type($edition_id) !== 'edition') {
+            continue;
+        }
+
+        // Delete all linked routes
+        $routes = get_posts([
+            'post_type' => 'art_route',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        foreach ($routes as $post_id) {
+            if (wp_delete_post($post_id, true)) {
+                $deleted_routes++;
+            }
+        }
+
+        // Delete all linked locations
+        $locations = get_posts([
+            'post_type' => 'artwork',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        foreach ($locations as $post_id) {
+            if (wp_delete_post($post_id, true)) {
+                $deleted_locations++;
+            }
+        }
+
+        // Delete all linked info points
+        $info_points = get_posts([
+            'post_type' => 'information_point',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        foreach ($info_points as $post_id) {
+            if (wp_delete_post($post_id, true)) {
+                $deleted_info_points++;
+            }
+        }
+
+        // Delete the edition itself
+        if (wp_delete_post($edition_id, true)) {
+            $deleted_editions++;
+        }
+    }
+
+    wp_send_json_success([
+        'deleted_editions' => $deleted_editions,
+        'deleted_routes' => $deleted_routes,
+        'deleted_locations' => $deleted_locations,
+        'deleted_info_points' => $deleted_info_points,
+        'message' => sprintf(
+            /* translators: 1: editions, 2: routes, 3: locations, 4: info points */
+            __('Deleted %1$d edition(s), %2$d route(s), %3$d location(s), %4$d info point(s).', 'wp-art-routes'),
+            $deleted_editions,
+            $deleted_routes,
+            $deleted_locations,
+            $deleted_info_points
+        ),
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_delete_edition_all', 'wp_art_routes_ajax_delete_edition_all');
