@@ -2,7 +2,21 @@
 
 [← Go back](README.md).
 
-All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
+All notable changes to the WP Art Routes plugin will be documented in this file.
+
+**Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
+
+## [2.0.0] - 2026-02-03
+
+### Changed
+
+- **Standalone Release**: Plugin now uses standard semantic versioning (removed `wenb-` prefix)
+- Ready for use by any organization, not just Woest & Bijster
+- No functional changes from wenb-1.31.0
+
+---
+
+## Historical Releases (wenb- prefix)
 
 ## [wenb-1.31.0] - 2026-02-03
 

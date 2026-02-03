@@ -19,9 +19,10 @@ This skill guides the complete release process for the wp-art-routes WordPress p
 
 | Step | Files/Commands |
 |------|----------------|
-| Version format | `wenb-X.Y.Z` (e.g., `wenb-1.25.0`) |
-| Version locations | `wp-art-routes.php` (2 places: header + constant) |
-| Changelog | `CHANGELOG.md` (add entry after line 6, before first `## [wenb-` entry) |
+| Version format | `X.Y.Z` (semantic versioning, e.g., `2.0.0`) |
+| Version locations | `wp-art-routes.php` (2 places: header + constant), `readme.txt` (Stable tag) |
+| Changelog | `CHANGELOG.md` (full entry), `readme.txt` (condensed entry) |
+| README.md | Update if user-facing features changed |
 | Build | `./bin/build-release` |
 | GitHub release | `gh release create` with zip attachment |
 
@@ -76,18 +77,18 @@ Update BOTH locations:
 
 ```php
 // Header comment (line ~7)
-* Version: wenb-X.Y.Z
+* Version: X.Y.Z
 
 // Constant definition (line ~26)
-define('WP_ART_ROUTES_VERSION', 'wenb-X.Y.Z');
+define('WP_ART_ROUTES_VERSION', 'X.Y.Z');
 ```
 
 ### 3. Update CHANGELOG.md
 
-Add new entry after line 6 (blank line after header paragraph), before the first `## [wenb-` entry:
+Add new entry after the versioning note paragraph, before the first `## [X.` entry or the historical releases section:
 
 ```markdown
-## [wenb-X.Y.Z] - YYYY-MM-DD
+## [X.Y.Z] - YYYY-MM-DD
 
 ### Added
 - Feature description
@@ -110,33 +111,58 @@ Use only relevant sections (Added/Changed/Fixed). Omit empty sections.
 
 **Tip:** Extract changelog section for GitHub release notes later:
 ```bash
-sed -n '/^## \[wenb-X.Y.Z\]/,/^## \[wenb-/p' CHANGELOG.md | head -n -1
+sed -n '/^## \[X.Y.Z\]/,/^## \[/p' CHANGELOG.md | head -n -1
 ```
 
-### 4. Build Release Package
+### 4. Update readme.txt
+
+Update the WordPress.org readme file:
+
+1. **Stable tag:** Update to new version number
+2. **Changelog section:** Add condensed changelog entry at top
+3. **Upgrade Notice:** Add entry if significant changes
+4. **Features list:** Update if new user-facing features added
+
+```
+Stable tag: X.Y.Z
+
+== Changelog ==
+
+= X.Y.Z =
+* Brief description of changes
+```
+
+### 5. Update README.md (if needed)
+
+If user-facing features changed:
+- Update version number in header
+- Update Features list
+- Add usage documentation for new features
+
+### 6. Build Release Package
 
 ```bash
 ./bin/build-release
 ```
 
-Creates: `build/wp-art-routes-wenb-X.Y.Z.zip`
+Creates: `build/wp-art-routes-X.Y.Z.zip`
 
-### 5. Commit and Tag
+### 7. Commit and Tag
 
 ```bash
-git add wp-art-routes.php CHANGELOG.md
-git commit -m "Release wenb-X.Y.Z"
-git tag wenb-X.Y.Z
+git add wp-art-routes.php CHANGELOG.md readme.txt README.md
+git commit -m "Release X.Y.Z"
+git tag X.Y.Z
 git push origin HEAD --tags
 ```
 
-### 6. Create GitHub Release
+### 8. Create GitHub Release
 
 ```bash
-gh release create wenb-X.Y.Z \
-  --title "WP Art Routes wenb-X.Y.Z" \
+gh release create X.Y.Z \
+  --title "WP Art Routes X.Y.Z" \
   --notes-file - \
-  build/wp-art-routes-wenb-X.Y.Z.zip <<'EOF'
+  build/wp-art-routes-X.Y.Z.zip <<'EOF'
 ## Changes
 
 [Paste relevant CHANGELOG section here]
@@ -151,8 +177,9 @@ EOF
 
 | Mistake | Fix |
 |---------|-----|
-| Only updating one version location | Always update BOTH header and constant |
-| Forgetting wenb- prefix | Version format is `wenb-X.Y.Z`, not `X.Y.Z` |
+| Only updating one version location | Update ALL: wp-art-routes.php (2 places) + readme.txt Stable tag |
+| Using old wenb- prefix | Version format is now `X.Y.Z` (semantic versioning) |
+| Forgetting readme.txt | Update Stable tag + add changelog entry |
 | Wrong changelog date format | Use `YYYY-MM-DD` |
 | Forgetting to build before release | Build creates the zip for GitHub |
 | Pushing before building | Build first, commit, then push+release |
@@ -167,5 +194,8 @@ Before creating release:
 - [ ] Version updated in wp-art-routes.php header (line ~7)
 - [ ] Version updated in WP_ART_ROUTES_VERSION constant (line ~26)
 - [ ] CHANGELOG.md has entry with correct version and date
+- [ ] readme.txt `Stable tag` updated to new version
+- [ ] readme.txt changelog section has new entry
+- [ ] README.md version updated (if applicable)
 - [ ] `./bin/build-release` ran successfully
 - [ ] Zip file exists in build/ directory

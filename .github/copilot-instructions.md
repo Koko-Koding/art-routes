@@ -19,7 +19,7 @@ Whenever you make changes to the plugin, make sure to:
 
 4. Update the `README.md` file accordingly.
 5. Update the translation files in the `languages` directory if necessary.
-6. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `wenb-X.Y.Z`.
+6. You can also propose to commit the changes to the `main` branch of the repository with a descriptive commit message and subsequently tag the commit with the new version number in the format of `X.Y.Z` (semantic versioning).
 7. Execute the `bin/build-release` script to build the release files and create a zip file of the plugin.
 
 ## GitHub CLI & Repository

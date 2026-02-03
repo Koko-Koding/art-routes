@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap, interactive, geolocation, touri
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.18.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,15 +18,21 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 
 = Features =
 
-* Custom post types for Routes and Artworks
+* **Editions system** - Organize content by events/time periods (e.g., "Art Festival 2024")
+* **Edition Dashboard** - Bulk manage routes, locations, and info points with overview map
+* Custom post types for Routes, Locations, and Info Points
 * Interactive route editor with map interface
-* Artwork location picker with map integration
+* Location picker with map integration
 * Route types (walking, cycling, wheelchair-accessible, child-friendly)
 * Route details (length, duration)
+* **GPX Import/Export** - Import routes and export for GPS devices
+* **CSV Import/Export** - Bulk import locations and info points
+* **Custom icon uploads** - Upload your own SVG/PNG icons
 * Location-aware functionality showing user position on map
 * Route progress tracking
-* Proximity detection for nearby artworks
+* Proximity detection for nearby locations
 * Multiple routes on a single map
+* **Customizable terminology** - Rename "Location" to "Artwork", "Creator" to "Artist", etc.
 * Responsive design for mobile devices
 * Translation-ready with complete Dutch (nl_NL) translation
 
@@ -87,6 +93,61 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 
 == Changelog ==
 
+= 2.0.0 =
+* Standalone release with standard semantic versioning (removed wenb- prefix)
+* Ready for use by any organization running location-based cultural events
+* No functional changes from 1.31.0
+
+= 1.31.0 =
+* Edition Settings now available in Edition Dashboard (dates, default icon, terminology)
+* AJAX-based settings save without page reload
+
+= 1.30.0 =
+* NEW: Custom icon uploads - upload SVG/PNG/JPG/WebP icons via Settings
+* SVG sanitizer for security
+
+= 1.29.0 =
+* Edition default icon setting - each edition can have its own default location icon
+
+= 1.28.0 =
+* Create editions during CSV/GPX import
+* Dashboard link after successful import
+* Publish/Draft toggle buttons in Edition Dashboard
+
+= 1.27.0 =
+* Default location icon setting for locations without icons
+* Import duplicate detection (skips existing items)
+* Auto-flush rewrite rules on version change
+
+= 1.26.0 =
+* NEW: Edition Dashboard for bulk content management
+* Overview map, inline editing, bulk actions
+* Improved Edition Map Block editor preview
+
+= 1.25.0 =
+* NEW: Editions system for grouping content by events/time periods
+* Per-edition terminology overrides
+* Edition Map Block and shortcode
+* Import/Export admin page (CSV and GPX)
+* Centralized terminology system
+
+= 1.24.0 =
+* NEW: GPX Export feature for routes
+* Export routes with waypoints for GPS devices
+
+= 1.23.0 =
+* Related artworks shortcode
+
+= 1.22.0 =
+* Related artists column in artworks admin
+
+= 1.21.0 =
+* Wheelchair and stroller accessibility fields
+
+= 1.19.0 =
+* Build and distribution system
+* Plugin prepared for standalone use
+
 = 1.18.0 =
 * Added translate script & Dockerfile for easy translation file generation
 * Enhanced developer workflow for managing translations
@@ -118,11 +179,14 @@ See CHANGELOG.md for complete version history.
 
 == Upgrade Notice ==
 
+= 2.0.0 =
+Standalone release with standard semantic versioning. No functional changes - safe to upgrade.
+
+= 1.25.0 =
+Major feature release: Editions system for organizing content by events. New Edition Dashboard and Import/Export tools.
+
+= 1.24.0 =
+New GPX export feature for routes. Export to GPS devices and mapping applications.
+
 = 1.18.0 =
 This version adds developer tools for translation management. No breaking changes for end users.
-
-= 1.17.0 =
-Major enhancement to route editing with new point insertion feature. Existing routes remain fully compatible.
-
-= 1.15.0 =
-New map controls provide better user experience. All existing functionality preserved.

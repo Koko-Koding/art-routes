@@ -444,11 +444,15 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 ## Release Workflow
 
 When making changes:
-1. Update version in `wp-art-routes.php` (uses `wenb-X.Y.Z` format)
+1. Update version in `wp-art-routes.php` (uses semantic versioning `X.Y.Z`)
 2. Add entry to `CHANGELOG.md`
-3. Update `README.md` if user-facing
-4. Update translation files if strings changed (run commands above)
-5. Run `./bin/build-release` to create distribution zip
+3. Update `readme.txt`:
+   - Update `Stable tag:` to new version
+   - Add changelog entry (condensed version)
+   - Update `Upgrade Notice` section if significant
+4. Update `README.md` if user-facing features changed
+5. Update translation files if strings changed (run commands above)
+6. Run `./bin/build-release` to create distribution zip
 
 ## External Dependencies
 

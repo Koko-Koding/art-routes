@@ -2,24 +2,32 @@
 
 ![WP Art Routes Logo](./assets/plugin-icons/icon.webp)
 
+**Version 2.0.0** | [Changelog](CHANGELOG.md)
+
 Interactive art route maps with OpenStreetMap integration for WordPress.
 
 ## Description
 
-WP Art Routes is a WordPress plugin designed for organizations that organize art routes and events, allowing them to create and display interactive maps with custom routes and points of interest (artworks).
+WP Art Routes is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap.
 
 The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, routes, and artwork locations. It allows users to track their progress on routes and receive notifications when they are near artworks.
 
 ## Features
 
-- Custom post types for Routes and Artworks
+- **Editions system** - Organize content by events/time periods (e.g., "Art Festival 2024", "Heritage Walk 2025")
+- **Edition Dashboard** - Bulk manage routes, locations, and info points with overview map
+- **Customizable terminology** - Rename "Location" to "Artwork", "Creator" to "Artist", etc.
+- Custom post types for Routes, Locations, and Info Points
 - Interactive route editor with map interface
-- Artwork location picker with map integration
+- Location picker with map integration
 - Route types (walking, cycling, wheelchair-accessible, child-friendly)
-- Route details (length, duration)
+- Route details (length, auto-calculated duration)
+- **GPX Import/Export** - Import routes from GPX files, export for GPS devices
+- **CSV Import/Export** - Bulk import/export locations and info points
+- **Custom icon uploads** - Upload your own SVG/PNG/JPG/WebP icons
 - Location-aware functionality showing user position on map
 - Route progress tracking
-- Proximity detection for nearby artworks
+- Proximity detection for nearby locations
 - Multiple routes on a single map
 - Responsive design for mobile devices
 - Translation-ready with complete Dutch (nl_NL) translation
@@ -45,9 +53,24 @@ The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, ro
 
 **Note:** The duration field is automatically calculated based on your route type and distance using realistic average speeds (walking: 4.5 km/h, cycling: 15 km/h, wheelchair-friendly: 3.5 km/h, child-friendly: 3.0 km/h). You can override this with a custom duration if needed.
 
-### Creating Artworks
+### Using Editions
 
-1. Navigate to "Artworks" in the WordPress admin menu
+Editions let you organize content by events or time periods (e.g., "Summer Festival 2024", "Heritage Walk 2025"):
+
+1. Navigate to "Art Routes → Editions" in the WordPress admin
+2. Create a new Edition with title and optional dates
+3. Use the **Edition Dashboard** to bulk manage content:
+   - Overview map showing all routes, locations, and info points
+   - Inline editing for titles, coordinates, and icons
+   - Bulk publish/draft/delete operations
+4. Link routes, locations, and info points to editions via the Edition selector
+5. Customize terminology per edition (e.g., "Location" → "Artwork", "Creator" → "Artist")
+
+**Import/Export:** Use "Art Routes → Import/Export" to bulk import via CSV or GPX, or export edition content.
+
+### Creating Locations (Artworks)
+
+1. Navigate to "Locations" in the WordPress admin menu (or "Artworks" if using default terminology)
 2. Click "Add New Artwork"
 3. Fill in the artwork details (title, description)
 4. **Optional:** Add a Number for artwork identification (e.g., "A1", "001")
