@@ -4,7 +4,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://github.com/Koko-Koding/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
- * Version: wenb-1.27.0
+ * Version: wenb-1.27.1
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', 'wenb-1.27.0');
+define('WP_ART_ROUTES_VERSION', 'wenb-1.27.1');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -60,6 +60,7 @@ function wp_art_routes_maybe_flush_rewrites()
 add_action('init', 'wp_art_routes_maybe_flush_rewrites', 999);
 
 // Load required files
+require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/terminology.php';  // Must load first (provides helper functions)
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/post-types.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/meta-boxes.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/template-functions.php';
@@ -67,7 +68,6 @@ require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/scripts.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/shortcodes.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/ajax-handlers.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/settings.php';
-require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/terminology.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/editions.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/blocks.php';
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/import-export.php';

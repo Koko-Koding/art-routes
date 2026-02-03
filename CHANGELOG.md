@@ -4,6 +4,14 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.27.1] - 2026-02-03
+
+### Fixed
+
+- **Critical Fix**: Fixed fatal error on Settings page caused by missing icon helper functions (load order issue)
+- Added missing `wp_art_routes_get_available_icons()`, `wp_art_routes_get_icon_url()`, `wp_art_routes_get_icon_display_name()`, and `wp_art_routes_get_default_info_icon()` helper functions to terminology.php
+- Fixed file load order so terminology.php loads before settings.php
+
 ## [wenb-1.27.0] - 2026-02-03
 
 ### Added

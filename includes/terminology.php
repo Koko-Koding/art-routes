@@ -203,3 +203,77 @@ function wp_art_routes_detect_edition_context() {
 
     return null;
 }
+
+/**
+ * Get available SVG icons from the assets/icons directory
+ *
+ * @return array Array of SVG icon filenames
+ */
+function wp_art_routes_get_available_icons() {
+    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
+    $available_icons = [];
+
+    if (is_dir($icons_dir)) {
+        $files = scandir($icons_dir);
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
+                $available_icons[] = $file;
+            }
+        }
+        sort($available_icons);
+    }
+
+    return $available_icons;
+}
+
+/**
+ * Get the full URL for an icon file
+ *
+ * Handles both built-in icons and custom uploaded icons.
+ *
+ * @param string $filename The icon filename
+ * @return string The full URL to the icon
+ */
+function wp_art_routes_get_icon_url($filename) {
+    if (empty($filename)) {
+        return '';
+    }
+
+    // Check if it's a custom uploaded icon
+    $upload_dir = wp_upload_dir();
+    $custom_icons_dir = $upload_dir['basedir'] . '/wp-art-routes-icons/';
+    $custom_icons_url = $upload_dir['baseurl'] . '/wp-art-routes-icons/';
+
+    if (file_exists($custom_icons_dir . $filename)) {
+        return $custom_icons_url . $filename;
+    }
+
+    // Default to built-in icons
+    return plugin_dir_url(dirname(__FILE__)) . 'assets/icons/' . $filename;
+}
+
+/**
+ * Get display name for an icon file
+ *
+ * Converts the filename to a human-readable display name by:
+ * - Removing the 'WB plattegrond-' prefix
+ * - Replacing dashes with spaces
+ * - Capitalizing words
+ *
+ * @param string $filename The icon filename
+ * @return string Human-readable display name
+ */
+function wp_art_routes_get_icon_display_name($filename) {
+    $icon_name = pathinfo($filename, PATHINFO_FILENAME);
+    $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
+    return ucwords(trim($display_name));
+}
+
+/**
+ * Get the default info point icon filename
+ *
+ * @return string Default info point icon filename
+ */
+function wp_art_routes_get_default_info_icon() {
+    return 'WB plattegrond-Informatie.svg';
+}
