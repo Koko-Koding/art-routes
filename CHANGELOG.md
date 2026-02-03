@@ -4,6 +4,13 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.28.1] - 2026-02-03
+
+### Fixed
+
+- **Edition Map Icons Not Showing**: Fixed icons not appearing on edition map shortcode - was using `image_url` instead of `icon_url` for artwork markers
+- **URL Encoding in Edition Dashboard**: Fixed missing `rawurlencode()` for icon URLs in the Edition Dashboard AJAX handler
+
 ## [wenb-1.28.0] - 2026-02-03
 
 ### Added

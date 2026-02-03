@@ -274,9 +274,20 @@ if (!empty($atts['height'])) {
         // Add artwork markers
         if (mapData.artworks && mapData.artworks.length > 0) {
             mapData.artworks.forEach(function(artwork) {
+                // Use icon_url if available, otherwise fall back to image_url
+                let artworkMarkerHtml;
+                if (artwork.icon_url && artwork.icon_url.trim() !== '') {
+                    // Show icon
+                    artworkMarkerHtml = '<div class="artwork-marker-inner"><div class="artwork-marker-icon" style="background-image: url(\'' + artwork.icon_url + '\'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 100%; height: 100%; border-radius: 50%;"></div></div>';
+                } else {
+                    // Show featured image or empty
+                    const displayNumber = artwork.number && artwork.number.trim() !== '' ? artwork.number : '';
+                    artworkMarkerHtml = '<div class="artwork-marker-inner"><div class="artwork-marker-image" style="background-image: url(\'' + (artwork.image_url || '') + '\');"></div><div class="artwork-marker-overlay"></div><div class="artwork-marker-number">' + displayNumber + '</div></div>';
+                }
+
                 const artworkIcon = L.divIcon({
                     className: 'artwork-marker',
-                    html: '<div class="artwork-marker-inner"><div class="artwork-marker-image" style="background-image: url(\'' + (artwork.image_url || '') + '\');"></div></div>',
+                    html: artworkMarkerHtml,
                     iconSize: [40, 40],
                     iconAnchor: [20, 20]
                 });
@@ -664,6 +675,7 @@ if (!empty($atts['height'])) {
     border: 3px solid #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     background: #f4f4f4;
+    position: relative;
 }
 
 .artwork-marker-image {
@@ -671,6 +683,32 @@ if (!empty($atts['height'])) {
     height: 100%;
     background-size: cover;
     background-position: center;
+}
+
+.artwork-marker-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.artwork-marker-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.artwork-marker-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .info-point-marker-inner {

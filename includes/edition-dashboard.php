@@ -380,7 +380,7 @@ function wp_art_routes_dashboard_get_items()
             'latitude' => get_post_meta($location->ID, '_artwork_latitude', true),
             'longitude' => get_post_meta($location->ID, '_artwork_longitude', true),
             'icon' => $icon,
-            'icon_url' => $icon ? $icons_url . $icon : '',
+            'icon_url' => $icon ? $icons_url . rawurlencode($icon) : '',
             'edit_url' => get_edit_post_link($location->ID, 'raw'),
         ];
     }
@@ -406,7 +406,7 @@ function wp_art_routes_dashboard_get_items()
             'latitude' => get_post_meta($info_point->ID, '_artwork_latitude', true),
             'longitude' => get_post_meta($info_point->ID, '_artwork_longitude', true),
             'icon' => $icon,
-            'icon_url' => $icon ? $icons_url . $icon : '',
+            'icon_url' => $icon ? $icons_url . rawurlencode($icon) : '',
             'edit_url' => get_edit_post_link($info_point->ID, 'raw'),
         ];
     }
