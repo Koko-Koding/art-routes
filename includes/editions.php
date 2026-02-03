@@ -542,3 +542,67 @@ function wp_art_routes_ajax_get_edition_content_counts() {
     ]);
 }
 add_action('wp_ajax_wp_art_routes_get_edition_content_counts', 'wp_art_routes_ajax_get_edition_content_counts');
+
+/**
+ * AJAX handler to delete editions only (keep linked content)
+ * Clears _edition_id meta from linked content before deletion
+ */
+function wp_art_routes_ajax_delete_edition_only() {
+    check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
+
+    if (!current_user_can('delete_posts')) {
+        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+    }
+
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+
+    if (empty($edition_ids)) {
+        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+    }
+
+    $deleted_count = 0;
+    $unlinked_count = 0;
+
+    foreach ($edition_ids as $edition_id) {
+        // Verify this is an edition
+        if (get_post_type($edition_id) !== 'edition') {
+            continue;
+        }
+
+        // Clear _edition_id from all linked content
+        $post_types = ['art_route', 'artwork', 'information_point'];
+        foreach ($post_types as $post_type) {
+            $linked_posts = get_posts([
+                'post_type' => $post_type,
+                'post_status' => 'any',
+                'posts_per_page' => -1,
+                'fields' => 'ids',
+                'meta_key' => '_edition_id',
+                'meta_value' => $edition_id,
+            ]);
+
+            foreach ($linked_posts as $post_id) {
+                delete_post_meta($post_id, '_edition_id');
+                $unlinked_count++;
+            }
+        }
+
+        // Delete the edition (force delete, skip trash)
+        $result = wp_delete_post($edition_id, true);
+        if ($result) {
+            $deleted_count++;
+        }
+    }
+
+    wp_send_json_success([
+        'deleted' => $deleted_count,
+        'unlinked' => $unlinked_count,
+        'message' => sprintf(
+            /* translators: 1: number of editions deleted, 2: number of items unlinked */
+            __('Deleted %1$d edition(s). %2$d item(s) were unlinked.', 'wp-art-routes'),
+            $deleted_count,
+            $unlinked_count
+        ),
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_delete_edition_only', 'wp_art_routes_ajax_delete_edition_only');
