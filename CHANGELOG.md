@@ -4,6 +4,16 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.30.0] - 2026-02-03
+
+### Added
+
+- **Custom Icon Uploads**: New "Custom Icons" tab in Settings page allows uploading custom SVG, PNG, JPG, and WebP icons
+- Icons are stored in `wp-content/uploads/wp-art-routes-icons/`
+- Custom icons appear in all icon selection dropdowns alongside built-in icons
+- SVG sanitizer prevents XSS attacks from malicious SVG files
+- Upload and delete icons directly from the admin interface
+
 ## [wenb-1.29.0] - 2026-02-03
 
 ### Added

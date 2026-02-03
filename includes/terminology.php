@@ -205,14 +205,15 @@ function wp_art_routes_detect_edition_context() {
 }
 
 /**
- * Get available SVG icons from the assets/icons directory
+ * Get available icons from both built-in and custom uploaded directories
  *
- * @return array Array of SVG icon filenames
+ * @return array Array of icon filenames (SVG, PNG, JPG, WEBP)
  */
 function wp_art_routes_get_available_icons() {
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
     $available_icons = [];
 
+    // Get built-in icons
+    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
     if (is_dir($icons_dir)) {
         $files = scandir($icons_dir);
         foreach ($files as $file) {
@@ -220,10 +221,94 @@ function wp_art_routes_get_available_icons() {
                 $available_icons[] = $file;
             }
         }
-        sort($available_icons);
     }
 
+    // Get custom uploaded icons
+    $upload_dir = wp_upload_dir();
+    $custom_icons_dir = $upload_dir['basedir'] . '/wp-art-routes-icons/';
+    if (is_dir($custom_icons_dir)) {
+        $files = scandir($custom_icons_dir);
+        foreach ($files as $file) {
+            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            if (in_array($ext, ['svg', 'png', 'jpg', 'jpeg', 'webp'], true)) {
+                // Avoid duplicates (custom icons override built-in with same name)
+                if (!in_array($file, $available_icons, true)) {
+                    $available_icons[] = $file;
+                }
+            }
+        }
+    }
+
+    sort($available_icons);
     return $available_icons;
+}
+
+/**
+ * Get custom uploaded icons only
+ *
+ * @return array Array of custom icon filenames
+ */
+function wp_art_routes_get_custom_icons() {
+    $custom_icons = [];
+
+    $upload_dir = wp_upload_dir();
+    $custom_icons_dir = $upload_dir['basedir'] . '/wp-art-routes-icons/';
+
+    if (is_dir($custom_icons_dir)) {
+        $files = scandir($custom_icons_dir);
+        foreach ($files as $file) {
+            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+            if (in_array($ext, ['svg', 'png', 'jpg', 'jpeg', 'webp'], true)) {
+                $custom_icons[] = $file;
+            }
+        }
+        sort($custom_icons);
+    }
+
+    return $custom_icons;
+}
+
+/**
+ * Check if an icon is a custom uploaded icon
+ *
+ * @param string $filename The icon filename
+ * @return bool True if custom icon, false if built-in
+ */
+function wp_art_routes_is_custom_icon($filename) {
+    $upload_dir = wp_upload_dir();
+    $custom_icons_dir = $upload_dir['basedir'] . '/wp-art-routes-icons/';
+
+    return file_exists($custom_icons_dir . $filename);
+}
+
+/**
+ * Get the custom icons directory path
+ *
+ * Creates the directory if it doesn't exist.
+ *
+ * @return string|false The directory path or false on failure
+ */
+function wp_art_routes_get_custom_icons_dir() {
+    $upload_dir = wp_upload_dir();
+    $custom_icons_dir = $upload_dir['basedir'] . '/wp-art-routes-icons/';
+
+    if (!is_dir($custom_icons_dir)) {
+        if (!wp_mkdir_p($custom_icons_dir)) {
+            return false;
+        }
+    }
+
+    return $custom_icons_dir;
+}
+
+/**
+ * Get the custom icons URL
+ *
+ * @return string The custom icons URL
+ */
+function wp_art_routes_get_custom_icons_url() {
+    $upload_dir = wp_upload_dir();
+    return $upload_dir['baseurl'] . '/wp-art-routes-icons/';
 }
 
 /**

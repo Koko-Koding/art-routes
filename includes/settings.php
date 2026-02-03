@@ -146,6 +146,7 @@ function wp_art_routes_render_settings_page() {
     $tabs = [
         'general' => __('General', 'wp-art-routes'),
         'terminology' => __('Terminology', 'wp-art-routes'),
+        'custom_icons' => __('Custom Icons', 'wp-art-routes'),
     ];
 
     // Show success message if settings were updated
@@ -177,6 +178,9 @@ function wp_art_routes_render_settings_page() {
             switch ($current_tab) {
                 case 'terminology':
                     wp_art_routes_render_terminology_tab();
+                    break;
+                case 'custom_icons':
+                    wp_art_routes_render_custom_icons_tab();
                     break;
                 case 'general':
                 default:
@@ -391,3 +395,313 @@ function wp_art_routes_render_terminology_tab() {
     </form>
     <?php
 }
+
+/**
+ * Render the Custom Icons settings tab
+ */
+function wp_art_routes_render_custom_icons_tab() {
+    $custom_icons = wp_art_routes_get_custom_icons();
+    $custom_icons_url = wp_art_routes_get_custom_icons_url();
+    ?>
+    <div class="custom-icons-wrapper">
+        <h2><?php _e('Upload Custom Icons', 'wp-art-routes'); ?></h2>
+        <p class="description">
+            <?php _e('Upload custom icons (SVG, PNG, JPG, or WebP) to use for locations and info points. Uploaded icons will appear in all icon selection dropdowns.', 'wp-art-routes'); ?>
+        </p>
+
+        <div class="custom-icons-upload-form" style="margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
+            <form id="custom-icon-upload-form" enctype="multipart/form-data">
+                <?php wp_nonce_field('wp_art_routes_upload_icon', 'upload_icon_nonce'); ?>
+                <p>
+                    <label for="custom_icon_file">
+                        <strong><?php _e('Select Icon File:', 'wp-art-routes'); ?></strong>
+                    </label>
+                </p>
+                <p>
+                    <input type="file" name="custom_icon_file" id="custom_icon_file" accept=".svg,.png,.jpg,.jpeg,.webp" required />
+                </p>
+                <p class="description">
+                    <?php _e('Recommended: SVG files for best quality at any size. PNG/JPG supported for compatibility.', 'wp-art-routes'); ?>
+                </p>
+                <p>
+                    <button type="submit" class="button button-primary" id="upload-icon-btn">
+                        <?php _e('Upload Icon', 'wp-art-routes'); ?>
+                    </button>
+                    <span id="upload-status" style="margin-left: 10px;"></span>
+                </p>
+            </form>
+        </div>
+
+        <h2><?php _e('Uploaded Custom Icons', 'wp-art-routes'); ?></h2>
+
+        <?php if (empty($custom_icons)) : ?>
+            <p class="description" id="no-custom-icons-message">
+                <?php _e('No custom icons uploaded yet.', 'wp-art-routes'); ?>
+            </p>
+        <?php endif; ?>
+
+        <div id="custom-icons-grid" class="custom-icons-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px;">
+            <?php foreach ($custom_icons as $icon) : ?>
+                <div class="custom-icon-item" data-filename="<?php echo esc_attr($icon); ?>" style="background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 15px; text-align: center;">
+                    <div class="icon-preview" style="height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <img src="<?php echo esc_url($custom_icons_url . rawurlencode($icon)); ?>" alt="<?php echo esc_attr($icon); ?>" style="max-width: 100%; max-height: 60px;">
+                    </div>
+                    <div class="icon-filename" style="font-size: 12px; word-break: break-all; margin-bottom: 10px;">
+                        <?php echo esc_html($icon); ?>
+                    </div>
+                    <button type="button" class="button button-small button-link-delete delete-custom-icon" data-filename="<?php echo esc_attr($icon); ?>">
+                        <?php _e('Delete', 'wp-art-routes'); ?>
+                    </button>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // Handle icon upload
+        $('#custom-icon-upload-form').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            formData.append('action', 'wp_art_routes_upload_custom_icon');
+
+            var $btn = $('#upload-icon-btn');
+            var $status = $('#upload-status');
+
+            $btn.prop('disabled', true);
+            $status.text('<?php echo esc_js(__('Uploading...', 'wp-art-routes')); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        $status.css('color', 'green').text(response.data.message);
+                        // Add the new icon to the grid
+                        var iconHtml = '<div class="custom-icon-item" data-filename="' + response.data.filename + '" style="background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 15px; text-align: center;">' +
+                            '<div class="icon-preview" style="height: 60px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">' +
+                            '<img src="' + response.data.url + '" alt="" style="max-width: 100%; max-height: 60px;">' +
+                            '</div>' +
+                            '<div class="icon-filename" style="font-size: 12px; word-break: break-all; margin-bottom: 10px;">' + response.data.filename + '</div>' +
+                            '<button type="button" class="button button-small button-link-delete delete-custom-icon" data-filename="' + response.data.filename + '"><?php echo esc_js(__('Delete', 'wp-art-routes')); ?></button>' +
+                            '</div>';
+                        $('#custom-icons-grid').append(iconHtml);
+                        $('#no-custom-icons-message').hide();
+                        $('#custom_icon_file').val('');
+                    } else {
+                        $status.css('color', 'red').text(response.data.message || '<?php echo esc_js(__('Upload failed.', 'wp-art-routes')); ?>');
+                    }
+                },
+                error: function() {
+                    $status.css('color', 'red').text('<?php echo esc_js(__('Upload failed.', 'wp-art-routes')); ?>');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+
+        // Handle icon delete
+        $(document).on('click', '.delete-custom-icon', function() {
+            var $btn = $(this);
+            var filename = $btn.data('filename');
+
+            if (!confirm('<?php echo esc_js(__('Are you sure you want to delete this icon? This cannot be undone.', 'wp-art-routes')); ?>')) {
+                return;
+            }
+
+            $btn.prop('disabled', true).text('<?php echo esc_js(__('Deleting...', 'wp-art-routes')); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'wp_art_routes_delete_custom_icon',
+                    filename: filename,
+                    nonce: '<?php echo wp_create_nonce('wp_art_routes_delete_icon'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $btn.closest('.custom-icon-item').fadeOut(300, function() {
+                            $(this).remove();
+                            if ($('#custom-icons-grid .custom-icon-item').length === 0) {
+                                $('#no-custom-icons-message').show();
+                            }
+                        });
+                    } else {
+                        alert(response.data.message || '<?php echo esc_js(__('Delete failed.', 'wp-art-routes')); ?>');
+                        $btn.prop('disabled', false).text('<?php echo esc_js(__('Delete', 'wp-art-routes')); ?>');
+                    }
+                },
+                error: function() {
+                    alert('<?php echo esc_js(__('Delete failed.', 'wp-art-routes')); ?>');
+                    $btn.prop('disabled', false).text('<?php echo esc_js(__('Delete', 'wp-art-routes')); ?>');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
+/**
+ * Handle custom icon upload via AJAX
+ */
+function wp_art_routes_ajax_upload_custom_icon() {
+    // Verify nonce
+    if (!isset($_POST['upload_icon_nonce']) || !wp_verify_nonce($_POST['upload_icon_nonce'], 'wp_art_routes_upload_icon')) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+    }
+
+    // Check if file was uploaded
+    if (!isset($_FILES['custom_icon_file']) || $_FILES['custom_icon_file']['error'] !== UPLOAD_ERR_OK) {
+        wp_send_json_error(['message' => __('No file uploaded or upload error.', 'wp-art-routes')]);
+    }
+
+    $file = $_FILES['custom_icon_file'];
+
+    // Validate file extension
+    $allowed_extensions = ['svg', 'png', 'jpg', 'jpeg', 'webp'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($ext, $allowed_extensions, true)) {
+        wp_send_json_error(['message' => __('Invalid file type. Allowed: SVG, PNG, JPG, WebP.', 'wp-art-routes')]);
+    }
+
+    // Validate MIME type
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime_type = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+
+    $allowed_mimes = [
+        'image/svg+xml' => 'svg',
+        'image/png' => 'png',
+        'image/jpeg' => ['jpg', 'jpeg'],
+        'image/webp' => 'webp',
+        'text/plain' => 'svg', // Some servers report SVG as text/plain
+        'text/html' => 'svg',  // Some servers report SVG as text/html
+        'application/xml' => 'svg', // Some servers report SVG as application/xml
+    ];
+
+    $mime_valid = false;
+    foreach ($allowed_mimes as $mime => $exts) {
+        if ($mime_type === $mime) {
+            $exts = (array) $exts;
+            if (in_array($ext, $exts, true)) {
+                $mime_valid = true;
+                break;
+            }
+        }
+    }
+
+    if (!$mime_valid) {
+        wp_send_json_error(['message' => __('Invalid file type detected.', 'wp-art-routes')]);
+    }
+
+    // For SVG files, sanitize the content
+    if ($ext === 'svg') {
+        $svg_content = file_get_contents($file['tmp_name']);
+
+        // Load the SVG sanitizer if available
+        if (class_exists('WP_Art_Routes_SVG_Sanitizer')) {
+            $sanitizer = new WP_Art_Routes_SVG_Sanitizer();
+            $sanitized = $sanitizer->sanitize($svg_content);
+
+            if ($sanitized === false) {
+                wp_send_json_error(['message' => __('SVG file failed security validation.', 'wp-art-routes')]);
+            }
+
+            $svg_content = $sanitized;
+        }
+    }
+
+    // Get the custom icons directory
+    $custom_icons_dir = wp_art_routes_get_custom_icons_dir();
+    if (!$custom_icons_dir) {
+        wp_send_json_error(['message' => __('Could not create icons directory.', 'wp-art-routes')]);
+    }
+
+    // Generate safe filename
+    $filename = sanitize_file_name($file['name']);
+
+    // Check if file already exists, add number suffix if so
+    $base = pathinfo($filename, PATHINFO_FILENAME);
+    $counter = 1;
+    while (file_exists($custom_icons_dir . $filename)) {
+        $filename = $base . '-' . $counter . '.' . $ext;
+        $counter++;
+    }
+
+    // Save the file
+    $destination = $custom_icons_dir . $filename;
+
+    if ($ext === 'svg' && isset($svg_content)) {
+        // Write sanitized SVG content
+        if (file_put_contents($destination, $svg_content) === false) {
+            wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
+        }
+    } else {
+        // Move uploaded file
+        if (!move_uploaded_file($file['tmp_name'], $destination)) {
+            wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
+        }
+    }
+
+    // Return success
+    wp_send_json_success([
+        'message' => __('Icon uploaded successfully.', 'wp-art-routes'),
+        'filename' => $filename,
+        'url' => wp_art_routes_get_custom_icons_url() . rawurlencode($filename),
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_upload_custom_icon', 'wp_art_routes_ajax_upload_custom_icon');
+
+/**
+ * Handle custom icon deletion via AJAX
+ */
+function wp_art_routes_ajax_delete_custom_icon() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wp_art_routes_delete_icon')) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+    }
+
+    // Get filename
+    $filename = isset($_POST['filename']) ? sanitize_file_name($_POST['filename']) : '';
+
+    if (empty($filename)) {
+        wp_send_json_error(['message' => __('No filename provided.', 'wp-art-routes')]);
+    }
+
+    // Verify this is a custom icon (not a built-in one)
+    if (!wp_art_routes_is_custom_icon($filename)) {
+        wp_send_json_error(['message' => __('Cannot delete built-in icons.', 'wp-art-routes')]);
+    }
+
+    // Get the file path
+    $custom_icons_dir = wp_art_routes_get_custom_icons_dir();
+    $filepath = $custom_icons_dir . $filename;
+
+    // Delete the file
+    if (file_exists($filepath)) {
+        if (!unlink($filepath)) {
+            wp_send_json_error(['message' => __('Failed to delete file.', 'wp-art-routes')]);
+        }
+    }
+
+    wp_send_json_success(['message' => __('Icon deleted successfully.', 'wp-art-routes')]);
+}
+add_action('wp_ajax_wp_art_routes_delete_custom_icon', 'wp_art_routes_ajax_delete_custom_icon');
