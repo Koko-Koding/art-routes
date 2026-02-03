@@ -13,6 +13,32 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Sanitize icon filename input
+ *
+ * Validates the filename exists in available icons rather than
+ * sanitizing the filename (which would break filenames with spaces).
+ *
+ * @param string $input The icon filename to validate
+ * @return string The validated filename or empty string
+ */
+function wp_art_routes_sanitize_icon_filename($input) {
+    if (empty($input)) {
+        return '';
+    }
+
+    // Get list of available icons
+    $available_icons = wp_art_routes_get_available_icons();
+
+    // Only allow filenames that exist in available icons
+    if (in_array($input, $available_icons, true)) {
+        return $input;
+    }
+
+    // Invalid filename - return empty
+    return '';
+}
+
+/**
  * Sanitize terminology input
  *
  * @param mixed $input The input to sanitize
@@ -72,7 +98,7 @@ function wp_art_routes_register_settings() {
         'wp_art_routes_default_location_icon',
         [
             'type' => 'string',
-            'sanitize_callback' => 'sanitize_file_name',
+            'sanitize_callback' => 'wp_art_routes_sanitize_icon_filename',
             'default' => '',
         ]
     );

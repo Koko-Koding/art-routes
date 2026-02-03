@@ -4,6 +4,23 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.28.0] - 2026-02-03
+
+### Added
+
+- **Create Edition During Import**: CSV and GPX import now allows creating a new edition directly from the import form
+- **Dashboard Link After Import**: Successful imports now show a button linking to the edition's dashboard page
+- **Publish/Draft Buttons in Dashboard**: Added explicit publish/draft toggle buttons in each row of the Edition Dashboard for easier status management
+- **Edition Delete Modal**: Custom confirmation modal when deleting editions with options to keep or delete linked content
+
+### Fixed
+
+- **Default Location Icon**: Fixed icon not appearing for locations without assigned icons
+- **Icon Filenames with Spaces**: Fixed URL encoding for icon files containing spaces (e.g., "WB plattegrond-10.svg")
+- **Edition Delete Modal Loading**: Fixed modal stuck on "Loading..." due to Thickbox content copying issue
+- **Icon Settings**: Fixed icon selection being corrupted by sanitize_file_name (now validates against available icons instead)
+- **Dashboard Icon Updates**: Fixed icon changes not reflecting immediately in Edition Dashboard after saving
+
 ## [wenb-1.27.1] - 2026-02-03
 
 ### Fixed

@@ -80,16 +80,16 @@
                 }
             });
 
-            // Modal button handlers
-            this.$modal.on('click', '#edition-delete-only', function() {
+            // Modal button handlers - use document delegation since Thickbox copies the content
+            $(document).on('click', '#edition-delete-only', function() {
                 self.executeDelete('edition_only');
             });
 
-            this.$modal.on('click', '#edition-delete-all', function() {
+            $(document).on('click', '#edition-delete-all', function() {
                 self.executeDelete('everything');
             });
 
-            this.$modal.on('click', '#edition-delete-cancel', function(e) {
+            $(document).on('click', '#edition-delete-cancel', function(e) {
                 e.preventDefault();
                 self.closeModal();
             });
@@ -104,6 +104,12 @@
         showModal: function() {
             var self = this;
 
+            console.log('Edition Delete Modal: showModal called', {
+                editionIds: self.pendingEditionIds,
+                ajaxUrl: wpArtRoutesEditionDelete.ajaxUrl,
+                nonce: wpArtRoutesEditionDelete.nonce ? 'present' : 'missing'
+            });
+
             // Show thickbox with loading state
             this.$modal.find('.edition-delete-counts').html('<span class="spinner is-active"></span> ' + wpArtRoutesEditionDelete.strings.loading);
             this.$modal.find('.edition-delete-buttons').hide();
@@ -114,24 +120,40 @@
                 '#TB_inline?width=400&height=300&inlineId=edition-delete-modal'
             );
 
+            console.log('Edition Delete Modal: Making AJAX request...');
+
             // Fetch content counts
             $.ajax({
                 url: wpArtRoutesEditionDelete.ajaxUrl,
                 type: 'POST',
+                dataType: 'json',
                 data: {
                     action: 'wp_art_routes_get_edition_content_counts',
                     nonce: wpArtRoutesEditionDelete.nonce,
                     edition_ids: self.pendingEditionIds
                 },
                 success: function(response) {
-                    if (response.success) {
+                    console.log('Edition Delete Modal: AJAX success', response);
+                    if (response && response.success) {
                         self.displayCounts(response.data);
                     } else {
-                        self.showError(response.data.message || wpArtRoutesEditionDelete.strings.error);
+                        var message = (response && response.data && response.data.message)
+                            ? response.data.message
+                            : wpArtRoutesEditionDelete.strings.error;
+                        self.showError(message);
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Edition Delete Modal: AJAX error', {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText,
+                        statusCode: xhr.status
+                    });
                     self.showError(wpArtRoutesEditionDelete.strings.error);
+                },
+                complete: function(xhr, status) {
+                    console.log('Edition Delete Modal: AJAX complete', status);
                 }
             });
         },
@@ -141,19 +163,22 @@
             var titles = data.titles;
             var total = counts.routes + counts.locations + counts.info_points;
 
+            // Thickbox copies content, so we need to target the visible copy inside #TB_ajaxContent
+            var $visibleModal = $('#TB_ajaxContent').length ? $('#TB_ajaxContent') : this.$modal;
+
             // Show title(s)
             var titleText = titles.length === 1
                 ? wpArtRoutesEditionDelete.strings.deleteEdition.replace('%s', '"' + titles[0] + '"')
                 : wpArtRoutesEditionDelete.strings.deleteEditions.replace('%d', titles.length);
-            this.$modal.find('.edition-delete-title').html('<strong>' + titleText + '</strong>');
+            $visibleModal.find('.edition-delete-title').html('<strong>' + titleText + '</strong>');
 
             // If no content, proceed directly
             if (total === 0) {
-                this.$modal.find('.edition-delete-counts').html('<p>' + wpArtRoutesEditionDelete.strings.noContent + '</p>');
-                this.$modal.find('.edition-delete-question').hide();
-                this.$modal.find('#edition-delete-all').hide();
-                this.$modal.find('#edition-delete-only').text(wpArtRoutesEditionDelete.strings.delete).show();
-                this.$modal.find('.edition-delete-buttons').show();
+                $visibleModal.find('.edition-delete-counts').html('<p>' + wpArtRoutesEditionDelete.strings.noContent + '</p>');
+                $visibleModal.find('.edition-delete-question').hide();
+                $visibleModal.find('#edition-delete-all').hide();
+                $visibleModal.find('#edition-delete-only').text(wpArtRoutesEditionDelete.strings.delete).show();
+                $visibleModal.find('.edition-delete-buttons').show();
             } else {
                 // Show counts
                 var countsHtml = '<p>' + wpArtRoutesEditionDelete.strings.containsContent + '</p><ul>';
@@ -168,16 +193,21 @@
                 }
                 countsHtml += '</ul>';
 
-                this.$modal.find('.edition-delete-counts').html(countsHtml);
-                this.$modal.find('.edition-delete-question').show();
-                this.$modal.find('#edition-delete-only').text(wpArtRoutesEditionDelete.strings.deleteEditionOnly).show();
-                this.$modal.find('#edition-delete-all').show();
-                this.$modal.find('.edition-delete-buttons').show();
+                $visibleModal.find('.edition-delete-counts').html(countsHtml);
+                $visibleModal.find('.edition-delete-question').show();
+                $visibleModal.find('#edition-delete-only').text(wpArtRoutesEditionDelete.strings.deleteEditionOnly).show();
+                $visibleModal.find('#edition-delete-all').show();
+                $visibleModal.find('.edition-delete-buttons').show();
             }
         },
 
         showError: function(message) {
-            this.$modal.find('.edition-delete-counts').html('<p class="error">' + message + '</p>');
+            // Thickbox copies content, so we need to target the visible copy inside #TB_ajaxContent
+            var $visibleModal = $('#TB_ajaxContent').length ? $('#TB_ajaxContent') : this.$modal;
+            $visibleModal.find('.edition-delete-counts').html('<p class="error">' + message + '</p>');
+            $visibleModal.find('.edition-delete-buttons').hide();
+            $visibleModal.find('.edition-delete-question').hide();
+            $visibleModal.find('.edition-delete-cancel').show();
         },
 
         executeDelete: function(mode) {
@@ -186,34 +216,40 @@
                 ? 'wp_art_routes_delete_edition_all'
                 : 'wp_art_routes_delete_edition_only';
 
+            // Thickbox copies content, so we need to target the visible copy inside #TB_ajaxContent
+            var $visibleModal = $('#TB_ajaxContent').length ? $('#TB_ajaxContent') : this.$modal;
+
             // Show loading state
-            this.$modal.find('.edition-delete-buttons').hide();
-            this.$modal.find('.edition-delete-cancel').hide();
-            this.$modal.find('.edition-delete-question').hide();
-            this.$modal.find('.edition-delete-loading').show();
+            $visibleModal.find('.edition-delete-buttons').hide();
+            $visibleModal.find('.edition-delete-cancel').hide();
+            $visibleModal.find('.edition-delete-question').hide();
+            $visibleModal.find('.edition-delete-loading').show();
 
             $.ajax({
                 url: wpArtRoutesEditionDelete.ajaxUrl,
                 type: 'POST',
+                dataType: 'json',
                 data: {
                     action: action,
                     nonce: wpArtRoutesEditionDelete.nonce,
                     edition_ids: self.pendingEditionIds
                 },
                 success: function(response) {
-                    if (response.success) {
+                    if (response && response.success) {
                         // Reload the page to show updated list
                         window.location.reload();
                     } else {
-                        self.$modal.find('.edition-delete-loading').hide();
-                        self.showError(response.data.message || wpArtRoutesEditionDelete.strings.error);
-                        self.$modal.find('.edition-delete-cancel').show();
+                        $visibleModal.find('.edition-delete-loading').hide();
+                        var message = (response && response.data && response.data.message)
+                            ? response.data.message
+                            : wpArtRoutesEditionDelete.strings.error;
+                        self.showError(message);
                     }
                 },
-                error: function() {
-                    self.$modal.find('.edition-delete-loading').hide();
+                error: function(xhr, status, error) {
+                    console.error('Edition delete AJAX error:', status, error);
+                    $visibleModal.find('.edition-delete-loading').hide();
                     self.showError(wpArtRoutesEditionDelete.strings.error);
-                    self.$modal.find('.edition-delete-cancel').show();
                 }
             });
         },

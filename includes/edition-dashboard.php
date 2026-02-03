@@ -98,6 +98,9 @@ function wp_art_routes_enqueue_dashboard_assets($hook)
             'infoPoints' => __('Info Points', 'wp-art-routes'),
             'published' => __('published', 'wp-art-routes'),
             'drafts' => __('drafts', 'wp-art-routes'),
+            'toDraft' => __('→ Draft', 'wp-art-routes'),
+            'toPublish' => __('→ Publish', 'wp-art-routes'),
+            'setToDraft' => __('Set to Draft', 'wp-art-routes'),
         ),
     ));
 }
@@ -527,16 +530,25 @@ function wp_art_routes_dashboard_update_item()
             break;
 
         case 'icon':
-            $sanitized_value = sanitize_file_name($value);
+            // Validate icon filename exists in available icons (don't use sanitize_file_name
+            // as it converts spaces to dashes which breaks filenames like "WB plattegrond-10.svg")
+            $sanitized_value = '';
+            if (!empty($value)) {
+                $available_icons = wp_art_routes_get_available_icons();
+                if (in_array($value, $available_icons, true)) {
+                    $sanitized_value = $value;
+                }
+            }
 
             // Use different meta key based on post type
             $meta_key = ($post->post_type === 'information_point') ? '_info_point_icon' : '_artwork_icon';
             update_post_meta($post_id, $meta_key, $sanitized_value);
 
-            // Return icon URL in response
+            // Return icon data in response
             $icons_url = plugins_url('assets/icons/', dirname(__FILE__));
             $response_data['icon'] = $sanitized_value;
-            $response_data['icon_url'] = $sanitized_value ? $icons_url . $sanitized_value : '';
+            $response_data['icon_url'] = $sanitized_value ? $icons_url . rawurlencode($sanitized_value) : '';
+            $response_data['icon_display_name'] = $sanitized_value ? wp_art_routes_get_icon_display_name($sanitized_value) : '';
             break;
 
         default:

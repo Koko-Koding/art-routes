@@ -156,13 +156,14 @@ wp_art_routes_get_edition_information_points($edition_id);
 Located at Editions → Import/Export (`includes/import-export.php`):
 
 **CSV Import (Locations & Info Points):**
-- Select target edition
+- Select target edition or create a new edition during import
 - Upload CSV with columns: Type, Name, Description, Latitude, Longitude, Number, Icon, Creator
 - Items created as drafts for review
 - Download template CSV available
+- After successful import, shows link to edition's dashboard
 
 **GPX Import (Routes & Locations):**
-- Select target edition
+- Select target edition or create a new edition during import
 - Three import modes:
   - Route path only (tracks become Routes)
   - Route path + waypoints as Locations
@@ -170,6 +171,7 @@ Located at Editions → Import/Export (`includes/import-export.php`):
 - Supports GPX 1.0 and 1.1 formats
 - Parses `<trk>`, `<rte>`, and `<wpt>` elements
 - **Duplicate detection:** Skips items that already exist in the edition (by name or coordinates within ~2 meters)
+- After successful import, shows link to edition's dashboard
 
 **Duplicate Detection (CSV & GPX Import):**
 Both import methods include automatic duplicate detection:
@@ -205,6 +207,7 @@ Located at Editions → Dashboard (`includes/edition-dashboard.php`):
 - Collapsible sections for Routes, Locations, Info Points
 - Inline editing for title, number, coordinates
 - Status toggle (click badge to publish/draft)
+- Publish/Draft toggle buttons in each row for quick status changes
 - Icon selector dropdown
 - Bulk actions: publish, draft, delete selected
 - Quick selection: Select All, Select None, Select Drafts

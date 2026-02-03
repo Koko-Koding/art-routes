@@ -197,12 +197,16 @@
         state.routes.forEach(function(route) {
             const statusClass = route.status === 'publish' ? 'publish' : 'draft';
             const statusLabel = route.status === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft';
+            const toggleButton = route.status === 'publish'
+                ? `<button type="button" class="button button-small status-toggle" data-id="${route.id}" data-action="draft" title="${wpArtRoutesDashboard.strings.setToDraft || 'Set to Draft'}">${wpArtRoutesDashboard.strings.toDraft || '→ Draft'}</button>`
+                : `<button type="button" class="button button-small button-primary status-toggle" data-id="${route.id}" data-action="publish" title="${wpArtRoutesDashboard.strings.publish || 'Publish'}">${wpArtRoutesDashboard.strings.toPublish || '→ Publish'}</button>`;
             const row = `
                 <tr data-id="${route.id}" data-type="route" data-status="${route.status}">
                     <td><input type="checkbox" class="item-checkbox" value="${route.id}"></td>
                     <td class="editable-cell" data-field="title" data-value="${escapeHtml(route.title)}">${escapeHtml(route.title)}</td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                     <td class="actions-cell">
+                        ${toggleButton}
                         <a href="${route.edit_url}" class="button button-small" target="_blank">${wpArtRoutesDashboard.strings.edit}</a>
                         <button type="button" class="button button-small delete-item" data-id="${route.id}" data-type="route">${wpArtRoutesDashboard.strings.delete}</button>
                     </td>
@@ -228,6 +232,9 @@
             const statusClass = location.status === 'publish' ? 'publish' : 'draft';
             const statusLabel = location.status === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft';
             const iconDisplay = location.icon ? escapeHtml(location.icon) : '-';
+            const toggleButton = location.status === 'publish'
+                ? `<button type="button" class="button button-small status-toggle" data-id="${location.id}" data-action="draft" title="${wpArtRoutesDashboard.strings.setToDraft || 'Set to Draft'}">${wpArtRoutesDashboard.strings.toDraft || '→ Draft'}</button>`
+                : `<button type="button" class="button button-small button-primary status-toggle" data-id="${location.id}" data-action="publish" title="${wpArtRoutesDashboard.strings.publish || 'Publish'}">${wpArtRoutesDashboard.strings.toPublish || '→ Publish'}</button>`;
             const row = `
                 <tr data-id="${location.id}" data-type="location" data-status="${location.status}">
                     <td><input type="checkbox" class="item-checkbox" value="${location.id}"></td>
@@ -238,6 +245,7 @@
                     <td class="editable-cell" data-field="longitude" data-value="${location.longitude || ''}">${location.longitude || '-'}</td>
                     <td class="icon-cell" data-id="${location.id}" data-icon="${escapeHtml(location.icon || '')}">${iconDisplay}</td>
                     <td class="actions-cell">
+                        ${toggleButton}
                         <a href="${location.edit_url}" class="button button-small" target="_blank">${wpArtRoutesDashboard.strings.edit}</a>
                         <button type="button" class="button button-small delete-item" data-id="${location.id}" data-type="location">${wpArtRoutesDashboard.strings.delete}</button>
                     </td>
@@ -263,6 +271,9 @@
             const statusClass = infoPoint.status === 'publish' ? 'publish' : 'draft';
             const statusLabel = infoPoint.status === 'publish' ? wpArtRoutesDashboard.strings.published : 'Draft';
             const iconDisplay = infoPoint.icon ? escapeHtml(infoPoint.icon) : '-';
+            const toggleButton = infoPoint.status === 'publish'
+                ? `<button type="button" class="button button-small status-toggle" data-id="${infoPoint.id}" data-action="draft" title="${wpArtRoutesDashboard.strings.setToDraft || 'Set to Draft'}">${wpArtRoutesDashboard.strings.toDraft || '→ Draft'}</button>`
+                : `<button type="button" class="button button-small button-primary status-toggle" data-id="${infoPoint.id}" data-action="publish" title="${wpArtRoutesDashboard.strings.publish || 'Publish'}">${wpArtRoutesDashboard.strings.toPublish || '→ Publish'}</button>`;
             const row = `
                 <tr data-id="${infoPoint.id}" data-type="info_point" data-status="${infoPoint.status}">
                     <td><input type="checkbox" class="item-checkbox" value="${infoPoint.id}"></td>
@@ -272,6 +283,7 @@
                     <td class="editable-cell" data-field="longitude" data-value="${infoPoint.longitude || ''}">${infoPoint.longitude || '-'}</td>
                     <td class="icon-cell" data-id="${infoPoint.id}" data-icon="${escapeHtml(infoPoint.icon || '')}">${iconDisplay}</td>
                     <td class="actions-cell">
+                        ${toggleButton}
                         <a href="${infoPoint.edit_url}" class="button button-small" target="_blank">${wpArtRoutesDashboard.strings.edit}</a>
                         <button type="button" class="button button-small delete-item" data-id="${infoPoint.id}" data-type="info_point">${wpArtRoutesDashboard.strings.delete}</button>
                     </td>
@@ -307,7 +319,10 @@
         $(document).on('click.dashboard', '.status-badge', toggleStatus);
 
         // Delete button
-        $(document).on('click.dashboard', '.row-actions .delete', deleteItem);
+        $(document).on('click.dashboard', '.delete-item', deleteItem);
+
+        // Status toggle button
+        $(document).on('click.dashboard', '.status-toggle', handleStatusToggle);
 
         // Checkbox header - select all in section
         $(document).on('change.dashboard', '.select-all-checkbox', selectAllInSection);
@@ -437,14 +452,39 @@
     }
 
     /**
-     * Toggle item status (publish/draft)
+     * Handle status toggle button click
+     */
+    function handleStatusToggle() {
+        const $button = $(this);
+        const postId = $button.data('id');
+        const newStatus = $button.data('action'); // 'publish' or 'draft'
+        const $row = $button.closest('tr');
+        const $badge = $row.find('.status-badge');
+        const currentStatus = $badge.hasClass('publish') ? 'publish' : 'draft';
+
+        if (currentStatus === newStatus) return; // Already in target status
+
+        setItemStatus(postId, newStatus, $row, $badge);
+    }
+
+    /**
+     * Toggle item status (publish/draft) - triggered by clicking status badge
      */
     function toggleStatus() {
         const $badge = $(this);
-        const postId = $badge.data('id');
+        const postId = $badge.closest('tr').data('id');
         const $row = $badge.closest('tr');
         const currentStatus = $badge.hasClass('publish') ? 'publish' : 'draft';
         const newStatus = currentStatus === 'publish' ? 'draft' : 'publish';
+
+        setItemStatus(postId, newStatus, $row, $badge);
+    }
+
+    /**
+     * Set item status to a specific value
+     */
+    function setItemStatus(postId, newStatus, $row, $badge) {
+        const currentStatus = $badge.hasClass('publish') ? 'publish' : 'draft';
 
         // Optimistic UI update
         $badge.removeClass(currentStatus).addClass(newStatus);
@@ -468,6 +508,8 @@
                     updateLocalState(postId, 'status', newStatus);
                     updateSectionCounts();
                     updateMap();
+                    // Re-render tables to update toggle buttons
+                    renderTables();
                 } else {
                     // Revert on error
                     $badge.removeClass(newStatus).addClass(currentStatus);
@@ -701,6 +743,7 @@
         $.ajax({
             url: wpArtRoutesDashboard.ajaxUrl,
             type: 'POST',
+            dataType: 'json',
             data: {
                 action: 'wp_art_routes_dashboard_update_item',
                 nonce: wpArtRoutesDashboard.nonce,
@@ -709,23 +752,26 @@
                 value: newIcon
             },
             success: function(response) {
-                if (response.success) {
-                    // Update cell with new icon
-                    const iconHtml = response.data.icon_url
-                        ? `<img src="${response.data.icon_url}" class="icon-preview" alt="" />`
-                        : '—';
-                    $cell.html(iconHtml);
-                    $cell.data('icon', newIcon);
+                if (response && response.success) {
+                    // Update cell with new icon display name (consistent with table rendering)
+                    const iconDisplay = response.data.icon_display_name || response.data.icon || '—';
+                    $cell.html(escapeHtml(iconDisplay));
+                    $cell.data('icon', response.data.icon || '');
+                    $cell.attr('data-icon', response.data.icon || '');
 
                     // Update local state
-                    updateLocalState(postId, 'icon', newIcon);
-                    updateLocalState(postId, 'icon_url', response.data.icon_url);
+                    updateLocalState(postId, 'icon', response.data.icon || '');
+                    updateLocalState(postId, 'icon_url', response.data.icon_url || '');
                 } else {
                     $cell.html(originalHtml);
-                    alert(response.data.message || wpArtRoutesDashboard.strings.error);
+                    var message = (response && response.data && response.data.message)
+                        ? response.data.message
+                        : wpArtRoutesDashboard.strings.error;
+                    alert(message);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('Icon save error:', status, error);
                 $cell.html(originalHtml);
                 alert(wpArtRoutesDashboard.strings.error);
             }
