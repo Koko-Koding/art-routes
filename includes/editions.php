@@ -101,6 +101,17 @@ function wp_art_routes_register_edition_meta()
             return current_user_can('edit_posts');
         },
     ]);
+
+    // Edition default location icon
+    register_post_meta('edition', '_edition_default_location_icon', [
+        'type'              => 'string',
+        'single'            => true,
+        'show_in_rest'      => true,
+        'sanitize_callback' => 'wp_art_routes_sanitize_icon_filename',
+        'auth_callback'     => function () {
+            return current_user_can('edit_posts');
+        },
+    ]);
 }
 add_action('init', 'wp_art_routes_register_edition_meta');
 
@@ -159,6 +170,16 @@ function wp_art_routes_add_edition_meta_boxes()
         'edition_dates',
         __('Event Dates', 'wp-art-routes'),
         'wp_art_routes_render_edition_dates_meta_box',
+        'edition',
+        'side',
+        'default'
+    );
+
+    // Edition Settings meta box (default icon)
+    add_meta_box(
+        'edition_settings',
+        __('Edition Settings', 'wp-art-routes'),
+        'wp_art_routes_render_edition_settings_meta_box',
         'edition',
         'side',
         'default'
@@ -291,6 +312,96 @@ function wp_art_routes_render_edition_dates_meta_box($post)
     </p>
     <?php
 }
+
+/**
+ * Render Edition Settings meta box
+ *
+ * @param WP_Post $post The post object
+ */
+function wp_art_routes_render_edition_settings_meta_box($post)
+{
+    // Add nonce for security
+    wp_nonce_field('save_edition_settings', 'edition_settings_nonce');
+
+    // Get saved default icon
+    $default_icon = get_post_meta($post->ID, '_edition_default_location_icon', true);
+    $available_icons = wp_art_routes_get_available_icons();
+    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+
+    // Get global default for fallback label
+    $global_default = get_option('wp_art_routes_default_location_icon', '');
+    $global_label = $global_default ? wp_art_routes_get_icon_display_name($global_default) : __('none', 'wp-art-routes');
+
+    ?>
+    <p>
+        <label for="edition_default_location_icon">
+            <?php _e('Default Location Icon:', 'wp-art-routes'); ?>
+        </label>
+        <select name="edition_default_location_icon" id="edition_default_location_icon" class="widefat">
+            <option value="">
+                <?php
+                /* translators: %s: global default icon name */
+                printf(esc_html__('Use global default (%s)', 'wp-art-routes'), esc_html($global_label));
+                ?>
+            </option>
+            <?php foreach ($available_icons as $icon_filename) : ?>
+                <option value="<?php echo esc_attr($icon_filename); ?>" <?php selected($default_icon, $icon_filename); ?>>
+                    <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_filename)); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+
+    <?php if (!empty($default_icon)) : ?>
+        <p style="text-align: center;">
+            <img src="<?php echo esc_url($icons_url . rawurlencode($default_icon)); ?>" alt="" style="width: 48px; height: 48px;">
+        </p>
+    <?php endif; ?>
+
+    <p class="description">
+        <?php _e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?>
+    </p>
+    <?php
+}
+
+/**
+ * Save Edition settings meta box data
+ *
+ * @param int $post_id The post ID
+ */
+function wp_art_routes_save_edition_settings($post_id)
+{
+    // Verify nonce
+    if (!isset($_POST['edition_settings_nonce']) || !wp_verify_nonce($_POST['edition_settings_nonce'], 'save_edition_settings')) {
+        return;
+    }
+
+    // Check autosave
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Check permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Save default location icon
+    if (isset($_POST['edition_default_location_icon'])) {
+        $icon = $_POST['edition_default_location_icon'];
+
+        // Validate icon exists in available icons
+        if (empty($icon)) {
+            delete_post_meta($post_id, '_edition_default_location_icon');
+        } else {
+            $available_icons = wp_art_routes_get_available_icons();
+            if (in_array($icon, $available_icons, true)) {
+                update_post_meta($post_id, '_edition_default_location_icon', $icon);
+            }
+        }
+    }
+}
+add_action('save_post_edition', 'wp_art_routes_save_edition_settings');
 
 /**
  * Save Edition terminology meta box data

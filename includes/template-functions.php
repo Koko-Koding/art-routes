@@ -656,13 +656,16 @@ function wp_art_routes_get_edition_artworks($edition_id)
 
     $result = [];
 
+    // Get edition default icon for fallback
+    $edition_default_icon = get_post_meta($edition_id, '_edition_default_location_icon', true);
+
     foreach ($artworks as $artwork) {
         $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then fall back to default location icon setting
+            // Get icon information - prefer icon field, then edition default, then global default
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
             $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
@@ -670,8 +673,11 @@ function wp_art_routes_get_edition_artworks($edition_id)
             if (!empty($icon_filename)) {
                 // Build URL from filename (rawurlencode handles spaces in filenames)
                 $icon_url = $icons_url . rawurlencode($icon_filename);
+            } elseif (!empty($edition_default_icon)) {
+                // Use edition default icon
+                $icon_url = $icons_url . rawurlencode($edition_default_icon);
             } else {
-                // Check for default location icon setting
+                // Fall back to global default location icon setting
                 $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
                 if (!empty($default_location_icon)) {
                     $icon_url = $icons_url . rawurlencode($default_location_icon);

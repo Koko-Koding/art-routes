@@ -369,9 +369,24 @@ function wp_art_routes_dashboard_get_items()
         'order' => 'ASC',
     ]);
 
+    // Get edition default icon for fallback
+    $edition_default_icon = get_post_meta($edition_id, '_edition_default_location_icon', true);
+    $global_default_icon = get_option('wp_art_routes_default_location_icon', '');
+
     $locations = [];
     foreach ($locations_query->posts as $location) {
         $icon = get_post_meta($location->ID, '_artwork_icon', true);
+
+        // Build icon URL with fallback chain: location icon → edition default → global default
+        $icon_url = '';
+        if (!empty($icon)) {
+            $icon_url = $icons_url . rawurlencode($icon);
+        } elseif (!empty($edition_default_icon)) {
+            $icon_url = $icons_url . rawurlencode($edition_default_icon);
+        } elseif (!empty($global_default_icon)) {
+            $icon_url = $icons_url . rawurlencode($global_default_icon);
+        }
+
         $locations[] = [
             'id' => $location->ID,
             'title' => $location->post_title,
@@ -380,7 +395,7 @@ function wp_art_routes_dashboard_get_items()
             'latitude' => get_post_meta($location->ID, '_artwork_latitude', true),
             'longitude' => get_post_meta($location->ID, '_artwork_longitude', true),
             'icon' => $icon,
-            'icon_url' => $icon ? $icons_url . rawurlencode($icon) : '',
+            'icon_url' => $icon_url,
             'edit_url' => get_edit_post_link($location->ID, 'raw'),
         ];
     }
