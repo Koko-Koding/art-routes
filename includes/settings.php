@@ -258,7 +258,6 @@ function wp_art_routes_render_general_tab() {
                     <?php
                     $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
                     $available_icons = wp_art_routes_get_available_icons();
-                    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
                     ?>
                     <select name="wp_art_routes_default_location_icon" id="wp_art_routes_default_location_icon">
                         <option value=""><?php esc_html_e('No default icon (gray circle)', 'wp-art-routes'); ?></option>
@@ -270,7 +269,7 @@ function wp_art_routes_render_general_tab() {
                     </select>
                     <?php if (!empty($default_location_icon)) : ?>
                         <span style="margin-left: 10px; vertical-align: middle;">
-                            <img src="<?php echo esc_url($icons_url . $default_location_icon); ?>" alt="" style="width: 24px; height: 24px; vertical-align: middle;">
+                            <img src="<?php echo esc_url(wp_art_routes_get_icon_url($default_location_icon)); ?>" alt="" style="width: 24px; height: 24px; vertical-align: middle;">
                         </span>
                     <?php endif; ?>
                     <p class="description">

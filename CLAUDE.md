@@ -204,7 +204,7 @@ Located at Editions → Dashboard (`includes/edition-dashboard.php`):
 **Features:**
 - Overview map showing all edition content (routes as polylines, locations/info points as markers)
 - Draft items shown at 50% opacity on map
-- Collapsible sections for Routes, Locations, Info Points
+- Collapsible sections for Routes, Locations, Info Points, Edition Settings
 - Inline editing for title, number, coordinates
 - Status toggle (click badge to publish/draft)
 - Publish/Draft toggle buttons in each row for quick status changes
@@ -212,15 +212,22 @@ Located at Editions → Dashboard (`includes/edition-dashboard.php`):
 - Bulk actions: publish, draft, delete selected
 - Quick selection: Select All, Select None, Select Drafts
 
+**Edition Settings Section:**
+- Event dates (start/end)
+- Default location icon with live preview
+- Terminology overrides (Route, Location, Info Point, Creator - singular/plural)
+- AJAX-based save without page reload
+
 **JavaScript:** `assets/js/edition-dashboard.js`
 **CSS:** `assets/css/edition-dashboard.css`
 
 **AJAX Endpoints:**
 | Action | Purpose |
 |--------|---------|
-| `wp_art_routes_dashboard_get_items` | Fetch all routes/locations/info points for edition (including drafts) |
+| `wp_art_routes_dashboard_get_items` | Fetch all routes/locations/info points/settings for edition |
 | `wp_art_routes_dashboard_update_item` | Update single field (title, status, number, lat, lng, icon) |
 | `wp_art_routes_dashboard_bulk_action` | Bulk publish/draft/delete |
+| `wp_art_routes_dashboard_save_settings` | Save edition settings (dates, icon, terminology) |
 
 ### Core PHP Files (includes/)
 
@@ -333,9 +340,10 @@ Settings are stored in `wp_art_routes_terminology` option:
 ]
 ```
 
-Settings page has two tabs:
+Settings page has three tabs:
 - **General** - Default route ID, location tracking toggle, default location icon
 - **Terminology** - Global label customization (singular/plural for each type)
+- **Custom Icons** - Upload custom SVG/PNG/JPG/WebP icons, manage uploaded icons
 
 Additional settings stored separately:
 - `wp_art_routes_default_location_icon` - Default icon filename for locations without icons (used as fallback for imported locations)
@@ -373,15 +381,20 @@ Additional settings stored separately:
 - `_edition_terminology` - Serialized array of terminology overrides
 - `_edition_start_date` - Event start date (Y-m-d)
 - `_edition_end_date` - Event end date (Y-m-d)
+- `_edition_default_location_icon` - Default icon filename for locations in this edition
 
 ## Icon System
 
-Icons are stored in `assets/icons/`. The system supports:
-- Built-in SVG icons (filtered by configurable prefix)
-- Custom uploaded icons (stored in `wp-content/uploads/wp-art-routes-icons/`)
+The plugin supports two sources of icons:
+- **Built-in icons:** SVG files in `assets/icons/`
+- **Custom uploaded icons:** SVG/PNG/JPG/WebP files in `wp-content/uploads/wp-art-routes-icons/`
+
+Custom icons can be uploaded via Settings → Custom Icons tab. SVG files are sanitized to prevent XSS attacks (`class-svg-sanitizer.php`).
+
+**Always use `wp_art_routes_get_icon_url()` for icon URLs** - it handles both built-in and custom icons correctly.
 
 **Icon Fallback Logic:**
-- **Locations:** Uses `_artwork_icon` meta → falls back to `wp_art_routes_default_location_icon` setting → no icon (gray circle)
+- **Locations:** Uses `_artwork_icon` meta → edition default (`_edition_default_location_icon`) → global default (`wp_art_routes_default_location_icon`) → no icon (gray circle)
 - **Info Points:** Uses `_info_point_icon` meta → falls back to `_info_point_icon_url` (legacy) → falls back to `WB plattegrond-Informatie.svg`
 
 ```php

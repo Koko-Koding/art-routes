@@ -497,19 +497,13 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_artwork_icon', true);
 
-    // Get available SVG icons from the assets/icons directory
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
-    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-    $available_icons = [];
+    // Get available icons (includes both built-in and custom uploaded)
+    $available_icons = wp_art_routes_get_available_icons();
 
-    if (is_dir($icons_dir)) {
-        $files = scandir($icons_dir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
-                $available_icons[] = $file;
-            }
-        }
-        sort($available_icons);
+    // Build icon URL map for JavaScript
+    $icon_urls = [];
+    foreach ($available_icons as $icon_file) {
+        $icon_urls[$icon_file] = wp_art_routes_get_icon_url($icon_file);
     }
 
 ?>
@@ -522,22 +516,18 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
 
         <select id="artwork_icon_select" name="artwork_icon" style="width: 100%;">
             <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
-            <?php foreach ($available_icons as $icon_file) :
-                $icon_name = pathinfo($icon_file, PATHINFO_FILENAME);
-                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
-                $display_name = ucwords(trim($display_name));
-            ?>
+            <?php foreach ($available_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
-                    <?php echo esc_html($display_name); ?> (<?php echo esc_html($icon_file); ?>)
+                    <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?> (<?php echo esc_html($icon_file); ?>)
                 </option>
             <?php endforeach; ?>
         </select>
 
         <div id="icon-preview-container" style="margin-top: 15px;">
-            <?php if ($selected_icon && in_array($selected_icon, $available_icons)) : ?>
+            <?php if ($selected_icon && in_array($selected_icon, $available_icons, true)) : ?>
                 <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                    <img id="icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
+                    <img id="icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
                         alt="<?php echo esc_attr($selected_icon); ?>" />
                 </div>
@@ -554,16 +544,15 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
 
     <script>
         jQuery(document).ready(function($) {
-            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
+            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
 
             $('#artwork_icon_select').on('change', function() {
                 const selectedIcon = $(this).val();
                 const $previewContainer = $('#icon-preview');
 
-                if (selectedIcon) {
-                    const iconUrl = iconsUrl + selectedIcon;
+                if (selectedIcon && iconUrls[selectedIcon]) {
                     $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrl).attr('alt', selectedIcon);
+                    $previewContainer.find('img').attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
                 } else {
                     $previewContainer.hide();
                 }
@@ -587,19 +576,13 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_info_point_icon', true);
 
-    // Get available SVG icons from the assets/icons directory
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
-    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-    $available_icons = [];
+    // Get available icons (includes both built-in and custom uploaded)
+    $available_icons = wp_art_routes_get_available_icons();
 
-    if (is_dir($icons_dir)) {
-        $files = scandir($icons_dir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
-                $available_icons[] = $file;
-            }
-        }
-        sort($available_icons);
+    // Build icon URL map for JavaScript
+    $icon_urls = [];
+    foreach ($available_icons as $icon_file) {
+        $icon_urls[$icon_file] = wp_art_routes_get_icon_url($icon_file);
     }
 
 ?>
@@ -612,22 +595,18 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
 
         <select id="info_point_icon_select" name="info_point_icon" style="width: 100%;">
             <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
-            <?php foreach ($available_icons as $icon_file) :
-                $icon_name = pathinfo($icon_file, PATHINFO_FILENAME);
-                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
-                $display_name = ucwords(trim($display_name));
-            ?>
+            <?php foreach ($available_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
-                    <?php echo esc_html($display_name); ?> (<?php echo esc_html($icon_file); ?>)
+                    <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?> (<?php echo esc_html($icon_file); ?>)
                 </option>
             <?php endforeach; ?>
         </select>
 
         <div id="icon-preview-container" style="margin-top: 15px;">
-            <?php if ($selected_icon && in_array($selected_icon, $available_icons)) : ?>
+            <?php if ($selected_icon && in_array($selected_icon, $available_icons, true)) : ?>
                 <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                    <img id="icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
+                    <img id="icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
                         alt="<?php echo esc_attr($selected_icon); ?>" />
                 </div>
@@ -644,16 +623,15 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
 
     <script>
         jQuery(document).ready(function($) {
-            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
+            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
 
             $('#info_point_icon_select').on('change', function() {
                 const selectedIcon = $(this).val();
                 const $previewContainer = $('#icon-preview');
 
-                if (selectedIcon) {
-                    const iconUrl = iconsUrl + selectedIcon;
+                if (selectedIcon && iconUrls[selectedIcon]) {
                     $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrl).attr('alt', selectedIcon);
+                    $previewContainer.find('img').attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
                 } else {
                     $previewContainer.hide();
                 }
@@ -677,13 +655,18 @@ function wp_art_routes_render_route_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_route_icon', true);
 
-    // Only allow these three icons
+    // Only allow these three icons (built-in route icons)
     $allowed_icons = [
         'WB plattegrond-39.svg',
         'WB plattegrond-40.svg',
         'WB plattegrond-41.svg',
     ];
-    $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
+
+    // Build icon URL map for JavaScript
+    $icon_urls = [];
+    foreach ($allowed_icons as $icon_file) {
+        $icon_urls[$icon_file] = wp_art_routes_get_icon_url($icon_file);
+    }
 
 ?>
     <div id="route-icon-meta-box">
@@ -696,15 +679,15 @@ function wp_art_routes_render_route_icon_meta_box($post)
             <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
             <?php foreach ($allowed_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
-                    <?php echo esc_html($icon_file); ?>
+                    <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?>
                 </option>
             <?php endforeach; ?>
         </select>
         <div id="route-icon-preview-container" style="margin-top: 15px;">
-            <?php if ($selected_icon && in_array($selected_icon, $allowed_icons)) : ?>
+            <?php if ($selected_icon && in_array($selected_icon, $allowed_icons, true)) : ?>
                 <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
-                    <img id="route-icon-preview" src="<?php echo esc_url($icons_url . $selected_icon); ?>"
+                    <img id="route-icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
                         alt="<?php echo esc_attr($selected_icon); ?>" />
                 </div>
@@ -720,14 +703,13 @@ function wp_art_routes_render_route_icon_meta_box($post)
     </div>
     <script>
         jQuery(document).ready(function($) {
-            const iconsUrl = '<?php echo esc_js($icons_url); ?>';
+            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
             $('#route_icon_select').on('change', function() {
                 const selectedIcon = $(this).val();
                 const $previewContainer = $('#route-icon-preview');
-                if (selectedIcon) {
-                    const iconUrl = iconsUrl + selectedIcon;
+                if (selectedIcon && iconUrls[selectedIcon]) {
                     $previewContainer.show();
-                    $previewContainer.attr('src', iconUrl).attr('alt', selectedIcon);
+                    $previewContainer.attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
                 } else {
                     $previewContainer.hide();
                 }

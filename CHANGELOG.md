@@ -4,6 +4,26 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.31.0] - 2026-02-03
+
+### Added
+
+- **Edition Settings in Dashboard**: The Edition Dashboard now includes a collapsible "Edition Settings" section with:
+  - Event dates (start and end date)
+  - Default location icon selector with live preview
+  - Terminology overrides (Route, Location, Info Point, Creator - singular/plural)
+- Settings changes are saved via AJAX without page reload
+- All settings previously only available on the WordPress edit page are now accessible from the dashboard
+
+## [wenb-1.30.1] - 2026-02-03
+
+### Fixed
+
+- **Custom Icons 404 Error**: Fixed custom uploaded icons returning 404 errors on maps
+- Centralized all icon URL generation to use `wp_art_routes_get_icon_url()` which properly checks both custom uploads directory and built-in icons directory
+- Updated icon URL building in: template-functions.php, edition-dashboard.php, ajax-handlers.php, editions.php, post-types.php, meta-boxes.php, settings.php
+- Icon selection dropdowns now include custom uploaded icons in all admin areas (artwork, info point, and edition settings)
+
 ## [wenb-1.30.0] - 2026-02-03
 
 ### Added

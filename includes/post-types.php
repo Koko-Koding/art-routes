@@ -304,8 +304,7 @@ function wp_art_routes_register_artwork_rest_fields()
         'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_artwork_icon', true);
             if (!empty($icon_filename)) {
-                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-                return $icons_url . $icon_filename;
+                return wp_art_routes_get_icon_url($icon_filename);
             }
             // No default icon for artworks - they will use their featured image or a generic marker
             return '';
@@ -395,8 +394,7 @@ function wp_art_routes_register_information_point_rest_fields()
         'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_info_point_icon', true);
             if (!empty($icon_filename)) {
-                $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-                return $icons_url . $icon_filename;
+                return wp_art_routes_get_icon_url($icon_filename);
             }
             // Fallback to old icon_url field for backward compatibility
             $old_icon_url = get_post_meta($post['id'], '_info_point_icon_url', true);
@@ -404,8 +402,7 @@ function wp_art_routes_register_information_point_rest_fields()
                 return $old_icon_url;
             }
             // Default icon if no icon is set
-            $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
-            return $icons_url . 'WB plattegrond-Informatie.svg';
+            return wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
         },
         'schema' => [
             'description' => __('Information point icon URL', 'wp-art-routes'),

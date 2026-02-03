@@ -85,7 +85,7 @@ function wp_art_routes_enqueue_dashboard_assets($hook)
             'confirmDeleteSingle' => __('Are you sure you want to delete this item? This cannot be undone.', 'wp-art-routes'),
             'confirmDelete' => __('Are you sure you want to delete the selected items? This cannot be undone.', 'wp-art-routes'),
             'saving' => __('Saving...', 'wp-art-routes'),
-            'saved' => __('Saved', 'wp-art-routes'),
+            'saved' => __('Saved!', 'wp-art-routes'),
             'error' => __('Error saving. Please try again.', 'wp-art-routes'),
             'noItemsSelected' => __('Please select at least one item.', 'wp-art-routes'),
             'publish' => __('Publish', 'wp-art-routes'),
@@ -101,6 +101,8 @@ function wp_art_routes_enqueue_dashboard_assets($hook)
             'toDraft' => __('→ Draft', 'wp-art-routes'),
             'toPublish' => __('→ Publish', 'wp-art-routes'),
             'setToDraft' => __('Set to Draft', 'wp-art-routes'),
+            'useGlobalDefault' => __('Use global default', 'wp-art-routes'),
+            'settingsSaved' => __('Settings saved successfully.', 'wp-art-routes'),
         ),
     ));
 }
@@ -272,6 +274,107 @@ function wp_art_routes_render_dashboard_page()
                     </table>
                 </div>
             </div>
+
+            <!-- Edition Settings section -->
+            <div id="edition-settings-section" class="dashboard-section collapsible collapsed">
+                <h2 class="section-header">
+                    <span class="toggle-icon">▶</span>
+                    <span class="section-title"><?php _e('Edition Settings', 'wp-art-routes'); ?></span>
+                </h2>
+                <div class="section-content" style="display: none;">
+                    <form id="edition-settings-form">
+                        <!-- Event Dates -->
+                        <div class="settings-group">
+                            <h3><?php _e('Event Dates', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php _e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?></p>
+                            <table class="form-table">
+                                <tr>
+                                    <th><label for="edition_start_date"><?php _e('Start Date:', 'wp-art-routes'); ?></label></th>
+                                    <td><input type="date" id="edition_start_date" name="start_date" class="regular-text" /></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="edition_end_date"><?php _e('End Date:', 'wp-art-routes'); ?></label></th>
+                                    <td><input type="date" id="edition_end_date" name="end_date" class="regular-text" /></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Default Location Icon -->
+                        <div class="settings-group">
+                            <h3><?php _e('Default Location Icon', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php _e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?></p>
+                            <table class="form-table">
+                                <tr>
+                                    <th><label for="edition_default_icon"><?php _e('Icon:', 'wp-art-routes'); ?></label></th>
+                                    <td>
+                                        <select id="edition_default_icon" name="default_location_icon" style="max-width: 300px;">
+                                            <option value=""><?php _e('Use global default', 'wp-art-routes'); ?></option>
+                                            <!-- Options populated via JavaScript -->
+                                        </select>
+                                        <span id="edition_default_icon_preview" style="margin-left: 10px; vertical-align: middle;"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Terminology Overrides -->
+                        <div class="settings-group">
+                            <h3><?php _e('Terminology Overrides', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php _e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?></p>
+                            <table class="form-table terminology-table">
+                                <thead>
+                                    <tr>
+                                        <th><?php _e('Type', 'wp-art-routes'); ?></th>
+                                        <th><?php _e('Singular', 'wp-art-routes'); ?></th>
+                                        <th><?php _e('Plural', 'wp-art-routes'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <strong><?php _e('Route', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php _e('The main paths users follow', 'wp-art-routes'); ?></p>
+                                        </td>
+                                        <td><input type="text" name="terminology[route][singular]" id="term_route_singular" class="regular-text" /></td>
+                                        <td><input type="text" name="terminology[route][plural]" id="term_route_plural" class="regular-text" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong><?php _e('Location', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php _e('Main content items (artworks, performances, etc.)', 'wp-art-routes'); ?></p>
+                                        </td>
+                                        <td><input type="text" name="terminology[location][singular]" id="term_location_singular" class="regular-text" /></td>
+                                        <td><input type="text" name="terminology[location][plural]" id="term_location_plural" class="regular-text" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong><?php _e('Info Point', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php _e('Information markers along routes', 'wp-art-routes'); ?></p>
+                                        </td>
+                                        <td><input type="text" name="terminology[info_point][singular]" id="term_info_point_singular" class="regular-text" /></td>
+                                        <td><input type="text" name="terminology[info_point][plural]" id="term_info_point_plural" class="regular-text" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong><?php _e('Creator', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php _e('People/entities associated with locations', 'wp-art-routes'); ?></p>
+                                        </td>
+                                        <td><input type="text" name="terminology[creator][singular]" id="term_creator_singular" class="regular-text" /></td>
+                                        <td><input type="text" name="terminology[creator][plural]" id="term_creator_plural" class="regular-text" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p class="submit">
+                            <button type="submit" class="button button-primary" id="save-edition-settings">
+                                <?php _e('Save Settings', 'wp-art-routes'); ?>
+                            </button>
+                            <span id="settings-save-status" style="margin-left: 10px;"></span>
+                        </p>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <div id="no-edition-message" <?php echo $selected_edition_id ? 'style="display: none;"' : ''; ?>>
@@ -309,31 +412,20 @@ function wp_art_routes_dashboard_get_items()
         wp_send_json_error(['message' => __('Invalid edition.', 'wp-art-routes')]);
     }
 
-    // Get icons directory info
-    $icons_dir = plugin_dir_path(dirname(__FILE__)) . 'assets/icons/';
-    $icons_url = plugins_url('assets/icons/', dirname(__FILE__));
-
-    // Get available icons
+    // Get available icons (includes both built-in and custom uploaded icons)
+    $icon_files = wp_art_routes_get_available_icons();
     $available_icons = [];
-    if (is_dir($icons_dir)) {
-        $files = scandir($icons_dir);
-        foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'svg') {
-                $icon_name = pathinfo($file, PATHINFO_FILENAME);
-                $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
-                $display_name = ucwords(trim($display_name));
-                $available_icons[] = [
-                    'filename' => $file,
-                    'display_name' => $display_name,
-                    'url' => $icons_url . $file,
-                ];
-            }
-        }
-        // Sort by display name
-        usort($available_icons, function ($a, $b) {
-            return strcmp($a['display_name'], $b['display_name']);
-        });
+    foreach ($icon_files as $file) {
+        $available_icons[] = [
+            'filename' => $file,
+            'display_name' => wp_art_routes_get_icon_display_name($file),
+            'url' => wp_art_routes_get_icon_url($file),
+        ];
     }
+    // Sort by display name
+    usort($available_icons, function ($a, $b) {
+        return strcmp($a['display_name'], $b['display_name']);
+    });
 
     // Query routes for this edition
     $routes_query = new WP_Query([
@@ -380,11 +472,11 @@ function wp_art_routes_dashboard_get_items()
         // Build icon URL with fallback chain: location icon → edition default → global default
         $icon_url = '';
         if (!empty($icon)) {
-            $icon_url = $icons_url . rawurlencode($icon);
+            $icon_url = wp_art_routes_get_icon_url($icon);
         } elseif (!empty($edition_default_icon)) {
-            $icon_url = $icons_url . rawurlencode($edition_default_icon);
+            $icon_url = wp_art_routes_get_icon_url($edition_default_icon);
         } elseif (!empty($global_default_icon)) {
-            $icon_url = $icons_url . rawurlencode($global_default_icon);
+            $icon_url = wp_art_routes_get_icon_url($global_default_icon);
         }
 
         $locations[] = [
@@ -421,10 +513,22 @@ function wp_art_routes_dashboard_get_items()
             'latitude' => get_post_meta($info_point->ID, '_artwork_latitude', true),
             'longitude' => get_post_meta($info_point->ID, '_artwork_longitude', true),
             'icon' => $icon,
-            'icon_url' => $icon ? $icons_url . rawurlencode($icon) : '',
+            'icon_url' => $icon ? wp_art_routes_get_icon_url($icon) : '',
             'edit_url' => get_edit_post_link($info_point->ID, 'raw'),
         ];
     }
+
+    // Get edition settings
+    $terminology = get_post_meta($edition_id, '_edition_terminology', true);
+    if (!is_array($terminology)) {
+        $terminology = [];
+    }
+    $start_date = get_post_meta($edition_id, '_edition_start_date', true);
+    $end_date = get_post_meta($edition_id, '_edition_end_date', true);
+    $default_location_icon = get_post_meta($edition_id, '_edition_default_location_icon', true);
+
+    // Get global terminology for placeholders
+    $global_terminology = wp_art_routes_get_global_terminology();
 
     // Build response
     wp_send_json_success([
@@ -439,6 +543,13 @@ function wp_art_routes_dashboard_get_items()
         'locations' => $locations,
         'info_points' => $info_points,
         'available_icons' => $available_icons,
+        'settings' => [
+            'start_date' => $start_date,
+            'end_date' => $end_date,
+            'default_location_icon' => $default_location_icon,
+            'terminology' => $terminology,
+            'global_terminology' => $global_terminology,
+        ],
     ]);
 }
 add_action('wp_ajax_wp_art_routes_dashboard_get_items', 'wp_art_routes_dashboard_get_items');
@@ -560,9 +671,8 @@ function wp_art_routes_dashboard_update_item()
             update_post_meta($post_id, $meta_key, $sanitized_value);
 
             // Return icon data in response
-            $icons_url = plugins_url('assets/icons/', dirname(__FILE__));
             $response_data['icon'] = $sanitized_value;
-            $response_data['icon_url'] = $sanitized_value ? $icons_url . rawurlencode($sanitized_value) : '';
+            $response_data['icon_url'] = $sanitized_value ? wp_art_routes_get_icon_url($sanitized_value) : '';
             $response_data['icon_display_name'] = $sanitized_value ? wp_art_routes_get_icon_display_name($sanitized_value) : '';
             break;
 
@@ -699,3 +809,76 @@ function wp_art_routes_dashboard_bulk_action()
     ]);
 }
 add_action('wp_ajax_wp_art_routes_dashboard_bulk_action', 'wp_art_routes_dashboard_bulk_action');
+
+/**
+ * AJAX handler for saving edition settings
+ */
+function wp_art_routes_dashboard_save_settings()
+{
+    // Verify nonce
+    if (!check_ajax_referer('wp_art_routes_dashboard', 'nonce', false)) {
+        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+    }
+
+    // Check capabilities
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => __('You do not have permission to save settings.', 'wp-art-routes')]);
+    }
+
+    // Get and validate edition ID
+    $edition_id = isset($_POST['edition_id']) ? absint($_POST['edition_id']) : 0;
+
+    if (!$edition_id) {
+        wp_send_json_error(['message' => __('No edition selected.', 'wp-art-routes')]);
+    }
+
+    // Verify edition exists and is correct post type
+    $edition = get_post($edition_id);
+    if (!$edition || $edition->post_type !== 'edition') {
+        wp_send_json_error(['message' => __('Invalid edition.', 'wp-art-routes')]);
+    }
+
+    // Save event dates
+    $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
+    $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : '';
+
+    update_post_meta($edition_id, '_edition_start_date', $start_date);
+    update_post_meta($edition_id, '_edition_end_date', $end_date);
+
+    // Save default location icon
+    $default_icon = isset($_POST['default_location_icon']) ? sanitize_text_field($_POST['default_location_icon']) : '';
+
+    // Validate icon exists if provided
+    if (!empty($default_icon)) {
+        $available_icons = wp_art_routes_get_available_icons();
+        if (!in_array($default_icon, $available_icons, true)) {
+            $default_icon = ''; // Reset if invalid
+        }
+    }
+    update_post_meta($edition_id, '_edition_default_location_icon', $default_icon);
+
+    // Save terminology overrides
+    $terminology = isset($_POST['terminology']) ? $_POST['terminology'] : [];
+    $sanitized_terminology = [];
+
+    $allowed_types = ['route', 'location', 'info_point', 'creator'];
+    $allowed_fields = ['singular', 'plural'];
+
+    foreach ($allowed_types as $type) {
+        if (isset($terminology[$type]) && is_array($terminology[$type])) {
+            $sanitized_terminology[$type] = [];
+            foreach ($allowed_fields as $field) {
+                if (isset($terminology[$type][$field])) {
+                    $sanitized_terminology[$type][$field] = sanitize_text_field($terminology[$type][$field]);
+                }
+            }
+        }
+    }
+
+    update_post_meta($edition_id, '_edition_terminology', $sanitized_terminology);
+
+    wp_send_json_success([
+        'message' => __('Settings saved successfully.', 'wp-art-routes'),
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_dashboard_save_settings', 'wp_art_routes_dashboard_save_settings');

@@ -161,16 +161,14 @@ function wp_art_routes_get_all_artworks()
             // Get icon information - prefer icon field, then fall back to default location icon setting
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
-            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
-                // Build URL from filename (rawurlencode handles spaces in filenames)
-                $icon_url = $icons_url . rawurlencode($icon_filename);
+                $icon_url = wp_art_routes_get_icon_url($icon_filename);
             } else {
                 // Check for default location icon setting
                 $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
                 if (!empty($default_location_icon)) {
-                    $icon_url = $icons_url . rawurlencode($default_location_icon);
+                    $icon_url = wp_art_routes_get_icon_url($default_location_icon);
                 }
             }
 
@@ -185,7 +183,7 @@ function wp_art_routes_get_all_artworks()
                 'number' => get_post_meta($artwork->ID, '_artwork_number', true),
                 'location' => get_post_meta($artwork->ID, '_artwork_location', true),
                 'permalink' => get_permalink($artwork->ID),
-                'icon_url' => $icon_url ? esc_url($icon_url) : '', // Add icon URL support
+                'icon_url' => $icon_url ? esc_url($icon_url) : '',
                 'wheelchair_accessible' => get_post_meta($artwork->ID, '_wheelchair_accessible', true),
                 'stroller_accessible' => get_post_meta($artwork->ID, '_stroller_accessible', true),
             ];
@@ -254,18 +252,16 @@ function wp_art_routes_get_all_information_points()
             // Get icon information - prefer new icon field, fallback to old icon_url, then default
             $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
             $icon_url = '';
-            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
-                // Build URL from filename (rawurlencode handles spaces in filenames)
-                $icon_url = $icons_url . rawurlencode($icon_filename);
+                $icon_url = wp_art_routes_get_icon_url($icon_filename);
             } else {
                 // Fallback to old icon_url field for backward compatibility
                 $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
 
                 // If still no icon, use default
                 if (empty($icon_url)) {
-                    $icon_url = $icons_url . rawurlencode('WB plattegrond-Informatie.svg');
+                    $icon_url = wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
                 }
             }
 
@@ -273,11 +269,11 @@ function wp_art_routes_get_all_information_points()
                 'id' => $info_post->ID,
                 'title' => $info_post->post_title,
                 'excerpt' => has_excerpt($info_post->ID) ? get_the_excerpt($info_post->ID) : wp_trim_words($info_post->post_content, 30, '...'),
-                'image_url' => get_the_post_thumbnail_url($info_post->ID, 'medium'), // Use medium size for popup
-                'permalink' => get_permalink($info_post->ID), // Link to the info point post itself
+                'image_url' => get_the_post_thumbnail_url($info_post->ID, 'medium'),
+                'permalink' => get_permalink($info_post->ID),
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
-                'icon_url' => $icon_url, // Support both new icon field and old icon_url field
+                'icon_url' => $icon_url,
             ];
         }
     }
@@ -668,19 +664,16 @@ function wp_art_routes_get_edition_artworks($edition_id)
             // Get icon information - prefer icon field, then edition default, then global default
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
-            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
-                // Build URL from filename (rawurlencode handles spaces in filenames)
-                $icon_url = $icons_url . rawurlencode($icon_filename);
+                $icon_url = wp_art_routes_get_icon_url($icon_filename);
             } elseif (!empty($edition_default_icon)) {
-                // Use edition default icon
-                $icon_url = $icons_url . rawurlencode($edition_default_icon);
+                $icon_url = wp_art_routes_get_icon_url($edition_default_icon);
             } else {
                 // Fall back to global default location icon setting
                 $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
                 if (!empty($default_location_icon)) {
-                    $icon_url = $icons_url . rawurlencode($default_location_icon);
+                    $icon_url = wp_art_routes_get_icon_url($default_location_icon);
                 }
             }
 
@@ -765,18 +758,17 @@ function wp_art_routes_get_edition_information_points($edition_id)
             // Get icon information - prefer new icon field, fallback to old icon_url, then default
             $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
             $icon_url = '';
-            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
-                // Build URL from filename (rawurlencode handles spaces in filenames)
-                $icon_url = $icons_url . rawurlencode($icon_filename);
+                // Use centralized function that handles both built-in and custom icons
+                $icon_url = wp_art_routes_get_icon_url($icon_filename);
             } else {
                 // Fallback to old icon_url field for backward compatibility
                 $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
 
                 // If still no icon, use default
                 if (empty($icon_url)) {
-                    $icon_url = $icons_url . rawurlencode('WB plattegrond-Informatie.svg');
+                    $icon_url = wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
                 }
             }
 

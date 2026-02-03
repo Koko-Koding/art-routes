@@ -326,7 +326,6 @@ function wp_art_routes_render_edition_settings_meta_box($post)
     // Get saved default icon
     $default_icon = get_post_meta($post->ID, '_edition_default_location_icon', true);
     $available_icons = wp_art_routes_get_available_icons();
-    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
     // Get global default for fallback label
     $global_default = get_option('wp_art_routes_default_location_icon', '');
@@ -354,7 +353,7 @@ function wp_art_routes_render_edition_settings_meta_box($post)
 
     <?php if (!empty($default_icon)) : ?>
         <p style="text-align: center;">
-            <img src="<?php echo esc_url($icons_url . rawurlencode($default_icon)); ?>" alt="" style="width: 48px; height: 48px;">
+            <img src="<?php echo esc_url(wp_art_routes_get_icon_url($default_icon)); ?>" alt="" style="width: 48px; height: 48px;">
         </p>
     <?php endif; ?>
 

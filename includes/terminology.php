@@ -315,9 +315,10 @@ function wp_art_routes_get_custom_icons_url() {
  * Get the full URL for an icon file
  *
  * Handles both built-in icons and custom uploaded icons.
+ * Automatically URL-encodes the filename for filenames with spaces.
  *
  * @param string $filename The icon filename
- * @return string The full URL to the icon
+ * @return string The full URL to the icon (URL-encoded)
  */
 function wp_art_routes_get_icon_url($filename) {
     if (empty($filename)) {
@@ -330,11 +331,11 @@ function wp_art_routes_get_icon_url($filename) {
     $custom_icons_url = $upload_dir['baseurl'] . '/wp-art-routes-icons/';
 
     if (file_exists($custom_icons_dir . $filename)) {
-        return $custom_icons_url . $filename;
+        return $custom_icons_url . rawurlencode($filename);
     }
 
     // Default to built-in icons
-    return plugin_dir_url(dirname(__FILE__)) . 'assets/icons/' . $filename;
+    return plugin_dir_url(dirname(__FILE__)) . 'assets/icons/' . rawurlencode($filename);
 }
 
 /**

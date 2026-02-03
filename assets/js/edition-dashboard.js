@@ -12,6 +12,7 @@
         locations: [],
         infoPoints: [],
         availableIcons: [],
+        settings: null,
         map: null,
         mapLayers: {
             routes: null,
@@ -82,9 +83,11 @@
                     state.locations = response.data.locations;
                     state.infoPoints = response.data.info_points;
                     state.availableIcons = response.data.available_icons;
+                    state.settings = response.data.settings;
 
                     $viewFrontendLink.attr('href', state.edition.permalink).show();
                     renderTables();
+                    renderSettings();
                     initMap();
                 } else {
                     alert(response.data.message || wpArtRoutesDashboard.strings.error);
@@ -911,6 +914,143 @@
             // Default view (Netherlands)
             state.map.setView([52.1326, 5.2913], 7);
         }
+    }
+
+    /**
+     * Render edition settings form
+     */
+    function renderSettings() {
+        if (!state.settings) return;
+
+        const settings = state.settings;
+        const globalTerm = settings.global_terminology || {};
+        const editionTerm = settings.terminology || {};
+
+        // Populate dates
+        $('#edition_start_date').val(settings.start_date || '');
+        $('#edition_end_date').val(settings.end_date || '');
+
+        // Populate icon dropdown
+        const $iconSelect = $('#edition_default_icon');
+        $iconSelect.empty();
+        $iconSelect.append('<option value="">' + (wpArtRoutesDashboard.strings.useGlobalDefault || 'Use global default') + '</option>');
+
+        state.availableIcons.forEach(function(icon) {
+            const selected = icon.filename === settings.default_location_icon ? 'selected' : '';
+            $iconSelect.append(`<option value="${escapeHtml(icon.filename)}" ${selected}>${escapeHtml(icon.display_name)}</option>`);
+        });
+
+        // Update icon preview
+        updateIconPreview();
+
+        // Bind icon change event
+        $iconSelect.off('change').on('change', updateIconPreview);
+
+        // Populate terminology fields with placeholders from global
+        const termTypes = ['route', 'location', 'info_point', 'creator'];
+        const termFields = ['singular', 'plural'];
+
+        termTypes.forEach(function(type) {
+            termFields.forEach(function(field) {
+                const $input = $(`#term_${type}_${field}`);
+                const globalValue = globalTerm[type] ? globalTerm[type][field] || '' : '';
+                const editionValue = editionTerm[type] ? editionTerm[type][field] || '' : '';
+
+                $input.val(editionValue);
+                $input.attr('placeholder', globalValue);
+            });
+        });
+
+        // Bind form submit
+        $('#edition-settings-form').off('submit').on('submit', saveSettings);
+    }
+
+    /**
+     * Update icon preview
+     */
+    function updateIconPreview() {
+        const selectedIcon = $('#edition_default_icon').val();
+        const $preview = $('#edition_default_icon_preview');
+
+        if (selectedIcon) {
+            const iconData = state.availableIcons.find(i => i.filename === selectedIcon);
+            if (iconData && iconData.url) {
+                $preview.html(`<img src="${escapeHtml(iconData.url)}" alt="" style="width: 24px; height: 24px; vertical-align: middle;">`);
+            } else {
+                $preview.empty();
+            }
+        } else {
+            $preview.empty();
+        }
+    }
+
+    /**
+     * Save edition settings
+     */
+    function saveSettings(e) {
+        e.preventDefault();
+
+        const $form = $('#edition-settings-form');
+        const $submitBtn = $('#save-edition-settings');
+        const $status = $('#settings-save-status');
+
+        $submitBtn.prop('disabled', true);
+        $status.text(wpArtRoutesDashboard.strings.saving || 'Saving...');
+
+        // Collect form data
+        const formData = {
+            action: 'wp_art_routes_dashboard_save_settings',
+            nonce: wpArtRoutesDashboard.nonce,
+            edition_id: state.editionId,
+            start_date: $('#edition_start_date').val(),
+            end_date: $('#edition_end_date').val(),
+            default_location_icon: $('#edition_default_icon').val(),
+            terminology: {
+                route: {
+                    singular: $('#term_route_singular').val(),
+                    plural: $('#term_route_plural').val()
+                },
+                location: {
+                    singular: $('#term_location_singular').val(),
+                    plural: $('#term_location_plural').val()
+                },
+                info_point: {
+                    singular: $('#term_info_point_singular').val(),
+                    plural: $('#term_info_point_plural').val()
+                },
+                creator: {
+                    singular: $('#term_creator_singular').val(),
+                    plural: $('#term_creator_plural').val()
+                }
+            }
+        };
+
+        $.ajax({
+            url: wpArtRoutesDashboard.ajaxUrl,
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                $submitBtn.prop('disabled', false);
+                if (response.success) {
+                    $status.text(wpArtRoutesDashboard.strings.saved || 'Saved!').css('color', 'green');
+                    setTimeout(function() {
+                        $status.text('').css('color', '');
+                    }, 3000);
+
+                    // Update local state
+                    state.settings.start_date = formData.start_date;
+                    state.settings.end_date = formData.end_date;
+                    state.settings.default_location_icon = formData.default_location_icon;
+                    state.settings.terminology = formData.terminology;
+                } else {
+                    $status.text(response.data.message || wpArtRoutesDashboard.strings.error).css('color', 'red');
+                }
+            },
+            error: function() {
+                $submitBtn.prop('disabled', false);
+                $status.text(wpArtRoutesDashboard.strings.error).css('color', 'red');
+            }
+        });
     }
 
     $(document).ready(init);
