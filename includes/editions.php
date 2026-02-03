@@ -469,3 +469,76 @@ function wp_art_routes_edition_label($type, $plural = false, $edition_id = null)
 {
     return wp_art_routes_label($type, $plural, $edition_id);
 }
+
+/**
+ * AJAX handler to get content counts for editions
+ * Used by the delete confirmation modal
+ */
+function wp_art_routes_ajax_get_edition_content_counts() {
+    check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
+
+    if (!current_user_can('delete_posts')) {
+        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+    }
+
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+
+    if (empty($edition_ids)) {
+        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+    }
+
+    $counts = [
+        'routes' => 0,
+        'locations' => 0,
+        'info_points' => 0,
+    ];
+
+    // Count content for each edition (including drafts)
+    foreach ($edition_ids as $edition_id) {
+        // Routes
+        $routes = get_posts([
+            'post_type' => 'art_route',
+            'post_status' => ['publish', 'draft', 'pending', 'private'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        $counts['routes'] += count($routes);
+
+        // Locations (artworks)
+        $locations = get_posts([
+            'post_type' => 'artwork',
+            'post_status' => ['publish', 'draft', 'pending', 'private'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        $counts['locations'] += count($locations);
+
+        // Info Points
+        $info_points = get_posts([
+            'post_type' => 'information_point',
+            'post_status' => ['publish', 'draft', 'pending', 'private'],
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_key' => '_edition_id',
+            'meta_value' => $edition_id,
+        ]);
+        $counts['info_points'] += count($info_points);
+    }
+
+    // Get edition titles for display
+    $titles = [];
+    foreach ($edition_ids as $edition_id) {
+        $titles[] = get_the_title($edition_id);
+    }
+
+    wp_send_json_success([
+        'counts' => $counts,
+        'titles' => $titles,
+        'edition_ids' => $edition_ids,
+    ]);
+}
+add_action('wp_ajax_wp_art_routes_get_edition_content_counts', 'wp_art_routes_ajax_get_edition_content_counts');
