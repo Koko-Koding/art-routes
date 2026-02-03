@@ -471,6 +471,71 @@ function wp_art_routes_edition_label($type, $plural = false, $edition_id = null)
 }
 
 /**
+ * Enqueue assets for the Edition delete confirmation modal
+ *
+ * @param string $hook The current admin page hook.
+ */
+function wp_art_routes_enqueue_edition_delete_modal_assets($hook) {
+    // Only load on edition list table
+    if ($hook !== 'edit.php') {
+        return;
+    }
+
+    $screen = get_current_screen();
+    if (!$screen || $screen->post_type !== 'edition') {
+        return;
+    }
+
+    // Enqueue Thickbox
+    add_thickbox();
+
+    // Enqueue our CSS
+    wp_enqueue_style(
+        'wp-art-routes-edition-delete-modal',
+        plugins_url('assets/css/edition-delete-modal.css', dirname(__FILE__)),
+        [],
+        filemtime(plugin_dir_path(dirname(__FILE__)) . 'assets/css/edition-delete-modal.css')
+    );
+
+    // Enqueue our JS
+    wp_enqueue_script(
+        'wp-art-routes-edition-delete-modal',
+        plugins_url('assets/js/edition-delete-modal.js', dirname(__FILE__)),
+        ['jquery', 'thickbox'],
+        filemtime(plugin_dir_path(dirname(__FILE__)) . 'assets/js/edition-delete-modal.js'),
+        true
+    );
+
+    // Localize script
+    wp_localize_script('wp-art-routes-edition-delete-modal', 'wpArtRoutesEditionDelete', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('wp_art_routes_edition_delete'),
+        'strings' => [
+            'modalTitle' => __('Delete Edition', 'wp-art-routes'),
+            'deleteEdition' => __('Delete %s', 'wp-art-routes'),
+            'deleteEditions' => __('Delete %d editions', 'wp-art-routes'),
+            'containsContent' => __('This edition contains:', 'wp-art-routes'),
+            'noContent' => __('This edition has no linked content.', 'wp-art-routes'),
+            'whatToDo' => __('What would you like to do?', 'wp-art-routes'),
+            'deleteEditionOnly' => __('Delete Edition Only', 'wp-art-routes'),
+            'deleteEverything' => __('Delete Everything', 'wp-art-routes'),
+            'delete' => __('Delete', 'wp-art-routes'),
+            'cancel' => __('Cancel', 'wp-art-routes'),
+            'deleting' => __('Deleting...', 'wp-art-routes'),
+            'loading' => __('Loading...', 'wp-art-routes'),
+            'error' => __('An error occurred. Please try again.', 'wp-art-routes'),
+            'route' => __('Route', 'wp-art-routes'),
+            'routes' => __('Routes', 'wp-art-routes'),
+            'location' => __('Location', 'wp-art-routes'),
+            'locations' => __('Locations', 'wp-art-routes'),
+            'infoPoint' => __('Info Point', 'wp-art-routes'),
+            'infoPoints' => __('Info Points', 'wp-art-routes'),
+        ],
+    ]);
+}
+add_action('admin_enqueue_scripts', 'wp_art_routes_enqueue_edition_delete_modal_assets');
+
+/**
  * AJAX handler to get content counts for editions
  * Used by the delete confirmation modal
  */
