@@ -67,6 +67,16 @@ function wp_art_routes_register_settings() {
         ]
     );
 
+    register_setting(
+        'wp_art_routes_options',
+        'wp_art_routes_default_location_icon',
+        [
+            'type' => 'string',
+            'sanitize_callback' => 'sanitize_file_name',
+            'default' => '',
+        ]
+    );
+
     // Terminology settings
     register_setting(
         'wp_art_routes_terminology_options',
@@ -206,6 +216,36 @@ function wp_art_routes_render_general_tab() {
                         <?php _e('Enable location tracking for users', 'wp-art-routes'); ?>
                     </label>
                     <p class="description"><?php _e('When enabled, users will be prompted to share their location to track progress on routes.', 'wp-art-routes'); ?></p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="wp_art_routes_default_location_icon">
+                        <?php _e('Default Location Icon', 'wp-art-routes'); ?>
+                    </label>
+                </th>
+                <td>
+                    <?php
+                    $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
+                    $available_icons = wp_art_routes_get_available_icons();
+                    $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
+                    ?>
+                    <select name="wp_art_routes_default_location_icon" id="wp_art_routes_default_location_icon">
+                        <option value=""><?php esc_html_e('No default icon (gray circle)', 'wp-art-routes'); ?></option>
+                        <?php foreach ($available_icons as $icon_filename) : ?>
+                            <option value="<?php echo esc_attr($icon_filename); ?>" <?php selected($default_location_icon, $icon_filename); ?>>
+                                <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_filename)); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($default_location_icon)) : ?>
+                        <span style="margin-left: 10px; vertical-align: middle;">
+                            <img src="<?php echo esc_url($icons_url . $default_location_icon); ?>" alt="" style="width: 24px; height: 24px; vertical-align: middle;">
+                        </span>
+                    <?php endif; ?>
+                    <p class="description">
+                        <?php _e('Select a default icon for locations that do not have an icon assigned (e.g., imported via GPX).', 'wp-art-routes'); ?>
+                    </p>
                 </td>
             </tr>
         </table>

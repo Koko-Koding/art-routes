@@ -4,7 +4,7 @@
  * Plugin Name: WP Art Routes
  * Plugin URI: https://github.com/Koko-Koding/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
- * Version: wenb-1.26.0
+ * Version: wenb-1.27.0
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', 'wenb-1.26.0');
+define('WP_ART_ROUTES_VERSION', 'wenb-1.27.0');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -40,6 +40,24 @@ function wp_art_routes_load_textdomain()
     );
 }
 add_action('plugins_loaded', 'wp_art_routes_load_textdomain');
+
+/**
+ * Flush rewrite rules if plugin version has changed
+ *
+ * This ensures permalinks work correctly after plugin updates
+ * without requiring manual flush via Settings > Permalinks.
+ */
+function wp_art_routes_maybe_flush_rewrites()
+{
+    $stored_version = get_option('wp_art_routes_version');
+
+    if ($stored_version !== WP_ART_ROUTES_VERSION) {
+        // Version changed, flush rewrite rules
+        flush_rewrite_rules();
+        update_option('wp_art_routes_version', WP_ART_ROUTES_VERSION);
+    }
+}
+add_action('init', 'wp_art_routes_maybe_flush_rewrites', 999);
 
 // Load required files
 require_once WP_ART_ROUTES_PLUGIN_DIR . 'includes/post-types.php';

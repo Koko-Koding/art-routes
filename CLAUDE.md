@@ -169,6 +169,23 @@ Located at Editions → Import/Export (`includes/import-export.php`):
   - Waypoints as Locations only
 - Supports GPX 1.0 and 1.1 formats
 - Parses `<trk>`, `<rte>`, and `<wpt>` elements
+- **Duplicate detection:** Skips items that already exist in the edition (by name or coordinates within ~2 meters)
+
+**Duplicate Detection (CSV & GPX Import):**
+Both import methods include automatic duplicate detection:
+- **Locations:** Skipped if coordinates are within ~2 meters of existing location OR if title matches
+- **Routes:** Skipped if title matches an existing route in the same edition
+- **Info Points:** Skipped if coordinates are within ~2 meters OR if title matches
+- Import results show count of created and skipped items
+
+Helper functions for duplicate detection:
+```php
+wp_art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance);
+wp_art_routes_find_duplicate_location_by_name($name, $edition_id);
+wp_art_routes_find_duplicate_route($name, $edition_id);
+wp_art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $tolerance);
+wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id);
+```
 
 **CSV Export:**
 - Export edition's locations and info points
@@ -314,8 +331,12 @@ Settings are stored in `wp_art_routes_terminology` option:
 ```
 
 Settings page has two tabs:
-- **General** - Default route ID, location tracking toggle
+- **General** - Default route ID, location tracking toggle, default location icon
 - **Terminology** - Global label customization (singular/plural for each type)
+
+Additional settings stored separately:
+- `wp_art_routes_default_location_icon` - Default icon filename for locations without icons (used as fallback for imported locations)
+- `wp_art_routes_version` - Stored version for auto-flushing rewrite rules on updates
 
 ## Meta Field Naming
 
@@ -356,6 +377,10 @@ Icons are stored in `assets/icons/`. The system supports:
 - Built-in SVG icons (filtered by configurable prefix)
 - Custom uploaded icons (stored in `wp-content/uploads/wp-art-routes-icons/`)
 
+**Icon Fallback Logic:**
+- **Locations:** Uses `_artwork_icon` meta → falls back to `wp_art_routes_default_location_icon` setting → no icon (gray circle)
+- **Info Points:** Uses `_info_point_icon` meta → falls back to `_info_point_icon_url` (legacy) → falls back to `WB plattegrond-Informatie.svg`
+
 ```php
 // Get available icons (respects prefix setting)
 wp_art_routes_get_available_icons();
@@ -393,6 +418,12 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 2. Artworks/Locations
 3. Information points
 4. Directional arrows (lowest)
+
+## Activation & Updates
+
+**Activation Hook:** Registers all CPTs and flushes rewrite rules.
+
+**Automatic Rewrite Flush:** The plugin automatically flushes rewrite rules when the version changes (stored in `wp_art_routes_version` option). This ensures permalinks work correctly after plugin updates without requiring manual flush via Settings → Permalinks.
 
 ## Release Workflow
 

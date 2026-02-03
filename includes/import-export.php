@@ -534,7 +534,9 @@ function wp_art_routes_handle_csv_import()
 
     // Process rows
     $locations_created = 0;
+    $locations_skipped = 0;
     $info_points_created = 0;
+    $info_points_skipped = 0;
     $errors = [];
     $row_number = 1;
 
@@ -617,6 +619,35 @@ function wp_art_routes_handle_csv_import()
         // Determine post type
         $post_type = ($type === 'location') ? 'artwork' : 'information_point';
 
+        // Check for duplicates
+        if ($type === 'location') {
+            // Check for duplicate location by coordinates
+            $existing_by_coords = wp_art_routes_find_duplicate_location($latitude, $longitude, $edition_id);
+            if ($existing_by_coords) {
+                $locations_skipped++;
+                continue;
+            }
+            // Check for duplicate location by name
+            $existing_by_name = wp_art_routes_find_duplicate_location_by_name($name, $edition_id);
+            if ($existing_by_name) {
+                $locations_skipped++;
+                continue;
+            }
+        } else {
+            // Check for duplicate info point by coordinates
+            $existing_by_coords = wp_art_routes_find_duplicate_info_point($latitude, $longitude, $edition_id);
+            if ($existing_by_coords) {
+                $info_points_skipped++;
+                continue;
+            }
+            // Check for duplicate info point by name
+            $existing_by_name = wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id);
+            if ($existing_by_name) {
+                $info_points_skipped++;
+                continue;
+            }
+        }
+
         // Create post as draft
         $post_data = [
             'post_title'   => $name,
@@ -682,6 +713,35 @@ function wp_art_routes_handle_csv_import()
         $info_point_label
     );
 
+    // Add information about skipped duplicates
+    $skipped_parts = [];
+    if ($locations_skipped > 0) {
+        $skipped_location_label = wp_art_routes_label('location', $locations_skipped !== 1);
+        $skipped_parts[] = sprintf(
+            /* translators: %1$d: number of locations, %2$s: location label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $locations_skipped,
+            $skipped_location_label
+        );
+    }
+    if ($info_points_skipped > 0) {
+        $skipped_info_point_label = wp_art_routes_label('info_point', $info_points_skipped !== 1);
+        $skipped_parts[] = sprintf(
+            /* translators: %1$d: number of info points, %2$s: info point label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $info_points_skipped,
+            $skipped_info_point_label
+        );
+    }
+
+    if (!empty($skipped_parts)) {
+        $message .= ' ' . sprintf(
+            /* translators: %s: skipped items summary */
+            __('%s skipped (duplicates).', 'wp-art-routes'),
+            implode(' ' . __('and', 'wp-art-routes') . ' ', $skipped_parts)
+        );
+    }
+
     if (!empty($errors)) {
         $message .= ' ' . sprintf(
             /* translators: %d: number of errors */
@@ -693,6 +753,157 @@ function wp_art_routes_handle_csv_import()
     }
 
     return $message;
+}
+
+/**
+ * Check if a location already exists near the given coordinates in the given edition
+ *
+ * @param float $lat Latitude to check
+ * @param float $lon Longitude to check
+ * @param int   $edition_id Edition ID to check within
+ * @param float $tolerance Distance tolerance in degrees (default ~2 meters)
+ * @return int|false Existing post ID if found, false otherwise
+ */
+function wp_art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance = 0.00002)
+{
+    $existing_locations = get_posts([
+        'post_type' => 'artwork',
+        'post_status' => ['publish', 'draft', 'pending', 'private'],
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+    ]);
+
+    foreach ($existing_locations as $location_id) {
+        $existing_lat = get_post_meta($location_id, '_artwork_latitude', true);
+        $existing_lon = get_post_meta($location_id, '_artwork_longitude', true);
+
+        if (is_numeric($existing_lat) && is_numeric($existing_lon)) {
+            $lat_diff = abs((float)$existing_lat - $lat);
+            $lon_diff = abs((float)$existing_lon - $lon);
+
+            // Check if within tolerance (approximately 2 meters)
+            if ($lat_diff <= $tolerance && $lon_diff <= $tolerance) {
+                return $location_id;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if a route already exists with the given name in the given edition
+ *
+ * @param string $name Route name to check
+ * @param int    $edition_id Edition ID to check within
+ * @return int|false Existing post ID if found, false otherwise
+ */
+function wp_art_routes_find_duplicate_route($name, $edition_id)
+{
+    $existing_routes = get_posts([
+        'post_type' => 'art_route',
+        'post_status' => ['publish', 'draft', 'pending', 'private'],
+        'posts_per_page' => 1,
+        'title' => $name,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+    ]);
+
+    if (!empty($existing_routes)) {
+        return $existing_routes[0]->ID;
+    }
+
+    return false;
+}
+
+/**
+ * Check if a location already exists with the given name in the given edition
+ *
+ * @param string $name Location name to check
+ * @param int    $edition_id Edition ID to check within
+ * @return int|false Existing post ID if found, false otherwise
+ */
+function wp_art_routes_find_duplicate_location_by_name($name, $edition_id)
+{
+    $existing_locations = get_posts([
+        'post_type' => 'artwork',
+        'post_status' => ['publish', 'draft', 'pending', 'private'],
+        'posts_per_page' => 1,
+        'title' => $name,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+    ]);
+
+    if (!empty($existing_locations)) {
+        return $existing_locations[0]->ID;
+    }
+
+    return false;
+}
+
+/**
+ * Check if an info point already exists near the given coordinates in the given edition
+ *
+ * @param float $lat Latitude to check
+ * @param float $lon Longitude to check
+ * @param int   $edition_id Edition ID to check within
+ * @param float $tolerance Distance tolerance in degrees (default ~2 meters)
+ * @return int|false Existing post ID if found, false otherwise
+ */
+function wp_art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $tolerance = 0.00002)
+{
+    $existing_info_points = get_posts([
+        'post_type' => 'information_point',
+        'post_status' => ['publish', 'draft', 'pending', 'private'],
+        'posts_per_page' => -1,
+        'fields' => 'ids',
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+    ]);
+
+    foreach ($existing_info_points as $info_point_id) {
+        $existing_lat = get_post_meta($info_point_id, '_artwork_latitude', true);
+        $existing_lon = get_post_meta($info_point_id, '_artwork_longitude', true);
+
+        if (is_numeric($existing_lat) && is_numeric($existing_lon)) {
+            $lat_diff = abs((float)$existing_lat - $lat);
+            $lon_diff = abs((float)$existing_lon - $lon);
+
+            // Check if within tolerance (approximately 2 meters)
+            if ($lat_diff <= $tolerance && $lon_diff <= $tolerance) {
+                return $info_point_id;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if an info point already exists with the given name in the given edition
+ *
+ * @param string $name Info point name to check
+ * @param int    $edition_id Edition ID to check within
+ * @return int|false Existing post ID if found, false otherwise
+ */
+function wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id)
+{
+    $existing_info_points = get_posts([
+        'post_type' => 'information_point',
+        'post_status' => ['publish', 'draft', 'pending', 'private'],
+        'posts_per_page' => 1,
+        'title' => $name,
+        'meta_key' => '_edition_id',
+        'meta_value' => $edition_id,
+    ]);
+
+    if (!empty($existing_info_points)) {
+        return $existing_info_points[0]->ID;
+    }
+
+    return false;
 }
 
 /**
@@ -773,7 +984,9 @@ function wp_art_routes_handle_gpx_import()
     $gpx->registerXPathNamespace('gpx10', 'http://www.topografix.com/GPX/1/0');
 
     $routes_created = 0;
+    $routes_skipped = 0;
     $locations_created = 0;
+    $locations_skipped = 0;
     $errors = [];
 
     // Import tracks as routes (if not waypoints_only mode)
@@ -794,8 +1007,15 @@ function wp_art_routes_handle_gpx_import()
                 $track_name = sprintf(
                     /* translators: %d: route number */
                     __('Imported Route %d', 'wp-art-routes'),
-                    $routes_created + 1
+                    $routes_created + $routes_skipped + 1
                 );
+            }
+
+            // Check for duplicate route by name
+            $existing_route_id = wp_art_routes_find_duplicate_route($track_name, $edition_id);
+            if ($existing_route_id) {
+                $routes_skipped++;
+                continue;
             }
 
             // Get track description
@@ -811,7 +1031,8 @@ function wp_art_routes_handle_gpx_import()
                     if (is_numeric($lat) && is_numeric($lon) &&
                         $lat >= -90 && $lat <= 90 &&
                         $lon >= -180 && $lon <= 180) {
-                        $route_path[] = [$lat, $lon];
+                        // Use object format {lat, lng} for compatibility with route editor
+                        $route_path[] = ['lat' => $lat, 'lng' => $lon];
                     }
                 }
             }
@@ -846,8 +1067,8 @@ function wp_art_routes_handle_gpx_import()
                 continue;
             }
 
-            // Save route path as JSON
-            update_post_meta($post_id, '_route_path', wp_json_encode($route_path));
+            // Save route path as JSON with pretty print for readability
+            update_post_meta($post_id, '_route_path', wp_json_encode($route_path, JSON_PRETTY_PRINT));
             update_post_meta($post_id, '_edition_id', $edition_id);
 
             $routes_created++;
@@ -868,8 +1089,15 @@ function wp_art_routes_handle_gpx_import()
                 $rte_name = sprintf(
                     /* translators: %d: route number */
                     __('Imported Route %d', 'wp-art-routes'),
-                    $routes_created + 1
+                    $routes_created + $routes_skipped + 1
                 );
+            }
+
+            // Check for duplicate route by name
+            $existing_route_id = wp_art_routes_find_duplicate_route($rte_name, $edition_id);
+            if ($existing_route_id) {
+                $routes_skipped++;
+                continue;
             }
 
             $rte_desc = isset($rte->desc) ? wp_kses_post((string) $rte->desc) : '';
@@ -882,7 +1110,8 @@ function wp_art_routes_handle_gpx_import()
                 if (is_numeric($lat) && is_numeric($lon) &&
                     $lat >= -90 && $lat <= 90 &&
                     $lon >= -180 && $lon <= 180) {
-                    $route_path[] = [$lat, $lon];
+                    // Use object format {lat, lng} for compatibility with route editor
+                    $route_path[] = ['lat' => $lat, 'lng' => $lon];
                 }
             }
 
@@ -901,7 +1130,8 @@ function wp_art_routes_handle_gpx_import()
             $post_id = wp_insert_post($post_data);
 
             if (!is_wp_error($post_id)) {
-                update_post_meta($post_id, '_route_path', wp_json_encode($route_path));
+                // Save route path as JSON with pretty print for readability
+                update_post_meta($post_id, '_route_path', wp_json_encode($route_path, JSON_PRETTY_PRINT));
                 update_post_meta($post_id, '_edition_id', $edition_id);
                 $routes_created++;
             }
@@ -935,8 +1165,22 @@ function wp_art_routes_handle_gpx_import()
                 $wpt_name = sprintf(
                     /* translators: %d: location number */
                     __('Imported Location %d', 'wp-art-routes'),
-                    $locations_created + 1
+                    $locations_created + $locations_skipped + 1
                 );
+            }
+
+            // Check for duplicate location by coordinates (within ~2 meters)
+            $existing_location_id = wp_art_routes_find_duplicate_location($lat, $lon, $edition_id);
+            if ($existing_location_id) {
+                $locations_skipped++;
+                continue;
+            }
+
+            // Also check for duplicate by name
+            $existing_by_name = wp_art_routes_find_duplicate_location_by_name($wpt_name, $edition_id);
+            if ($existing_by_name) {
+                $locations_skipped++;
+                continue;
             }
 
             // Get waypoint description (try desc, then cmt)
@@ -1015,6 +1259,35 @@ function wp_art_routes_handle_gpx_import()
         __('GPX import complete: %s created as drafts.', 'wp-art-routes'),
         implode(' ' . __('and', 'wp-art-routes') . ' ', $message_parts)
     );
+
+    // Add information about skipped duplicates
+    $skipped_parts = [];
+    if ($routes_skipped > 0) {
+        $skipped_route_label = wp_art_routes_label('route', $routes_skipped !== 1);
+        $skipped_parts[] = sprintf(
+            /* translators: %1$d: number of routes, %2$s: route label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $routes_skipped,
+            $skipped_route_label
+        );
+    }
+    if ($locations_skipped > 0) {
+        $skipped_location_label = wp_art_routes_label('location', $locations_skipped !== 1);
+        $skipped_parts[] = sprintf(
+            /* translators: %1$d: number of locations, %2$s: location label */
+            __('%1$d %2$s', 'wp-art-routes'),
+            $locations_skipped,
+            $skipped_location_label
+        );
+    }
+
+    if (!empty($skipped_parts)) {
+        $message .= ' ' . sprintf(
+            /* translators: %s: skipped items summary */
+            __('%s skipped (duplicates).', 'wp-art-routes'),
+            implode(' ' . __('and', 'wp-art-routes') . ' ', $skipped_parts)
+        );
+    }
 
     if (!empty($errors)) {
         $message .= ' ' . sprintf(

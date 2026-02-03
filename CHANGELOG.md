@@ -4,6 +4,20 @@
 
 All notable changes to the WP Art Routes plugin will be documented in this file. As from version 1.19.1, this plugin is forked to a Woest & Bijster specific plugin with a new versioning scheme by prefixing the version numbers with `wenb`. What would normally be version 1.19.1 is now version `wenb-1.19.1`.
 
+## [wenb-1.27.0] - 2026-02-03
+
+### Added
+
+- **Default Location Icon Setting**: New setting in Settings → General to select a default icon for locations without icons (e.g., imported via GPX)
+- **Import Duplicate Detection**: Both CSV and GPX imports now detect and skip duplicate items
+  - Locations/Info Points: Skipped if coordinates within ~2 meters OR title matches existing item in same edition
+  - Routes: Skipped if title matches existing route in same edition
+  - Import results now show count of created and skipped items
+
+### Fixed
+
+- **Edition 404 Fix**: Plugin now automatically flushes rewrite rules when version changes, fixing 404 errors on edition pages after plugin updates
+
 ## [wenb-1.26.0] - 2026-02-02
 
 ### Added

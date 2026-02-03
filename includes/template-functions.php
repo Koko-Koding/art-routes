@@ -83,17 +83,30 @@ function wp_art_routes_get_route_path($route_id)
     $path = [];
     // Try to decode as JSON first
     $json = json_decode($path_string, true);
-    if (is_array($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
-        // New format: array of objects with lat/lng and possibly extra metadata
-        foreach ($json as $pt) {
-            if (isset($pt['lat']) && isset($pt['lng']) && is_numeric($pt['lat']) && is_numeric($pt['lng'])) {
-                // Keep all properties (lat, lng, is_start, is_end, notes, ...)
-                $pt['lat'] = floatval($pt['lat']);
-                $pt['lng'] = floatval($pt['lng']);
-                $path[] = $pt;
+    if (is_array($json) && !empty($json)) {
+        // Check first element to determine format
+        $first = $json[0];
+        if (isset($first['lat']) && isset($first['lng'])) {
+            // New format: array of objects with lat/lng and possibly extra metadata
+            foreach ($json as $pt) {
+                if (isset($pt['lat']) && isset($pt['lng']) && is_numeric($pt['lat']) && is_numeric($pt['lng'])) {
+                    // Keep all properties (lat, lng, is_start, is_end, notes, ...)
+                    $pt['lat'] = floatval($pt['lat']);
+                    $pt['lng'] = floatval($pt['lng']);
+                    $path[] = $pt;
+                }
             }
+            return $path;
+        } elseif (is_array($first) && count($first) >= 2 && is_numeric($first[0]) && is_numeric($first[1])) {
+            // Legacy array format: [[lat, lng], [lat, lng], ...]
+            // Convert to object format for consistency
+            foreach ($json as $pt) {
+                if (is_array($pt) && count($pt) >= 2 && is_numeric($pt[0]) && is_numeric($pt[1])) {
+                    $path[] = ['lat' => floatval($pt[0]), 'lng' => floatval($pt[1])];
+                }
+            }
+            return $path;
         }
-        return $path;
     }
     // Fallback: old format (lines of lat, lng)
     $lines = explode("\n", $path_string);
@@ -107,7 +120,7 @@ function wp_art_routes_get_route_path($route_id)
             $lat = trim($parts[0]);
             $lng = trim($parts[1]);
             if (is_numeric($lat) && is_numeric($lng)) {
-                $path[] = [(float)$lat, (float)$lng];
+                $path[] = ['lat' => (float)$lat, 'lng' => (float)$lng];
             }
         }
     }
@@ -145,14 +158,20 @@ function wp_art_routes_get_all_artworks()
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then fall back to no icon
+            // Get icon information - prefer icon field, then fall back to default location icon setting
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
+            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
                 // Build URL from filename
-                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
                 $icon_url = $icons_url . $icon_filename;
+            } else {
+                // Check for default location icon setting
+                $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
+                if (!empty($default_location_icon)) {
+                    $icon_url = $icons_url . $default_location_icon;
+                }
             }
 
             $artwork_data = [
@@ -644,14 +663,20 @@ function wp_art_routes_get_edition_artworks($edition_id)
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then fall back to no icon
+            // Get icon information - prefer icon field, then fall back to default location icon setting
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
+            $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
 
             if (!empty($icon_filename)) {
                 // Build URL from filename
-                $icons_url = plugin_dir_url(__FILE__) . '../assets/icons/';
                 $icon_url = $icons_url . $icon_filename;
+            } else {
+                // Check for default location icon setting
+                $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
+                if (!empty($default_location_icon)) {
+                    $icon_url = $icons_url . $default_location_icon;
+                }
             }
 
             $artwork_data = [
