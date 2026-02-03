@@ -1,0 +1,86 @@
+/**
+ * Edition Delete Confirmation Modal Styles
+ */
+
+#edition-delete-modal {
+    padding: 20px;
+}
+
+.edition-delete-modal-content {
+    text-align: center;
+}
+
+.edition-delete-title {
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.edition-delete-counts {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.edition-delete-counts ul {
+    margin: 10px 0 0 20px;
+}
+
+.edition-delete-counts li {
+    margin-bottom: 5px;
+}
+
+.edition-delete-counts .spinner {
+    float: none;
+    margin: 0;
+}
+
+.edition-delete-question {
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.edition-delete-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.edition-delete-buttons .button {
+    min-width: 140px;
+}
+
+.edition-delete-buttons .button-link-delete {
+    background: #d63638;
+    border-color: #d63638;
+    color: #fff;
+}
+
+.edition-delete-buttons .button-link-delete:hover {
+    background: #b32d2e;
+    border-color: #b32d2e;
+}
+
+.edition-delete-buttons .button-link-delete:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px #d63638;
+}
+
+.edition-delete-cancel {
+    margin-top: 10px;
+}
+
+.edition-delete-cancel a {
+    text-decoration: none;
+}
+
+.edition-delete-loading {
+    padding: 20px;
+}
+
+.edition-delete-loading .spinner {
+    float: none;
+    margin: 0 5px 0 0;
+}
+
+.edition-delete-counts .error {
+    color: #d63638;
+}
