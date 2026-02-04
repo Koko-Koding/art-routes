@@ -228,7 +228,7 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
 
     ?>
     <p class="description">
-        <?php _e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?>
+        <?php esc_html_e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?>
     </p>
 
     <table class="form-table" role="presentation">
@@ -243,7 +243,7 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
                 <td>
                     <p>
                         <label for="edition_terminology_<?php echo esc_attr($type); ?>_singular">
-                            <?php _e('Singular:', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Singular:', 'wp-art-routes'); ?>
                         </label>
                         <input type="text"
                                id="edition_terminology_<?php echo esc_attr($type); ?>_singular"
@@ -254,7 +254,7 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
                     </p>
                     <p>
                         <label for="edition_terminology_<?php echo esc_attr($type); ?>_plural">
-                            <?php _e('Plural:', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Plural:', 'wp-art-routes'); ?>
                         </label>
                         <input type="text"
                                id="edition_terminology_<?php echo esc_attr($type); ?>_plural"
@@ -287,7 +287,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
     ?>
     <p>
         <label for="edition_start_date">
-            <?php _e('Start Date:', 'wp-art-routes'); ?>
+            <?php esc_html_e('Start Date:', 'wp-art-routes'); ?>
         </label>
         <input type="date"
                id="edition_start_date"
@@ -298,7 +298,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
 
     <p>
         <label for="edition_end_date">
-            <?php _e('End Date:', 'wp-art-routes'); ?>
+            <?php esc_html_e('End Date:', 'wp-art-routes'); ?>
         </label>
         <input type="date"
                id="edition_end_date"
@@ -308,7 +308,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
     </p>
 
     <p class="description">
-        <?php _e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?>
     </p>
     <?php
 }
@@ -334,7 +334,7 @@ function wp_art_routes_render_edition_settings_meta_box($post)
     ?>
     <p>
         <label for="edition_default_location_icon">
-            <?php _e('Default Location Icon:', 'wp-art-routes'); ?>
+            <?php esc_html_e('Default Location Icon:', 'wp-art-routes'); ?>
         </label>
         <select name="edition_default_location_icon" id="edition_default_location_icon" class="widefat">
             <option value="">
@@ -358,7 +358,7 @@ function wp_art_routes_render_edition_settings_meta_box($post)
     <?php endif; ?>
 
     <p class="description">
-        <?php _e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?>
     </p>
     <?php
 }
@@ -371,7 +371,7 @@ function wp_art_routes_render_edition_settings_meta_box($post)
 function wp_art_routes_save_edition_settings($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['edition_settings_nonce']) || !wp_verify_nonce($_POST['edition_settings_nonce'], 'save_edition_settings')) {
+    if (!isset($_POST['edition_settings_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['edition_settings_nonce'])), 'save_edition_settings')) {
         return;
     }
 
@@ -387,7 +387,7 @@ function wp_art_routes_save_edition_settings($post_id)
 
     // Save default location icon
     if (isset($_POST['edition_default_location_icon'])) {
-        $icon = $_POST['edition_default_location_icon'];
+        $icon = sanitize_text_field(wp_unslash($_POST['edition_default_location_icon']));
 
         // Validate icon exists in available icons
         if (empty($icon)) {
@@ -410,7 +410,7 @@ add_action('save_post_edition', 'wp_art_routes_save_edition_settings');
 function wp_art_routes_save_edition_terminology($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['edition_terminology_nonce']) || !wp_verify_nonce($_POST['edition_terminology_nonce'], 'save_edition_terminology')) {
+    if (!isset($_POST['edition_terminology_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['edition_terminology_nonce'])), 'save_edition_terminology')) {
         return;
     }
 
@@ -425,8 +425,9 @@ function wp_art_routes_save_edition_terminology($post_id)
     }
 
     // Save terminology overrides
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by wp_art_routes_sanitize_edition_terminology
     if (isset($_POST['edition_terminology']) && is_array($_POST['edition_terminology'])) {
-        $terminology = wp_art_routes_sanitize_edition_terminology($_POST['edition_terminology']);
+        $terminology = wp_art_routes_sanitize_edition_terminology(wp_unslash($_POST['edition_terminology']));
         update_post_meta($post_id, '_edition_terminology', $terminology);
     } else {
         delete_post_meta($post_id, '_edition_terminology');
@@ -442,7 +443,7 @@ add_action('save_post_edition', 'wp_art_routes_save_edition_terminology');
 function wp_art_routes_save_edition_dates($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['edition_dates_nonce']) || !wp_verify_nonce($_POST['edition_dates_nonce'], 'save_edition_dates')) {
+    if (!isset($_POST['edition_dates_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['edition_dates_nonce'])), 'save_edition_dates')) {
         return;
     }
 
@@ -458,7 +459,7 @@ function wp_art_routes_save_edition_dates($post_id)
 
     // Save start date
     if (isset($_POST['edition_start_date'])) {
-        $start_date = sanitize_text_field($_POST['edition_start_date']);
+        $start_date = sanitize_text_field(wp_unslash($_POST['edition_start_date']));
         // Validate date format (Y-m-d)
         if (empty($start_date) || preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date)) {
             if (!empty($start_date)) {
@@ -471,7 +472,7 @@ function wp_art_routes_save_edition_dates($post_id)
 
     // Save end date
     if (isset($_POST['edition_end_date'])) {
-        $end_date = sanitize_text_field($_POST['edition_end_date']);
+        $end_date = sanitize_text_field(wp_unslash($_POST['edition_end_date']));
         // Validate date format (Y-m-d)
         if (empty($end_date) || preg_match('/^\d{4}-\d{2}-\d{2}$/', $end_date)) {
             if (!empty($end_date)) {
@@ -622,7 +623,9 @@ function wp_art_routes_enqueue_edition_delete_modal_assets($hook) {
         'nonce' => wp_create_nonce('wp_art_routes_edition_delete'),
         'strings' => [
             'modalTitle' => __('Delete Edition', 'wp-art-routes'),
+            /* translators: %s: edition title */
             'deleteEdition' => __('Delete %s', 'wp-art-routes'),
+            /* translators: %d: number of editions */
             'deleteEditions' => __('Delete %d editions', 'wp-art-routes'),
             'containsContent' => __('This edition contains:', 'wp-art-routes'),
             'noContent' => __('This edition has no linked content.', 'wp-art-routes'),
@@ -656,7 +659,8 @@ function wp_art_routes_ajax_get_edition_content_counts() {
         wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
     }
 
-    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
         wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
@@ -729,7 +733,8 @@ function wp_art_routes_ajax_delete_edition_only() {
         wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
     }
 
-    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
         wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
@@ -793,7 +798,8 @@ function wp_art_routes_ajax_delete_edition_all() {
         wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
     }
 
-    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', (array) $_POST['edition_ids']) : [];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
+    $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
         wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);

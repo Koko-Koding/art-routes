@@ -73,7 +73,7 @@ function wp_art_routes_enqueue_scripts()
     if (is_singular('art_route')) {
         $route_id = get_the_ID();
     } elseif (is_page_template('art-route-map-template.php')) {
-        $route_id = isset($_GET['route_id']) ? intval($_GET['route_id']) : get_option('wp_art_routes_default_route', 0);
+        $route_id = isset($_GET['route_id']) ? intval(wp_unslash($_GET['route_id'])) : get_option('wp_art_routes_default_route', 0);
     } else {
         // Attempt to find route_id if shortcode is present on a non-singular/non-template page
         global $post;
@@ -298,7 +298,7 @@ function wp_art_routes_get_route_editor_modal_html()
     <div id="route-editor-modal" class="route-editor-modal" style="display: none;">
         <div class="route-editor-modal-content">
             <div class="route-editor-header">
-                <h2><?php _e('Route Editor', 'wp-art-routes'); ?></h2>
+                <h2><?php esc_html_e('Route Editor', 'wp-art-routes'); ?></h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="route-editor-body">
@@ -323,20 +323,20 @@ function wp_art_routes_get_route_editor_modal_html()
                     <button id="search-location" class="button"><?php esc_html_e('Search', 'wp-art-routes'); ?></button>
                 </div>
                 <div class="control-info">
-                    <p id="drawing-instructions"><?php _e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
+                    <p id="drawing-instructions"><?php esc_html_e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
                     <p>
-                        <span id="point-count">0</span> <?php _e('route points', 'wp-art-routes'); ?> |
-                        <span id="artwork-count">0</span> <?php _e('artworks', 'wp-art-routes'); ?> |
-                        <span id="info-point-count">0</span> <?php _e('info points', 'wp-art-routes'); ?>
+                        <span id="point-count">0</span> <?php esc_html_e('route points', 'wp-art-routes'); ?> |
+                        <span id="artwork-count">0</span> <?php esc_html_e('artworks', 'wp-art-routes'); ?> |
+                        <span id="info-point-count">0</span> <?php esc_html_e('info points', 'wp-art-routes'); ?>
                     </p>
-                    <p><?php _e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                    <p><?php esc_html_e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
                     <p id="save-status" style="color: green; font-weight: bold;"></p>
                 </div>
                 <div id="route-editor-map"></div>
             </div>
             <div class="route-editor-footer">
-                <button type="button" class="button button-secondary" id="cancel-route"><?php _e('Close', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-route"><?php _e('Save Changes', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-route"><?php esc_html_e('Close', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-route"><?php esc_html_e('Save Changes', 'wp-art-routes'); ?></button>
             </div>
         </div>
     </div>
@@ -354,27 +354,27 @@ function wp_art_routes_get_location_picker_modal_html()
     <div id="artwork-location-modal" class="location-picker-modal" style="display: none;">
         <div class="location-picker-modal-content">
             <div class="location-picker-header">
-                <h2><?php _e('Pick Artwork Location', 'wp-art-routes'); ?></h2>
+                <h2><?php esc_html_e('Pick Artwork Location', 'wp-art-routes'); ?></h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="location-picker-body">
                 <div class="location-picker-controls">
                     <div class="control-group">
-                        <label for="location-search"><?php _e('Search Location:', 'wp-art-routes'); ?></label>
-                        <input type="text" id="location-search" class="regular-text" placeholder="<?php _e('Enter location...', 'wp-art-routes'); ?>">
-                        <button type="button" class="button" id="search-artwork-location"><?php _e('Search', 'wp-art-routes'); ?></button>
+                        <label for="location-search"><?php esc_html_e('Search Location:', 'wp-art-routes'); ?></label>
+                        <input type="text" id="location-search" class="regular-text" placeholder="<?php esc_html_e('Enter location...', 'wp-art-routes'); ?>">
+                        <button type="button" class="button" id="search-artwork-location"><?php esc_html_e('Search', 'wp-art-routes'); ?></button>
                     </div>
                     <div class="control-info">
-                        <p><?php _e('Click on the map to select the artwork location.', 'wp-art-routes'); ?></p>
-                        <p><?php _e('Selected coordinates:', 'wp-art-routes'); ?></p>
+                        <p><?php esc_html_e('Click on the map to select the artwork location.', 'wp-art-routes'); ?></p>
+                        <p><?php esc_html_e('Selected coordinates:', 'wp-art-routes'); ?></p>
                         <p id="selected-coordinates">None</p>
                     </div>
                 </div>
                 <div id="location-picker-map"></div>
             </div>
             <div class="location-picker-footer">
-                <button type="button" class="button button-secondary" id="cancel-location"><?php _e('Cancel', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-location"><?php _e('Save Location', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-location"><?php esc_html_e('Cancel', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-location"><?php esc_html_e('Save Location', 'wp-art-routes'); ?></button>
             </div>
         </div>
     </div>

@@ -6,6 +6,25 @@ All notable changes to the WP Art Routes plugin will be documented in this file.
 
 **Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
 
+## [2.1.2] - 2026-02-04
+
+### Fixed
+
+- **WordPress Plugin Check Compliance**: Fixed all errors reported by WordPress Plugin Check plugin
+  - Replaced `_e()` with `esc_html_e()` for proper output escaping
+  - Added `wp_unslash()` before sanitizing all `$_POST` and `$_GET` inputs
+  - Added proper output escaping with `esc_html()` where needed
+  - Replaced `strip_tags()` with `wp_strip_all_tags()`
+  - Replaced `file_get_contents()`/`file_put_contents()` with WP_Filesystem API
+  - Replaced `unlink()` with `wp_delete_file()`
+  - Removed `error_log()` debug calls
+  - Added missing translator comments for i18n strings with placeholders
+  - Used numbered placeholders (`%1$s`, `%2$s`) in translatable strings
+
+### Changed
+
+- **Legacy icon filenames**: Renamed legacy icons to remove spaces (e.g., `WB plattegrond-10.svg` → `WB-plattegrond-10.svg`) for WordPress.org compliance
+
 ## [2.1.1] - 2026-02-04
 
 ### Changed

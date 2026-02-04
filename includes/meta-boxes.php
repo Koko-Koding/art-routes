@@ -145,27 +145,27 @@ function wp_art_routes_render_route_details_meta_box($post)
 ?>
     <p>
         <label for="route_length">
-            <?php _e('Route Length (km)', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Route Length (km)', 'wp-art-routes'); ?>:
         </label>
         <input type="number" id="route_length" name="route_length" value="<?php echo esc_attr($length); ?>" step="0.01" min="0" style="width: 100px;" />
     </p>
 
     <p>
         <label for="route_duration">
-            <?php _e('Duration (minutes)', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Duration (minutes)', 'wp-art-routes'); ?>:
         </label>
         <input type="number" id="route_duration" name="route_duration" value="<?php echo esc_attr($duration); ?>" min="0" style="width: 100px;" />
-        <button type="button" id="calculate-duration" class="button button-secondary" style="margin-left: 10px;" title="<?php _e('Calculate estimated duration based on route distance and type', 'wp-art-routes'); ?>">
-            <?php _e('Calculate', 'wp-art-routes'); ?>
+        <button type="button" id="calculate-duration" class="button button-secondary" style="margin-left: 10px;" title="<?php esc_html_e('Calculate estimated duration based on route distance and type', 'wp-art-routes'); ?>">
+            <?php esc_html_e('Calculate', 'wp-art-routes'); ?>
         </button>
     </p>
 
     <p>
         <label for="route_type">
-            <?php _e('Route Type', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Route Type', 'wp-art-routes'); ?>:
         </label>
         <select id="route_type" name="route_type">
-            <option value=""><?php _e('Select Type', 'wp-art-routes'); ?></option>
+            <option value=""><?php esc_html_e('Select Type', 'wp-art-routes'); ?></option>
             <?php foreach ($route_types as $value => $label) : ?>
                 <option value="<?php echo esc_attr($value); ?>" <?php selected($type, $value); ?>>
                     <?php echo esc_html($label); ?>
@@ -177,19 +177,19 @@ function wp_art_routes_render_route_details_meta_box($post)
     <p>
         <label for="show_completed_route">
             <input type="checkbox" id="show_completed_route" name="show_completed_route" value="1" <?php checked($show_completed_route, '1'); ?> />
-            <?php _e('Show completed route path', 'wp-art-routes'); ?>
+            <?php esc_html_e('Show completed route path', 'wp-art-routes'); ?>
         </label>
         <br>
-        <span class="description"><?php _e('When checked, users will see which part of the route they have already traversed.', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('When checked, users will see which part of the route they have already traversed.', 'wp-art-routes'); ?></span>
     </p>
 
     <p>
         <label for="show_artwork_toasts">
             <input type="checkbox" id="show_artwork_toasts" name="show_artwork_toasts" value="1" <?php checked($show_artwork_toasts, '1'); ?> />
-            <?php _e('Show artwork notifications', 'wp-art-routes'); ?>
+            <?php esc_html_e('Show artwork notifications', 'wp-art-routes'); ?>
         </label>
         <br>
-        <span class="description"><?php _e('When checked, users will receive a notification when they pass near an artwork.', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('When checked, users will receive a notification when they pass near an artwork.', 'wp-art-routes'); ?></span>
     </p>
 <?php
 }
@@ -235,53 +235,53 @@ function wp_art_routes_render_artwork_location_meta_box($post)
 ?>
     <p>
         <label for="artwork_number">
-            <?php _e('Number', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Number', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_number" name="artwork_number" value="<?php echo esc_attr($number); ?>" class="regular-text" />
-        <span class="description"><?php _e('Optional artwork number for identification', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('Optional artwork number for identification', 'wp-art-routes'); ?></span>
     </p>
 
     <p>
         <label for="artwork_location">
-            <?php _e('Location', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Location', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_location" name="artwork_location" value="<?php echo esc_attr($location); ?>" class="regular-text" />
-        <span class="description"><?php _e('Optional location description (e.g., "Near the town square")', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('Optional location description (e.g., "Near the town square")', 'wp-art-routes'); ?></span>
     </p>
 
     <p>
         <label for="wheelchair_accessible">
             <input type="checkbox" id="wheelchair_accessible" name="wheelchair_accessible" value="1" <?php checked($wheelchair_accessible, '1'); ?> />
-            <?php _e('Wheelchair accessible', 'wp-art-routes'); ?>
+            <?php esc_html_e('Wheelchair accessible', 'wp-art-routes'); ?>
         </label>
         <br>
-        <span class="description"><?php _e('Check if this artwork is accessible by wheelchair.', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('Check if this artwork is accessible by wheelchair.', 'wp-art-routes'); ?></span>
     </p>
     <p>
         <label for="stroller_accessible">
             <input type="checkbox" id="stroller_accessible" name="stroller_accessible" value="1" <?php checked($stroller_accessible, '1'); ?> />
-            <?php _e('Stroller accessible', 'wp-art-routes'); ?>
+            <?php esc_html_e('Stroller accessible', 'wp-art-routes'); ?>
         </label>
         <br>
-        <span class="description"><?php _e('Check if this artwork is accessible by stroller.', 'wp-art-routes'); ?></span>
+        <span class="description"><?php esc_html_e('Check if this artwork is accessible by stroller.', 'wp-art-routes'); ?></span>
     </p>
 
     <p>
         <label for="artwork_latitude">
-            <?php _e('Latitude', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Latitude', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_latitude" name="artwork_latitude" value="<?php echo esc_attr($latitude); ?>" class="regular-text" />
     </p>
 
     <p>
         <label for="artwork_longitude">
-            <?php _e('Longitude', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Longitude', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_longitude" name="artwork_longitude" value="<?php echo esc_attr($longitude); ?>" class="regular-text" />
     </p>
 
     <div id="artwork_location_map" style="width: 100%; height: 300px; margin-top: 10px;"></div>
-    <p><button type="button" class="button" id="pick_artwork_location"><?php _e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
+    <p><button type="button" class="button" id="pick_artwork_location"><?php esc_html_e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
 <?php
 }
 
@@ -300,20 +300,20 @@ function wp_art_routes_render_info_point_location_meta_box($post)
 ?>
     <p>
         <label for="artwork_latitude">
-            <?php _e('Latitude', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Latitude', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_latitude" name="artwork_latitude" value="<?php echo esc_attr($latitude); ?>" class="regular-text" />
     </p>
 
     <p>
         <label for="artwork_longitude">
-            <?php _e('Longitude', 'wp-art-routes'); ?>:
+            <?php esc_html_e('Longitude', 'wp-art-routes'); ?>:
         </label>
         <input type="text" id="artwork_longitude" name="artwork_longitude" value="<?php echo esc_attr($longitude); ?>" class="regular-text" />
     </p>
 
     <div id="artwork_location_map" style="width: 100%; height: 300px; margin-top: 10px;"></div>
-    <p><button type="button" class="button" id="pick_artwork_location"><?php _e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
+    <p><button type="button" class="button" id="pick_artwork_location"><?php esc_html_e('Pick Location on Map', 'wp-art-routes'); ?></button></p>
 <?php
 }
 
@@ -341,16 +341,16 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
 
 ?>
     <div class="artist-association-container">
-        <p><?php _e('Connect this artwork to one or more posts representing the artist(s).', 'wp-art-routes'); ?></p>
+        <p><?php esc_html_e('Connect this artwork to one or more posts representing the artist(s).', 'wp-art-routes'); ?></p>
 
         <div class="artist-search">
-            <label for="artist_search"><?php _e('Search for content:', 'wp-art-routes'); ?></label>
+            <label for="artist_search"><?php esc_html_e('Search for content:', 'wp-art-routes'); ?></label>
             <input type="text" id="artist_search" placeholder="<?php esc_attr_e('Start typing to search...', 'wp-art-routes'); ?>" class="regular-text" />
 
             <div class="post-type-filter">
-                <label><?php _e('Filter by post type:', 'wp-art-routes'); ?></label>
+                <label><?php esc_html_e('Filter by post type:', 'wp-art-routes'); ?></label>
                 <select id="post_type_filter">
-                    <option value=""><?php _e('All post types', 'wp-art-routes'); ?></option>
+                    <option value=""><?php esc_html_e('All post types', 'wp-art-routes'); ?></option>
                     <?php foreach ($post_types as $type) :
                         if (!in_array($type->name, $excluded_post_types)) : ?>
                             <option value="<?php echo esc_attr($type->name); ?>">
@@ -363,7 +363,7 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
         </div>
 
         <div class="selected-artists">
-            <h4><?php _e('Selected Artist(s):', 'wp-art-routes'); ?></h4>
+            <h4><?php esc_html_e('Selected Artist(s):', 'wp-art-routes'); ?></h4>
             <ul id="selected_artists_list">
                 <?php
                 if (!empty($artist_ids)) {
@@ -384,7 +384,7 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
                 }
                 ?>
             </ul>
-            <p class="description"><?php _e('These posts will be associated with this artwork as artists.', 'wp-art-routes'); ?></p>
+            <p class="description"><?php esc_html_e('These posts will be associated with this artwork as artists.', 'wp-art-routes'); ?></p>
         </div>
     </div>
 
@@ -470,7 +470,7 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
                     var artistItem = $('<li data-id="' + item.id + '"></li>');
                     artistItem.append('<span class="artist-title">' + item.label + '</span>');
                     artistItem.append(' <span class="post-type-label">(' + item.post_type_label + ')</span>');
-                    artistItem.append(' <a href="#" class="remove-artist"><?php _e('Remove', 'wp-art-routes'); ?></a>');
+                    artistItem.append(' <a href="#" class="remove-artist"><?php esc_html_e('Remove', 'wp-art-routes'); ?></a>');
                     artistItem.append('<input type="hidden" name="artwork_artist_ids[]" value="' + item.id + '">');
 
                     $('#selected_artists_list').append(artistItem);
@@ -510,12 +510,12 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
     <div id="artwork-icon-meta-box">
         <p>
             <label for="artwork_icon_select">
-                <?php _e('Select Icon:', 'wp-art-routes'); ?>
+                <?php esc_html_e('Select Icon:', 'wp-art-routes'); ?>
             </label>
         </p>
 
         <select id="artwork_icon_select" name="artwork_icon" style="width: 100%;">
-            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
+            <option value=""><?php esc_html_e('-- No Icon --', 'wp-art-routes'); ?></option>
             <?php foreach ($available_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
                     <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?> (<?php echo esc_html($icon_file); ?>)
@@ -525,7 +525,7 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
 
         <div id="icon-preview-container" style="margin-top: 15px;">
             <?php if ($selected_icon && in_array($selected_icon, $available_icons, true)) : ?>
-                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                     <img id="icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
@@ -533,7 +533,7 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
                 </div>
             <?php else : ?>
                 <div id="icon-preview" style="display: none;">
-                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                    <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                     <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                         <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
                     </div>
@@ -561,7 +561,7 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
     </script>
 
     <p class="description">
-        <?php _e('Select an icon for this artwork. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Select an icon for this artwork. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
     </p>
 <?php
 }
@@ -589,12 +589,12 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
     <div id="info-point-icon-meta-box">
         <p>
             <label for="info_point_icon_select">
-                <?php _e('Select Icon:', 'wp-art-routes'); ?>
+                <?php esc_html_e('Select Icon:', 'wp-art-routes'); ?>
             </label>
         </p>
 
         <select id="info_point_icon_select" name="info_point_icon" style="width: 100%;">
-            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
+            <option value=""><?php esc_html_e('-- No Icon --', 'wp-art-routes'); ?></option>
             <?php foreach ($available_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
                     <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?> (<?php echo esc_html($icon_file); ?>)
@@ -604,7 +604,7 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
 
         <div id="icon-preview-container" style="margin-top: 15px;">
             <?php if ($selected_icon && in_array($selected_icon, $available_icons, true)) : ?>
-                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                     <img id="icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
@@ -612,7 +612,7 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
                 </div>
             <?php else : ?>
                 <div id="icon-preview" style="display: none;">
-                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                    <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                     <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                         <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
                     </div>
@@ -640,7 +640,7 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
     </script>
 
     <p class="description">
-        <?php _e('Select an icon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Select an icon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
     </p>
 <?php
 }
@@ -672,11 +672,11 @@ function wp_art_routes_render_route_icon_meta_box($post)
     <div id="route-icon-meta-box">
         <p>
             <label for="route_icon_select">
-                <?php _e('Select Icon:', 'wp-art-routes'); ?>
+                <?php esc_html_e('Select Icon:', 'wp-art-routes'); ?>
             </label>
         </p>
         <select id="route_icon_select" name="route_icon" style="width: 100%;">
-            <option value=""><?php _e('-- No Icon --', 'wp-art-routes'); ?></option>
+            <option value=""><?php esc_html_e('-- No Icon --', 'wp-art-routes'); ?></option>
             <?php foreach ($allowed_icons as $icon_file) : ?>
                 <option value="<?php echo esc_attr($icon_file); ?>" <?php selected($selected_icon, $icon_file); ?>>
                     <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_file)); ?>
@@ -685,7 +685,7 @@ function wp_art_routes_render_route_icon_meta_box($post)
         </select>
         <div id="route-icon-preview-container" style="margin-top: 15px;">
             <?php if ($selected_icon && in_array($selected_icon, $allowed_icons, true)) : ?>
-                <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                 <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                     <img id="route-icon-preview" src="<?php echo esc_url(wp_art_routes_get_icon_url($selected_icon)); ?>"
                         style="width: 40px; height: 40px; object-fit: contain;"
@@ -693,7 +693,7 @@ function wp_art_routes_render_route_icon_meta_box($post)
                 </div>
             <?php else : ?>
                 <div id="route-icon-preview" style="display: none;">
-                    <p><strong><?php _e('Preview:', 'wp-art-routes'); ?></strong></p>
+                    <p><strong><?php esc_html_e('Preview:', 'wp-art-routes'); ?></strong></p>
                     <div style="padding: 10px; border: 1px solid #ddd; background: #f9f9f9; display: inline-block;">
                         <img style="width: 40px; height: 40px; object-fit: contain;" alt="" />
                     </div>
@@ -717,7 +717,7 @@ function wp_art_routes_render_route_icon_meta_box($post)
         });
     </script>
     <p class="description">
-        <?php _e('Select an icon for this route. The icon will be shown on the route overview page.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Select an icon for this route. The icon will be shown on the route overview page.', 'wp-art-routes'); ?>
     </p>
 <?php
 }
@@ -728,7 +728,7 @@ function wp_art_routes_render_route_icon_meta_box($post)
 function wp_art_routes_save_route_details($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['route_details_nonce']) || !wp_verify_nonce($_POST['route_details_nonce'], 'save_route_details')) {
+    if (!isset($_POST['route_details_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['route_details_nonce'])), 'save_route_details')) {
         return;
     }
 
@@ -744,17 +744,17 @@ function wp_art_routes_save_route_details($post_id)
 
     // Save route length
     if (isset($_POST['route_length'])) {
-        update_post_meta($post_id, '_route_length', sanitize_text_field($_POST['route_length']));
+        update_post_meta($post_id, '_route_length', sanitize_text_field(wp_unslash($_POST['route_length'])));
     }
 
     // Save route duration
     if (isset($_POST['route_duration'])) {
-        update_post_meta($post_id, '_route_duration', sanitize_text_field($_POST['route_duration']));
+        update_post_meta($post_id, '_route_duration', sanitize_text_field(wp_unslash($_POST['route_duration'])));
     }
 
     // Save route type
     if (isset($_POST['route_type'])) {
-        update_post_meta($post_id, '_route_type', sanitize_text_field($_POST['route_type']));
+        update_post_meta($post_id, '_route_type', sanitize_text_field(wp_unslash($_POST['route_type'])));
     }
 
     // Save show completed route setting (checkbox)
@@ -773,7 +773,7 @@ add_action('save_post_art_route', 'wp_art_routes_save_route_details');
 function wp_art_routes_save_route_path($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['route_path_nonce']) || !wp_verify_nonce($_POST['route_path_nonce'], 'save_route_path')) {
+    if (!isset($_POST['route_path_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['route_path_nonce'])), 'save_route_path')) {
         return;
     }
     // Check autosave
@@ -786,7 +786,7 @@ function wp_art_routes_save_route_path($post_id)
     }
     // Save route path
     if (isset($_POST['route_path'])) {
-        $raw = trim(stripslashes($_POST['route_path']));
+        $raw = trim(wp_unslash($_POST['route_path']));
         $json = json_decode($raw, true);
         if (is_array($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
             // Already valid JSON format
@@ -826,30 +826,30 @@ function wp_art_routes_save_artwork_location($post_id)
     $nonce_action = 'save_artwork_location'; // Nonce action remains the same as it's tied to the rendering function
     $nonce_name = 'artwork_location_nonce';
 
-    if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_action)) {
+    if (!isset($_POST[$nonce_name]) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST[$nonce_name])), $nonce_action)) {
         return;
     }
 
     // Save latitude
     if (isset($_POST['artwork_latitude'])) {
-        update_post_meta($post_id, '_artwork_latitude', sanitize_text_field($_POST['artwork_latitude']));
+        update_post_meta($post_id, '_artwork_latitude', sanitize_text_field(wp_unslash($_POST['artwork_latitude'])));
     }
 
     // Save longitude
     if (isset($_POST['artwork_longitude'])) {
-        update_post_meta($post_id, '_artwork_longitude', sanitize_text_field($_POST['artwork_longitude']));
+        update_post_meta($post_id, '_artwork_longitude', sanitize_text_field(wp_unslash($_POST['artwork_longitude'])));
     }
 
     // Only save number and location for artwork post type
     if ($post_type === 'artwork') {
         // Save artwork number
         if (isset($_POST['artwork_number'])) {
-            update_post_meta($post_id, '_artwork_number', sanitize_text_field($_POST['artwork_number']));
+            update_post_meta($post_id, '_artwork_number', sanitize_text_field(wp_unslash($_POST['artwork_number'])));
         }
 
         // Save location description
         if (isset($_POST['artwork_location'])) {
-            update_post_meta($post_id, '_artwork_location', sanitize_text_field($_POST['artwork_location']));
+            update_post_meta($post_id, '_artwork_location', sanitize_text_field(wp_unslash($_POST['artwork_location'])));
         }
 
         // Save wheelchair accessible setting (checkbox)
@@ -870,7 +870,7 @@ add_action('save_post_information_point', 'wp_art_routes_save_artwork_location')
 function wp_art_routes_save_artwork_artists($post_id)
 {
     // Verify nonce
-    if (!isset($_POST['artwork_artists_nonce']) || !wp_verify_nonce($_POST['artwork_artists_nonce'], 'save_artwork_artists')) {
+    if (!isset($_POST['artwork_artists_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['artwork_artists_nonce'])), 'save_artwork_artists')) {
         return;
     }
 
@@ -885,9 +885,10 @@ function wp_art_routes_save_artwork_artists($post_id)
     }
 
     // Save artist associations
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- IDs are cast to int via array_map('intval')
     if (isset($_POST['artwork_artist_ids']) && is_array($_POST['artwork_artist_ids'])) {
         // Sanitize the array of IDs
-        $artist_ids = array_map('intval', $_POST['artwork_artist_ids']);
+        $artist_ids = array_map('intval', wp_unslash($_POST['artwork_artist_ids']));
         update_post_meta($post_id, '_artwork_artist_ids', $artist_ids);
     } else {
         // If no artists selected, save empty array
@@ -901,7 +902,7 @@ add_action('save_post_artwork', 'wp_art_routes_save_artwork_artists');
  */
 function wp_art_routes_save_artwork_icon($post_id)
 {
-    if (!isset($_POST['artwork_icon_nonce']) || !wp_verify_nonce($_POST['artwork_icon_nonce'], 'save_artwork_icon')) {
+    if (!isset($_POST['artwork_icon_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['artwork_icon_nonce'])), 'save_artwork_icon')) {
         return;
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -913,7 +914,7 @@ function wp_art_routes_save_artwork_icon($post_id)
 
     // Save the selected icon filename
     if (isset($_POST['artwork_icon'])) {
-        $selected_icon = sanitize_text_field($_POST['artwork_icon']);
+        $selected_icon = sanitize_text_field(wp_unslash($_POST['artwork_icon']));
         if (!empty($selected_icon)) {
             update_post_meta($post_id, '_artwork_icon', $selected_icon);
         } else {
@@ -928,7 +929,7 @@ add_action('save_post_artwork', 'wp_art_routes_save_artwork_icon');
  */
 function wp_art_routes_save_info_point_icon($post_id)
 {
-    if (!isset($_POST['info_point_icon_nonce']) || !wp_verify_nonce($_POST['info_point_icon_nonce'], 'save_info_point_icon')) {
+    if (!isset($_POST['info_point_icon_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['info_point_icon_nonce'])), 'save_info_point_icon')) {
         return;
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -940,7 +941,7 @@ function wp_art_routes_save_info_point_icon($post_id)
 
     // Save the selected icon filename
     if (isset($_POST['info_point_icon'])) {
-        $selected_icon = sanitize_text_field($_POST['info_point_icon']);
+        $selected_icon = sanitize_text_field(wp_unslash($_POST['info_point_icon']));
         if (!empty($selected_icon)) {
             update_post_meta($post_id, '_info_point_icon', $selected_icon);
         } else {
@@ -955,7 +956,7 @@ add_action('save_post_information_point', 'wp_art_routes_save_info_point_icon');
  */
 function wp_art_routes_save_route_icon($post_id)
 {
-    if (!isset($_POST['route_icon_nonce']) || !wp_verify_nonce($_POST['route_icon_nonce'], 'save_route_icon')) {
+    if (!isset($_POST['route_icon_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['route_icon_nonce'])), 'save_route_icon')) {
         return;
     }
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -970,8 +971,9 @@ function wp_art_routes_save_route_icon($post_id)
         'end.svg',
         'marker.svg',
     ];
-    if (isset($_POST['route_icon']) && in_array($_POST['route_icon'], $allowed_icons)) {
-        update_post_meta($post_id, '_route_icon', sanitize_text_field($_POST['route_icon']));
+    $route_icon = isset($_POST['route_icon']) ? sanitize_text_field(wp_unslash($_POST['route_icon'])) : '';
+    if (!empty($route_icon) && in_array($route_icon, $allowed_icons, true)) {
+        update_post_meta($post_id, '_route_icon', $route_icon);
     } else {
         delete_post_meta($post_id, '_route_icon');
     }
@@ -990,7 +992,7 @@ function wp_art_routes_render_edition_selector_meta_box($post) {
     ?>
     <p>
         <select name="edition_id" id="edition_id" class="widefat">
-            <option value="0"><?php _e('— No Edition —', 'wp-art-routes'); ?></option>
+            <option value="0"><?php esc_html_e('— No Edition —', 'wp-art-routes'); ?></option>
             <?php foreach ($editions as $edition) : ?>
                 <option value="<?php echo esc_attr($edition->ID); ?>" <?php selected($current_edition_id, $edition->ID); ?>>
                     <?php echo esc_html($edition->post_title); ?>
@@ -999,7 +1001,7 @@ function wp_art_routes_render_edition_selector_meta_box($post) {
         </select>
     </p>
     <p class="description">
-        <?php _e('Assign this content to an edition.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Assign this content to an edition.', 'wp-art-routes'); ?>
     </p>
     <?php
 }
@@ -1009,7 +1011,7 @@ function wp_art_routes_render_edition_selector_meta_box($post) {
  */
 function wp_art_routes_save_edition_selector($post_id) {
     if (!isset($_POST['edition_selector_nonce']) ||
-        !wp_verify_nonce($_POST['edition_selector_nonce'], 'save_edition_selector')) {
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['edition_selector_nonce'])), 'save_edition_selector')) {
         return;
     }
 
@@ -1022,7 +1024,7 @@ function wp_art_routes_save_edition_selector($post_id) {
     }
 
     if (isset($_POST['edition_id'])) {
-        $edition_id = absint($_POST['edition_id']);
+        $edition_id = absint(wp_unslash($_POST['edition_id']));
         if ($edition_id > 0) {
             update_post_meta($post_id, '_edition_id', $edition_id);
         } else {

@@ -101,7 +101,7 @@ $map_id = 'art-routes-map-' . uniqid();
 <div class="art-routes-container">
     <?php if ($atts['show_legend']): ?>
         <div class="art-routes-legend">
-            <h3><?php _e('Routes', 'wp-art-routes'); ?></h3>
+            <h3><?php esc_html_e('Routes', 'wp-art-routes'); ?></h3>
             <ul class="route-list">
                 <?php foreach ($js_data['routes'] as $index => $route): ?>
                     <li class="route-item">
@@ -153,7 +153,7 @@ $map_id = 'art-routes-map-' . uniqid();
                         
                         <button class="zoom-to-route-button" data-route-index="<?php echo esc_attr($index); ?>">
                             <span class="dashicons dashicons-search"></span>
-                            <?php _e('Zoom to Route', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Zoom to Route', 'wp-art-routes'); ?>
                         </button>
                     </li>
                 <?php endforeach; ?>
@@ -163,7 +163,7 @@ $map_id = 'art-routes-map-' . uniqid();
     
     <div class="art-routes-map-container">
         <?php if ($atts['show_title']): ?>
-            <h2 class="art-routes-map-title"><?php _e('Art Routes Map', 'wp-art-routes'); ?></h2>
+            <h2 class="art-routes-map-title"><?php esc_html_e('Art Routes Map', 'wp-art-routes'); ?></h2>
         <?php endif; ?>
         
         <!-- Map container -->
@@ -172,7 +172,7 @@ $map_id = 'art-routes-map-' . uniqid();
         <!-- Loading indicator -->
         <div id="map-loading-<?php echo esc_attr($map_id); ?>" class="map-loading" style="display: none;">
             <div class="spinner"></div>
-            <p><?php _e('Loading map...', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
         </div>
     </div>
 </div>
@@ -483,7 +483,7 @@ $map_id = 'art-routes-map-' . uniqid();
             const allRoutesButton = document.createElement('button');
             allRoutesButton.className = 'zoom-to-all-routes-button';
             allRoutesButton.innerHTML = '<span class="dashicons dashicons-admin-site"></span>' + 
-                                        '<?php _e('Show All Routes', 'wp-art-routes'); ?>';
+                                        '<?php esc_html_e('Show All Routes', 'wp-art-routes'); ?>';
             
             // Insert button at the top of the legend
             const legendTitle = legendElement.querySelector('h3');

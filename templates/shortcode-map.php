@@ -101,7 +101,7 @@ $js_data = [
                class="gpx-export-button" 
                download="<?php echo esc_attr(sanitize_file_name($route['title'])); ?>.gpx">
                 <span class="dashicons dashicons-download"></span>
-                <?php _e('Export to GPX', 'wp-art-routes'); ?>
+                <?php esc_html_e('Export to GPX', 'wp-art-routes'); ?>
             </a>
         </div>
     </div>
@@ -117,22 +117,22 @@ $js_data = [
     <!-- Loading indicator -->
     <div id="map-loading" class="map-loading" style="display: none;">
         <div class="spinner"></div>
-        <p><?php _e('Loading map...', 'wp-art-routes'); ?></p>
+        <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
     </div>
     
     <!-- Location error message -->
     <div id="location-error" class="map-error" style="display: none;">
         <p></p>
-        <button id="retry-location" class="button"><?php _e('Retry', 'wp-art-routes'); ?></button>
+        <button id="retry-location" class="button"><?php esc_html_e('Retry', 'wp-art-routes'); ?></button>
     </div>
     
     <!-- Route progress -->
     <div class="route-progress" style="display: none;">
-        <h3><?php _e('Progress', 'wp-art-routes'); ?></h3>
+        <h3><?php esc_html_e('Progress', 'wp-art-routes'); ?></h3>
         <div class="progress-bar">
             <div class="progress-fill" style="width: 0%;"></div>
         </div>
-        <p><?php _e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php _e('of this route', 'wp-art-routes'); ?></p>
+        <p><?php esc_html_e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php esc_html_e('of this route', 'wp-art-routes'); ?></p>
     </div>
     
     <!-- Artwork modal -->

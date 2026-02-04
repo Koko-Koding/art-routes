@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 function wp_art_routes_ajax_mark_artwork_visited()
 {
     // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wp_art_routes_nonce')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wp_art_routes_nonce')) {
         wp_send_json_error('Invalid nonce');
         die();
     }
@@ -32,7 +32,7 @@ function wp_art_routes_ajax_mark_artwork_visited()
     }
 
     // Get data
-    $artwork_id = isset($_POST['artwork_id']) ? intval($_POST['artwork_id']) : 0;
+    $artwork_id = isset($_POST['artwork_id']) ? intval(wp_unslash($_POST['artwork_id'])) : 0;
     $user_id = get_current_user_id();
 
     if ($artwork_id <= 0) {
@@ -68,13 +68,13 @@ add_action('wp_ajax_nopriv_wp_art_routes_mark_artwork_visited', 'wp_art_routes_a
 function wp_art_routes_search_posts_for_artist()
 {
     // Verify nonce
-    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'artist_search_nonce')) {
+    if (!isset($_GET['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce'])), 'artist_search_nonce')) {
         wp_send_json_error('Invalid nonce');
         die();
     }
 
-    $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
-    $post_type = isset($_GET['post_type']) ? sanitize_text_field($_GET['post_type']) : '';
+    $term = isset($_GET['term']) ? sanitize_text_field(wp_unslash($_GET['term'])) : '';
+    $post_type = isset($_GET['post_type']) ? sanitize_text_field(wp_unslash($_GET['post_type'])) : '';
 
     if (empty($term)) {
         wp_send_json([]);
@@ -143,11 +143,11 @@ function wp_ajax_get_route_points()
 {
     check_ajax_referer('get_route_points_nonce', 'nonce');
 
-    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
+    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
         wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
     }
 
-    $route_id = intval($_POST['route_id']);
+    $route_id = intval(wp_unslash($_POST['route_id']));
     $points = wp_art_routes_get_associated_points($route_id);
 
     wp_send_json_success($points);
@@ -161,30 +161,32 @@ function wp_ajax_save_route_points()
 {
     check_ajax_referer('save_route_points_nonce', 'nonce');
 
-    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval($_POST['route_id']))) {
+    if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
         wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
     }
 
-    $route_id = intval($_POST['route_id']);
+    $route_id = intval(wp_unslash($_POST['route_id']));
     $results = [];
 
     // 1. Save Route Path
     if (isset($_POST['route_path'])) {
-        $sanitized_path = sanitize_textarea_field($_POST['route_path']);
+        $sanitized_path = sanitize_textarea_field(wp_unslash($_POST['route_path']));
         update_post_meta($route_id, '_route_path', $sanitized_path);
         $results['path_saved'] = true;
     }
 
     // 2. Save Route Length (calculated client-side, passed here)
     if (isset($_POST['route_length'])) {
-        update_post_meta($route_id, '_route_length', sanitize_text_field($_POST['route_length']));
+        update_post_meta($route_id, '_route_length', sanitize_text_field(wp_unslash($_POST['route_length'])));
         $results['length_saved'] = true;
     }
 
     // 3. Handle Point Updates (Moved Points)
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
     if (isset($_POST['updated_points']) && is_array($_POST['updated_points'])) {
         $results['updated'] = [];
-        foreach ($_POST['updated_points'] as $point) {
+        $updated_points = wp_unslash($_POST['updated_points']);
+        foreach ($updated_points as $point) {
             $point_id = isset($point['id']) ? intval($point['id']) : 0;
             $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
             $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
@@ -209,9 +211,11 @@ function wp_ajax_save_route_points()
     }
 
     // 4. Handle Point Removals (Delete from system - no longer just disassociate)
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each ID is cast to int below
     if (isset($_POST['removed_points']) && is_array($_POST['removed_points'])) {
         $results['removed'] = [];
-        foreach ($_POST['removed_points'] as $point_id_raw) {
+        $removed_points = wp_unslash($_POST['removed_points']);
+        foreach ($removed_points as $point_id_raw) {
             $point_id = intval($point_id_raw);
             if ($point_id > 0 && current_user_can('edit_post', $point_id)) {
                 // Since points are now global, we just note them as removed from the editor
@@ -222,9 +226,11 @@ function wp_ajax_save_route_points()
     }
 
     // 5. Handle New Points (Create Draft Posts)
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
     if (isset($_POST['new_points']) && is_array($_POST['new_points'])) {
         $results['added'] = [];
-        foreach ($_POST['new_points'] as $point) {
+        $new_points = wp_unslash($_POST['new_points']);
+        foreach ($new_points as $point) {
             $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
             $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
             $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
@@ -232,7 +238,8 @@ function wp_ajax_save_route_points()
 
             if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
                 $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
-                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %s, %s', 'wp-art-routes'), $lat, $lng) : sprintf(__('New Info Point near %s, %s', 'wp-art-routes'), $lat, $lng);
+                /* translators: %1$s: latitude coordinate, %2$s: longitude coordinate */
+                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %1$s, %2$s', 'wp-art-routes'), $lat, $lng) : sprintf(__('New Info Point near %1$s, %2$s', 'wp-art-routes'), $lat, $lng);
 
                 $new_post_id = wp_insert_post([
                     'post_title' => $post_title,
@@ -382,22 +389,22 @@ function wp_art_routes_get_associated_points($route_id)
 function wp_art_routes_ajax_export_gpx()
 {
     // Verify nonce - for GET requests, the nonce is in the URL parameter
-    $nonce = isset($_GET['_wpnonce']) ? $_GET['_wpnonce'] : '';
+    $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
     if (!wp_verify_nonce($nonce, 'wp_art_routes_export_gpx')) {
-        wp_die(__('Security check failed', 'wp-art-routes'));
+        wp_die(esc_html__('Security check failed', 'wp-art-routes'));
     }
 
-    $route_id = isset($_GET['route_id']) ? intval($_GET['route_id']) : 0;
+    $route_id = isset($_GET['route_id']) ? intval(wp_unslash($_GET['route_id'])) : 0;
 
     if ($route_id <= 0) {
-        wp_die(__('Invalid route ID', 'wp-art-routes'));
+        wp_die(esc_html__('Invalid route ID', 'wp-art-routes'));
     }
 
     // Get route data
     $route_data = wp_art_routes_get_route_data($route_id);
 
     if (!$route_data) {
-        wp_die(__('Route not found', 'wp-art-routes'));
+        wp_die(esc_html__('Route not found', 'wp-art-routes'));
     }
 
     // Generate GPX content
@@ -412,6 +419,9 @@ function wp_art_routes_ajax_export_gpx()
     header('Pragma: no-cache');
 
     // Output GPX content and exit
+    // Note: $gpx_content is pre-escaped XML generated by wp_art_routes_generate_gpx()
+    // using wp_art_routes_sanitize_for_gpx() which applies htmlspecialchars() with ENT_XML1
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- GPX/XML content already escaped for XML output
     echo $gpx_content;
     exit;
 }
@@ -435,7 +445,7 @@ function wp_art_routes_sanitize_for_gpx($content) {
     $content = strip_shortcodes($content);
     
     // Strip HTML tags
-    $content = strip_tags($content);
+    $content = wp_strip_all_tags($content);
     
     // Decode HTML entities first to get the actual characters
     $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');

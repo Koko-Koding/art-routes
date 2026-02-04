@@ -412,7 +412,7 @@ function wp_art_routes_append_map_to_route_content($content)
                             'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
                             'children' => __('Child-friendly route', 'wp-art-routes'),
                         ];
-                        echo isset($route_types[$route_data['type']]) ? $route_types[$route_data['type']] : $route_data['type'];
+                        echo esc_html(isset($route_types[$route_data['type']]) ? $route_types[$route_data['type']] : $route_data['type']);
                         ?>
                     </span>
                 <?php endif; ?>
@@ -424,7 +424,7 @@ function wp_art_routes_append_map_to_route_content($content)
                    class="gpx-export-button" 
                    download="<?php echo esc_attr(sanitize_file_name($route_data['title'])); ?>.gpx">
                     <span class="dashicons dashicons-download"></span>
-                    <?php _e('Export to GPX', 'wp-art-routes'); ?>
+                    <?php esc_html_e('Export to GPX', 'wp-art-routes'); ?>
                 </a>
             </div>
         </div>
@@ -440,22 +440,22 @@ function wp_art_routes_append_map_to_route_content($content)
         <!-- Loading indicator -->
         <div id="map-loading" class="map-loading" style="display: none;">
             <div class="spinner"></div>
-            <p><?php _e('Loading map...', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
         </div>
 
         <!-- Location error message -->
         <div id="location-error" class="map-error" style="display: none;">
             <p></p>
-            <button id="retry-location" class="button"><?php _e('Retry', 'wp-art-routes'); ?></button>
+            <button id="retry-location" class="button"><?php esc_html_e('Retry', 'wp-art-routes'); ?></button>
         </div>
 
         <!-- Route progress -->
         <div class="route-progress" style="display: none;">
-            <h3><?php _e('Progress', 'wp-art-routes'); ?></h3>
+            <h3><?php esc_html_e('Progress', 'wp-art-routes'); ?></h3>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: 0%;"></div>
             </div>
-            <p><?php _e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php _e('of this route', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php esc_html_e('of this route', 'wp-art-routes'); ?></p>
         </div>
 
         <!-- Artwork modal -->
@@ -521,7 +521,7 @@ function wp_art_routes_display_map_controls($options = [])
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-artworks" <?php checked($options['artworks_checked']); ?>>
                     <span class="map-control-icon dashicons dashicons-art"></span>
-                    <span class="map-control-label"><?php _e('Show Artworks', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Show Artworks', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
 
@@ -529,7 +529,7 @@ function wp_art_routes_display_map_controls($options = [])
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-info-points" <?php checked($options['info_points_checked']); ?>>
                     <span class="map-control-icon dashicons dashicons-info"></span>
-                    <span class="map-control-label"><?php _e('Show Information Points', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Show Information Points', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
 
@@ -537,7 +537,7 @@ function wp_art_routes_display_map_controls($options = [])
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-route" <?php checked($options['route_checked']); ?>>
                     <span class="map-control-icon dashicons dashicons-chart-line"></span>
-                    <span class="map-control-label"><?php _e('Show Route', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Show Route', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
 
@@ -545,7 +545,7 @@ function wp_art_routes_display_map_controls($options = [])
                 <label class="map-control-item">
                     <input type="checkbox" id="toggle-user-location" <?php checked($options['user_location_checked']); ?>>
                     <span class="map-control-icon dashicons dashicons-location"></span>
-                    <span class="map-control-label"><?php _e('Show My Location', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Show My Location', 'wp-art-routes'); ?></span>
                 </label>
             <?php endif; ?>
         </div>
@@ -554,12 +554,12 @@ function wp_art_routes_display_map_controls($options = [])
             <div class="map-navigation-buttons">
                 <button type="button" id="go-to-my-location" class="map-nav-button">
                     <span class="map-control-icon dashicons dashicons-location-alt"></span>
-                    <span class="map-control-label"><?php _e('Go to My Location', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Go to My Location', 'wp-art-routes'); ?></span>
                 </button>
 
                 <button type="button" id="go-to-route" class="map-nav-button">
                     <span class="map-control-icon dashicons dashicons-admin-site"></span>
-                    <span class="map-control-label"><?php _e('Go to Route', 'wp-art-routes'); ?></span>
+                    <span class="map-control-label"><?php esc_html_e('Go to Route', 'wp-art-routes'); ?></span>
                 </button>
             </div>
         <?php endif; ?>
@@ -578,9 +578,11 @@ function wp_art_routes_format_duration($minutes)
     $mins = $minutes % 60;
     $parts = array();
     if ($hours > 0) {
+        /* translators: %d: number of hours */
         $parts[] = sprintf(_n('%d hour', '%d hours', $hours, 'wp-art-routes'), $hours);
     }
     if ($mins > 0) {
+        /* translators: %d: number of minutes */
         $parts[] = sprintf(_n('%d minute', '%d minutes', $mins, 'wp-art-routes'), $mins);
     }
     return implode(' ', $parts);

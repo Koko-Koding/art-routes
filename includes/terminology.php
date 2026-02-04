@@ -358,8 +358,8 @@ function wp_art_routes_get_icon_display_name($filename) {
         return '#' . $matches[1];
     }
 
-    // Remove common prefixes and clean up
-    $display_name = str_replace(['WB plattegrond-'], [''], $icon_name);
+    // Remove common prefixes and clean up (support both old and new naming)
+    $display_name = str_replace(['WB-plattegrond-', 'WB plattegrond-'], ['', ''], $icon_name);
     $display_name = str_replace(['-', '_'], ' ', $display_name);
     return ucwords(trim($display_name));
 }

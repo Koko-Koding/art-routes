@@ -58,8 +58,8 @@ get_header();
                         $formatted_end = !empty($end_date) ? date_i18n($date_format, strtotime($end_date)) : '';
 
                         if ($formatted_start && $formatted_end) {
-                            /* translators: %1$s: start date, %2$s: end date */
                             printf(
+                                /* translators: %1$s: start date, %2$s: end date */
                                 esc_html__('%1$s - %2$s', 'wp-art-routes'),
                                 esc_html($formatted_start),
                                 esc_html($formatted_end)

@@ -534,7 +534,7 @@ function wp_art_routes_add_edition_filter() {
     }
 
     $editions = wp_art_routes_get_editions();
-    $current_edition = isset($_GET['edition_filter']) ? absint($_GET['edition_filter']) : 0;
+    $current_edition = isset($_GET['edition_filter']) ? absint(wp_unslash($_GET['edition_filter'])) : 0;
 
     ?>
     <select name="edition_filter">
@@ -566,11 +566,11 @@ function wp_art_routes_filter_by_edition($query) {
         return;
     }
 
-    if (!isset($_GET['edition_filter']) || $_GET['edition_filter'] === '0') {
+    if (!isset($_GET['edition_filter']) || wp_unslash($_GET['edition_filter']) === '0') {
         return;
     }
 
-    $edition_filter = intval($_GET['edition_filter']);
+    $edition_filter = intval(wp_unslash($_GET['edition_filter']));
 
     if ($edition_filter === -1) {
         // No edition

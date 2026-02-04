@@ -47,7 +47,7 @@ function wp_art_routes_render_import_export_page()
     }
 
     // Determine current tab
-    $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'import';
+    $current_tab = isset($_GET['tab']) ? sanitize_key(wp_unslash($_GET['tab'])) : 'import';
 
     // Define available tabs
     $tabs = [
@@ -141,7 +141,7 @@ function wp_art_routes_render_import_tab()
         ); ?></h2>
 
         <p class="description">
-            <?php _e('Upload a CSV file to import locations and information points. Items will be created as drafts for review before publishing.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Upload a CSV file to import locations and information points. Items will be created as drafts for review before publishing.', 'wp-art-routes'); ?>
         </p>
 
         <form method="post" enctype="multipart/form-data">
@@ -150,42 +150,42 @@ function wp_art_routes_render_import_tab()
             <table class="form-table" role="presentation">
                 <tr>
                     <th scope="row">
-                        <label for="import_edition_id"><?php _e('Edition', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="import_edition_id"><?php esc_html_e('Edition', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <select name="import_edition_id" id="import_edition_id" required>
-                            <option value=""><?php _e('Select an edition', 'wp-art-routes'); ?></option>
+                            <option value=""><?php esc_html_e('Select an edition', 'wp-art-routes'); ?></option>
                             <?php foreach ($editions as $edition) : ?>
                                 <option value="<?php echo esc_attr($edition->ID); ?>">
                                     <?php echo esc_html($edition->post_title); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="new">+ <?php _e('Create new edition', 'wp-art-routes'); ?></option>
+                            <option value="new">+ <?php esc_html_e('Create new edition', 'wp-art-routes'); ?></option>
                         </select>
                         <p class="description">
-                            <?php _e('All imported items will be assigned to this edition.', 'wp-art-routes'); ?>
+                            <?php esc_html_e('All imported items will be assigned to this edition.', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
                 <tr class="new-edition-name-row" id="csv-new-edition-row">
                     <th scope="row">
-                        <label for="csv_new_edition_name"><?php _e('New Edition Name', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="csv_new_edition_name"><?php esc_html_e('New Edition Name', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <input type="text" name="csv_new_edition_name" id="csv_new_edition_name" class="regular-text" />
                         <p class="description">
-                            <?php _e('Enter a name for the new edition (e.g., "Kunstroute 2026").', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Enter a name for the new edition (e.g., "Kunstroute 2026").', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="import_csv_file"><?php _e('CSV File', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="import_csv_file"><?php esc_html_e('CSV File', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <input type="file" name="import_csv_file" id="import_csv_file" accept=".csv" required />
                         <p class="description">
-                            <?php _e('Select a CSV file following the template format.', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Select a CSV file following the template format.', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
@@ -199,60 +199,60 @@ function wp_art_routes_render_import_tab()
 
         <hr style="margin: 30px 0;" />
 
-        <h3><?php _e('CSV Template', 'wp-art-routes'); ?></h3>
+        <h3><?php esc_html_e('CSV Template', 'wp-art-routes'); ?></h3>
         <p class="description">
-            <?php _e('Download the template CSV file to see the required format for importing.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Download the template CSV file to see the required format for importing.', 'wp-art-routes'); ?>
         </p>
 
         <p>
             <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin-ajax.php?action=wp_art_routes_download_csv_template'), 'wp_art_routes_csv_template')); ?>"
                class="button">
                 <span class="dashicons dashicons-download" style="vertical-align: middle;"></span>
-                <?php _e('Download Template CSV', 'wp-art-routes'); ?>
+                <?php esc_html_e('Download Template CSV', 'wp-art-routes'); ?>
             </a>
         </p>
 
-        <h4><?php _e('CSV Format', 'wp-art-routes'); ?></h4>
+        <h4><?php esc_html_e('CSV Format', 'wp-art-routes'); ?></h4>
         <p class="description">
-            <?php _e('The CSV file should have the following columns:', 'wp-art-routes'); ?>
+            <?php esc_html_e('The CSV file should have the following columns:', 'wp-art-routes'); ?>
         </p>
         <table class="widefat striped" style="max-width: 700px;">
             <thead>
                 <tr>
-                    <th><?php _e('Column', 'wp-art-routes'); ?></th>
-                    <th><?php _e('Required', 'wp-art-routes'); ?></th>
-                    <th><?php _e('Description', 'wp-art-routes'); ?></th>
+                    <th><?php esc_html_e('Column', 'wp-art-routes'); ?></th>
+                    <th><?php esc_html_e('Required', 'wp-art-routes'); ?></th>
+                    <th><?php esc_html_e('Description', 'wp-art-routes'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><code>Type</code></td>
-                    <td><?php _e('Yes', 'wp-art-routes'); ?></td>
-                    <td><?php _e('"location" or "info_point"', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Yes', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('"location" or "info_point"', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Name</code></td>
-                    <td><?php _e('Yes', 'wp-art-routes'); ?></td>
-                    <td><?php _e('The title of the item', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Yes', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('The title of the item', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Description</code></td>
-                    <td><?php _e('No', 'wp-art-routes'); ?></td>
-                    <td><?php _e('Full description/content', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Full description/content', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Latitude</code></td>
-                    <td><?php _e('Yes', 'wp-art-routes'); ?></td>
-                    <td><?php _e('GPS latitude (e.g., 52.0907)', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Yes', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('GPS latitude (e.g., 52.0907)', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Longitude</code></td>
-                    <td><?php _e('Yes', 'wp-art-routes'); ?></td>
-                    <td><?php _e('GPS longitude (e.g., 5.1214)', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Yes', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('GPS longitude (e.g., 5.1214)', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Number</code></td>
-                    <td><?php _e('No', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
                     <td><?php printf(
                         /* translators: %s: location label (e.g., "Locations") */
                         __('%s only: Display number (e.g., A1, 1)', 'wp-art-routes'),
@@ -261,12 +261,12 @@ function wp_art_routes_render_import_tab()
                 </tr>
                 <tr>
                     <td><code>Icon</code></td>
-                    <td><?php _e('No', 'wp-art-routes'); ?></td>
-                    <td><?php _e('Icon filename (e.g., icon.svg)', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('Icon filename (e.g., icon.svg)', 'wp-art-routes'); ?></td>
                 </tr>
                 <tr>
                     <td><code>Creator</code></td>
-                    <td><?php _e('No', 'wp-art-routes'); ?></td>
+                    <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
                     <td><?php printf(
                         /* translators: %s: location label (e.g., "Locations") */
                         __('%s only: Creator/artist name', 'wp-art-routes'),
@@ -278,10 +278,10 @@ function wp_art_routes_render_import_tab()
     </div>
 
     <div class="card" style="max-width: 800px; margin-bottom: 20px;">
-        <h2><?php _e('Import from GPX', 'wp-art-routes'); ?></h2>
+        <h2><?php esc_html_e('Import from GPX', 'wp-art-routes'); ?></h2>
 
         <p class="description">
-            <?php _e('Upload a GPX file to import route paths and/or waypoints. Routes will be created as drafts for review.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Upload a GPX file to import route paths and/or waypoints. Routes will be created as drafts for review.', 'wp-art-routes'); ?>
         </p>
 
         <form method="post" enctype="multipart/form-data">
@@ -290,56 +290,56 @@ function wp_art_routes_render_import_tab()
             <table class="form-table" role="presentation">
                 <tr>
                     <th scope="row">
-                        <label for="gpx_import_edition_id"><?php _e('Edition', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="gpx_import_edition_id"><?php esc_html_e('Edition', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <select name="gpx_import_edition_id" id="gpx_import_edition_id" required>
-                            <option value=""><?php _e('Select an edition', 'wp-art-routes'); ?></option>
+                            <option value=""><?php esc_html_e('Select an edition', 'wp-art-routes'); ?></option>
                             <?php foreach ($editions as $edition) : ?>
                                 <option value="<?php echo esc_attr($edition->ID); ?>">
                                     <?php echo esc_html($edition->post_title); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="new">+ <?php _e('Create new edition', 'wp-art-routes'); ?></option>
+                            <option value="new">+ <?php esc_html_e('Create new edition', 'wp-art-routes'); ?></option>
                         </select>
                         <p class="description">
-                            <?php _e('All imported items will be assigned to this edition.', 'wp-art-routes'); ?>
+                            <?php esc_html_e('All imported items will be assigned to this edition.', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
                 <tr class="new-edition-name-row" id="gpx-new-edition-row">
                     <th scope="row">
-                        <label for="gpx_new_edition_name"><?php _e('New Edition Name', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="gpx_new_edition_name"><?php esc_html_e('New Edition Name', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <input type="text" name="gpx_new_edition_name" id="gpx_new_edition_name" class="regular-text" />
                         <p class="description">
-                            <?php _e('Enter a name for the new edition (e.g., "Kunstroute 2026").', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Enter a name for the new edition (e.g., "Kunstroute 2026").', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="import_gpx_file"><?php _e('GPX File', 'wp-art-routes'); ?> <span class="required">*</span></label>
+                        <label for="import_gpx_file"><?php esc_html_e('GPX File', 'wp-art-routes'); ?> <span class="required">*</span></label>
                     </th>
                     <td>
                         <input type="file" name="import_gpx_file" id="import_gpx_file" accept=".gpx" required />
                         <p class="description">
-                            <?php _e('Select a GPX file containing tracks and/or waypoints.', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Select a GPX file containing tracks and/or waypoints.', 'wp-art-routes'); ?>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="gpx_import_mode"><?php _e('Import Mode', 'wp-art-routes'); ?></label>
+                        <label for="gpx_import_mode"><?php esc_html_e('Import Mode', 'wp-art-routes'); ?></label>
                     </th>
                     <td>
                         <fieldset>
                             <label>
                                 <input type="radio" name="gpx_import_mode" value="route_only" checked />
-                                <?php _e('Route path only', 'wp-art-routes'); ?>
+                                <?php esc_html_e('Route path only', 'wp-art-routes'); ?>
                                 <p class="description" style="margin-left: 24px; margin-top: 4px;">
-                                    <?php _e('Import tracks as route paths. Waypoints are ignored.', 'wp-art-routes'); ?>
+                                    <?php esc_html_e('Import tracks as route paths. Waypoints are ignored.', 'wp-art-routes'); ?>
                                 </p>
                             </label>
                             <br />
@@ -367,7 +367,7 @@ function wp_art_routes_render_import_tab()
                                     esc_html($location_label)
                                 ); ?>
                                 <p class="description" style="margin-left: 24px; margin-top: 4px;">
-                                    <?php _e('Ignore track data, only import waypoints.', 'wp-art-routes'); ?>
+                                    <?php esc_html_e('Ignore track data, only import waypoints.', 'wp-art-routes'); ?>
                                 </p>
                             </label>
                         </fieldset>
@@ -434,10 +434,10 @@ function wp_art_routes_render_export_tab()
 
     ?>
     <div class="card" style="max-width: 800px;">
-        <h2><?php _e('Export Edition Data', 'wp-art-routes'); ?></h2>
+        <h2><?php esc_html_e('Export Edition Data', 'wp-art-routes'); ?></h2>
 
         <p class="description">
-            <?php _e('Export all locations and information points from an edition to CSV or GPX format.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Export all locations and information points from an edition to CSV or GPX format.', 'wp-art-routes'); ?>
         </p>
 
         <?php if (!empty($editions)) : ?>
@@ -447,11 +447,11 @@ function wp_art_routes_render_export_tab()
                 <table class="form-table" role="presentation">
                     <tr>
                         <th scope="row">
-                            <label for="export_edition_id"><?php _e('Edition', 'wp-art-routes'); ?></label>
+                            <label for="export_edition_id"><?php esc_html_e('Edition', 'wp-art-routes'); ?></label>
                         </th>
                         <td>
                             <select name="export_edition_id" id="export_edition_id" required>
-                                <option value=""><?php _e('Select an edition', 'wp-art-routes'); ?></option>
+                                <option value=""><?php esc_html_e('Select an edition', 'wp-art-routes'); ?></option>
                                 <?php foreach ($editions as $edition) : ?>
                                     <option value="<?php echo esc_attr($edition->ID); ?>">
                                         <?php echo esc_html($edition->post_title); ?>
@@ -462,15 +462,15 @@ function wp_art_routes_render_export_tab()
                     </tr>
                     <tr>
                         <th scope="row">
-                            <label for="export_format"><?php _e('Format', 'wp-art-routes'); ?></label>
+                            <label for="export_format"><?php esc_html_e('Format', 'wp-art-routes'); ?></label>
                         </th>
                         <td>
                             <select name="export_format" id="export_format" required>
-                                <option value="csv"><?php _e('CSV (Spreadsheet)', 'wp-art-routes'); ?></option>
-                                <option value="gpx"><?php _e('GPX (GPS Exchange Format)', 'wp-art-routes'); ?></option>
+                                <option value="csv"><?php esc_html_e('CSV (Spreadsheet)', 'wp-art-routes'); ?></option>
+                                <option value="gpx"><?php esc_html_e('GPX (GPS Exchange Format)', 'wp-art-routes'); ?></option>
                             </select>
                             <p class="description">
-                                <?php _e('CSV is best for spreadsheet editing. GPX is compatible with GPS devices and mapping apps.', 'wp-art-routes'); ?>
+                                <?php esc_html_e('CSV is best for spreadsheet editing. GPX is compatible with GPS devices and mapping apps.', 'wp-art-routes'); ?>
                             </p>
                         </td>
                     </tr>
@@ -479,7 +479,7 @@ function wp_art_routes_render_export_tab()
                 <p class="submit">
                     <button type="button" id="export-button" class="button button-primary">
                         <span class="dashicons dashicons-download" style="vertical-align: middle;"></span>
-                        <?php _e('Export', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Export', 'wp-art-routes'); ?>
                     </button>
                 </p>
             </form>
@@ -506,7 +506,7 @@ function wp_art_routes_render_export_tab()
             </script>
         <?php else : ?>
             <p class="description" style="color: #d63638;">
-                <?php _e('No editions found. Please create an edition first.', 'wp-art-routes'); ?>
+                <?php esc_html_e('No editions found. Please create an edition first.', 'wp-art-routes'); ?>
             </p>
         <?php endif; ?>
     </div>
@@ -521,7 +521,7 @@ function wp_art_routes_render_export_tab()
 function wp_art_routes_handle_csv_import()
 {
     // Verify nonce
-    if (!wp_verify_nonce($_POST['_wpnonce'], 'wp_art_routes_import_csv')) {
+    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'wp_art_routes_import_csv')) {
         return new WP_Error('invalid_nonce', __('Security check failed. Please try again.', 'wp-art-routes'));
     }
 
@@ -531,13 +531,13 @@ function wp_art_routes_handle_csv_import()
     }
 
     // Check edition ID or create new edition
-    $edition_id_input = isset($_POST['import_edition_id']) ? sanitize_text_field($_POST['import_edition_id']) : '';
+    $edition_id_input = isset($_POST['import_edition_id']) ? sanitize_text_field(wp_unslash($_POST['import_edition_id'])) : '';
     $edition_id = 0;
     $created_new_edition = false;
 
     if ($edition_id_input === 'new') {
         // Create new edition
-        $new_edition_name = isset($_POST['csv_new_edition_name']) ? sanitize_text_field($_POST['csv_new_edition_name']) : '';
+        $new_edition_name = isset($_POST['csv_new_edition_name']) ? sanitize_text_field(wp_unslash($_POST['csv_new_edition_name'])) : '';
         if (empty($new_edition_name)) {
             return new WP_Error('missing_edition_name', __('Please enter a name for the new edition.', 'wp-art-routes'));
         }
@@ -847,8 +847,6 @@ function wp_art_routes_handle_csv_import()
             _n('%d row had errors.', '%d rows had errors.', count($errors), 'wp-art-routes'),
             count($errors)
         );
-        // Log errors for debugging
-        error_log('WP Art Routes CSV Import Errors: ' . implode('; ', $errors));
     }
 
     // Return result array with message and edition data
@@ -1018,7 +1016,7 @@ function wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id)
 function wp_art_routes_handle_gpx_import()
 {
     // Verify nonce
-    if (!wp_verify_nonce($_POST['_wpnonce_gpx'], 'wp_art_routes_import_gpx')) {
+    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce_gpx'])), 'wp_art_routes_import_gpx')) {
         return new WP_Error('invalid_nonce', __('Security check failed. Please try again.', 'wp-art-routes'));
     }
 
@@ -1028,13 +1026,13 @@ function wp_art_routes_handle_gpx_import()
     }
 
     // Check edition ID or create new edition
-    $edition_id_input = isset($_POST['gpx_import_edition_id']) ? sanitize_text_field($_POST['gpx_import_edition_id']) : '';
+    $edition_id_input = isset($_POST['gpx_import_edition_id']) ? sanitize_text_field(wp_unslash($_POST['gpx_import_edition_id'])) : '';
     $edition_id = 0;
     $created_new_edition = false;
 
     if ($edition_id_input === 'new') {
         // Create new edition
-        $new_edition_name = isset($_POST['gpx_new_edition_name']) ? sanitize_text_field($_POST['gpx_new_edition_name']) : '';
+        $new_edition_name = isset($_POST['gpx_new_edition_name']) ? sanitize_text_field(wp_unslash($_POST['gpx_new_edition_name'])) : '';
         if (empty($new_edition_name)) {
             return new WP_Error('missing_edition_name', __('Please enter a name for the new edition.', 'wp-art-routes'));
         }
@@ -1065,7 +1063,7 @@ function wp_art_routes_handle_gpx_import()
     }
 
     // Get import mode
-    $import_mode = isset($_POST['gpx_import_mode']) ? sanitize_key($_POST['gpx_import_mode']) : 'route_only';
+    $import_mode = isset($_POST['gpx_import_mode']) ? sanitize_key(wp_unslash($_POST['gpx_import_mode'])) : 'route_only';
     if (!in_array($import_mode, ['route_only', 'route_and_waypoints', 'waypoints_only'], true)) {
         $import_mode = 'route_only';
     }
@@ -1093,8 +1091,13 @@ function wp_art_routes_handle_gpx_import()
         return new WP_Error('invalid_file_type', __('Please upload a GPX file.', 'wp-art-routes'));
     }
 
-    // Read GPX file
-    $gpx_content = file_get_contents($_FILES['import_gpx_file']['tmp_name']);
+    // Read GPX file using WP_Filesystem
+    global $wp_filesystem;
+    if (empty($wp_filesystem)) {
+        require_once ABSPATH . '/wp-admin/includes/file.php';
+        WP_Filesystem();
+    }
+    $gpx_content = $wp_filesystem->get_contents($_FILES['import_gpx_file']['tmp_name']);
     if (!$gpx_content) {
         return new WP_Error('file_read_error', __('Could not read the uploaded file.', 'wp-art-routes'));
     }
@@ -1424,7 +1427,6 @@ function wp_art_routes_handle_gpx_import()
             _n('%d item had errors.', '%d items had errors.', count($errors), 'wp-art-routes'),
             count($errors)
         );
-        error_log('WP Art Routes GPX Import Errors: ' . implode('; ', $errors));
     }
 
     // Return result array with message and edition data
@@ -1441,8 +1443,8 @@ function wp_art_routes_handle_gpx_import()
 function wp_art_routes_download_csv_template()
 {
     // Verify nonce
-    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'wp_art_routes_csv_template')) {
-        wp_die(__('Security check failed.', 'wp-art-routes'));
+    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'wp_art_routes_csv_template')) {
+        wp_die(esc_html__('Security check failed.', 'wp-art-routes'));
     }
 
     // Check permissions
@@ -1482,8 +1484,8 @@ add_action('wp_ajax_wp_art_routes_download_csv_template', 'wp_art_routes_downloa
 function wp_art_routes_export_edition()
 {
     // Verify nonce
-    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'wp_art_routes_export_edition')) {
-        wp_die(__('Security check failed.', 'wp-art-routes'));
+    if (!isset($_GET['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'wp_art_routes_export_edition')) {
+        wp_die(esc_html__('Security check failed.', 'wp-art-routes'));
     }
 
     // Check permissions
@@ -1492,8 +1494,8 @@ function wp_art_routes_export_edition()
     }
 
     // Get parameters
-    $edition_id = isset($_GET['edition_id']) ? absint($_GET['edition_id']) : 0;
-    $format = isset($_GET['format']) ? sanitize_key($_GET['format']) : 'csv';
+    $edition_id = isset($_GET['edition_id']) ? absint(wp_unslash($_GET['edition_id'])) : 0;
+    $format = isset($_GET['format']) ? sanitize_key(wp_unslash($_GET['format'])) : 'csv';
 
     // Validate edition
     if (!$edition_id) {
@@ -1621,7 +1623,7 @@ function wp_art_routes_export_edition_gpx($edition)
             return '';
         }
         $content = strip_shortcodes($content);
-        $content = strip_tags($content);
+        $content = wp_strip_all_tags($content);
         $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $content = trim($content);
         $content = preg_replace('/\s+/', ' ', $content);

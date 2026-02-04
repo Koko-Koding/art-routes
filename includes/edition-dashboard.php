@@ -121,16 +121,16 @@ function wp_art_routes_render_dashboard_page()
     $editions = wp_art_routes_get_editions();
 
     // Get selected edition from URL parameter
-    $selected_edition_id = isset($_GET['edition_id']) ? absint($_GET['edition_id']) : 0;
+    $selected_edition_id = isset($_GET['edition_id']) ? absint(wp_unslash($_GET['edition_id'])) : 0;
 
     ?>
     <div class="wrap" id="edition-dashboard">
-        <h1><?php _e('Edition Dashboard', 'wp-art-routes'); ?></h1>
+        <h1><?php esc_html_e('Edition Dashboard', 'wp-art-routes'); ?></h1>
 
         <div class="edition-selector-wrap">
-            <label for="edition-select"><?php _e('Select Edition:', 'wp-art-routes'); ?></label>
+            <label for="edition-select"><?php esc_html_e('Select Edition:', 'wp-art-routes'); ?></label>
             <select id="edition-select">
-                <option value=""><?php _e('-- Select an edition --', 'wp-art-routes'); ?></option>
+                <option value=""><?php esc_html_e('-- Select an edition --', 'wp-art-routes'); ?></option>
                 <?php foreach ($editions as $edition) : ?>
                     <option value="<?php echo esc_attr($edition->ID); ?>" <?php selected($selected_edition_id, $edition->ID); ?>>
                         <?php echo esc_html($edition->post_title); ?>
@@ -138,7 +138,7 @@ function wp_art_routes_render_dashboard_page()
                 <?php endforeach; ?>
             </select>
             <a id="view-frontend-link" href="#" class="button" style="display: none;" target="_blank">
-                <?php _e('View Frontend', 'wp-art-routes'); ?>
+                <?php esc_html_e('View Frontend', 'wp-art-routes'); ?>
             </a>
         </div>
 
@@ -147,10 +147,10 @@ function wp_art_routes_render_dashboard_page()
             <div id="dashboard-map-container" class="dashboard-section">
                 <div id="dashboard-map" style="height: 300px; margin-bottom: 20px;"></div>
                 <div id="map-legend" class="map-legend">
-                    <span class="legend-item"><span class="legend-marker route"></span> <?php _e('Routes', 'wp-art-routes'); ?></span>
-                    <span class="legend-item"><span class="legend-marker location"></span> <?php _e('Locations', 'wp-art-routes'); ?></span>
-                    <span class="legend-item"><span class="legend-marker info-point"></span> <?php _e('Info Points', 'wp-art-routes'); ?></span>
-                    <span class="legend-item"><span class="legend-marker draft"></span> <?php _e('Draft (faded)', 'wp-art-routes'); ?></span>
+                    <span class="legend-item"><span class="legend-marker route"></span> <?php esc_html_e('Routes', 'wp-art-routes'); ?></span>
+                    <span class="legend-item"><span class="legend-marker location"></span> <?php esc_html_e('Locations', 'wp-art-routes'); ?></span>
+                    <span class="legend-item"><span class="legend-marker info-point"></span> <?php esc_html_e('Info Points', 'wp-art-routes'); ?></span>
+                    <span class="legend-item"><span class="legend-marker draft"></span> <?php esc_html_e('Draft (faded)', 'wp-art-routes'); ?></span>
                 </div>
             </div>
 
@@ -158,35 +158,35 @@ function wp_art_routes_render_dashboard_page()
             <div id="routes-section" class="dashboard-section collapsible">
                 <h2 class="section-header">
                     <span class="toggle-icon">▼</span>
-                    <span class="section-title"><?php _e('Routes', 'wp-art-routes'); ?></span>
+                    <span class="section-title"><?php esc_html_e('Routes', 'wp-art-routes'); ?></span>
                     <span class="section-counts"></span>
                 </h2>
                 <div class="section-content">
                     <div class="bulk-actions">
                         <select class="bulk-action-select">
-                            <option value=""><?php _e('Bulk Actions', 'wp-art-routes'); ?></option>
-                            <option value="publish"><?php _e('Publish', 'wp-art-routes'); ?></option>
-                            <option value="draft"><?php _e('Set to Draft', 'wp-art-routes'); ?></option>
-                            <option value="delete"><?php _e('Delete', 'wp-art-routes'); ?></option>
+                            <option value=""><?php esc_html_e('Bulk Actions', 'wp-art-routes'); ?></option>
+                            <option value="publish"><?php esc_html_e('Publish', 'wp-art-routes'); ?></option>
+                            <option value="draft"><?php esc_html_e('Set to Draft', 'wp-art-routes'); ?></option>
+                            <option value="delete"><?php esc_html_e('Delete', 'wp-art-routes'); ?></option>
                         </select>
-                        <button type="button" class="button bulk-apply"><?php _e('Apply', 'wp-art-routes'); ?></button>
+                        <button type="button" class="button bulk-apply"><?php esc_html_e('Apply', 'wp-art-routes'); ?></button>
                         <span class="selection-buttons">
-                            <button type="button" class="button select-all"><?php _e('Select All', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-none"><?php _e('Select None', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-drafts"><?php _e('Select Drafts', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-all"><?php esc_html_e('Select All', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-none"><?php esc_html_e('Select None', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-drafts"><?php esc_html_e('Select Drafts', 'wp-art-routes'); ?></button>
                         </span>
                     </div>
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
                                 <th class="check-column"><input type="checkbox" class="select-all-checkbox" /></th>
-                                <th class="column-title"><?php _e('Title', 'wp-art-routes'); ?></th>
-                                <th class="column-status"><?php _e('Status', 'wp-art-routes'); ?></th>
-                                <th class="column-actions"><?php _e('Actions', 'wp-art-routes'); ?></th>
+                                <th class="column-title"><?php esc_html_e('Title', 'wp-art-routes'); ?></th>
+                                <th class="column-status"><?php esc_html_e('Status', 'wp-art-routes'); ?></th>
+                                <th class="column-actions"><?php esc_html_e('Actions', 'wp-art-routes'); ?></th>
                             </tr>
                         </thead>
                         <tbody id="routes-table-body">
-                            <tr class="no-items"><td colspan="4"><?php _e('Loading...', 'wp-art-routes'); ?></td></tr>
+                            <tr class="no-items"><td colspan="4"><?php esc_html_e('Loading...', 'wp-art-routes'); ?></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -196,39 +196,39 @@ function wp_art_routes_render_dashboard_page()
             <div id="locations-section" class="dashboard-section collapsible collapsed">
                 <h2 class="section-header">
                     <span class="toggle-icon">▶</span>
-                    <span class="section-title"><?php _e('Locations', 'wp-art-routes'); ?></span>
+                    <span class="section-title"><?php esc_html_e('Locations', 'wp-art-routes'); ?></span>
                     <span class="section-counts"></span>
                 </h2>
                 <div class="section-content" style="display: none;">
                     <div class="bulk-actions">
                         <select class="bulk-action-select">
-                            <option value=""><?php _e('Bulk Actions', 'wp-art-routes'); ?></option>
-                            <option value="publish"><?php _e('Publish', 'wp-art-routes'); ?></option>
-                            <option value="draft"><?php _e('Set to Draft', 'wp-art-routes'); ?></option>
-                            <option value="delete"><?php _e('Delete', 'wp-art-routes'); ?></option>
+                            <option value=""><?php esc_html_e('Bulk Actions', 'wp-art-routes'); ?></option>
+                            <option value="publish"><?php esc_html_e('Publish', 'wp-art-routes'); ?></option>
+                            <option value="draft"><?php esc_html_e('Set to Draft', 'wp-art-routes'); ?></option>
+                            <option value="delete"><?php esc_html_e('Delete', 'wp-art-routes'); ?></option>
                         </select>
-                        <button type="button" class="button bulk-apply"><?php _e('Apply', 'wp-art-routes'); ?></button>
+                        <button type="button" class="button bulk-apply"><?php esc_html_e('Apply', 'wp-art-routes'); ?></button>
                         <span class="selection-buttons">
-                            <button type="button" class="button select-all"><?php _e('Select All', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-none"><?php _e('Select None', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-drafts"><?php _e('Select Drafts', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-all"><?php esc_html_e('Select All', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-none"><?php esc_html_e('Select None', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-drafts"><?php esc_html_e('Select Drafts', 'wp-art-routes'); ?></button>
                         </span>
                     </div>
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
                                 <th class="check-column"><input type="checkbox" class="select-all-checkbox" /></th>
-                                <th class="column-number"><?php _e('#', 'wp-art-routes'); ?></th>
-                                <th class="column-title"><?php _e('Title', 'wp-art-routes'); ?></th>
-                                <th class="column-status"><?php _e('Status', 'wp-art-routes'); ?></th>
-                                <th class="column-lat"><?php _e('Lat', 'wp-art-routes'); ?></th>
-                                <th class="column-lng"><?php _e('Lng', 'wp-art-routes'); ?></th>
-                                <th class="column-icon"><?php _e('Icon', 'wp-art-routes'); ?></th>
-                                <th class="column-actions"><?php _e('Actions', 'wp-art-routes'); ?></th>
+                                <th class="column-number"><?php esc_html_e('#', 'wp-art-routes'); ?></th>
+                                <th class="column-title"><?php esc_html_e('Title', 'wp-art-routes'); ?></th>
+                                <th class="column-status"><?php esc_html_e('Status', 'wp-art-routes'); ?></th>
+                                <th class="column-lat"><?php esc_html_e('Lat', 'wp-art-routes'); ?></th>
+                                <th class="column-lng"><?php esc_html_e('Lng', 'wp-art-routes'); ?></th>
+                                <th class="column-icon"><?php esc_html_e('Icon', 'wp-art-routes'); ?></th>
+                                <th class="column-actions"><?php esc_html_e('Actions', 'wp-art-routes'); ?></th>
                             </tr>
                         </thead>
                         <tbody id="locations-table-body">
-                            <tr class="no-items"><td colspan="8"><?php _e('Loading...', 'wp-art-routes'); ?></td></tr>
+                            <tr class="no-items"><td colspan="8"><?php esc_html_e('Loading...', 'wp-art-routes'); ?></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -238,38 +238,38 @@ function wp_art_routes_render_dashboard_page()
             <div id="info-points-section" class="dashboard-section collapsible collapsed">
                 <h2 class="section-header">
                     <span class="toggle-icon">▶</span>
-                    <span class="section-title"><?php _e('Info Points', 'wp-art-routes'); ?></span>
+                    <span class="section-title"><?php esc_html_e('Info Points', 'wp-art-routes'); ?></span>
                     <span class="section-counts"></span>
                 </h2>
                 <div class="section-content" style="display: none;">
                     <div class="bulk-actions">
                         <select class="bulk-action-select">
-                            <option value=""><?php _e('Bulk Actions', 'wp-art-routes'); ?></option>
-                            <option value="publish"><?php _e('Publish', 'wp-art-routes'); ?></option>
-                            <option value="draft"><?php _e('Set to Draft', 'wp-art-routes'); ?></option>
-                            <option value="delete"><?php _e('Delete', 'wp-art-routes'); ?></option>
+                            <option value=""><?php esc_html_e('Bulk Actions', 'wp-art-routes'); ?></option>
+                            <option value="publish"><?php esc_html_e('Publish', 'wp-art-routes'); ?></option>
+                            <option value="draft"><?php esc_html_e('Set to Draft', 'wp-art-routes'); ?></option>
+                            <option value="delete"><?php esc_html_e('Delete', 'wp-art-routes'); ?></option>
                         </select>
-                        <button type="button" class="button bulk-apply"><?php _e('Apply', 'wp-art-routes'); ?></button>
+                        <button type="button" class="button bulk-apply"><?php esc_html_e('Apply', 'wp-art-routes'); ?></button>
                         <span class="selection-buttons">
-                            <button type="button" class="button select-all"><?php _e('Select All', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-none"><?php _e('Select None', 'wp-art-routes'); ?></button>
-                            <button type="button" class="button select-drafts"><?php _e('Select Drafts', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-all"><?php esc_html_e('Select All', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-none"><?php esc_html_e('Select None', 'wp-art-routes'); ?></button>
+                            <button type="button" class="button select-drafts"><?php esc_html_e('Select Drafts', 'wp-art-routes'); ?></button>
                         </span>
                     </div>
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
                                 <th class="check-column"><input type="checkbox" class="select-all-checkbox" /></th>
-                                <th class="column-title"><?php _e('Title', 'wp-art-routes'); ?></th>
-                                <th class="column-status"><?php _e('Status', 'wp-art-routes'); ?></th>
-                                <th class="column-lat"><?php _e('Lat', 'wp-art-routes'); ?></th>
-                                <th class="column-lng"><?php _e('Lng', 'wp-art-routes'); ?></th>
-                                <th class="column-icon"><?php _e('Icon', 'wp-art-routes'); ?></th>
-                                <th class="column-actions"><?php _e('Actions', 'wp-art-routes'); ?></th>
+                                <th class="column-title"><?php esc_html_e('Title', 'wp-art-routes'); ?></th>
+                                <th class="column-status"><?php esc_html_e('Status', 'wp-art-routes'); ?></th>
+                                <th class="column-lat"><?php esc_html_e('Lat', 'wp-art-routes'); ?></th>
+                                <th class="column-lng"><?php esc_html_e('Lng', 'wp-art-routes'); ?></th>
+                                <th class="column-icon"><?php esc_html_e('Icon', 'wp-art-routes'); ?></th>
+                                <th class="column-actions"><?php esc_html_e('Actions', 'wp-art-routes'); ?></th>
                             </tr>
                         </thead>
                         <tbody id="info-points-table-body">
-                            <tr class="no-items"><td colspan="7"><?php _e('Loading...', 'wp-art-routes'); ?></td></tr>
+                            <tr class="no-items"><td colspan="7"><?php esc_html_e('Loading...', 'wp-art-routes'); ?></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -279,21 +279,21 @@ function wp_art_routes_render_dashboard_page()
             <div id="edition-settings-section" class="dashboard-section collapsible collapsed">
                 <h2 class="section-header">
                     <span class="toggle-icon">▶</span>
-                    <span class="section-title"><?php _e('Edition Settings', 'wp-art-routes'); ?></span>
+                    <span class="section-title"><?php esc_html_e('Edition Settings', 'wp-art-routes'); ?></span>
                 </h2>
                 <div class="section-content" style="display: none;">
                     <form id="edition-settings-form">
                         <!-- Event Dates -->
                         <div class="settings-group">
-                            <h3><?php _e('Event Dates', 'wp-art-routes'); ?></h3>
-                            <p class="description"><?php _e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?></p>
+                            <h3><?php esc_html_e('Event Dates', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php esc_html_e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?></p>
                             <table class="form-table">
                                 <tr>
-                                    <th><label for="edition_start_date"><?php _e('Start Date:', 'wp-art-routes'); ?></label></th>
+                                    <th><label for="edition_start_date"><?php esc_html_e('Start Date:', 'wp-art-routes'); ?></label></th>
                                     <td><input type="date" id="edition_start_date" name="start_date" class="regular-text" /></td>
                                 </tr>
                                 <tr>
-                                    <th><label for="edition_end_date"><?php _e('End Date:', 'wp-art-routes'); ?></label></th>
+                                    <th><label for="edition_end_date"><?php esc_html_e('End Date:', 'wp-art-routes'); ?></label></th>
                                     <td><input type="date" id="edition_end_date" name="end_date" class="regular-text" /></td>
                                 </tr>
                             </table>
@@ -301,14 +301,14 @@ function wp_art_routes_render_dashboard_page()
 
                         <!-- Default Location Icon -->
                         <div class="settings-group">
-                            <h3><?php _e('Default Location Icon', 'wp-art-routes'); ?></h3>
-                            <p class="description"><?php _e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?></p>
+                            <h3><?php esc_html_e('Default Location Icon', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php esc_html_e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?></p>
                             <table class="form-table">
                                 <tr>
-                                    <th><label for="edition_default_icon"><?php _e('Icon:', 'wp-art-routes'); ?></label></th>
+                                    <th><label for="edition_default_icon"><?php esc_html_e('Icon:', 'wp-art-routes'); ?></label></th>
                                     <td>
                                         <select id="edition_default_icon" name="default_location_icon" style="max-width: 300px;">
-                                            <option value=""><?php _e('Use global default', 'wp-art-routes'); ?></option>
+                                            <option value=""><?php esc_html_e('Use global default', 'wp-art-routes'); ?></option>
                                             <!-- Options populated via JavaScript -->
                                         </select>
                                         <span id="edition_default_icon_preview" style="margin-left: 10px; vertical-align: middle;"></span>
@@ -319,45 +319,45 @@ function wp_art_routes_render_dashboard_page()
 
                         <!-- Terminology Overrides -->
                         <div class="settings-group">
-                            <h3><?php _e('Terminology Overrides', 'wp-art-routes'); ?></h3>
-                            <p class="description"><?php _e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?></p>
+                            <h3><?php esc_html_e('Terminology Overrides', 'wp-art-routes'); ?></h3>
+                            <p class="description"><?php esc_html_e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?></p>
                             <table class="form-table terminology-table">
                                 <thead>
                                     <tr>
-                                        <th><?php _e('Type', 'wp-art-routes'); ?></th>
-                                        <th><?php _e('Singular', 'wp-art-routes'); ?></th>
-                                        <th><?php _e('Plural', 'wp-art-routes'); ?></th>
+                                        <th><?php esc_html_e('Type', 'wp-art-routes'); ?></th>
+                                        <th><?php esc_html_e('Singular', 'wp-art-routes'); ?></th>
+                                        <th><?php esc_html_e('Plural', 'wp-art-routes'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <strong><?php _e('Route', 'wp-art-routes'); ?></strong>
-                                            <p class="description"><?php _e('The main paths users follow', 'wp-art-routes'); ?></p>
+                                            <strong><?php esc_html_e('Route', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php esc_html_e('The main paths users follow', 'wp-art-routes'); ?></p>
                                         </td>
                                         <td><input type="text" name="terminology[route][singular]" id="term_route_singular" class="regular-text" /></td>
                                         <td><input type="text" name="terminology[route][plural]" id="term_route_plural" class="regular-text" /></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong><?php _e('Location', 'wp-art-routes'); ?></strong>
-                                            <p class="description"><?php _e('Main content items (artworks, performances, etc.)', 'wp-art-routes'); ?></p>
+                                            <strong><?php esc_html_e('Location', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php esc_html_e('Main content items (artworks, performances, etc.)', 'wp-art-routes'); ?></p>
                                         </td>
                                         <td><input type="text" name="terminology[location][singular]" id="term_location_singular" class="regular-text" /></td>
                                         <td><input type="text" name="terminology[location][plural]" id="term_location_plural" class="regular-text" /></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong><?php _e('Info Point', 'wp-art-routes'); ?></strong>
-                                            <p class="description"><?php _e('Information markers along routes', 'wp-art-routes'); ?></p>
+                                            <strong><?php esc_html_e('Info Point', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php esc_html_e('Information markers along routes', 'wp-art-routes'); ?></p>
                                         </td>
                                         <td><input type="text" name="terminology[info_point][singular]" id="term_info_point_singular" class="regular-text" /></td>
                                         <td><input type="text" name="terminology[info_point][plural]" id="term_info_point_plural" class="regular-text" /></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong><?php _e('Creator', 'wp-art-routes'); ?></strong>
-                                            <p class="description"><?php _e('People/entities associated with locations', 'wp-art-routes'); ?></p>
+                                            <strong><?php esc_html_e('Creator', 'wp-art-routes'); ?></strong>
+                                            <p class="description"><?php esc_html_e('People/entities associated with locations', 'wp-art-routes'); ?></p>
                                         </td>
                                         <td><input type="text" name="terminology[creator][singular]" id="term_creator_singular" class="regular-text" /></td>
                                         <td><input type="text" name="terminology[creator][plural]" id="term_creator_plural" class="regular-text" /></td>
@@ -368,7 +368,7 @@ function wp_art_routes_render_dashboard_page()
 
                         <p class="submit">
                             <button type="submit" class="button button-primary" id="save-edition-settings">
-                                <?php _e('Save Settings', 'wp-art-routes'); ?>
+                                <?php esc_html_e('Save Settings', 'wp-art-routes'); ?>
                             </button>
                             <span id="settings-save-status" style="margin-left: 10px;"></span>
                         </p>
@@ -378,7 +378,7 @@ function wp_art_routes_render_dashboard_page()
         </div>
 
         <div id="no-edition-message" <?php echo $selected_edition_id ? 'style="display: none;"' : ''; ?>>
-            <p><?php _e('Select an edition to manage its content.', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('Select an edition to manage its content.', 'wp-art-routes'); ?></p>
         </div>
     </div>
     <?php
@@ -400,7 +400,7 @@ function wp_art_routes_dashboard_get_items()
     }
 
     // Get and validate edition ID
-    $edition_id = isset($_POST['edition_id']) ? absint($_POST['edition_id']) : 0;
+    $edition_id = isset($_POST['edition_id']) ? absint(wp_unslash($_POST['edition_id'])) : 0;
 
     if (!$edition_id) {
         wp_send_json_error(['message' => __('No edition selected.', 'wp-art-routes')]);
@@ -570,9 +570,9 @@ function wp_art_routes_dashboard_update_item()
     }
 
     // Get parameters
-    $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
-    $field = isset($_POST['field']) ? sanitize_key($_POST['field']) : '';
-    $value = isset($_POST['value']) ? $_POST['value'] : '';
+    $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+    $field = isset($_POST['field']) ? sanitize_key(wp_unslash($_POST['field'])) : '';
+    $value = isset($_POST['value']) ? wp_unslash($_POST['value']) : '';
 
     // Validate post ID
     if (!$post_id) {
@@ -656,8 +656,7 @@ function wp_art_routes_dashboard_update_item()
             break;
 
         case 'icon':
-            // Validate icon filename exists in available icons (don't use sanitize_file_name
-            // as it converts spaces to dashes which breaks filenames like "WB plattegrond-10.svg")
+            // Validate icon filename exists in available icons
             $sanitized_value = '';
             if (!empty($value)) {
                 $available_icons = wp_art_routes_get_available_icons();
@@ -700,8 +699,9 @@ function wp_art_routes_dashboard_bulk_action()
     }
 
     // Get parameters
-    $bulk_action = isset($_POST['bulk_action']) ? sanitize_key($_POST['bulk_action']) : '';
-    $post_ids = isset($_POST['post_ids']) ? array_map('absint', (array) $_POST['post_ids']) : [];
+    $bulk_action = isset($_POST['bulk_action']) ? sanitize_key(wp_unslash($_POST['bulk_action'])) : '';
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
+    $post_ids = isset($_POST['post_ids']) ? array_map('absint', wp_unslash((array) $_POST['post_ids'])) : [];
 
     // Validate action
     $allowed_actions = ['publish', 'draft', 'delete'];
@@ -826,7 +826,7 @@ function wp_art_routes_dashboard_save_settings()
     }
 
     // Get and validate edition ID
-    $edition_id = isset($_POST['edition_id']) ? absint($_POST['edition_id']) : 0;
+    $edition_id = isset($_POST['edition_id']) ? absint(wp_unslash($_POST['edition_id'])) : 0;
 
     if (!$edition_id) {
         wp_send_json_error(['message' => __('No edition selected.', 'wp-art-routes')]);
@@ -839,14 +839,14 @@ function wp_art_routes_dashboard_save_settings()
     }
 
     // Save event dates
-    $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
-    $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : '';
+    $start_date = isset($_POST['start_date']) ? sanitize_text_field(wp_unslash($_POST['start_date'])) : '';
+    $end_date = isset($_POST['end_date']) ? sanitize_text_field(wp_unslash($_POST['end_date'])) : '';
 
     update_post_meta($edition_id, '_edition_start_date', $start_date);
     update_post_meta($edition_id, '_edition_end_date', $end_date);
 
     // Save default location icon
-    $default_icon = isset($_POST['default_location_icon']) ? sanitize_text_field($_POST['default_location_icon']) : '';
+    $default_icon = isset($_POST['default_location_icon']) ? sanitize_text_field(wp_unslash($_POST['default_location_icon'])) : '';
 
     // Validate icon exists if provided
     if (!empty($default_icon)) {
@@ -858,7 +858,8 @@ function wp_art_routes_dashboard_save_settings()
     update_post_meta($edition_id, '_edition_default_location_icon', $default_icon);
 
     // Save terminology overrides
-    $terminology = isset($_POST['terminology']) ? $_POST['terminology'] : [];
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
+    $terminology = isset($_POST['terminology']) ? wp_unslash($_POST['terminology']) : [];
     $sanitized_terminology = [];
 
     $allowed_types = ['route', 'location', 'info_point', 'creator'];

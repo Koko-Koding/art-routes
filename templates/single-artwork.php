@@ -32,13 +32,13 @@ get_header();
                     <div class="artwork-meta">
                         <?php if (!empty($artwork_number)) : ?>
                             <span class="artwork-number">
-                                <strong><?php _e('Number:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_number); ?>
+                                <strong><?php esc_html_e('Number:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_number); ?>
                             </span>
                         <?php endif; ?>
                         
                         <?php if (!empty($artwork_location)) : ?>
                             <span class="artwork-location">
-                                <strong><?php _e('Location:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_location); ?>
+                                <strong><?php esc_html_e('Location:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_location); ?>
                             </span>
                         <?php endif; ?>
                     </div>
@@ -64,14 +64,14 @@ get_header();
                 <div class="artwork-accessibility" style="margin-bottom: 30px; display: flex; gap: 24px; align-items: center;">
                     <?php if ($wheelchair_accessible === '1') : ?>
                         <span class="artwork-accessibility-item" title="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/WB plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
-                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php _e('Wheelchair accessible', 'wp-art-routes'); ?></span>
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
+                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php esc_html_e('Wheelchair accessible', 'wp-art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                     <?php if ($stroller_accessible === '1') : ?>
                         <span class="artwork-accessibility-item" title="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/WB plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
-                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php _e('Stroller accessible', 'wp-art-routes'); ?></span>
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
+                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php esc_html_e('Stroller accessible', 'wp-art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                 </div>
@@ -118,7 +118,7 @@ get_header();
             if (is_numeric($latitude) && is_numeric($longitude)) :
             ?>
                 <div class="artwork-location-map">
-                    <h3><?php _e('Location on Map', 'wp-art-routes'); ?></h3>
+                    <h3><?php esc_html_e('Location on Map', 'wp-art-routes'); ?></h3>
                     <div id="artwork-single-map" style="height: 300px; margin: 20px 0;"></div>
                     
                     <script type="text/javascript">

@@ -27,6 +27,10 @@ Create these files in `.wordpress-org/assets/` directory:
 - `screenshot-4.png` - Multiple routes map
 - `screenshot-5.png` - Mobile responsive interface
 
+#### Additional description:
+
+WP Art Routes is a map-based event management plugin for cultural organizations. It uses Leaflet.js (bundled locally) with OpenStreetMap to display interactive route maps. Features include editions system for event management, custom icon uploads, GPX/CSV import/export, and a dashboard for bulk content management. The plugin is GPL-licensed and has been tested with the Plugin Check plugin.
+
 ### 2. Final Code Review
 
 - [ ] Test on fresh WordPress installation

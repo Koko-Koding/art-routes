@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap, interactive, geolocation, touri
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,10 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.1.2 =
+* Fixed all WordPress Plugin Check errors (escaping, sanitization, i18n)
+* Renamed legacy icons to remove spaces from filenames
 
 = 2.1.1 =
 * WordPress.org compliance: Bundled Leaflet.js locally instead of CDN
