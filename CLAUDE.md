@@ -456,7 +456,7 @@ When making changes:
 
 ## External Dependencies
 
-- Leaflet.js 1.9.4 (loaded from cdn.jsdelivr.net)
+- Leaflet.js 1.9.4 (bundled locally in assets/lib/leaflet/)
 - OpenStreetMap tiles
 - jQuery (WordPress bundled)
 

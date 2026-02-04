@@ -24,18 +24,18 @@ function wp_art_routes_enqueue_scripts()
         return;
     }
 
-    // Leaflet CSS
+    // Leaflet CSS (bundled locally for WordPress.org compliance)
     wp_enqueue_style(
         'wp-art-routes-leaflet-css',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css',
         [],
         '1.9.4'
     );
 
-    // Leaflet JS
+    // Leaflet JS (bundled locally for WordPress.org compliance)
     wp_enqueue_script(
         'wp-art-routes-leaflet-js',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js',
         [],
         '1.9.4',
         true
@@ -144,18 +144,18 @@ function wp_art_routes_enqueue_admin_scripts($hook)
         return;
     }
 
-    // Leaflet CSS (shared)
+    // Leaflet CSS (shared, bundled locally for WordPress.org compliance)
     wp_enqueue_style(
         'wp-art-routes-admin-leaflet-css',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css',
         [],
         '1.9.4'
     );
 
-    // Leaflet JS (shared)
+    // Leaflet JS (shared, bundled locally for WordPress.org compliance)
     wp_enqueue_script(
         'wp-art-routes-admin-leaflet-js',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js',
         ['jquery'],
         '1.9.4',
         true

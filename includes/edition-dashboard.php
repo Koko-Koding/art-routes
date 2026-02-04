@@ -39,18 +39,18 @@ function wp_art_routes_enqueue_dashboard_assets($hook)
         return;
     }
 
-    // Enqueue Leaflet CSS
+    // Enqueue Leaflet CSS (bundled locally for WordPress.org compliance)
     wp_enqueue_style(
         'leaflet',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css',
+        plugins_url('assets/lib/leaflet/leaflet.css', dirname(__FILE__)),
         array(),
         '1.9.4'
     );
 
-    // Enqueue Leaflet JS
+    // Enqueue Leaflet JS (bundled locally for WordPress.org compliance)
     wp_enqueue_script(
         'leaflet',
-        'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js',
+        plugins_url('assets/lib/leaflet/leaflet.js', dirname(__FILE__)),
         array(),
         '1.9.4',
         true
