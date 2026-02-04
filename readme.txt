@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap, interactive, geolocation, touri
 Requires at least: 5.6
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,12 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.1.0 =
+* NEW: 25+ new SVG map marker icons (art, museum, music, cafe, park, numbered markers 1-20, etc.)
+* Legacy icons moved to subfolder (backwards compatible)
+* Improved icon display names in dropdowns
+* Default info icon now uses cleaner info.svg
 
 = 2.0.0 =
 * Standalone release with standard semantic versioning (removed wenb- prefix)
