@@ -261,7 +261,7 @@ function wp_art_routes_get_all_information_points()
 
                 // If still no icon, use default
                 if (empty($icon_url)) {
-                    $icon_url = wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
+                    $icon_url = wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
                 }
             }
 
@@ -768,7 +768,7 @@ function wp_art_routes_get_edition_information_points($edition_id)
 
                 // If still no icon, use default
                 if (empty($icon_url)) {
-                    $icon_url = wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
+                    $icon_url = wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
                 }
             }
 

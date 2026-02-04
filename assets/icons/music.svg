@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <circle cx="16" cy="16" r="14" fill="#ec4899"/>
+  <!-- Note stems -->
+  <line x1="12" y1="10" x2="12" y2="21" stroke="white" stroke-width="2"/>
+  <line x1="22" y1="8" x2="22" y2="19" stroke="white" stroke-width="2"/>
+  <!-- Connecting beam -->
+  <path d="M12 10 L22 8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <!-- Note heads - positioned to the left of stems -->
+  <ellipse cx="10.3" cy="21.3" rx="3" ry="2.5" fill="white" transform="rotate(-20 10 22)"/>
+  <ellipse cx="20.3" cy="19.3" rx="3" ry="2.5" fill="white" transform="rotate(-20 20 20)"/>
+</svg>

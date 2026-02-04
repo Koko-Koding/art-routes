@@ -402,7 +402,7 @@ function wp_art_routes_register_information_point_rest_fields()
                 return $old_icon_url;
             }
             // Default icon if no icon is set
-            return wp_art_routes_get_icon_url('WB plattegrond-Informatie.svg');
+            return wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
         },
         'schema' => [
             'description' => __('Information point icon URL', 'wp-art-routes'),

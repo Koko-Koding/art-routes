@@ -342,8 +342,9 @@ function wp_art_routes_get_icon_url($filename) {
  * Get display name for an icon file
  *
  * Converts the filename to a human-readable display name by:
- * - Removing the 'WB plattegrond-' prefix
- * - Replacing dashes with spaces
+ * - Handling numbered icons specially (number-1 -> #1)
+ * - Removing common prefixes ('WB plattegrond-')
+ * - Replacing dashes/underscores with spaces
  * - Capitalizing words
  *
  * @param string $filename The icon filename
@@ -351,7 +352,15 @@ function wp_art_routes_get_icon_url($filename) {
  */
 function wp_art_routes_get_icon_display_name($filename) {
     $icon_name = pathinfo($filename, PATHINFO_FILENAME);
-    $display_name = str_replace(['WB plattegrond-', '-'], ['', ' '], $icon_name);
+
+    // Handle numbered icons specially
+    if (preg_match('/^number-(\d+)$/', $icon_name, $matches)) {
+        return '#' . $matches[1];
+    }
+
+    // Remove common prefixes and clean up
+    $display_name = str_replace(['WB plattegrond-'], [''], $icon_name);
+    $display_name = str_replace(['-', '_'], ' ', $display_name);
     return ucwords(trim($display_name));
 }
 
@@ -361,5 +370,5 @@ function wp_art_routes_get_icon_display_name($filename) {
  * @return string Default info point icon filename
  */
 function wp_art_routes_get_default_info_icon() {
-    return 'WB plattegrond-Informatie.svg';
+    return 'info.svg';
 }

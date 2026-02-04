@@ -1469,7 +1469,7 @@ function wp_art_routes_download_csv_template()
     fputcsv($output, ['location', 'Example Artwork', 'Description of the artwork', '52.0907', '5.1214', 'A1', 'icon.svg', 'Artist Name']);
     fputcsv($output, ['info_point', 'Parking Area', 'Free parking available', '52.0910', '5.1220', '', '', '']);
     fputcsv($output, ['location', 'Another Artwork', 'Another description', '52.0915', '5.1230', 'A2', '', 'Another Artist']);
-    fputcsv($output, ['info_point', 'Information Booth', 'Get maps and information here', '52.0920', '5.1240', '', 'WB plattegrond-Informatie.svg', '']);
+    fputcsv($output, ['info_point', 'Information Booth', 'Get maps and information here', '52.0920', '5.1240', '', 'info.svg', '']);
 
     fclose($output);
     exit;

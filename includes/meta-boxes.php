@@ -655,11 +655,11 @@ function wp_art_routes_render_route_icon_meta_box($post)
     // Get the currently selected icon
     $selected_icon = get_post_meta($post->ID, '_route_icon', true);
 
-    // Only allow these three icons (built-in route icons)
+    // Only allow these route marker icons
     $allowed_icons = [
-        'WB plattegrond-39.svg',
-        'WB plattegrond-40.svg',
-        'WB plattegrond-41.svg',
+        'start.svg',
+        'end.svg',
+        'marker.svg',
     ];
 
     // Build icon URL map for JavaScript
@@ -964,11 +964,11 @@ function wp_art_routes_save_route_icon($post_id)
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
-    // Only allow the three icons
+    // Only allow route marker icons
     $allowed_icons = [
-        'WB plattegrond-39.svg',
-        'WB plattegrond-40.svg',
-        'WB plattegrond-41.svg',
+        'start.svg',
+        'end.svg',
+        'marker.svg',
     ];
     if (isset($_POST['route_icon']) && in_array($_POST['route_icon'], $allowed_icons)) {
         update_post_meta($post_id, '_route_icon', sanitize_text_field($_POST['route_icon']));
