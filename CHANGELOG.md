@@ -2,9 +2,17 @@
 
 [← Go back](README.md).
 
-All notable changes to the WP Art Routes plugin will be documented in this file.
+All notable changes to the Art Routes plugin will be documented in this file.
 
 **Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
+
+## [2.2.0] - 2026-02-04
+
+### Changed
+
+- **Plugin Renamed**: Changed plugin name from "WP Art Routes" to "Art Routes" for WordPress.org trademark compliance (WordPress.org does not accept plugins with "WP" in the name)
+- **WordPress Version**: Updated "Tested up to" to WordPress 6.7
+- **readme.txt**: Reduced tags to 5 (WordPress.org maximum)
 
 ## [2.1.2] - 2026-02-04
 

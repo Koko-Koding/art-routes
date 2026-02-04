@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Plugin Name: WP Art Routes
+ * Plugin Name: Art Routes
  * Plugin URI: https://github.com/Koko-Koding/wp-art-routes
  * Description: Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js.
- * Version: 2.1.2
+ * Version: 2.2.0
  * Author: Drikus Roor - Koko Koding
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
@@ -12,9 +12,8 @@
  * Text Domain: wp-art-routes
  * Domain Path: /languages
  * Requires at least: 5.6
- * Tested up to: 6.6
+ * Tested up to: 6.7
  * Requires PHP: 7.4
- * Network: false
  */
 
 // If this file is called directly, abort.
@@ -23,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WP_ART_ROUTES_VERSION', '2.1.2');
+define('WP_ART_ROUTES_VERSION', '2.2.0');
 define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));

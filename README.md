@@ -1,14 +1,14 @@
-# WP Art Routes
+# Art Routes
 
-![WP Art Routes Logo](./assets/plugin-icons/icon.webp)
+![Art Routes Logo](./assets/plugin-icons/icon.webp)
 
-**Version 2.0.0** | [Changelog](CHANGELOG.md)
+**Version 2.2.0** | [Changelog](CHANGELOG.md)
 
 Interactive art route maps with OpenStreetMap integration for WordPress.
 
 ## Description
 
-WP Art Routes is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap.
+Art Routes is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap.
 
 The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, routes, and artwork locations. It allows users to track their progress on routes and receive notifications when they are near artworks.
 

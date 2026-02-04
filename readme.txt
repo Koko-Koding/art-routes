@@ -1,10 +1,10 @@
-=== WP Art Routes ===
+=== Art Routes ===
 Contributors: drikusroor
-Tags: maps, routes, art, leaflet, openstreetmap, interactive, geolocation, tourism
+Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Interactive art route maps with OpenStreetMap integration for WordPress. Create 
 
 == Description ==
 
-WP Art Routes is a WordPress plugin designed for organizations that organize art routes and events, allowing them to create and display interactive maps with custom routes and points of interest (artworks).
+Art Routes is a WordPress plugin designed for organizations that organize art routes and events, allowing them to create and display interactive maps with custom routes and points of interest (artworks).
 
 The plugin uses Leaflet.js in combination with OpenStreetMap to display maps, routes, and artwork locations. It allows users to track their progress on routes and receive notifications when they are near artworks.
 
@@ -92,6 +92,10 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.2.0 =
+* Renamed plugin from "WP Art Routes" to "Art Routes" for WordPress.org compliance
+* Updated tested WordPress version to 6.7
 
 = 2.1.2 =
 * Fixed all WordPress Plugin Check errors (escaping, sanitization, i18n)
@@ -191,6 +195,9 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 See CHANGELOG.md for complete version history.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+Plugin renamed from "WP Art Routes" to "Art Routes" for WordPress.org trademark compliance. No functional changes.
 
 = 2.0.0 =
 Standalone release with standard semantic versioning. No functional changes - safe to upgrade.
