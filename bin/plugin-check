@@ -8,7 +8,7 @@
 # This script:
 # 1. Builds the release package (creates clean build/wp-art-routes/)
 # 2. Copies it to a temporary location in wp-content/plugins/
-# 3. Runs wp plugin check on the clean copy
+# 3. Runs wp plugin check on the clean copy using Local's environment
 # 4. Cleans up the temporary copy
 
 set -e
@@ -19,6 +19,10 @@ WP_PLUGINS_DIR="$(dirname "$PLUGIN_DIR")"
 WP_DIR="$(dirname "$(dirname "$WP_PLUGINS_DIR")")"
 TEST_PLUGIN_NAME="art-routes-check"
 TEST_PLUGIN_DIR="$WP_PLUGINS_DIR/$TEST_PLUGIN_NAME"
+
+# Local by Flywheel environment (site ID: UB4SEkrsK)
+LOCAL_SITE_ID="UB4SEkrsK"
+LOCAL_SUPPORT_DIR="$HOME/Library/Application Support/Local"
 
 echo -e "\033[1;33mArt Routes Plugin Check\033[0m"
 echo "========================"
@@ -47,35 +51,65 @@ echo ""
 echo -e "\033[1;33m3. Running Plugin Check...\033[0m"
 echo ""
 
-cd "$WP_DIR"
+# Set up Local by Flywheel environment
+export MYSQL_HOME="$LOCAL_SUPPORT_DIR/run/$LOCAL_SITE_ID/conf/mysql"
+export PHPRC="$LOCAL_SUPPORT_DIR/run/$LOCAL_SITE_ID/conf/php"
+export WP_CLI_CONFIG_PATH="/Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/config.yaml"
+export WP_CLI_DISABLE_AUTO_CHECK_UPDATE=1
 
-# Try to run wp-cli directly first
-if wp plugin check "$TEST_PLUGIN_NAME" --require="$WP_PLUGINS_DIR/plugin-check/cli.php" 2>/dev/null; then
-    CHECK_SUCCESS=true
-else
-    # If wp-cli fails (e.g., Local site), provide manual instructions
-    echo -e "\033[1;31mNote: wp-cli couldn't connect to database.\033[0m"
-    echo ""
-    echo "For Local by Flywheel sites, run this command in the Site Shell:"
-    echo ""
-    echo -e "\033[1;36m  wp plugin check $TEST_PLUGIN_NAME --require=./wp-content/plugins/plugin-check/cli.php\033[0m"
-    echo ""
-    echo "To open Site Shell: Right-click your site in Local → 'Open Site Shell'"
-    echo ""
-    CHECK_SUCCESS=false
+# Find the correct PHP and MySQL versions from Local
+MYSQL_BIN=$(find "$LOCAL_SUPPORT_DIR/lightning-services" -path "*/mysql-*/bin/darwin-arm64/bin" -type d 2>/dev/null | head -1)
+PHP_BIN=$(find "$LOCAL_SUPPORT_DIR/lightning-services" -path "*/php-8.*/bin/darwin-arm64/bin" -type d 2>/dev/null | sort -r | head -1)
+WP_CLI_BIN="/Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/posix"
+
+if [ -z "$MYSQL_BIN" ] || [ -z "$PHP_BIN" ]; then
+    echo -e "\033[1;31mError: Could not find Local by Flywheel binaries\033[0m"
+    echo "Make sure Local is installed and the site '$LOCAL_SITE_ID' is running."
+    exit 1
 fi
 
-# Step 4: Cleanup option
-echo ""
-echo -e "\033[1;33m4. Cleanup\033[0m"
-echo "   Test plugin directory: $TEST_PLUGIN_DIR"
+export PATH="$MYSQL_BIN:$PHP_BIN:$WP_CLI_BIN:$PATH"
+
+cd "$WP_DIR"
+
+# Check if site is running
+if ! mysql --defaults-file="$MYSQL_HOME/my.cnf" -e "SELECT 1" &>/dev/null; then
+    echo -e "\033[1;31mError: Local site is not running.\033[0m"
+    echo "Please start the 'art-routes' site in Local by Flywheel first."
+    exit 1
+fi
+
+# Run the plugin check
+echo "Running: wp plugin check $TEST_PLUGIN_NAME"
 echo ""
 
-if [ "$CHECK_SUCCESS" = true ]; then
-    # Auto cleanup on success
-    rm -rf "$TEST_PLUGIN_DIR"
-    echo "   ✓ Cleaned up test directory"
+# Run plugin check and filter results
+wp plugin check "$TEST_PLUGIN_NAME" --require=./wp-content/plugins/plugin-check/cli.php 2>&1 | \
+    grep -v "TextDomainMismatch" | \
+    tee /tmp/plugin-check-results.txt
+
+# Count errors (excluding TextDomainMismatch false positives)
+ERROR_COUNT=$(grep -c "ERROR" /tmp/plugin-check-results.txt 2>/dev/null || echo "0")
+WARNING_COUNT=$(grep -c "WARNING" /tmp/plugin-check-results.txt 2>/dev/null || echo "0")
+
+echo ""
+echo "========================"
+echo -e "Results: \033[1;31m$ERROR_COUNT errors\033[0m, \033[1;33m$WARNING_COUNT warnings\033[0m"
+echo "(TextDomainMismatch errors filtered - they're false positives from the test folder name)"
+
+# Step 4: Cleanup
+echo ""
+echo -e "\033[1;33m4. Cleanup\033[0m"
+rm -rf "$TEST_PLUGIN_DIR"
+echo "   ✓ Cleaned up test directory"
+
+# Exit with error if there were errors
+if [ "$ERROR_COUNT" -gt 0 ]; then
+    echo ""
+    echo -e "\033[1;31m✗ Plugin check found errors. Fix them before release.\033[0m"
+    echo "  Full results saved to: /tmp/plugin-check-results.txt"
+    exit 1
 else
-    echo "   To clean up after checking, run:"
-    echo -e "   \033[1;36mrm -rf \"$TEST_PLUGIN_DIR\"\033[0m"
+    echo ""
+    echo -e "\033[0;32m✓ Plugin check passed!\033[0m"
 fi
