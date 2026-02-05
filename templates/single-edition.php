@@ -177,9 +177,20 @@ get_header();
                         // Add artwork markers
                         if (mapData.artworks && mapData.artworks.length > 0) {
                             mapData.artworks.forEach(function(artwork) {
+                                // Use icon_url if available, otherwise fall back to image_url
+                                let artworkMarkerHtml;
+                                if (artwork.icon_url && artwork.icon_url.trim() !== '') {
+                                    // Show icon
+                                    artworkMarkerHtml = '<div class="artwork-marker-inner"><div class="artwork-marker-icon" style="background-image: url(\'' + artwork.icon_url + '\'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 100%; height: 100%; border-radius: 50%;"></div></div>';
+                                } else {
+                                    // Show featured image or empty
+                                    const displayNumber = artwork.number && artwork.number.trim() !== '' ? artwork.number : '';
+                                    artworkMarkerHtml = '<div class="artwork-marker-inner"><div class="artwork-marker-image" style="background-image: url(\'' + (artwork.image_url || '') + '\');"></div><div class="artwork-marker-overlay"></div><div class="artwork-marker-number">' + displayNumber + '</div></div>';
+                                }
+
                                 const artworkIcon = L.divIcon({
                                     className: 'artwork-marker',
-                                    html: '<div class="artwork-marker-inner"><div class="artwork-marker-image" style="background-image: url(\'' + (artwork.image_url || '') + '\');"></div></div>',
+                                    html: artworkMarkerHtml,
                                     iconSize: [40, 40],
                                     iconAnchor: [20, 20]
                                 });
