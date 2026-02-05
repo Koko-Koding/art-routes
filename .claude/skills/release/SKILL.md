@@ -71,6 +71,8 @@ digraph release_flow {
 
 **Run these checks BEFORE proceeding to avoid post-release hotfixes:**
 
+#### Quick Checks (run from plugin directory):
+
 1. **CDN Check:** No external CDN resources (except Google Fonts)
    ```bash
    grep -r "cdn\." --include="*.php" --include="*.js" . | grep -v node_modules | grep -v .git
@@ -86,10 +88,25 @@ digraph release_flow {
 
 3. **Output Escaping Spot Check:**
    ```bash
-   # Quick check for common issues
    grep -r "_e(" --include="*.php" . | grep -v "esc_" | head -5
    ```
    - All `_e()` should be `esc_html_e()` or `esc_attr_e()`
+
+#### Full Plugin Check (recommended before major releases):
+
+```bash
+./bin/plugin-check
+```
+
+This script:
+1. Builds the release package (clean files only)
+2. Copies to `art-routes-check` in plugins directory
+3. Provides wp-cli command to run in Local's Site Shell
+
+For Local by Flywheel, open Site Shell and run:
+```bash
+wp plugin check art-routes-check --require=./wp-content/plugins/plugin-check/cli.php
+```
 
 If any compliance issues are found, fix them BEFORE continuing with the release.
 

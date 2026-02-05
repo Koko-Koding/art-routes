@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Plugin Check Script for Art Routes
+# Runs WordPress Plugin Check on the release build (not dev files)
+#
+# Usage: ./bin/plugin-check
+#
+# This script:
+# 1. Builds the release package (creates clean build/wp-art-routes/)
+# 2. Copies it to a temporary location in wp-content/plugins/
+# 3. Runs wp plugin check on the clean copy
+# 4. Cleans up the temporary copy
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+WP_PLUGINS_DIR="$(dirname "$PLUGIN_DIR")"
+WP_DIR="$(dirname "$(dirname "$WP_PLUGINS_DIR")")"
+TEST_PLUGIN_NAME="art-routes-check"
+TEST_PLUGIN_DIR="$WP_PLUGINS_DIR/$TEST_PLUGIN_NAME"
+
+echo -e "\033[1;33mArt Routes Plugin Check\033[0m"
+echo "========================"
+echo ""
+
+# Step 1: Build the release
+echo -e "\033[1;33m1. Building release package...\033[0m"
+cd "$PLUGIN_DIR"
+./bin/build-release
+
+# Step 2: Copy to test location
+echo ""
+echo -e "\033[1;33m2. Copying clean build to test location...\033[0m"
+
+# Remove old test copy if exists
+if [ -d "$TEST_PLUGIN_DIR" ]; then
+    rm -rf "$TEST_PLUGIN_DIR"
+fi
+
+# Copy the clean build
+cp -r "$PLUGIN_DIR/build/wp-art-routes" "$TEST_PLUGIN_DIR"
+echo "   Copied to: $TEST_PLUGIN_DIR"
+
+# Step 3: Run plugin check
+echo ""
+echo -e "\033[1;33m3. Running Plugin Check...\033[0m"
+echo ""
+
+cd "$WP_DIR"
+
+# Try to run wp-cli directly first
+if wp plugin check "$TEST_PLUGIN_NAME" --require="$WP_PLUGINS_DIR/plugin-check/cli.php" 2>/dev/null; then
+    CHECK_SUCCESS=true
+else
+    # If wp-cli fails (e.g., Local site), provide manual instructions
+    echo -e "\033[1;31mNote: wp-cli couldn't connect to database.\033[0m"
+    echo ""
+    echo "For Local by Flywheel sites, run this command in the Site Shell:"
+    echo ""
+    echo -e "\033[1;36m  wp plugin check $TEST_PLUGIN_NAME --require=./wp-content/plugins/plugin-check/cli.php\033[0m"
+    echo ""
+    echo "To open Site Shell: Right-click your site in Local → 'Open Site Shell'"
+    echo ""
+    CHECK_SUCCESS=false
+fi
+
+# Step 4: Cleanup option
+echo ""
+echo -e "\033[1;33m4. Cleanup\033[0m"
+echo "   Test plugin directory: $TEST_PLUGIN_DIR"
+echo ""
+
+if [ "$CHECK_SUCCESS" = true ]; then
+    # Auto cleanup on success
+    rm -rf "$TEST_PLUGIN_DIR"
+    echo "   ✓ Cleaned up test directory"
+else
+    echo "   To clean up after checking, run:"
+    echo -e "   \033[1;36mrm -rf \"$TEST_PLUGIN_DIR\"\033[0m"
+fi

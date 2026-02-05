@@ -29,6 +29,9 @@ Art Routes is a flexible WordPress plugin for organizations managing cultural lo
 # Build release package (creates zip in build/)
 ./bin/build-release
 
+# Run Plugin Check on release build (creates test copy, provides wp-cli command)
+./bin/plugin-check
+
 # Compile translations (.po to .mo)
 ./bin/translate
 
