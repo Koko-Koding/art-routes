@@ -34,7 +34,9 @@ digraph release_flow {
     "On main branch?" [shape=diamond];
     "Merge/switch to main" [shape=box];
     "Verify gh auth" [shape=box];
-    "Run compliance checks" [shape=box, style=bold];
+    "Run ./bin/plugin-check" [shape=box, style=bold, color=red];
+    "0 errors?" [shape=diamond];
+    "Fix errors" [shape=box];
     "Determine version bump" [shape=diamond];
     "Update wp-art-routes.php" [shape=box];
     "Update CHANGELOG.md" [shape=box];
@@ -47,8 +49,11 @@ digraph release_flow {
     "On main branch?" -> "Merge/switch to main" [label="no"];
     "On main branch?" -> "Verify gh auth" [label="yes"];
     "Merge/switch to main" -> "Verify gh auth";
-    "Verify gh auth" -> "Run compliance checks";
-    "Run compliance checks" -> "Determine version bump";
+    "Verify gh auth" -> "Run ./bin/plugin-check";
+    "Run ./bin/plugin-check" -> "0 errors?";
+    "0 errors?" -> "Fix errors" [label="no"];
+    "Fix errors" -> "Run ./bin/plugin-check";
+    "0 errors?" -> "Determine version bump" [label="yes"];
     "Determine version bump" -> "Update wp-art-routes.php";
     "Update wp-art-routes.php" -> "Update CHANGELOG.md";
     "Update CHANGELOG.md" -> "Run ./bin/build-release";
@@ -92,21 +97,21 @@ digraph release_flow {
    ```
    - All `_e()` should be `esc_html_e()` or `esc_attr_e()`
 
-#### Full Plugin Check (recommended before major releases):
+#### Full Plugin Check (REQUIRED before releases):
 
 ```bash
 ./bin/plugin-check
 ```
 
-This script:
-1. Builds the release package (clean files only)
-2. Copies to `art-routes-check` in plugins directory
-3. Provides wp-cli command to run in Local's Site Shell
+This script runs automatically (no Site Shell needed):
+1. Auto-detects Local by Flywheel site from sites.json
+2. Sources environment from Local's ssh-entry script
+3. Builds the release package (clean files only)
+4. Copies to temporary `art-routes-check` directory
+5. Runs `wp plugin check` with full runtime checks
+6. Reports errors/warnings and cleans up
 
-For Local by Flywheel, open Site Shell and run:
-```bash
-wp plugin check art-routes-check --require=./wp-content/plugins/plugin-check/cli.php
-```
+**The script must pass with 0 errors before releasing.**
 
 If any compliance issues are found, fix them BEFORE continuing with the release.
 
