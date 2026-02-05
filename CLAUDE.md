@@ -16,6 +16,8 @@ If you need to make breaking changes, ask the user first.
 
 Art Routes is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap. The plugin is designed for non-technical users on mobile devices, so prioritize simplicity and responsive design.
 
+**Primary Language:** PHP (WordPress plugin). Use PHP for all new code unless otherwise specified.
+
 **Key Design Principles:**
 - Backwards compatible: existing installations must work unchanged
 - Target audience: non-technical Dutch users organizing cultural events
@@ -453,6 +455,32 @@ When making changes:
 4. Update `README.md` if user-facing features changed
 5. Update translation files if strings changed (run commands above)
 6. Run `./bin/build-release` to create distribution zip
+
+### Pre-Release Compliance Checklist
+
+**IMPORTANT:** Always run these checks BEFORE tagging a release to avoid hotfix releases:
+
+1. **CDN Compliance:** All JS/CSS must be bundled locally (no external CDNs except Google Fonts)
+   - Leaflet.js is bundled in `assets/lib/leaflet/`
+   - Verify no new CDN links were added: `grep -r "cdn\." --include="*.php" --include="*.js"`
+
+2. **WordPress Plugin Check:** Install and run the [Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin
+   - Build the release zip first: `./bin/build-release`
+   - Upload and test the zip file, not the dev directory
+   - Fix all errors before release (warnings can be reviewed case-by-case)
+
+3. **WordPress.org Requirements:**
+   - Plugin name must NOT contain "WP" (trademark restriction) - use "Art Routes"
+   - Maximum 5 tags in readme.txt
+   - "Tested up to" should be current WordPress version
+   - All user input must be sanitized, all output must be escaped
+
+### WordPress.org Submission
+
+For WordPress.org plugin directory submission:
+- Submission URL: https://wordpress.org/plugins/developers/add/
+- Plugin slug will be `art-routes` (not `wp-art-routes`)
+- After approval, use SVN to publish (instructions in memory/wordpress-org-submission.md)
 
 ## External Dependencies
 

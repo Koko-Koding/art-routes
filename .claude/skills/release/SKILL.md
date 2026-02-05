@@ -1,13 +1,13 @@
 ---
-name: wp-art-routes-release
+name: release
 description: Use when releasing a new version of wp-art-routes plugin - incrementing version, updating changelog, building release, and creating GitHub release
 ---
 
-# WP Art Routes Release
+# Art Routes Release
 
 ## Overview
 
-This skill guides the complete release process for the wp-art-routes WordPress plugin: version increment, changelog update, build, and GitHub release creation.
+This skill guides the complete release process for the Art Routes WordPress plugin: version increment, changelog update, compliance checks, build, and GitHub release creation.
 
 ## When to Use
 
@@ -23,6 +23,7 @@ This skill guides the complete release process for the wp-art-routes WordPress p
 | Version locations | `wp-art-routes.php` (2 places: header + constant), `readme.txt` (Stable tag) |
 | Changelog | `CHANGELOG.md` (full entry), `readme.txt` (condensed entry) |
 | README.md | Update if user-facing features changed |
+| Compliance | CDN check, WordPress.org requirements |
 | Build | `./bin/build-release` |
 | GitHub release | `gh release create` with zip attachment |
 
@@ -33,6 +34,7 @@ digraph release_flow {
     "On main branch?" [shape=diamond];
     "Merge/switch to main" [shape=box];
     "Verify gh auth" [shape=box];
+    "Run compliance checks" [shape=box, style=bold];
     "Determine version bump" [shape=diamond];
     "Update wp-art-routes.php" [shape=box];
     "Update CHANGELOG.md" [shape=box];
@@ -45,7 +47,8 @@ digraph release_flow {
     "On main branch?" -> "Merge/switch to main" [label="no"];
     "On main branch?" -> "Verify gh auth" [label="yes"];
     "Merge/switch to main" -> "Verify gh auth";
-    "Verify gh auth" -> "Determine version bump";
+    "Verify gh auth" -> "Run compliance checks";
+    "Run compliance checks" -> "Determine version bump";
     "Determine version bump" -> "Update wp-art-routes.php";
     "Update wp-art-routes.php" -> "Update CHANGELOG.md";
     "Update CHANGELOG.md" -> "Run ./bin/build-release";
@@ -63,6 +66,32 @@ digraph release_flow {
 2. If merging: `git checkout main && git merge <branch> && git push`
 
 **GitHub Auth:** Run `gh auth status`. If not authenticated, stop and ask user to run `gh auth login`.
+
+### 0.5. Compliance Checks (CRITICAL)
+
+**Run these checks BEFORE proceeding to avoid post-release hotfixes:**
+
+1. **CDN Check:** No external CDN resources (except Google Fonts)
+   ```bash
+   grep -r "cdn\." --include="*.php" --include="*.js" . | grep -v node_modules | grep -v .git
+   ```
+   - If any CDN links found (other than fonts), they must be bundled locally
+   - Leaflet.js must be in `assets/lib/leaflet/`
+
+2. **WordPress.org Requirements:**
+   - Plugin name must be "Art Routes" (no "WP" - trademark restriction)
+   - readme.txt must have maximum 5 tags
+   - "Tested up to" should match current WordPress version
+   - Check: `grep "Tags:" readme.txt` (count comma-separated values)
+
+3. **Output Escaping Spot Check:**
+   ```bash
+   # Quick check for common issues
+   grep -r "_e(" --include="*.php" . | grep -v "esc_" | head -5
+   ```
+   - All `_e()` should be `esc_html_e()` or `esc_attr_e()`
+
+If any compliance issues are found, fix them BEFORE continuing with the release.
 
 ### 1. Determine Version Bump
 
@@ -160,7 +189,7 @@ git push origin HEAD --tags
 
 ```bash
 gh release create X.Y.Z \
-  --title "WP Art Routes X.Y.Z" \
+  --title "Art Routes X.Y.Z" \
   --notes-file - \
   build/wp-art-routes-X.Y.Z.zip <<'EOF'
 ## Changes
@@ -177,6 +206,10 @@ EOF
 
 | Mistake | Fix |
 |---------|-----|
+| Skipping compliance checks | Always run CDN and WordPress.org checks BEFORE tagging |
+| CDN resources not bundled | Bundle all JS/CSS locally (see assets/lib/) |
+| Plugin name contains "WP" | Use "Art Routes" not "WP Art Routes" (trademark) |
+| Too many tags in readme.txt | Maximum 5 tags allowed by WordPress.org |
 | Only updating one version location | Update ALL: wp-art-routes.php (2 places) + readme.txt Stable tag |
 | Using old wenb- prefix | Version format is now `X.Y.Z` (semantic versioning) |
 | Forgetting readme.txt | Update Stable tag + add changelog entry |
@@ -191,6 +224,9 @@ EOF
 Before creating release:
 - [ ] On main branch (or user confirmed feature branch release)
 - [ ] `gh auth status` shows logged in
+- [ ] **Compliance: No CDN resources** (grep check passed)
+- [ ] **Compliance: Plugin name is "Art Routes"** (no "WP")
+- [ ] **Compliance: readme.txt has ≤5 tags**
 - [ ] Version updated in wp-art-routes.php header (line ~7)
 - [ ] Version updated in WP_ART_ROUTES_VERSION constant (line ~26)
 - [ ] CHANGELOG.md has entry with correct version and date
@@ -199,3 +235,13 @@ Before creating release:
 - [ ] README.md version updated (if applicable)
 - [ ] `./bin/build-release` ran successfully
 - [ ] Zip file exists in build/ directory
+
+## WordPress.org Submission
+
+After GitHub release, if submitting to WordPress.org:
+1. Download the zip from GitHub release
+2. Install [Plugin Check](https://wordpress.org/plugins/plugin-check/) on a test site
+3. Upload and activate the plugin from the zip
+4. Run Plugin Check - fix any errors (warnings can be reviewed)
+5. Submit at https://wordpress.org/plugins/developers/add/
+6. After approval, use SVN to publish updates
