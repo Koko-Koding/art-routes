@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,13 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.2.1 =
+* Fixed all remaining WordPress Plugin Check errors (0 errors now)
+* Updated tested WordPress version to 6.9
+* Removed deprecated load_plugin_textdomain() call
+* Fixed output escaping in templates and includes
+* Replaced forbidden file functions with WP_Filesystem API
 
 = 2.2.0 =
 * Renamed plugin from "WP Art Routes" to "Art Routes" for WordPress.org compliance

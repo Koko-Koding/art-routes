@@ -6,6 +6,26 @@ All notable changes to the Art Routes plugin will be documented in this file.
 
 **Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
 
+## [2.2.1] - 2026-02-04
+
+### Fixed
+
+- **WordPress Plugin Check**: Fixed all remaining errors (plugin now passes with 0 errors)
+  - Fixed `__()` escaping → `esc_html__()` in multiple files
+  - Fixed `wp_create_nonce`/`admin_url` escaping with `esc_js()`
+  - Fixed `$container_style`, `$route_title`, `$route_types` escaping in templates
+  - Replaced `move_uploaded_file()` with WP_Filesystem in settings.php
+  - Replaced `fopen`/`fclose` with WP_Filesystem in import-export.php
+  - Added ABSPATH check to art-route-map-template.php
+
+### Changed
+
+- **WordPress Version**: Updated "Tested up to" to WordPress 6.9
+
+### Removed
+
+- **Deprecated function**: Removed `load_plugin_textdomain()` (not needed since WordPress 4.6)
+
 ## [2.2.0] - 2026-02-04
 
 ### Changed
