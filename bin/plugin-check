@@ -89,8 +89,8 @@ wp plugin check "$TEST_PLUGIN_NAME" --require=./wp-content/plugins/plugin-check/
     tee /tmp/plugin-check-results.txt
 
 # Count errors (excluding TextDomainMismatch false positives)
-ERROR_COUNT=$(grep -c "ERROR" /tmp/plugin-check-results.txt 2>/dev/null || echo "0")
-WARNING_COUNT=$(grep -c "WARNING" /tmp/plugin-check-results.txt 2>/dev/null || echo "0")
+ERROR_COUNT=$(grep "ERROR" /tmp/plugin-check-results.txt 2>/dev/null | wc -l | tr -d ' ')
+WARNING_COUNT=$(grep "WARNING" /tmp/plugin-check-results.txt 2>/dev/null | wc -l | tr -d ' ')
 
 echo ""
 echo "========================"

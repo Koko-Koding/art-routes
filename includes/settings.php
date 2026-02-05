@@ -521,7 +521,7 @@ function wp_art_routes_render_custom_icons_tab() {
                 data: {
                     action: 'wp_art_routes_delete_custom_icon',
                     filename: filename,
-                    nonce: '<?php echo wp_create_nonce('wp_art_routes_delete_icon'); ?>'
+                    nonce: '<?php echo esc_js(wp_create_nonce('wp_art_routes_delete_icon')); ?>'
                 },
                 success: function(response) {
                     if (response.success) {
@@ -649,19 +649,26 @@ function wp_art_routes_ajax_upload_custom_icon() {
     // Save the file
     $destination = $custom_icons_dir . $filename;
 
+    // Ensure WP_Filesystem is available
+    global $wp_filesystem;
+    if (empty($wp_filesystem)) {
+        require_once ABSPATH . '/wp-admin/includes/file.php';
+        WP_Filesystem();
+    }
+
     if ($ext === 'svg' && isset($svg_content)) {
         // Write sanitized SVG content using WP_Filesystem
-        global $wp_filesystem;
-        if (empty($wp_filesystem)) {
-            require_once ABSPATH . '/wp-admin/includes/file.php';
-            WP_Filesystem();
-        }
         if (!$wp_filesystem->put_contents($destination, $svg_content, FS_CHMOD_FILE)) {
             wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
         }
     } else {
-        // Move uploaded file
-        if (!move_uploaded_file($file['tmp_name'], $destination)) {
+        // For non-SVG files, read the uploaded file and write to destination using WP_Filesystem
+        // This replaces move_uploaded_file() which is forbidden by WordPress Plugin Check
+        $file_content = $wp_filesystem->get_contents($file['tmp_name']);
+        if ($file_content === false) {
+            wp_send_json_error(['message' => __('Failed to read uploaded file.', 'wp-art-routes')]);
+        }
+        if (!$wp_filesystem->put_contents($destination, $file_content, FS_CHMOD_FILE)) {
             wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
         }
     }

@@ -85,10 +85,10 @@ get_header();
             ?>
                 <div class="artwork-artists">
                     <h3 class="artists-heading">
-                        <?php 
-                        echo count($artist_ids) > 1 
-                            ? __('Artists:', 'wp-art-routes') 
-                            : __('Artist:', 'wp-art-routes'); 
+                        <?php
+                        echo count($artist_ids) > 1
+                            ? esc_html__('Artists:', 'wp-art-routes')
+                            : esc_html__('Artist:', 'wp-art-routes');
                         ?>
                     </h3>
                     

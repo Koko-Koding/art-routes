@@ -32,7 +32,7 @@ add_action('admin_menu', 'wp_art_routes_add_import_export_page');
 function wp_art_routes_render_import_export_page()
 {
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'wp-art-routes'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'wp-art-routes'));
     }
 
     // Handle CSV import if form was submitted
@@ -135,7 +135,7 @@ function wp_art_routes_render_import_tab()
     <div class="card" style="max-width: 800px; margin-bottom: 20px;">
         <h2><?php printf(
             /* translators: %1$s: locations label (e.g., "Locations"), %2$s: info points label (e.g., "Info Points") */
-            __('Import %1$s & %2$s from CSV', 'wp-art-routes'),
+            esc_html__('Import %1$s & %2$s from CSV', 'wp-art-routes'),
             esc_html($location_label),
             esc_html($info_point_label)
         ); ?></h2>
@@ -255,7 +255,7 @@ function wp_art_routes_render_import_tab()
                     <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
                     <td><?php printf(
                         /* translators: %s: location label (e.g., "Locations") */
-                        __('%s only: Display number (e.g., A1, 1)', 'wp-art-routes'),
+                        esc_html__('%s only: Display number (e.g., A1, 1)', 'wp-art-routes'),
                         esc_html($location_label)
                     ); ?></td>
                 </tr>
@@ -269,7 +269,7 @@ function wp_art_routes_render_import_tab()
                     <td><?php esc_html_e('No', 'wp-art-routes'); ?></td>
                     <td><?php printf(
                         /* translators: %s: location label (e.g., "Locations") */
-                        __('%s only: Creator/artist name', 'wp-art-routes'),
+                        esc_html__('%s only: Creator/artist name', 'wp-art-routes'),
                         esc_html($location_label)
                     ); ?></td>
                 </tr>
@@ -347,13 +347,13 @@ function wp_art_routes_render_import_tab()
                                 <input type="radio" name="gpx_import_mode" value="route_and_waypoints" />
                                 <?php printf(
                                     /* translators: %s: locations label */
-                                    __('Route path + waypoints as %s', 'wp-art-routes'),
+                                    esc_html__('Route path + waypoints as %s', 'wp-art-routes'),
                                     esc_html($location_label)
                                 ); ?>
                                 <p class="description" style="margin-left: 24px; margin-top: 4px;">
                                     <?php printf(
                                         /* translators: %s: locations label */
-                                        __('Import tracks as route paths and waypoints as %s.', 'wp-art-routes'),
+                                        esc_html__('Import tracks as route paths and waypoints as %s.', 'wp-art-routes'),
                                         esc_html($location_label)
                                     ); ?>
                                 </p>
@@ -363,7 +363,7 @@ function wp_art_routes_render_import_tab()
                                 <input type="radio" name="gpx_import_mode" value="waypoints_only" />
                                 <?php printf(
                                     /* translators: %s: locations label */
-                                    __('Waypoints as %s only', 'wp-art-routes'),
+                                    esc_html__('Waypoints as %s only', 'wp-art-routes'),
                                     esc_html($location_label)
                                 ); ?>
                                 <p class="description" style="margin-left: 24px; margin-top: 4px;">
@@ -495,7 +495,7 @@ function wp_art_routes_render_export_tab()
                         return;
                     }
 
-                    var url = '<?php echo admin_url('admin-ajax.php'); ?>' +
+                    var url = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>' +
                               '?action=wp_art_routes_export_edition' +
                               '&edition_id=' + encodeURIComponent(editionId) +
                               '&format=' + encodeURIComponent(format) +
@@ -590,16 +590,31 @@ function wp_art_routes_handle_csv_import()
         return new WP_Error('invalid_file_type', __('Please upload a CSV file.', 'wp-art-routes'));
     }
 
-    // Read and parse CSV
-    $file_handle = fopen($_FILES['import_csv_file']['tmp_name'], 'r');
-    if (!$file_handle) {
+    // Read CSV file using WP_Filesystem
+    global $wp_filesystem;
+    if (empty($wp_filesystem)) {
+        require_once ABSPATH . '/wp-admin/includes/file.php';
+        WP_Filesystem();
+    }
+
+    $csv_content = $wp_filesystem->get_contents($_FILES['import_csv_file']['tmp_name']);
+    if (!$csv_content) {
         return new WP_Error('file_read_error', __('Could not read the uploaded file.', 'wp-art-routes'));
     }
 
+    // Parse CSV content into rows
+    $csv_lines = explode("\n", $csv_content);
+    $csv_lines = array_filter($csv_lines, function ($line) {
+        return trim($line) !== '';
+    });
+
+    if (empty($csv_lines)) {
+        return new WP_Error('empty_file', __('The CSV file is empty.', 'wp-art-routes'));
+    }
+
     // Get header row
-    $header = fgetcsv($file_handle);
+    $header = str_getcsv(array_shift($csv_lines));
     if (!$header) {
-        fclose($file_handle);
         return new WP_Error('empty_file', __('The CSV file is empty.', 'wp-art-routes'));
     }
 
@@ -612,7 +627,6 @@ function wp_art_routes_handle_csv_import()
     $required_columns = ['type', 'name', 'latitude', 'longitude'];
     $missing_columns = array_diff($required_columns, $header);
     if (!empty($missing_columns)) {
-        fclose($file_handle);
         return new WP_Error(
             'missing_columns',
             sprintf(
@@ -639,8 +653,9 @@ function wp_art_routes_handle_csv_import()
     $errors = [];
     $row_number = 1;
 
-    while (($row = fgetcsv($file_handle)) !== false) {
+    foreach ($csv_lines as $csv_line) {
         $row_number++;
+        $row = str_getcsv($csv_line);
 
         // Skip empty rows
         if (empty(array_filter($row))) {
@@ -796,8 +811,6 @@ function wp_art_routes_handle_csv_import()
             $info_points_created++;
         }
     }
-
-    fclose($file_handle);
 
     // Build result message
     $location_label = wp_art_routes_label('location', $locations_created !== 1);
@@ -1438,6 +1451,30 @@ function wp_art_routes_handle_gpx_import()
 }
 
 /**
+ * Convert an array to a CSV line string
+ *
+ * This is a helper function to avoid using fputcsv with file handles.
+ *
+ * @param array $fields Array of field values
+ * @return string CSV-formatted line
+ */
+function wp_art_routes_array_to_csv_line($fields)
+{
+    $escaped_fields = [];
+    foreach ($fields as $field) {
+        $field = (string) $field;
+        // Escape double quotes by doubling them
+        $field = str_replace('"', '""', $field);
+        // Wrap in quotes if contains comma, quote, or newline
+        if (strpos($field, ',') !== false || strpos($field, '"') !== false || strpos($field, "\n") !== false || strpos($field, "\r") !== false) {
+            $field = '"' . $field . '"';
+        }
+        $escaped_fields[] = $field;
+    }
+    return implode(',', $escaped_fields);
+}
+
+/**
  * AJAX handler for downloading CSV template
  */
 function wp_art_routes_download_csv_template()
@@ -1449,31 +1486,32 @@ function wp_art_routes_download_csv_template()
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have permission to access this resource.', 'wp-art-routes'));
+        wp_die(esc_html__('You do not have permission to access this resource.', 'wp-art-routes'));
+    }
+
+    // Build CSV content
+    $csv_rows = [];
+    $csv_rows[] = ['Type', 'Name', 'Description', 'Latitude', 'Longitude', 'Number', 'Icon', 'Creator'];
+    $csv_rows[] = ['location', 'Example Artwork', 'Description of the artwork', '52.0907', '5.1214', 'A1', 'icon.svg', 'Artist Name'];
+    $csv_rows[] = ['info_point', 'Parking Area', 'Free parking available', '52.0910', '5.1220', '', '', ''];
+    $csv_rows[] = ['location', 'Another Artwork', 'Another description', '52.0915', '5.1230', 'A2', '', 'Another Artist'];
+    $csv_rows[] = ['info_point', 'Information Booth', 'Get maps and information here', '52.0920', '5.1240', '', 'info.svg', ''];
+
+    // Convert rows to CSV string
+    $csv_content = chr(0xEF) . chr(0xBB) . chr(0xBF); // BOM for Excel UTF-8 compatibility
+    foreach ($csv_rows as $row) {
+        $csv_content .= wp_art_routes_array_to_csv_line($row) . "\n";
     }
 
     // Set headers for CSV download
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="wp-art-routes-import-template.csv"');
+    header('Content-Length: ' . strlen($csv_content));
     header('Cache-Control: no-cache, must-revalidate');
     header('Pragma: no-cache');
 
-    // Create output stream
-    $output = fopen('php://output', 'w');
-
-    // Add BOM for Excel UTF-8 compatibility
-    fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-    // Write header row
-    fputcsv($output, ['Type', 'Name', 'Description', 'Latitude', 'Longitude', 'Number', 'Icon', 'Creator']);
-
-    // Write example rows
-    fputcsv($output, ['location', 'Example Artwork', 'Description of the artwork', '52.0907', '5.1214', 'A1', 'icon.svg', 'Artist Name']);
-    fputcsv($output, ['info_point', 'Parking Area', 'Free parking available', '52.0910', '5.1220', '', '', '']);
-    fputcsv($output, ['location', 'Another Artwork', 'Another description', '52.0915', '5.1230', 'A2', '', 'Another Artist']);
-    fputcsv($output, ['info_point', 'Information Booth', 'Get maps and information here', '52.0920', '5.1240', '', 'info.svg', '']);
-
-    fclose($output);
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV output for download
+    echo $csv_content;
     exit;
 }
 add_action('wp_ajax_wp_art_routes_download_csv_template', 'wp_art_routes_download_csv_template');
@@ -1490,7 +1528,7 @@ function wp_art_routes_export_edition()
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have permission to access this resource.', 'wp-art-routes'));
+        wp_die(esc_html__('You do not have permission to access this resource.', 'wp-art-routes'));
     }
 
     // Get parameters
@@ -1499,12 +1537,12 @@ function wp_art_routes_export_edition()
 
     // Validate edition
     if (!$edition_id) {
-        wp_die(__('Please select an edition.', 'wp-art-routes'));
+        wp_die(esc_html__('Please select an edition.', 'wp-art-routes'));
     }
 
     $edition = get_post($edition_id);
     if (!$edition || $edition->post_type !== 'edition') {
-        wp_die(__('Selected edition does not exist.', 'wp-art-routes'));
+        wp_die(esc_html__('Selected edition does not exist.', 'wp-art-routes'));
     }
 
     // Export based on format
@@ -1532,22 +1570,11 @@ function wp_art_routes_export_edition_csv($edition)
     // Generate filename
     $filename = sanitize_file_name($edition->post_title) . '-export.csv';
 
-    // Set headers
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    header('Cache-Control: no-cache, must-revalidate');
-    header('Pragma: no-cache');
+    // Build CSV content
+    $csv_rows = [];
+    $csv_rows[] = ['Type', 'Name', 'Description', 'Latitude', 'Longitude', 'Number', 'Icon', 'Creator', 'ID', 'Permalink'];
 
-    // Create output stream
-    $output = fopen('php://output', 'w');
-
-    // Add BOM for Excel UTF-8 compatibility
-    fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
-
-    // Write header row
-    fputcsv($output, ['Type', 'Name', 'Description', 'Latitude', 'Longitude', 'Number', 'Icon', 'Creator', 'ID', 'Permalink']);
-
-    // Write locations
+    // Add locations
     foreach ($artworks as $artwork) {
         // Get artist names
         $creator_names = [];
@@ -1563,7 +1590,7 @@ function wp_art_routes_export_edition_csv($edition)
             $icon = basename($artwork['icon_url']);
         }
 
-        fputcsv($output, [
+        $csv_rows[] = [
             'location',
             $artwork['title'],
             wp_strip_all_tags($artwork['description']),
@@ -1574,10 +1601,10 @@ function wp_art_routes_export_edition_csv($edition)
             implode(', ', $creator_names),
             $artwork['id'],
             $artwork['permalink'],
-        ]);
+        ];
     }
 
-    // Write info points
+    // Add info points
     foreach ($info_points as $info_point) {
         // Get icon filename from URL
         $icon = '';
@@ -1585,7 +1612,7 @@ function wp_art_routes_export_edition_csv($edition)
             $icon = basename($info_point['icon_url']);
         }
 
-        fputcsv($output, [
+        $csv_rows[] = [
             'info_point',
             $info_point['title'],
             wp_strip_all_tags($info_point['excerpt']),
@@ -1596,10 +1623,24 @@ function wp_art_routes_export_edition_csv($edition)
             '',
             $info_point['id'],
             $info_point['permalink'],
-        ]);
+        ];
     }
 
-    fclose($output);
+    // Convert rows to CSV string
+    $csv_content = chr(0xEF) . chr(0xBB) . chr(0xBF); // BOM for Excel UTF-8 compatibility
+    foreach ($csv_rows as $row) {
+        $csv_content .= wp_art_routes_array_to_csv_line($row) . "\n";
+    }
+
+    // Set headers
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Length: ' . strlen($csv_content));
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Pragma: no-cache');
+
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV output for download
+    echo $csv_content;
 }
 
 /**
@@ -1724,5 +1765,6 @@ function wp_art_routes_export_edition_gpx($edition)
     header('Cache-Control: no-cache, must-revalidate');
     header('Pragma: no-cache');
 
+    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $gpx is valid GPX XML content for file download
     echo $gpx;
 }

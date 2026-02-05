@@ -206,14 +206,14 @@ function wp_art_routes_render_route_path_meta_box($post)
     $path = get_post_meta($post->ID, '_route_path', true);
 
     // Instructions
-    echo '<p>' . __('Enter the route path as a series of latitude,longitude points. One point per line.', 'wp-art-routes') . '</p>';
-    echo '<p>' . __('Example: 52.3702, 4.8952', 'wp-art-routes') . '</p>';
+    echo '<p>' . esc_html__('Enter the route path as a series of latitude,longitude points. One point per line.', 'wp-art-routes') . '</p>';
+    echo '<p>' . esc_html__('Example: 52.3702, 4.8952', 'wp-art-routes') . '</p>';
 
     // Text area for path
     echo '<textarea id="route_path" name="route_path" rows="10" class="large-text">' . esc_textarea($path) . '</textarea>';
 
     // Add button to open map modal
-    echo '<p><button type="button" class="button" id="open_route_map">' . __('Use Map to Create Route', 'wp-art-routes') . '</button></p>';
+    echo '<p><button type="button" class="button" id="open_route_map">' . esc_html__('Use Map to Create Route', 'wp-art-routes') . '</button></p>';
 }
 
 /**
@@ -376,7 +376,7 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
                             echo '<li data-id="' . esc_attr($artist_id) . '">';
                             echo '<span class="artist-title">' . esc_html($artist->post_title) . '</span>';
                             echo ' <span class="post-type-label">(' . esc_html($post_type_label) . ')</span>';
-                            echo ' <a href="#" class="remove-artist">' . __('Remove', 'wp-art-routes') . '</a>';
+                            echo ' <a href="#" class="remove-artist">' . esc_html__('Remove', 'wp-art-routes') . '</a>';
                             echo '<input type="hidden" name="artwork_artist_ids[]" value="' . esc_attr($artist_id) . '">';
                             echo '</li>';
                         }
@@ -438,7 +438,7 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
                             action: 'search_posts_for_artist',
                             term: request.term,
                             post_type: postType,
-                            nonce: '<?php echo wp_create_nonce('artist_search_nonce'); ?>'
+                            nonce: '<?php echo esc_js(wp_create_nonce('artist_search_nonce')); ?>'
                         },
                         success: function(data) {
                             response(data);

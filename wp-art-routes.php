@@ -12,7 +12,7 @@
  * Text Domain: wp-art-routes
  * Domain Path: /languages
  * Requires at least: 5.6
- * Tested up to: 6.7
+ * Tested up to: 6.9
  * Requires PHP: 7.4
  */
 
@@ -27,18 +27,8 @@ define('WP_ART_ROUTES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_ART_ROUTES_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
-/**
- * Load plugin text domain for translations
- */
-function wp_art_routes_load_textdomain()
-{
-    load_plugin_textdomain(
-        'wp-art-routes',
-        false,
-        dirname(WP_ART_ROUTES_PLUGIN_BASENAME) . '/languages'
-    );
-}
-add_action('plugins_loaded', 'wp_art_routes_load_textdomain');
+// Note: load_plugin_textdomain() is not needed since WordPress 4.6
+// WordPress automatically loads translations for plugins hosted on WordPress.org
 
 /**
  * Flush rewrite rules if plugin version has changed

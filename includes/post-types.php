@@ -443,6 +443,7 @@ add_action('manage_artwork_posts_custom_column', function ($column, $post_id) {
                 $artist_titles[] = esc_html($artist_post->post_title);
             }
         }
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $artist_titles items are escaped with esc_html() when added to array
         echo implode(', ', $artist_titles);
     }
 }, 10, 2);

@@ -16,14 +16,8 @@ if (!defined('ABSPATH')) {
 
 // Check if route data exists
 if (empty($route)) {
-    echo '<p class="wp-art-routes-error">' . __('Route not found.', 'wp-art-routes') . '</p>';
+    echo '<p class="wp-art-routes-error">' . esc_html__('Route not found.', 'wp-art-routes') . '</p>';
     return;
-}
-
-// Set up HTML element styles
-$container_style = '';
-if (!empty($atts['height'])) {
-    $container_style = 'style="height: ' . esc_attr($atts['height']) . ';"';
 }
 
 // Prepare route data for JavaScript
@@ -89,7 +83,7 @@ $js_data = [
                         'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
                         'children' => __('Child-friendly route', 'wp-art-routes'),
                     ];
-                    echo isset($route_types[$route['type']]) ? $route_types[$route['type']] : $route['type']; 
+                    echo isset($route_types[$route['type']]) ? esc_html($route_types[$route['type']]) : esc_html($route['type']); 
                     ?>
                 </span>
             <?php endif; ?>
@@ -107,7 +101,7 @@ $js_data = [
     </div>
     
     <!-- Map container -->
-    <div id="art-route-map" class="art-route-map" <?php echo $container_style; ?>></div>
+    <div id="art-route-map" class="art-route-map"<?php echo !empty($atts['height']) ? ' style="height: ' . esc_attr($atts['height']) . ';"' : ''; ?>></div>
     
     <?php 
     // Display map controls using the reusable template tag

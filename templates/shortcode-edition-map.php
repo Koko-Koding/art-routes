@@ -60,11 +60,6 @@ $route_types = [
     ],
 ];
 
-// Set up container style
-$container_style = '';
-if (!empty($atts['height'])) {
-    $container_style = 'style="height: ' . esc_attr($atts['height']) . ';"';
-}
 ?>
 
 <div class="edition-map-container">
@@ -135,7 +130,7 @@ if (!empty($atts['height'])) {
 
     <div class="edition-map-wrapper">
         <!-- Map container -->
-        <div id="<?php echo esc_attr($map_id); ?>" class="edition-map" <?php echo $container_style; ?>></div>
+        <div id="<?php echo esc_attr($map_id); ?>" class="edition-map"<?php echo !empty($atts['height']) ? ' style="height: ' . esc_attr($atts['height']) . ';"' : ''; ?>></div>
 
         <!-- Loading indicator -->
         <div id="map-loading-<?php echo esc_attr($map_id); ?>" class="map-loading" style="display: none;">

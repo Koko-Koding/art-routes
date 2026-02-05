@@ -21,13 +21,13 @@ $icons_url = plugin_dir_url(dirname(__FILE__)) . 'assets/icons/';
         $icon_file = get_post_meta($route['id'], '_route_icon', true);
         $icon_url = $icon_file ? $icons_url . $icon_file : '';
         $route_url = get_permalink($route['id']);
-        $route_title = esc_attr($route['title']);
+        $route_title = $route['title'];
     ?>
-        <a class="art-route-icon-link" href="<?php echo esc_url($route_url); ?>" title="<?php echo $route_title; ?>">
+        <a class="art-route-icon-link" href="<?php echo esc_url($route_url); ?>" title="<?php echo esc_attr($route_title); ?>">
             <?php if ($icon_url): ?>
-                <img class="art-route-icon-img" src="<?php echo esc_url($icon_url); ?>" alt="<?php echo $route_title; ?>" loading="lazy" />
+                <img class="art-route-icon-img" src="<?php echo esc_url($icon_url); ?>" alt="<?php echo esc_attr($route_title); ?>" loading="lazy" />
             <?php else: ?>
-                <span class="art-route-icon-fallback" aria-label="<?php echo $route_title; ?>">🎨</span>
+                <span class="art-route-icon-fallback" aria-label="<?php echo esc_attr($route_title); ?>">🎨</span>
             <?php endif; ?>
         </a>
     <?php endforeach; ?>

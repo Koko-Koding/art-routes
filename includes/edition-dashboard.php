@@ -114,7 +114,7 @@ add_action('admin_enqueue_scripts', 'wp_art_routes_enqueue_dashboard_assets');
 function wp_art_routes_render_dashboard_page()
 {
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'wp-art-routes'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'wp-art-routes'));
     }
 
     // Get all editions for dropdown
