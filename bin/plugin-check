@@ -20,15 +20,63 @@ WP_DIR="$(dirname "$(dirname "$WP_PLUGINS_DIR")")"
 TEST_PLUGIN_NAME="art-routes-check"
 TEST_PLUGIN_DIR="$WP_PLUGINS_DIR/$TEST_PLUGIN_NAME"
 
-# Local by Flywheel environment (site ID: UB4SEkrsK)
-LOCAL_SITE_ID="UB4SEkrsK"
+# Local by Flywheel paths
 LOCAL_SUPPORT_DIR="$HOME/Library/Application Support/Local"
+LOCAL_SSH_ENTRY_DIR="$LOCAL_SUPPORT_DIR/ssh-entry"
 
 echo -e "\033[1;33mArt Routes Plugin Check\033[0m"
 echo "========================"
 echo ""
 
+# Step 0: Find the Local site ID from sites.json
+echo -e "\033[1;33m0. Detecting Local by Flywheel site...\033[0m"
+
+# Get the Local site root (strip /app/public from WP_DIR)
+LOCAL_SITE_ROOT=$(echo "$WP_DIR" | sed 's|/app/public$||')
+
+# Find site ID from sites.json
+LOCAL_SITE_ID=""
+if [ -f "$LOCAL_SUPPORT_DIR/sites.json" ]; then
+    # Extract site IDs and paths, find the one matching our path
+    LOCAL_SITE_ID=$(python3 -c "
+import json
+import os
+import sys
+try:
+    with open(os.path.expanduser('~/Library/Application Support/Local/sites.json'), 'r') as f:
+        sites = json.load(f)
+    for site_id, site_data in sites.items():
+        site_path = os.path.expanduser(site_data.get('path', ''))
+        if site_path == '$LOCAL_SITE_ROOT':
+            print(site_id)
+            sys.exit(0)
+except Exception as e:
+    pass
+" 2>/dev/null)
+fi
+
+if [ -z "$LOCAL_SITE_ID" ]; then
+    echo -e "\033[1;31mError: Could not find Local site ID for this WordPress installation.\033[0m"
+    echo "Make sure this site is managed by Local by Flywheel."
+    exit 1
+fi
+
+echo "   Found site ID: $LOCAL_SITE_ID"
+
+# Check if ssh-entry script exists
+SSH_ENTRY_SCRIPT="$LOCAL_SSH_ENTRY_DIR/$LOCAL_SITE_ID.sh"
+if [ ! -f "$SSH_ENTRY_SCRIPT" ]; then
+    echo -e "\033[1;31mError: SSH entry script not found: $SSH_ENTRY_SCRIPT\033[0m"
+    echo "Make sure the site is running in Local by Flywheel."
+    exit 1
+fi
+
+# Source the ssh-entry script environment (exclude the exec command and cd)
+echo "   Loading Local environment from: $SSH_ENTRY_SCRIPT"
+eval "$(grep -E '^export ' "$SSH_ENTRY_SCRIPT")"
+
 # Step 1: Build the release
+echo ""
 echo -e "\033[1;33m1. Building release package...\033[0m"
 cd "$PLUGIN_DIR"
 ./bin/build-release
@@ -51,31 +99,12 @@ echo ""
 echo -e "\033[1;33m3. Running Plugin Check...\033[0m"
 echo ""
 
-# Set up Local by Flywheel environment
-export MYSQL_HOME="$LOCAL_SUPPORT_DIR/run/$LOCAL_SITE_ID/conf/mysql"
-export PHPRC="$LOCAL_SUPPORT_DIR/run/$LOCAL_SITE_ID/conf/php"
-export WP_CLI_CONFIG_PATH="/Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/config.yaml"
-export WP_CLI_DISABLE_AUTO_CHECK_UPDATE=1
-
-# Find the correct PHP and MySQL versions from Local
-MYSQL_BIN=$(find "$LOCAL_SUPPORT_DIR/lightning-services" -path "*/mysql-*/bin/darwin-arm64/bin" -type d 2>/dev/null | head -1)
-PHP_BIN=$(find "$LOCAL_SUPPORT_DIR/lightning-services" -path "*/php-8.*/bin/darwin-arm64/bin" -type d 2>/dev/null | sort -r | head -1)
-WP_CLI_BIN="/Applications/Local.app/Contents/Resources/extraResources/bin/wp-cli/posix"
-
-if [ -z "$MYSQL_BIN" ] || [ -z "$PHP_BIN" ]; then
-    echo -e "\033[1;31mError: Could not find Local by Flywheel binaries\033[0m"
-    echo "Make sure Local is installed and the site '$LOCAL_SITE_ID' is running."
-    exit 1
-fi
-
-export PATH="$MYSQL_BIN:$PHP_BIN:$WP_CLI_BIN:$PATH"
-
 cd "$WP_DIR"
 
-# Check if site is running
+# Check if site is running by testing MySQL connection
 if ! mysql --defaults-file="$MYSQL_HOME/my.cnf" -e "SELECT 1" &>/dev/null; then
     echo -e "\033[1;31mError: Local site is not running.\033[0m"
-    echo "Please start the 'art-routes' site in Local by Flywheel first."
+    echo "Please start the site in Local by Flywheel first."
     exit 1
 fi
 
