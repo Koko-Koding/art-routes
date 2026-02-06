@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.2
+Stable tag: 2.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,10 @@ Yes, the plugin is fully responsive and optimized for mobile devices with touch-
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.2.3 =
+* Added complete Dutch translations for Edition and Information Point labels
+* Reorganized admin menu: entity types grouped together, utility pages at bottom
 
 = 2.2.2 =
 * Fixed map marker icons not displaying on edition single pages

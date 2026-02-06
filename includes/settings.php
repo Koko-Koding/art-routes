@@ -126,7 +126,8 @@ function wp_art_routes_add_settings_page() {
         __('Settings', 'wp-art-routes'),
         'manage_options',
         'wp-art-routes-settings',
-        'wp_art_routes_render_settings_page'
+        'wp_art_routes_render_settings_page',
+        101 // Position: last in menu
     );
 }
 add_action('admin_menu', 'wp_art_routes_add_settings_page');

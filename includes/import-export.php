@@ -21,7 +21,8 @@ function wp_art_routes_add_import_export_page()
         __('Import/Export', 'wp-art-routes'),
         'manage_options',
         'wp-art-routes-import-export',
-        'wp_art_routes_render_import_export_page'
+        'wp_art_routes_render_import_export_page',
+        100 // Position: after Dashboard, before Settings
     );
 }
 add_action('admin_menu', 'wp_art_routes_add_import_export_page');

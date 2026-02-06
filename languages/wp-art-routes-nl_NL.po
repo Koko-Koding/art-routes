@@ -549,3 +549,137 @@ msgstr "Het verzoek om je locatie is verlopen."
 #: templates/shortcode-map.php:52
 msgid "Geolocation is not supported by this browser."
 msgstr "Geolocatie wordt niet ondersteund door deze browser."
+
+#. Edition labels
+#: includes/editions.php:21
+msgid "Editions"
+msgstr "Edities"
+
+#: includes/editions.php:22
+msgid "Edition"
+msgstr "Editie"
+
+#: includes/editions.php:24
+msgid "Add New Edition"
+msgstr "Nieuwe editie toevoegen"
+
+#: includes/editions.php:25
+msgid "Edit Edition"
+msgstr "Editie bewerken"
+
+#: includes/editions.php:26
+msgid "New Edition"
+msgstr "Nieuwe editie"
+
+#: includes/editions.php:27
+msgid "View Edition"
+msgstr "Editie bekijken"
+
+#: includes/editions.php:28
+msgid "View Editions"
+msgstr "Edities bekijken"
+
+#: includes/editions.php:29
+msgid "Search Editions"
+msgstr "Edities zoeken"
+
+#: includes/editions.php:30
+msgid "No editions found"
+msgstr "Geen edities gevonden"
+
+#: includes/editions.php:31
+msgid "No editions found in Trash"
+msgstr "Geen edities gevonden in prullenbak"
+
+#: includes/editions.php:33
+msgid "Edition Archives"
+msgstr "Editie-archieven"
+
+#: includes/editions.php:34
+msgid "Edition Attributes"
+msgstr "Editie-attributen"
+
+#: includes/editions.php:181
+msgid "Edition Settings"
+msgstr "Editie-instellingen"
+
+#: includes/editions.php:625
+msgid "Delete Edition"
+msgstr "Editie verwijderen"
+
+#: includes/editions.php:633
+msgid "Delete Edition Only"
+msgstr "Alleen editie verwijderen"
+
+#. Information Point labels
+#: includes/post-types.php:62
+msgid "Information Points"
+msgstr "Informatiepunten"
+
+#: includes/post-types.php:63
+msgid "Information Point"
+msgstr "Informatiepunt"
+
+#: includes/post-types.php:64
+msgid "Add New Info Point"
+msgstr "Nieuw informatiepunt toevoegen"
+
+#: includes/post-types.php:65
+msgid "Edit Info Point"
+msgstr "Informatiepunt bewerken"
+
+#: includes/post-types.php:67
+msgid "View Info Point"
+msgstr "Informatiepunt bekijken"
+
+#: includes/post-types.php:68
+msgid "Search Info Points"
+msgstr "Informatiepunten zoeken"
+
+#: includes/post-types.php:69
+msgid "No info points found"
+msgstr "Geen informatiepunten gevonden"
+
+#: includes/edition-dashboard.php:21
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: includes/post-types.php:542
+msgid "All Editions"
+msgstr "Alle edities"
+
+#: includes/post-types.php:543
+msgid "No Edition"
+msgstr "Geen editie"
+
+#: includes/blocks.php:62
+msgid "Edition Map"
+msgstr "Editiekaart"
+
+#: includes/blocks.php:75
+msgid "Please select an Edition or the block will auto-detect from the page context."
+msgstr "Selecteer een editie of het blok detecteert automatisch vanuit de paginacontext."
+
+#: includes/blocks.php:78
+msgid "Unknown Edition"
+msgstr "Onbekende editie"
+
+#: includes/shortcodes.php:232
+msgid "Please select an Edition."
+msgstr "Selecteer een editie."
+
+#: includes/shortcodes.php:238
+msgid "Edition not found."
+msgstr "Editie niet gevonden."
+
+#: includes/import-export.php:20
+msgid "Import/Export"
+msgstr "Importeren/Exporteren"
+
+#: includes/import-export.php:54
+msgid "Import"
+msgstr "Importeren"
+
+#: includes/import-export.php:55
+msgid "Export"
+msgstr "Exporteren"

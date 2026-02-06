@@ -22,7 +22,7 @@ function wp_art_routes_add_dashboard_page()
         'manage_options',
         'wp-art-routes-dashboard',
         'wp_art_routes_render_dashboard_page',
-        1 // Position: after Editions, before Routes
+        99 // Position: near Settings and Import/Export, after entity post types
     );
 }
 add_action('admin_menu', 'wp_art_routes_add_dashboard_page');
