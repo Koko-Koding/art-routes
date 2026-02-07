@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Routes - Gebruikershandleiding</title>
+    <style>
+        :root {
+            --primary: #0073aa;
+            --primary-dark: #005a87;
+            --text: #333;
+            --text-light: #666;
+            --bg: #fff;
+            --bg-light: #f8f9fa;
+            --border: #e0e0e0;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: var(--bg);
+        }
+
+        h1 {
+            font-size: 2.4em;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.6em;
+            color: var(--primary-dark);
+            margin-top: 50px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.25em;
+            color: var(--text);
+            margin-top: 30px;
+        }
+
+        h4 {
+            font-size: 1.1em;
+            color: var(--text-light);
+            margin-top: 20px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin: 12px 0;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1em;
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 40px 0;
+        }
+
+        /* Table of Contents */
+        .toc {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin: 30px 0 40px;
+        }
+
+        .toc h2 {
+            margin-top: 0;
+            border-bottom: none;
+            font-size: 1.3em;
+        }
+
+        .toc ol {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .toc li {
+            margin: 8px 0;
+        }
+
+        .toc a {
+            font-weight: 500;
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 6px 0;
+        }
+
+        /* Code blocks */
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 18px 22px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        /* Blockquotes (tips) */
+        blockquote {
+            background: #e8f4fd;
+            border-left: 4px solid var(--primary);
+            margin: 20px 0;
+            padding: 15px 20px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        blockquote p {
+            margin: 5px 0;
+        }
+
+        /* Menu structure */
+        .menu-structure {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px 25px;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-size: 0.9em;
+            line-height: 2;
+        }
+
+        /* Section styling */
+        .section {
+            page-break-inside: avoid;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                padding: 20px;
+                font-size: 11pt;
+                max-width: none;
+            }
+
+            h1 { font-size: 24pt; }
+            h2 {
+                font-size: 16pt;
+                page-break-after: avoid;
+            }
+            h3 {
+                font-size: 13pt;
+                page-break-after: avoid;
+            }
+
+            .toc {
+                page-break-after: always;
+            }
+
+            pre {
+                background: #f0f0f0 !important;
+                color: #333 !important;
+                border: 1px solid #ccc;
+            }
+
+            a {
+                color: var(--text) !important;
+                text-decoration: none !important;
+            }
+
+            blockquote {
+                background: #f0f0f0 !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Responsive - screen only */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.3em; }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Art Routes - Gebruikershandleiding</h1>
+<p class="subtitle">Versie 2.2.3 | Februari 2026</p>
+
+<div class="toc">
+    <h2>Inhoudsopgave</h2>
+    <ol>
+        <li><a href="#inleiding">Inleiding</a></li>
+        <li><a href="#installatie">Installatie en activering</a></li>
+        <li><a href="#menu">Het menu begrijpen</a></li>
+        <li><a href="#edities">Edities aanmaken en beheren</a></li>
+        <li><a href="#routes">Routes aanmaken</a></li>
+        <li><a href="#locaties">Locaties aanmaken</a></li>
+        <li><a href="#informatiepunten">Informatiepunten aanmaken</a></li>
+        <li><a href="#dashboard">Het Editie Dashboard</a></li>
+        <li><a href="#importexport">Importeren en exporteren</a></li>
+        <li><a href="#kaarten">Kaarten weergeven op je website</a></li>
+        <li><a href="#iconen">Iconen beheren</a></li>
+        <li><a href="#instellingen">Instellingen aanpassen</a></li>
+        <li><a href="#bezoekers">De kaart voor bezoekers</a></li>
+        <li><a href="#faq">Tips en veelgestelde vragen</a></li>
+    </ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="inleiding">1. Inleiding</h2>
+
+<p><strong>Art Routes</strong> is een WordPress-plugin waarmee je interactieve kaarten maakt voor culturele evenementen zoals kunstroutes, theaterwandelingen, muziekfestivals en erfgoedwandelingen. De plugin maakt gebruik van OpenStreetMap om kaarten weer te geven met routes, locaties (zoals kunstwerken) en informatiepunten.</p>
+
+<h3>Wat kun je ermee?</h3>
+
+<ul>
+    <li><strong>Routes</strong> uittekenen op een kaart (wandelroutes, fietsroutes, etc.)</li>
+    <li><strong>Locaties</strong> met GPS-co&ouml;rdinaten toevoegen (kunstwerken, optredens, venues)</li>
+    <li><strong>Informatiepunten</strong> plaatsen (parkeren, horeca, toiletten, etc.)</li>
+    <li>Alles organiseren in <strong>Edities</strong> (bijv. "Kunstroute 2026", "Gluren bij de Buren 2025")</li>
+    <li>Gegevens <strong>importeren</strong> vanuit CSV- of GPX-bestanden</li>
+    <li>Gegevens <strong>exporteren</strong> naar CSV of GPX (voor GPS-apparaten)</li>
+    <li>Interactieve kaarten tonen op je website met <strong>shortcodes</strong> of <strong>Gutenberg-blokken</strong></li>
+    <li>Bezoekers hun <strong>locatie laten volgen</strong> op de kaart</li>
+    <li>Alle benamingen <strong>aanpassen</strong> aan jouw evenement</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="installatie">2. Installatie en activering</h2>
+
+<h3>De plugin installeren</h3>
+<ol>
+    <li>Ga naar <strong>Plugins &gt; Nieuwe plugin</strong> in het WordPress-beheergedeelte</li>
+    <li>Klik op <strong>Plugin uploaden</strong> en selecteer het <code>wp-art-routes.zip</code>-bestand</li>
+    <li>Klik op <strong>Nu installeren</strong></li>
+    <li>Klik daarna op <strong>Plugin activeren</strong></li>
+</ol>
+
+<h3>Na activering</h3>
+<p>Na het activeren verschijnt er een nieuw menu-item <strong>Art Routes</strong> (of <strong>Kunstroutes</strong> in het Nederlands) in de linkerzijbalk van WordPress.</p>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="menu">3. Het menu begrijpen</h2>
+
+<p>Na activering vind je het volgende menu in de WordPress-zijbalk:</p>
+
+<div class="menu-structure">
+    Art Routes<br>
+    &nbsp;&nbsp;├── Edities &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Overzicht van al je edities<br>
+    &nbsp;&nbsp;├── Routes &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Alle routes beheren<br>
+    &nbsp;&nbsp;├── Locaties &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Alle locaties/kunstwerken beheren<br>
+    &nbsp;&nbsp;├── Informatiepunten &nbsp;&nbsp;&nbsp;- Alle informatiepunten beheren<br>
+    &nbsp;&nbsp;├── Dashboard &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Editie Dashboard voor bulkbeheer<br>
+    &nbsp;&nbsp;├── Import/Export &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Gegevens importeren en exporteren<br>
+    &nbsp;&nbsp;└── Instellingen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Plugin-instellingen aanpassen
+</div>
+
+<blockquote>
+    <p><strong>Tip:</strong> De benamingen in het menu kunnen afwijken als je de terminologie hebt aangepast in de instellingen. Bijvoorbeeld: "Locaties" kan "Kunstwerken" worden en "Informatiepunten" kan "Bezienswaardigheden" worden.</p>
+</blockquote>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="edities">4. Edities aanmaken en beheren</h2>
+
+<h3>Wat is een Editie?</h3>
+<p>Een <strong>Editie</strong> is een container die routes, locaties en informatiepunten groepeert voor een specifiek evenement of tijdsperiode. Denk aan:</p>
+<ul>
+    <li>"Kunstroute Amersfoort 2026"</li>
+    <li>"Gluren bij de Buren 2025"</li>
+    <li>"Erfgoedwandeling Voorjaar"</li>
+</ul>
+<p>Door edities te gebruiken kun je elk jaar of elk evenement apart beheren, terwijl alles netjes georganiseerd blijft.</p>
+
+<h3>Een nieuwe Editie aanmaken</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Edities</strong></li>
+    <li>Klik op <strong>Nieuwe toevoegen</strong> bovenaan de pagina</li>
+    <li>Vul de volgende gegevens in:
+        <ul>
+            <li><strong>Titel</strong>: De naam van je editie (bijv. "Kunstroute 2026")</li>
+            <li><strong>Beschrijving</strong>: Een tekst die op de editiepagina wordt getoond</li>
+            <li><strong>Uitgelichte afbeelding</strong>: Een afbeelding voor de editie (optioneel)</li>
+        </ul>
+    </li>
+    <li>In het <strong>Editie-instellingen</strong> vak rechts kun je instellen:
+        <ul>
+            <li><strong>Startdatum</strong>: Wanneer het evenement begint</li>
+            <li><strong>Einddatum</strong>: Wanneer het evenement eindigt</li>
+            <li><strong>Standaard locatie-icoon</strong>: Een standaardicoon voor locaties in deze editie</li>
+        </ul>
+    </li>
+    <li>Optioneel: Pas de <strong>Terminologie</strong> aan (zie hoofdstuk 12)</li>
+    <li>Klik op <strong>Publiceren</strong></li>
+</ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="routes">5. Routes aanmaken</h2>
+
+<p>Een <strong>Route</strong> is een pad op de kaart dat bezoekers kunnen volgen, zoals een wandelroute of fietsroute.</p>
+
+<h3>Een nieuwe Route aanmaken</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Routes</strong></li>
+    <li>Klik op <strong>Nieuwe toevoegen</strong></li>
+    <li>Vul de basisgegevens in:
+        <ul>
+            <li><strong>Titel</strong>: De naam van de route (bijv. "Wandelroute Binnenstad")</li>
+            <li><strong>Beschrijving</strong>: Een omschrijving van de route</li>
+            <li><strong>Uitgelichte afbeelding</strong>: Een foto van de route (optioneel)</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>Het routepad tekenen</h3>
+<p>Onder de beschrijving vind je de <strong>Route Editor</strong> - een interactieve kaart waarmee je het pad uittekent:</p>
+<ol>
+    <li><strong>Zoeken</strong>: Typ een adres of plaatsnaam in het zoekveld en klik op "Zoeken" om de kaart naar die locatie te verplaatsen</li>
+    <li><strong>Mijn locatie</strong>: Klik op deze knop om de kaart te centreren op je huidige locatie</li>
+    <li><strong>Punten toevoegen</strong>: Klik op de kaart om routepunten toe te voegen. De punten worden verbonden tot een lijn</li>
+    <li><strong>Punten verslepen</strong>: Sleep een bestaand punt naar een nieuwe positie om het pad aan te passen</li>
+    <li><strong>Punt invoegen</strong>: Klik op de groene <strong>+</strong> knop bij een routepunt om een nieuw punt tussenvoegen</li>
+    <li><strong>Punt verwijderen</strong>: Klik op de rode <strong>&times;</strong> knop om een punt te verwijderen (minimaal 2 punten vereist)</li>
+    <li><strong>Punt bewerken</strong>: Klik op het potloodicoon om extra informatie bij een punt in te vullen</li>
+    <li><strong>Route passend maken</strong>: Klik op "Route passend maken" om de kaart automatisch in te zoomen op de hele route</li>
+</ol>
+
+<h3>Route-eigenschappen instellen</h3>
+<p>Naast het pad kun je ook de volgende eigenschappen invullen:</p>
+<ul>
+    <li><strong>Routetype</strong>: Wandeling, fietstocht, rolstoelvriendelijk of kindvriendelijk</li>
+    <li><strong>Lengte</strong>: De afstand van de route (bijv. "3,5 km")</li>
+    <li><strong>Duur</strong>: Hoe lang de route duurt (wordt automatisch berekend, maar kan handmatig worden aangepast)</li>
+    <li><strong>Editie</strong>: Koppel de route aan een editie</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="locaties">6. Locaties aanmaken</h2>
+
+<p>Een <strong>Locatie</strong> is een punt op de kaart, zoals een kunstwerk, een optreden of een venue.</p>
+
+<h3>Een nieuwe Locatie aanmaken</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Locaties</strong></li>
+    <li>Klik op <strong>Nieuwe toevoegen</strong></li>
+    <li>Vul de basisgegevens in:
+        <ul>
+            <li><strong>Titel</strong>: De naam van de locatie</li>
+            <li><strong>Beschrijving</strong>: Een uitgebreide omschrijving</li>
+            <li><strong>Uitgelichte afbeelding</strong>: Een foto</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>De locatie op de kaart plaatsen</h3>
+<p>Onder de beschrijving vind je de <strong>Locatie Picker</strong>:</p>
+<ol>
+    <li><strong>Zoeken</strong>: Typ een adres in het zoekveld om de kaart te verplaatsen</li>
+    <li><strong>Op de kaart klikken</strong>: Klik op de gewenste plek op de kaart om de GPS-co&ouml;rdinaten automatisch in te vullen</li>
+    <li><strong>Handmatig invullen</strong>: Je kunt ook direct de breedtegraad en lengtegraad invoeren</li>
+</ol>
+
+<h3>Aanvullende gegevens</h3>
+<ul>
+    <li><strong>Nummer</strong>: Een nummer of code (bijv. "A1", "001") - wordt op de kaartmarkering getoond</li>
+    <li><strong>Locatiebeschrijving</strong>: Een korte plaatsaanduiding (bijv. "Bij de kerk op het plein")</li>
+    <li><strong>Icoon</strong>: Kies een icoon voor de kaartmarkering</li>
+    <li><strong>Kunstenaar/Maker</strong>: Koppel de locatie aan een of meer kunstenaars</li>
+    <li><strong>Rolstoeltoegankelijk</strong>: Geef aan of de locatie toegankelijk is voor rolstoelen</li>
+    <li><strong>Kinderwagentoegang</strong>: Geef aan of de locatie toegankelijk is met een kinderwagen</li>
+    <li><strong>Editie</strong>: Koppel de locatie aan een editie</li>
+</ul>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="informatiepunten">7. Informatiepunten aanmaken</h2>
+
+<p>Een <strong>Informatiepunt</strong> is een nuttig punt op de kaart dat geen kunstwerk is, maar wel handig voor bezoekers, zoals parkeergelegenheid, een toilet of een horecagelegenheid.</p>
+
+<h3>Een nieuw Informatiepunt aanmaken</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Informatiepunten</strong></li>
+    <li>Klik op <strong>Nieuwe toevoegen</strong></li>
+    <li>Vul de titel en beschrijving in</li>
+    <li>Gebruik de <strong>Locatie Picker</strong> om het punt op de kaart te plaatsen</li>
+    <li>Kies een passend <strong>Icoon</strong> (bijv. parkeren, toilet, cafe, bus, trein)</li>
+    <li>Koppel het aan een <strong>Editie</strong></li>
+    <li>Klik op <strong>Publiceren</strong></li>
+</ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="dashboard">8. Het Editie Dashboard</h2>
+
+<p>Het <strong>Editie Dashboard</strong> is het krachtigste beheerscherm van de plugin. Hier kun je alle inhoud van een editie in &eacute;&eacute;n overzicht beheren.</p>
+
+<h3>Het Dashboard openen</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Dashboard</strong></li>
+    <li>Selecteer een editie uit het dropdown-menu bovenaan</li>
+</ol>
+
+<h3>Overzichtskaart</h3>
+<p>Bovenaan zie je een interactieve kaart met:</p>
+<ul>
+    <li><strong>Routes</strong> als gekleurde lijnen</li>
+    <li><strong>Locaties</strong> als markeringen</li>
+    <li><strong>Informatiepunten</strong> als markeringen</li>
+    <li>Concepten worden met 50% transparantie getoond</li>
+</ul>
+
+<h3>Secties voor Routes, Locaties en Informatiepunten</h3>
+<p>Onder de kaart vind je inklapbare secties met tabellen. Per item zie je:</p>
+<ul>
+    <li><strong>Selectievakje</strong>: Om items te selecteren voor bulkacties</li>
+    <li><strong>Titel</strong>: Klik om direct te bewerken</li>
+    <li><strong>Nummer</strong>: Alleen bij locaties, klik om te bewerken</li>
+    <li><strong>Co&ouml;rdinaten</strong>: Breedtegraad en lengtegraad, klik om te bewerken</li>
+    <li><strong>Icoon</strong>: Kies een icoon uit het dropdown-menu</li>
+    <li><strong>Status</strong>: Klik op de badge om te wisselen tussen Gepubliceerd en Concept</li>
+    <li><strong>Acties</strong>: Knoppen om te publiceren/verbergen, bewerken of bekijken</li>
+</ul>
+
+<h3>Bulkacties</h3>
+<p>Selecteer meerdere items met de selectievakjes en gebruik de knoppen bovenaan elke sectie:</p>
+<ul>
+    <li><strong>Alles selecteren</strong> / <strong>Niets selecteren</strong> / <strong>Concepten selecteren</strong></li>
+    <li><strong>Publiceren</strong>: Publiceert alle geselecteerde items</li>
+    <li><strong>Concept maken</strong>: Maakt alle geselecteerde items tot concept</li>
+    <li><strong>Verwijderen</strong>: Verwijdert alle geselecteerde items (permanent!)</li>
+</ul>
+
+<h3>Editie-instellingen</h3>
+<p>Onderin het Dashboard vind je de sectie <strong>Editie-instellingen</strong> waar je kunt aanpassen:</p>
+<ul>
+    <li><strong>Evenementdatums</strong>: Start- en einddatum</li>
+    <li><strong>Standaard locatie-icoon</strong>: Het standaardicoon voor locaties zonder eigen icoon</li>
+    <li><strong>Terminologie</strong>: Pas de benamingen aan per editie</li>
+</ul>
+<p>Klik op <strong>Instellingen opslaan</strong> om op te slaan zonder de pagina te verlaten.</p>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="importexport">9. Importeren en exporteren</h2>
+
+<p>Met de Import/Export-functie kun je snel grote hoeveelheden gegevens toevoegen of een back-up maken.</p>
+
+<h3>CSV Importeren (Locaties en Informatiepunten)</h3>
+
+<h4>Stap voor stap:</h4>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Import/Export</strong>, tabblad <strong>Import</strong></li>
+    <li>Selecteer een <strong>Editie</strong>, of kies <strong>"+ Nieuwe editie aanmaken"</strong></li>
+    <li>Klik op <strong>Bestand kiezen</strong> en selecteer je CSV-bestand</li>
+    <li>Klik op <strong>CSV importeren</strong></li>
+</ol>
+
+<h4>CSV-bestandsformaat</h4>
+<table>
+    <thead>
+        <tr>
+            <th>Kolom</th>
+            <th>Verplicht</th>
+            <th>Beschrijving</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><code>Type</code></td><td>Ja</td><td><code>location</code> of <code>info_point</code></td></tr>
+        <tr><td><code>Name</code></td><td>Ja</td><td>De naam van het item</td></tr>
+        <tr><td><code>Description</code></td><td>Nee</td><td>Een beschrijving</td></tr>
+        <tr><td><code>Latitude</code></td><td>Ja</td><td>Breedtegraad (bijv. 52.0907)</td></tr>
+        <tr><td><code>Longitude</code></td><td>Ja</td><td>Lengtegraad (bijv. 5.1214)</td></tr>
+        <tr><td><code>Number</code></td><td>Nee</td><td>Nummer (alleen locaties, bijv. "A1")</td></tr>
+        <tr><td><code>Icon</code></td><td>Nee</td><td>Bestandsnaam icoon (bijv. "art.svg")</td></tr>
+        <tr><td><code>Creator</code></td><td>Nee</td><td>Naam kunstenaar (alleen locaties)</td></tr>
+    </tbody>
+</table>
+
+<blockquote>
+    <p><strong>Tip:</strong> Download het <strong>sjabloonbestand</strong> via de knop "Download Template CSV" op de importpagina.</p>
+</blockquote>
+
+<p>Na het importeren worden alle items aangemaakt als <strong>Concept</strong>, zodat je ze eerst kunt controleren. Duplicaten worden automatisch overgeslagen.</p>
+
+<h3>GPX Importeren (Routes en/of Locaties)</h3>
+
+<ol>
+    <li>Ga naar <strong>Import/Export</strong>, tabblad <strong>Import</strong></li>
+    <li>Scroll naar <strong>Importeren van GPX</strong></li>
+    <li>Selecteer een <strong>Editie</strong></li>
+    <li>Kies je <strong>GPX-bestand</strong></li>
+    <li>Kies een <strong>Importmodus</strong>:
+        <ul>
+            <li><strong>Alleen routepad</strong>: Importeert tracks als routes</li>
+            <li><strong>Routepad + waypoints als Locaties</strong>: Importeert zowel routes als waypoints</li>
+            <li><strong>Alleen waypoints als Locaties</strong>: Negeert tracks, importeert alleen waypoints</li>
+        </ul>
+    </li>
+    <li>Klik op <strong>GPX importeren</strong></li>
+</ol>
+
+<h3>Exporteren</h3>
+<ol>
+    <li>Ga naar het tabblad <strong>Export</strong></li>
+    <li>Selecteer een <strong>Editie</strong></li>
+    <li>Kies het <strong>formaat</strong>:
+        <ul>
+            <li><strong>CSV</strong>: Geschikt voor bewerking in Excel of Google Sheets</li>
+            <li><strong>GPX</strong>: Geschikt voor GPS-apparaten en kaart-apps</li>
+        </ul>
+    </li>
+    <li>Klik op <strong>Exporteren</strong></li>
+</ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="kaarten">10. Kaarten weergeven op je website</h2>
+
+<h3>Automatische editiepagina</h3>
+<p>Elke gepubliceerde editie krijgt automatisch een eigen pagina met een interactieve kaart, overzicht van routes, locaties en informatiepunten.</p>
+
+<h3>Shortcodes</h3>
+<p>Shortcodes zijn korte codes die je in een pagina of bericht plakt om een kaart weer te geven.</p>
+
+<h4>Editie-kaart</h4>
+<pre><code>[edition_map edition_id="123" height="500px"]</code></pre>
+<p>Opties: <code>edition_id</code>, <code>routes</code> (all/none/ID's), <code>show_locations</code>, <code>show_info_points</code>, <code>show_legend</code>, <code>height</code></p>
+
+<h4>Enkele route-kaart</h4>
+<pre><code>[art_route_map route="123" height="500px"]</code></pre>
+
+<h4>Meerdere routes op &eacute;&eacute;n kaart</h4>
+<pre><code>[art_routes_map height="600px" edition_id="123"]</code></pre>
+
+<h4>Route-iconen weergeven</h4>
+<pre><code>[art_route_icons]</code></pre>
+
+<h3>Gutenberg-blok: Editie-kaart</h3>
+<ol>
+    <li>Klik op <strong>+</strong> om een nieuw blok toe te voegen</li>
+    <li>Zoek naar <strong>"Edition Map"</strong></li>
+    <li>Stel in de blokinstelling in: Editie, Hoogte, Routes/Locaties/Informatiepunten/Legenda tonen</li>
+</ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="iconen">11. Iconen beheren</h2>
+
+<p>De plugin bevat meer dan 40 ingebouwde iconen en je kunt ook eigen iconen uploaden.</p>
+
+<h3>Ingebouwde iconen</h3>
+<ul>
+    <li><strong>Genummerd</strong> (1 t/m 20): Nummers in een cirkel</li>
+    <li><strong>Categorie</strong>: Kunst, museum, muziek, kerk, sculptuur, po&euml;zie, foto</li>
+    <li><strong>Voorzieningen</strong>: Cafe, restaurant, parkeren, bus, trein, fiets, toilet</li>
+    <li><strong>Natuur</strong>: Park, uitzichtpunt</li>
+    <li><strong>Navigatie</strong>: Start, einde, markering, informatie, huis, festival</li>
+</ul>
+
+<h3>Eigen iconen uploaden</h3>
+<ol>
+    <li>Ga naar <strong>Art Routes &gt; Instellingen &gt; Eigen iconen</strong></li>
+    <li>Klik op <strong>Bestand kiezen</strong> (SVG aanbevolen, PNG/JPG/WebP ook mogelijk)</li>
+    <li>Klik op <strong>Icoon uploaden</strong></li>
+</ol>
+
+<h3>Standaardicoon instellen</h3>
+<p>De volgorde van iconen is:</p>
+<ol>
+    <li>Eigen icoon van de locatie</li>
+    <li>Standaardicoon van de editie</li>
+    <li>Globaal standaardicoon (Instellingen &gt; Algemeen)</li>
+    <li>Grijs bolletje (geen icoon)</li>
+</ol>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="instellingen">12. Instellingen aanpassen</h2>
+
+<h3>Tabblad: Algemeen</h3>
+<ul>
+    <li><strong>Standaardroute</strong>: Route die wordt gebruikt als er geen specifieke route is geselecteerd</li>
+    <li><strong>Locatietracking</strong>: In-/uitschakelen of bezoekers hun locatie kunnen delen</li>
+    <li><strong>Standaard locatie-icoon</strong>: Icoon voor locaties zonder eigen icoon</li>
+</ul>
+
+<h3>Tabblad: Terminologie</h3>
+<p>Pas alle benamingen aan die de plugin gebruikt. Per type kun je instellen: enkelvoud, meervoud en URL-slug.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Standaard</th>
+            <th>Voorbeeld aanpassing</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>Route</strong></td><td>Route / Routes</td><td>Wandeling / Wandelingen</td></tr>
+        <tr><td><strong>Locatie</strong></td><td>Location / Locations</td><td>Kunstwerk / Kunstwerken</td></tr>
+        <tr><td><strong>Informatiepunt</strong></td><td>Info Point / Info Points</td><td>Bezienswaardigheid / Bezienswaardigheden</td></tr>
+        <tr><td><strong>Maker</strong></td><td>Artist / Artists</td><td>Kunstenaar / Kunstenaars</td></tr>
+    </tbody>
+</table>
+
+<blockquote>
+    <p><strong>Let op:</strong> Na het wijzigen van de URL-slug moet je naar <strong>Instellingen &gt; Permalinks</strong> gaan en op <strong>Wijzigingen opslaan</strong> klikken om de URL-regels te verversen.</p>
+</blockquote>
+
+<h3>Terminologie per Editie</h3>
+<p>Naast de globale terminologie kun je ook <strong>per editie</strong> de benamingen aanpassen via het Editie Dashboard onder "Editie-instellingen".</p>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="bezoekers">13. De kaart voor bezoekers</h2>
+
+<h3>Wat zien bezoekers op de kaart?</h3>
+<ul>
+    <li><strong>Routes</strong> als gekleurde lijnen</li>
+    <li><strong>Locaties</strong> als ronde markeringen met icoon, foto of nummer</li>
+    <li><strong>Informatiepunten</strong> als kleinere markeringen met icoon</li>
+    <li><strong>Start- en eindpunten</strong> van routes</li>
+    <li><strong>Richtingpijlen</strong> langs de route</li>
+</ul>
+
+<h3>Interactie met de kaart</h3>
+<ul>
+    <li><strong>Inzoomen en uitzoomen</strong> met de +/- knoppen of scrollen</li>
+    <li><strong>De kaart verschuiven</strong> door te slepen</li>
+    <li><strong>Op een markering klikken</strong> voor een popup met details en een link naar de detailpagina</li>
+    <li><strong>Lagen aan/uit zetten</strong> via schakelknoppen (als de legenda is ingeschakeld)</li>
+</ul>
+
+<h3>Locatietracking</h3>
+<p>Als locatietracking is ingeschakeld:</p>
+<ul>
+    <li>Bezoekers worden gevraagd hun locatie te delen</li>
+    <li>Hun positie verschijnt als blauwe stip op de kaart</li>
+    <li>Ze krijgen een melding wanneer ze in de buurt van een locatie zijn</li>
+    <li>Werkt het beste op mobiele apparaten</li>
+</ul>
+
+<h3>GPX-export voor bezoekers</h3>
+<p>Op routepagina's kunnen bezoekers de route downloaden als GPX-bestand via de <strong>"Exporteren naar GPX"</strong>-knop. Dit bestand is compatibel met Google Maps, Komoot, OsmAnd en Garmin-apparaten.</p>
+</div>
+
+<hr>
+
+<div class="section">
+<h2 id="faq">14. Tips en veelgestelde vragen</h2>
+
+<h3>Hoe vind ik het ID van een route of editie?</h3>
+<p>Het ID staat in de URL wanneer je een item bewerkt:<br>
+<code>wp-admin/post.php?post=<strong>123</strong>&action=edit</code> - hier is <strong>123</strong> het ID.</p>
+
+<h3>Mijn kaart toont niets</h3>
+<ul>
+    <li>Controleer of de routes/locaties <strong>gepubliceerd</strong> zijn (niet "Concept")</li>
+    <li>Controleer of de items aan de juiste <strong>editie</strong> zijn gekoppeld</li>
+    <li>Controleer of je het juiste ID in de shortcode gebruikt</li>
+</ul>
+
+<h3>Hoe maak ik een back-up van mijn gegevens?</h3>
+<p>Gebruik de <strong>Export</strong>-functie om een CSV- of GPX-bestand te downloaden van een editie.</p>
+
+<h3>Kan ik de plugin in het Nederlands gebruiken?</h3>
+<p>Ja! De plugin heeft een volledige Nederlandse vertaling. Als je WordPress in het Nederlands hebt ingesteld, worden alle teksten automatisch in het Nederlands getoond.</p>
+
+<h3>Hoe wissel ik snel de status van items?</h3>
+<p>In het <strong>Editie Dashboard</strong>: klik op de <strong>statusbadge</strong> om een enkel item te publiceren of terug te zetten naar concept, of selecteer meerdere items en gebruik de <strong>bulkacties</strong>.</p>
+
+<h3>Dubbele items bij het importeren</h3>
+<p>De plugin detecteert automatisch duplicaten: items worden overgeslagen als er al een item met dezelfde naam of dezelfde co&ouml;rdinaten (binnen ~2 meter) bestaat in de editie.</p>
+
+<h3>Kan ik het uiterlijk van de kaart aanpassen?</h3>
+<p>Het uiterlijk kan worden aangepast via CSS in je thema. De plugin biedt templates in de map <code>templates/</code> die je kunt overschrijven door ze te kopi&euml;ren naar <code>wp-art-routes/</code> in je thema.</p>
+</div>
+
+<hr>
+
+<div class="footer">
+    <p><strong>Art Routes</strong> - Interactieve kaarten voor culturele evenementen</p>
+    <p>Versie 2.2.3 | GPL v2 of later</p>
+    <p>Hulp nodig? Bezoek de <a href="https://github.com/drikusroor/wp-art-routes">GitHub-pagina</a></p>
+</div>
+
+</body>
+</html>
