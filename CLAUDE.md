@@ -12,9 +12,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 If you need to make breaking changes, ask the user first.
 
+## Monorepo Structure
+
+This is a monorepo containing two WordPress plugins:
+
+```
+art-routes/
+├── plugins/
+│   ├── wp-art-routes/           # Free plugin (WordPress.org)
+│   │   ├── wp-art-routes.php, includes/, assets/, languages/,
+│   │   ├── templates/, readme.txt, README.md, CHANGELOG.md,
+│   │   └── DISTRIBUTION.md, Dockerfile, icon-*.png/webp
+│   └── art-routes-pro/          # Pro add-on (premium)
+│       ├── art-routes-pro.php, includes/, assets/, lib/
+├── bin/                         # Build & dev scripts (shared)
+├── docs/, gpx/, @bin/, publish-plugin/
+├── .claude/skills/, .github/
+├── build/                       # gitignored output
+├── CLAUDE.md                    # This file
+└── README.md                    # Monorepo overview
+```
+
+**Development setup:** The repo lives at `~/repos/art-routes/`. Symlinks in Local Sites point back here:
+- `<Local Sites>/plugins/wp-art-routes` → `~/repos/art-routes/plugins/wp-art-routes`
+- `<Local Sites>/plugins/art-routes-pro` → `~/repos/art-routes/plugins/art-routes-pro`
+
+Run `./bin/setup-dev` to create/verify symlinks.
+
 ## Project Overview
 
-Art Routes is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap. The plugin is designed for non-technical users on mobile devices, so prioritize simplicity and responsive design.
+**Art Routes (Free)** is a flexible WordPress plugin for organizations managing cultural location-based events (art routes, theater trails, music festivals, heritage walks, etc.). It provides interactive map-based route management using Leaflet.js and OpenStreetMap.
+
+**Art Routes Pro** is a premium add-on that requires the free plugin. It adds QR codes, visitor analytics, PDF exports, and more.
 
 **Primary Language:** PHP (WordPress plugin). Use PHP for all new code unless otherwise specified.
 
@@ -26,13 +55,19 @@ Art Routes is a flexible WordPress plugin for organizations managing cultural lo
 ## Common Commands
 
 ```bash
-# Build release package (creates zip in build/)
-./bin/build-release
+# Build free plugin for distribution (creates zip in build/)
+./bin/build-free
 
-# Run Plugin Check on release build (creates test copy, provides wp-cli command)
+# Build pro plugin for distribution (creates zip in build/)
+./bin/build-pro
+
+# Create/verify Local Sites symlinks
+./bin/setup-dev
+
+# Run Plugin Check on free plugin release build
 ./bin/plugin-check
 
-# Compile translations (.po to .mo)
+# Compile translations (.po to .mo) for all plugins
 ./bin/translate
 
 # Validate GPX export files
@@ -41,17 +76,17 @@ Art Routes is a flexible WordPress plugin for organizations managing cultural lo
 # Verify Editions system integration
 ./bin/verify-editions-system
 
-# Generate POT file for translations
-wp i18n make-pot . languages/wp-art-routes.pot
+# Generate POT file for translations (run from plugins/wp-art-routes/)
+cd plugins/wp-art-routes && wp i18n make-pot . languages/wp-art-routes.pot
 
 # Merge POT with existing translations
-msgmerge --update languages/wp-art-routes-nl_NL.po languages/wp-art-routes.pot
+msgmerge --update plugins/wp-art-routes/languages/wp-art-routes-nl_NL.po plugins/wp-art-routes/languages/wp-art-routes.pot
 
 # Compile .mo file
-wp i18n make-mo languages/wp-art-routes-nl_NL.po
+wp i18n make-mo plugins/wp-art-routes/languages/wp-art-routes-nl_NL.po
 ```
 
-## Architecture
+## Free Plugin Architecture
 
 ### Admin Menu Structure
 
@@ -71,7 +106,7 @@ Note: The "Add New Edition" submenu is intentionally hidden - editions should be
 
 ### Terminology System
 
-The plugin uses a centralized terminology system (`includes/terminology.php`) that allows all labels to be customized. **Never hardcode labels** like "Artwork", "Artist", "Route" - always use the helper functions:
+The plugin uses a centralized terminology system (`plugins/wp-art-routes/includes/terminology.php`) that allows all labels to be customized. **Never hardcode labels** like "Artwork", "Artist", "Route" - always use the helper functions:
 
 ```php
 // Get a label (singular or plural) - with optional edition context
@@ -158,7 +193,7 @@ wp_art_routes_get_edition_information_points($edition_id);
 
 ### Import/Export System
 
-Located at Editions → Import/Export (`includes/import-export.php`):
+Located at Editions → Import/Export (`plugins/wp-art-routes/includes/import-export.php`):
 
 **CSV Import (Locations & Info Points):**
 - Select target edition or create a new edition during import
@@ -204,7 +239,7 @@ wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id);
 
 ### Edition Dashboard
 
-Located at Editions → Dashboard (`includes/edition-dashboard.php`):
+Located at Editions → Dashboard (`plugins/wp-art-routes/includes/edition-dashboard.php`):
 
 **Features:**
 - Overview map showing all edition content (routes as polylines, locations/info points as markers)
@@ -223,8 +258,8 @@ Located at Editions → Dashboard (`includes/edition-dashboard.php`):
 - Terminology overrides (Route, Location, Info Point, Creator - singular/plural)
 - AJAX-based save without page reload
 
-**JavaScript:** `assets/js/edition-dashboard.js`
-**CSS:** `assets/css/edition-dashboard.css`
+**JavaScript:** `plugins/wp-art-routes/assets/js/edition-dashboard.js`
+**CSS:** `plugins/wp-art-routes/assets/css/edition-dashboard.css`
 
 **AJAX Endpoints:**
 | Action | Purpose |
@@ -234,7 +269,7 @@ Located at Editions → Dashboard (`includes/edition-dashboard.php`):
 | `wp_art_routes_dashboard_bulk_action` | Bulk publish/draft/delete |
 | `wp_art_routes_dashboard_save_settings` | Save edition settings (dates, icon, terminology) |
 
-### Core PHP Files (includes/)
+### Core PHP Files (plugins/wp-art-routes/includes/)
 
 | File | Purpose |
 |------|---------|
@@ -274,8 +309,8 @@ Attributes:
 Auto-detection: On Edition single pages, the block automatically uses that edition's content.
 
 **Block Assets:**
-- Editor script: `assets/js/blocks/edition-map-block.js`
-- Editor styles: `assets/css/blocks/edition-map-block-editor.css`
+- Editor script: `plugins/wp-art-routes/assets/js/blocks/edition-map-block.js`
+- Editor styles: `plugins/wp-art-routes/assets/css/blocks/edition-map-block-editor.css`
 
 **Routes Map Block** (`wp-art-routes/routes-map`)
 
@@ -308,7 +343,7 @@ Attributes:
 
 ### Template System
 
-Templates in `templates/` can be overridden by themes by copying to `{theme}/wp-art-routes/`:
+Templates in `plugins/wp-art-routes/templates/` can be overridden by themes by copying to `{theme}/wp-art-routes/`:
 
 - `single-edition.php` - Edition single page (map + routes grid + locations grid + info points list)
 - `shortcode-edition-map.php` - Edition map shortcode template
@@ -323,7 +358,7 @@ The edition single template automatically displays:
 
 All section headings use edition-specific terminology.
 
-### JavaScript Files (assets/js/)
+### JavaScript Files (plugins/wp-art-routes/assets/js/)
 
 | File | Lines | Purpose |
 |------|-------|---------|
@@ -331,6 +366,33 @@ All section headings use edition-specific terminology.
 | `route-editor-admin.js` | ~1,400 | Admin route path editor with draggable points |
 | `artwork-location-picker.js` | ~300 | Admin artwork GPS coordinate picker |
 | `blocks/edition-map-block.js` | ~150 | Edition Map Gutenberg block editor component |
+
+## Pro Plugin Architecture
+
+**Main file:** `plugins/art-routes-pro/art-routes-pro.php`
+**Text domain:** `art-routes-pro`
+**Requires:** Art Routes (free) to be installed and activated
+
+### Pro Plugin Files (plugins/art-routes-pro/)
+
+| File | Purpose |
+|------|---------|
+| `art-routes-pro.php` | Main plugin file, dependency check, bootstrap |
+| `includes/class-license.php` | License key validation and management |
+| `includes/class-updater.php` | Auto-update mechanism |
+| `includes/class-pro-features.php` | Feature registry and initialization |
+| `includes/features/class-feature-qr-codes.php` | QR code generation for locations |
+| `lib/class-qr-generator.php` | QR code image generation library |
+| `assets/css/admin.css` | Pro admin styles |
+| `assets/css/qr-codes.css` | QR code display styles |
+
+### Pro Plugin Constants
+```php
+ART_ROUTES_PRO_VERSION  // '1.0.0'
+ART_ROUTES_PRO_FILE     // __FILE__
+ART_ROUTES_PRO_DIR      // plugin_dir_path(__FILE__)
+ART_ROUTES_PRO_URL      // plugin_dir_url(__FILE__)
+```
 
 ## Settings Structure
 
@@ -391,7 +453,7 @@ Additional settings stored separately:
 ## Icon System
 
 The plugin supports two sources of icons:
-- **Built-in icons:** SVG files in `assets/icons/`
+- **Built-in icons:** SVG files in `plugins/wp-art-routes/assets/icons/`
 - **Custom uploaded icons:** SVG/PNG/JPG/WebP files in `wp-content/uploads/wp-art-routes-icons/`
 
 Custom icons can be uploaded via Settings → Custom Icons tab. SVG files are sanitized to prevent XSS attacks (`class-svg-sanitizer.php`).
@@ -448,28 +510,34 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 
 ## Release Workflow
 
-When making changes:
-1. Update version in `wp-art-routes.php` (uses semantic versioning `X.Y.Z`)
-2. Add entry to `CHANGELOG.md`
-3. Update `readme.txt`:
+### Free Plugin (Art Routes)
+
+1. Update version in `plugins/wp-art-routes/wp-art-routes.php` (2 places: header + constant)
+2. Add entry to `plugins/wp-art-routes/CHANGELOG.md`
+3. Update `plugins/wp-art-routes/readme.txt`:
    - Update `Stable tag:` to new version
    - Add changelog entry (condensed version)
    - Update `Upgrade Notice` section if significant
-4. Update `README.md` if user-facing features changed
-5. Update translation files if strings changed (run commands above)
-6. Run `./bin/build-release` to create distribution zip
+4. Update `plugins/wp-art-routes/README.md` if user-facing features changed
+5. Update translation files if strings changed
+6. Run `./bin/build-free` to create distribution zip
+7. Tag: `vX.Y.Z`
 
-### Pre-Release Compliance Checklist
+### Pro Plugin (Art Routes Pro)
+
+1. Update version in `plugins/art-routes-pro/art-routes-pro.php` (2 places: header + constant)
+2. Run `./bin/build-pro` to create distribution zip
+3. Tag: `pro-vX.Y.Z`
+
+### Pre-Release Compliance Checklist (Free Plugin)
 
 **IMPORTANT:** Always run these checks BEFORE tagging a release to avoid hotfix releases:
 
 1. **CDN Compliance:** All JS/CSS must be bundled locally (no external CDNs except Google Fonts)
-   - Leaflet.js is bundled in `assets/lib/leaflet/`
-   - Verify no new CDN links were added: `grep -r "cdn\." --include="*.php" --include="*.js"`
+   - Leaflet.js is bundled in `plugins/wp-art-routes/assets/lib/leaflet/`
+   - Verify no new CDN links were added: `grep -r "cdn\." --include="*.php" --include="*.js" plugins/wp-art-routes/`
 
-2. **WordPress Plugin Check:** Install and run the [Plugin Check](https://wordpress.org/plugins/plugin-check/) plugin
-   - Build the release zip first: `./bin/build-release`
-   - Upload and test the zip file, not the dev directory
+2. **WordPress Plugin Check:** Run `./bin/plugin-check`
    - Fix all errors before release (warnings can be reviewed case-by-case)
 
 3. **WordPress.org Requirements:**
@@ -487,7 +555,7 @@ For WordPress.org plugin directory submission:
 
 ## External Dependencies
 
-- Leaflet.js 1.9.4 (bundled locally in assets/lib/leaflet/)
+- Leaflet.js 1.9.4 (bundled locally in plugins/wp-art-routes/assets/lib/leaflet/)
 - OpenStreetMap tiles
 - jQuery (WordPress bundled)
 
@@ -511,9 +579,9 @@ sprintf(__('Add New %s', 'wp-art-routes'), wp_art_routes_label('location'))
 ### Adding a New Setting
 
 1. Add default value in `wp_art_routes_get_default_terminology()`
-2. Add form field in appropriate tab in `settings.php`
+2. Add form field in appropriate tab in `plugins/wp-art-routes/includes/settings.php`
 3. Add hidden field preservation in other tabs
-4. Create helper function in `terminology.php` if needed
+4. Create helper function in `plugins/wp-art-routes/includes/terminology.php` if needed
 
 ### Adding Edition-Aware Functionality
 

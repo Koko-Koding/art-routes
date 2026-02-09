@@ -2,8 +2,6 @@
 build/
 
 # Development files
-@route-info-rest-client/
-Dockerfile
 node_modules/
 *.log
 

@@ -1,0 +1,70 @@
+/* Art Routes Pro - License admin page */
+
+.art-routes-pro-license-wrap {
+    max-width: 600px;
+}
+
+.art-routes-pro-license-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 16px 0;
+}
+
+.art-routes-pro-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.art-routes-pro-status--active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.art-routes-pro-status--inactive {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.art-routes-pro-license-details {
+    margin: 12px 0;
+}
+
+.art-routes-pro-license-details th {
+    text-align: left;
+    padding: 4px 16px 4px 0;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.art-routes-pro-license-details td {
+    padding: 4px 0;
+}
+
+#art-routes-pro-key {
+    width: 100%;
+    max-width: 400px;
+    font-family: monospace;
+}
+
+#art-routes-pro-message {
+    margin-top: 16px;
+    padding: 8px 12px;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+#art-routes-pro-message.notice-success {
+    border-left-color: #46b450;
+    background: #d4edda;
+}
+
+#art-routes-pro-message.notice-error {
+    border-left-color: #dc3232;
+    background: #f8d7da;
+}

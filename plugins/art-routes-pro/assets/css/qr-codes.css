@@ -1,0 +1,82 @@
+/* Art Routes Pro - QR Codes page */
+
+.art-routes-pro-qr-filter {
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.art-routes-pro-qr-filter select {
+    min-width: 250px;
+}
+
+.art-routes-pro-qr-actions {
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.art-routes-pro-qr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 16px 0 32px;
+}
+
+.art-routes-pro-qr-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 16px;
+    text-align: center;
+}
+
+.art-routes-pro-qr-card--draft {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.art-routes-pro-qr-svg {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.art-routes-pro-qr-svg svg {
+    width: 160px;
+    height: 160px;
+}
+
+.art-routes-pro-qr-label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+
+.art-routes-pro-qr-url {
+    margin-bottom: 12px;
+}
+
+.art-routes-pro-qr-url code {
+    font-size: 11px;
+    word-break: break-all;
+    color: #666;
+}
+
+.art-routes-pro-badge-draft {
+    display: inline-block;
+    background: #dba617;
+    color: #fff;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: normal;
+    margin-left: 4px;
+}
+
+.art-routes-pro-qr-download {
+    width: 100%;
+}

@@ -1,13 +1,13 @@
 ---
 name: release
-description: Use when releasing a new version of wp-art-routes plugin - incrementing version, updating changelog, building release, and creating GitHub release
+description: Use when releasing a new version of Art Routes (free or pro) - incrementing version, updating changelog, building release, and creating GitHub release
 ---
 
 # Art Routes Release
 
 ## Overview
 
-This skill guides the complete release process for the Art Routes WordPress plugin: version increment, changelog update, compliance checks, build, and GitHub release creation.
+This skill guides the complete release process for Art Routes plugins: version increment, changelog update, compliance checks, build, and GitHub release creation. Supports both the free plugin and the pro add-on.
 
 ## When to Use
 
@@ -15,22 +15,42 @@ This skill guides the complete release process for the Art Routes WordPress plug
 - User wants to bump the version
 - User mentions "release", "version", "publish", or "deploy"
 
+## Step 0: Determine Which Plugin
+
+Ask user which plugin to release (if not specified):
+- **Art Routes (Free)** - WordPress.org distribution
+- **Art Routes Pro** - Premium distribution
+
 ## Quick Reference
+
+### Free Plugin
 
 | Step | Files/Commands |
 |------|----------------|
-| Version format | `X.Y.Z` (semantic versioning, e.g., `2.0.0`) |
-| Version locations | `wp-art-routes.php` (2 places: header + constant), `readme.txt` (Stable tag) |
-| Changelog | `CHANGELOG.md` (full entry), `readme.txt` (condensed entry) |
-| README.md | Update if user-facing features changed |
+| Version format | `X.Y.Z` (semantic versioning) |
+| Version locations | `plugins/wp-art-routes/wp-art-routes.php` (2 places: header + constant), `plugins/wp-art-routes/readme.txt` (Stable tag) |
+| Changelog | `plugins/wp-art-routes/CHANGELOG.md` (full entry), `plugins/wp-art-routes/readme.txt` (condensed entry) |
+| README.md | Update `plugins/wp-art-routes/README.md` if user-facing features changed |
 | Compliance | CDN check, WordPress.org requirements |
-| Build | `./bin/build-release` |
+| Build | `./bin/build-free` |
+| Tag format | `vX.Y.Z` |
+| GitHub release | `gh release create` with zip attachment |
+
+### Pro Plugin
+
+| Step | Files/Commands |
+|------|----------------|
+| Version format | `X.Y.Z` (semantic versioning) |
+| Version locations | `plugins/art-routes-pro/art-routes-pro.php` (2 places: header + constant) |
+| Build | `./bin/build-pro` |
+| Tag format | `pro-vX.Y.Z` |
 | GitHub release | `gh release create` with zip attachment |
 
 ## Release Process
 
 ```dot
 digraph release_flow {
+    "Which plugin?" [shape=diamond];
     "On main branch?" [shape=diamond];
     "Merge/switch to main" [shape=box];
     "Verify gh auth" [shape=box];
@@ -38,26 +58,28 @@ digraph release_flow {
     "0 errors?" [shape=diamond];
     "Fix errors" [shape=box];
     "Determine version bump" [shape=diamond];
-    "Update wp-art-routes.php" [shape=box];
+    "Update version files" [shape=box];
     "Update CHANGELOG.md" [shape=box];
-    "Run ./bin/build-release" [shape=box];
+    "Run build script" [shape=box];
     "Commit changes" [shape=box];
     "Create git tag" [shape=box];
     "Create GitHub release" [shape=box];
     "Done" [shape=doublecircle];
 
+    "Which plugin?" -> "On main branch?";
     "On main branch?" -> "Merge/switch to main" [label="no"];
     "On main branch?" -> "Verify gh auth" [label="yes"];
     "Merge/switch to main" -> "Verify gh auth";
-    "Verify gh auth" -> "Run ./bin/plugin-check";
+    "Verify gh auth" -> "Run ./bin/plugin-check" [label="free only"];
+    "Verify gh auth" -> "Determine version bump" [label="pro"];
     "Run ./bin/plugin-check" -> "0 errors?";
     "0 errors?" -> "Fix errors" [label="no"];
     "Fix errors" -> "Run ./bin/plugin-check";
     "0 errors?" -> "Determine version bump" [label="yes"];
-    "Determine version bump" -> "Update wp-art-routes.php";
-    "Update wp-art-routes.php" -> "Update CHANGELOG.md";
-    "Update CHANGELOG.md" -> "Run ./bin/build-release";
-    "Run ./bin/build-release" -> "Commit changes";
+    "Determine version bump" -> "Update version files";
+    "Update version files" -> "Update CHANGELOG.md";
+    "Update CHANGELOG.md" -> "Run build script";
+    "Run build script" -> "Commit changes";
     "Commit changes" -> "Create git tag";
     "Create git tag" -> "Create GitHub release";
     "Create GitHub release" -> "Done";
@@ -72,48 +94,35 @@ digraph release_flow {
 
 **GitHub Auth:** Run `gh auth status`. If not authenticated, stop and ask user to run `gh auth login`.
 
-### 0.5. Compliance Checks (CRITICAL)
+### 0.5. Compliance Checks (Free Plugin Only - CRITICAL)
 
 **Run these checks BEFORE proceeding to avoid post-release hotfixes:**
 
-#### Quick Checks (run from plugin directory):
+#### Quick Checks:
 
 1. **CDN Check:** No external CDN resources (except Google Fonts)
    ```bash
-   grep -r "cdn\." --include="*.php" --include="*.js" . | grep -v node_modules | grep -v .git
+   grep -r "cdn\." --include="*.php" --include="*.js" plugins/wp-art-routes/ | grep -v node_modules | grep -v .git
    ```
-   - If any CDN links found (other than fonts), they must be bundled locally
-   - Leaflet.js must be in `assets/lib/leaflet/`
 
 2. **WordPress.org Requirements:**
    - Plugin name must be "Art Routes" (no "WP" - trademark restriction)
    - readme.txt must have maximum 5 tags
    - "Tested up to" should match current WordPress version
-   - Check: `grep "Tags:" readme.txt` (count comma-separated values)
+   - Check: `grep "Tags:" plugins/wp-art-routes/readme.txt` (count comma-separated values)
 
 3. **Output Escaping Spot Check:**
    ```bash
-   grep -r "_e(" --include="*.php" . | grep -v "esc_" | head -5
+   grep -r "_e(" --include="*.php" plugins/wp-art-routes/ | grep -v "esc_" | head -5
    ```
-   - All `_e()` should be `esc_html_e()` or `esc_attr_e()`
 
-#### Full Plugin Check (REQUIRED before releases):
+#### Full Plugin Check (REQUIRED before free plugin releases):
 
 ```bash
 ./bin/plugin-check
 ```
 
-This script runs automatically (no Site Shell needed):
-1. Auto-detects Local by Flywheel site from sites.json
-2. Sources environment from Local's ssh-entry script
-3. Builds the release package (clean files only)
-4. Copies to temporary `art-routes-check` directory
-5. Runs `wp plugin check` with full runtime checks
-6. Reports errors/warnings and cleans up
-
 **The script must pass with 0 errors before releasing.**
-
-If any compliance issues are found, fix them BEFORE continuing with the release.
 
 ### 1. Determine Version Bump
 
@@ -122,9 +131,10 @@ Ask user for bump type if not specified:
 - **Minor** (X.Y.0): New features, enhancements
 - **Patch** (X.Y.Z): Bug fixes, small improvements
 
-### 2. Update Version in wp-art-routes.php
+### 2. Update Version
 
-Update BOTH locations:
+#### Free Plugin
+Update BOTH locations in `plugins/wp-art-routes/wp-art-routes.php`:
 
 ```php
 // Header comment (line ~7)
@@ -134,9 +144,20 @@ Update BOTH locations:
 define('WP_ART_ROUTES_VERSION', 'X.Y.Z');
 ```
 
-### 3. Update CHANGELOG.md
+#### Pro Plugin
+Update BOTH locations in `plugins/art-routes-pro/art-routes-pro.php`:
 
-Add new entry after the versioning note paragraph, before the first `## [X.` entry or the historical releases section:
+```php
+// Header comment (line ~7)
+* Version: X.Y.Z
+
+// Constant definition (line ~20)
+define( 'ART_ROUTES_PRO_VERSION', 'X.Y.Z' );
+```
+
+### 3. Update CHANGELOG.md (Free Plugin)
+
+Add new entry in `plugins/wp-art-routes/CHANGELOG.md` after the versioning note paragraph:
 
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
@@ -158,59 +179,55 @@ Add new entry after the versioning note paragraph, before the first `## [X.` ent
 2. Git commits since last release: `git log --oneline $(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~10)..HEAD`
 3. Ask user if unclear
 
-Use only relevant sections (Added/Changed/Fixed). Omit empty sections.
+### 4. Update readme.txt (Free Plugin)
 
-**Tip:** Extract changelog section for GitHub release notes later:
-```bash
-sed -n '/^## \[X.Y.Z\]/,/^## \[/p' CHANGELOG.md | head -n -1
-```
-
-### 4. Update readme.txt
-
-Update the WordPress.org readme file:
+Update `plugins/wp-art-routes/readme.txt`:
 
 1. **Stable tag:** Update to new version number
 2. **Changelog section:** Add condensed changelog entry at top
 3. **Upgrade Notice:** Add entry if significant changes
-4. **Features list:** Update if new user-facing features added
-
-```
-Stable tag: X.Y.Z
-
-== Changelog ==
-
-= X.Y.Z =
-* Brief description of changes
-```
 
 ### 5. Update README.md (if needed)
 
-If user-facing features changed:
+If user-facing features changed, update `plugins/wp-art-routes/README.md`:
 - Update version number in header
 - Update Features list
-- Add usage documentation for new features
 
 ### 6. Build Release Package
 
 ```bash
-./bin/build-release
-```
+# Free plugin
+./bin/build-free
+# Creates: build/wp-art-routes-X.Y.Z.zip
 
-Creates: `build/wp-art-routes-X.Y.Z.zip`
+# Pro plugin
+./bin/build-pro
+# Creates: build/art-routes-pro-X.Y.Z.zip
+```
 
 ### 7. Commit and Tag
 
+#### Free Plugin
 ```bash
-git add wp-art-routes.php CHANGELOG.md readme.txt README.md
+git add plugins/wp-art-routes/wp-art-routes.php plugins/wp-art-routes/CHANGELOG.md plugins/wp-art-routes/readme.txt plugins/wp-art-routes/README.md
 git commit -m "Release X.Y.Z"
-git tag X.Y.Z
+git tag vX.Y.Z
+git push origin HEAD --tags
+```
+
+#### Pro Plugin
+```bash
+git add plugins/art-routes-pro/art-routes-pro.php
+git commit -m "Release Art Routes Pro X.Y.Z"
+git tag pro-vX.Y.Z
 git push origin HEAD --tags
 ```
 
 ### 8. Create GitHub Release
 
+#### Free Plugin
 ```bash
-gh release create X.Y.Z \
+gh release create vX.Y.Z \
   --title "Art Routes X.Y.Z" \
   --notes-file - \
   build/wp-art-routes-X.Y.Z.zip <<'EOF'
@@ -224,46 +241,62 @@ Download the zip file and install via WordPress Admin > Plugins > Add New > Uplo
 EOF
 ```
 
+#### Pro Plugin
+```bash
+gh release create pro-vX.Y.Z \
+  --title "Art Routes Pro X.Y.Z" \
+  --notes-file - \
+  build/art-routes-pro-X.Y.Z.zip <<'EOF'
+## Changes
+
+[Describe changes]
+
+## Installation
+
+Download the zip file and install via WordPress Admin > Plugins > Add New > Upload Plugin.
+Requires the free Art Routes plugin to be installed and activated.
+EOF
+```
+
 ## Common Mistakes
 
 | Mistake | Fix |
 |---------|-----|
-| Skipping compliance checks | Always run CDN and WordPress.org checks BEFORE tagging |
-| CDN resources not bundled | Bundle all JS/CSS locally (see assets/lib/) |
+| Skipping compliance checks | Always run CDN and WordPress.org checks BEFORE tagging (free plugin) |
+| CDN resources not bundled | Bundle all JS/CSS locally (see plugins/wp-art-routes/assets/lib/) |
 | Plugin name contains "WP" | Use "Art Routes" not "WP Art Routes" (trademark) |
 | Too many tags in readme.txt | Maximum 5 tags allowed by WordPress.org |
-| Only updating one version location | Update ALL: wp-art-routes.php (2 places) + readme.txt Stable tag |
-| Using old wenb- prefix | Version format is now `X.Y.Z` (semantic versioning) |
+| Only updating one version location | Update ALL: header + constant + readme.txt Stable tag |
 | Forgetting readme.txt | Update Stable tag + add changelog entry |
 | Wrong changelog date format | Use `YYYY-MM-DD` |
 | Forgetting to build before release | Build creates the zip for GitHub |
 | Pushing before building | Build first, commit, then push+release |
 | Releasing from feature branch | Releases typically from `main` - merge first |
 | gh not authenticated | Run `gh auth status` before starting |
+| Wrong tag format | Free: `vX.Y.Z`, Pro: `pro-vX.Y.Z` |
 
 ## Verification Checklist
 
-Before creating release:
+### Free Plugin
 - [ ] On main branch (or user confirmed feature branch release)
 - [ ] `gh auth status` shows logged in
 - [ ] **Compliance: No CDN resources** (grep check passed)
 - [ ] **Compliance: Plugin name is "Art Routes"** (no "WP")
 - [ ] **Compliance: readme.txt has ≤5 tags**
-- [ ] Version updated in wp-art-routes.php header (line ~7)
-- [ ] Version updated in WP_ART_ROUTES_VERSION constant (line ~26)
-- [ ] CHANGELOG.md has entry with correct version and date
-- [ ] readme.txt `Stable tag` updated to new version
-- [ ] readme.txt changelog section has new entry
-- [ ] README.md version updated (if applicable)
-- [ ] `./bin/build-release` ran successfully
+- [ ] **Plugin Check passed** (`./bin/plugin-check`)
+- [ ] Version updated in `plugins/wp-art-routes/wp-art-routes.php` header
+- [ ] Version updated in `WP_ART_ROUTES_VERSION` constant
+- [ ] `plugins/wp-art-routes/CHANGELOG.md` has entry with correct version and date
+- [ ] `plugins/wp-art-routes/readme.txt` `Stable tag` updated
+- [ ] `plugins/wp-art-routes/readme.txt` changelog section has new entry
+- [ ] `plugins/wp-art-routes/README.md` version updated (if applicable)
+- [ ] `./bin/build-free` ran successfully
 - [ ] Zip file exists in build/ directory
 
-## WordPress.org Submission
-
-After GitHub release, if submitting to WordPress.org:
-1. Download the zip from GitHub release
-2. Install [Plugin Check](https://wordpress.org/plugins/plugin-check/) on a test site
-3. Upload and activate the plugin from the zip
-4. Run Plugin Check - fix any errors (warnings can be reviewed)
-5. Submit at https://wordpress.org/plugins/developers/add/
-6. After approval, use SVN to publish updates
+### Pro Plugin
+- [ ] On main branch
+- [ ] `gh auth status` shows logged in
+- [ ] Version updated in `plugins/art-routes-pro/art-routes-pro.php` header
+- [ ] Version updated in `ART_ROUTES_PRO_VERSION` constant
+- [ ] `./bin/build-pro` ran successfully
+- [ ] Zip file exists in build/ directory

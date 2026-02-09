@@ -16,8 +16,8 @@
 // Set script mode
 define('VERIFICATION_SCRIPT', true);
 
-// Change to plugin root directory
-chdir(dirname(__DIR__));
+// Change to free plugin directory
+chdir(dirname(__DIR__) . '/plugins/wp-art-routes');
 
 echo "===========================================\n";
 echo "WP Art Routes - Editions System Verification\n";

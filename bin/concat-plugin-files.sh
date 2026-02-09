@@ -6,12 +6,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PLUGIN_DIR="$REPO_ROOT/plugins"
 DEFAULT_OUTPUT_FILE="all-plugin-code.txt"
 
 # Add directories (relative to PLUGIN_DIR) to ignore here:
 # Examples: "build", "bin", "vendor/some-package", "node_modules"
-IGNORE_DIRS=("build" "bin" "@route-info-rest-client")
+IGNORE_DIRS=("build")
 
 read -r -p "Output to a file? (y/n): " output_to_file
 if [[ "$output_to_file" =~ ^[Yy]$ ]]; then

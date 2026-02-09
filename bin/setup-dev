@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Art Routes - Development Setup Script
+# Creates symlinks from the monorepo plugins to the Local Sites plugins directory
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+WP_PLUGINS_DIR="/Users/drikusroor/Local Sites/art-routes/app/public/wp-content/plugins"
+
+echo -e "${YELLOW}Art Routes - Development Setup${NC}"
+echo "================================"
+echo ""
+
+# Check Local Sites plugins dir exists
+if [ ! -d "$WP_PLUGINS_DIR" ]; then
+    echo -e "${RED}Error: Local Sites plugins directory not found:${NC}"
+    echo "  $WP_PLUGINS_DIR"
+    echo ""
+    echo "Make sure Local by Flywheel is installed and the 'art-routes' site exists."
+    exit 1
+fi
+
+PLUGINS=("wp-art-routes" "art-routes-pro")
+
+for PLUGIN in "${PLUGINS[@]}"; do
+    SOURCE="$REPO_ROOT/plugins/$PLUGIN"
+    TARGET="$WP_PLUGINS_DIR/$PLUGIN"
+
+    echo -e "${YELLOW}Setting up $PLUGIN...${NC}"
+
+    # Check source exists
+    if [ ! -d "$SOURCE" ]; then
+        echo -e "  ${RED}✗ Source not found: $SOURCE${NC}"
+        continue
+    fi
+
+    # If symlink already exists and points to correct target
+    if [ -L "$TARGET" ]; then
+        CURRENT_TARGET="$(readlink "$TARGET")"
+        if [ "$CURRENT_TARGET" = "$SOURCE" ]; then
+            echo -e "  ${GREEN}✓ Symlink already correct${NC}"
+            continue
+        else
+            echo -e "  ${YELLOW}Symlink exists but points to: $CURRENT_TARGET${NC}"
+            echo -n "  Replace with correct symlink? (y/N) "
+            read -r REPLY
+            if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+                rm "$TARGET"
+            else
+                echo -e "  ${YELLOW}Skipped${NC}"
+                continue
+            fi
+        fi
+    # If regular directory exists
+    elif [ -d "$TARGET" ]; then
+        echo -e "  ${YELLOW}⚠ Regular directory exists at: $TARGET${NC}"
+        echo -n "  Replace with symlink? This will DELETE the existing directory. (y/N) "
+        read -r REPLY
+        if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+            rm -rf "$TARGET"
+        else
+            echo -e "  ${YELLOW}Skipped${NC}"
+            continue
+        fi
+    fi
+
+    # Create symlink
+    ln -s "$SOURCE" "$TARGET"
+    echo -e "  ${GREEN}✓ Created symlink: $TARGET → $SOURCE${NC}"
+done
+
+echo ""
+echo -e "${YELLOW}Summary - WordPress will see:${NC}"
+for PLUGIN in "${PLUGINS[@]}"; do
+    TARGET="$WP_PLUGINS_DIR/$PLUGIN"
+    if [ -L "$TARGET" ]; then
+        echo -e "  ${GREEN}✓${NC} $PLUGIN → $(readlink "$TARGET")"
+    elif [ -d "$TARGET" ]; then
+        echo -e "  ${YELLOW}⚠${NC} $PLUGIN (regular directory, not symlinked)"
+    else
+        echo -e "  ${RED}✗${NC} $PLUGIN (not found)"
+    fi
+done
+echo ""
+echo -e "${GREEN}Done! Start your Local site and both plugins should be available.${NC}"

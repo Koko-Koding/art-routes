@@ -14,9 +14,10 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
-WP_PLUGINS_DIR="$(dirname "$PLUGIN_DIR")"
-WP_DIR="$(dirname "$(dirname "$WP_PLUGINS_DIR")")"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+PLUGIN_DIR="$REPO_ROOT/plugins/wp-art-routes"
+WP_PLUGINS_DIR="/Users/drikusroor/Local Sites/art-routes/app/public/wp-content/plugins"
+WP_DIR="/Users/drikusroor/Local Sites/art-routes/app/public"
 TEST_PLUGIN_NAME="art-routes-check"
 TEST_PLUGIN_DIR="$WP_PLUGINS_DIR/$TEST_PLUGIN_NAME"
 
@@ -78,8 +79,7 @@ eval "$(grep -E '^export ' "$SSH_ENTRY_SCRIPT")"
 # Step 1: Build the release
 echo ""
 echo -e "\033[1;33m1. Building release package...\033[0m"
-cd "$PLUGIN_DIR"
-./bin/build-release
+"$REPO_ROOT/bin/build-free"
 
 # Step 2: Copy to test location
 echo ""
@@ -91,7 +91,7 @@ if [ -d "$TEST_PLUGIN_DIR" ]; then
 fi
 
 # Copy the clean build
-cp -r "$PLUGIN_DIR/build/wp-art-routes" "$TEST_PLUGIN_DIR"
+cp -r "$REPO_ROOT/build/wp-art-routes" "$TEST_PLUGIN_DIR"
 echo "   Copied to: $TEST_PLUGIN_DIR"
 
 # Step 3: Run plugin check
