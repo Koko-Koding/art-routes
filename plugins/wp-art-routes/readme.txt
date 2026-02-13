@@ -83,6 +83,32 @@ Yes! Use the `[art_routes_map]` shortcode to display all routes on a single inte
 
 Yes, the plugin is fully responsive and optimized for mobile devices with touch-friendly controls.
 
+== External services ==
+
+This plugin relies on third-party services provided by the OpenStreetMap Foundation to display maps and perform address searches.
+
+= OpenStreetMap Tile Server =
+
+This plugin loads map tile images from the OpenStreetMap tile server to display interactive maps on your website. Map tiles are loaded every time a page containing a map is viewed by any visitor. The tile requests contain the geographic coordinates and zoom level of the area being displayed, along with standard HTTP request data (visitor IP address, user agent).
+
+* Service provider: OpenStreetMap Foundation
+* [Terms of Use](https://wiki.osmfoundation.org/wiki/Terms_of_Use)
+* [Privacy Policy](https://wiki.osmfoundation.org/wiki/Privacy_Policy)
+* [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/)
+
+= Nominatim Geocoding API =
+
+This plugin uses the Nominatim geocoding service for address search functionality in the admin area (route editor and location picker). When a site administrator searches for an address while editing a route or location, the search query is sent to the Nominatim API. This service is only used in the WordPress admin area and is never triggered by frontend visitors.
+
+* Service provider: OpenStreetMap Foundation
+* [Terms of Use](https://wiki.osmfoundation.org/wiki/Terms_of_Use)
+* [Privacy Policy](https://wiki.osmfoundation.org/wiki/Privacy_Policy)
+* [Nominatim Usage Policy](https://operations.osmfoundation.org/policies/nominatim/)
+
+= GPX File Format (topografix.com) =
+
+The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace identifier in GPX import/export files. This is a standard XML namespace URI required by the GPX file format specification. No HTTP requests are made to this domain and no data is sent to it.
+
 == Screenshots ==
 
 1. Route editor interface showing interactive map with drawing tools
