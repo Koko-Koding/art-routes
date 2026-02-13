@@ -597,3 +597,13 @@ $label = wp_art_routes_label('location', false, $edition_id);
 // Query content for specific edition
 $locations = wp_art_routes_get_edition_artworks($edition_id);
 ```
+
+### WordPress Enqueue Guidelines
+
+- **NEVER** use inline `<script>` or `<style>` tags in PHP files
+- Use `wp_enqueue_script()` / `wp_enqueue_style()` for all JS/CSS
+- Use `wp_localize_script()` for global config and i18n strings
+- Use `wp_add_inline_script()` for small per-instance data (map coordinates, etc.)
+- Use `wp_add_inline_style()` only for truly dynamic CSS (e.g., user-configured colors)
+- Admin scripts: enqueue in `admin_enqueue_scripts` hook, check `$hook` parameter
+- Frontend scripts: register early, enqueue from templates when needed

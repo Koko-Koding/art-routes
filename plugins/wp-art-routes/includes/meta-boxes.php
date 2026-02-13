@@ -332,9 +332,6 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
         $artist_ids = empty($artist_ids) ? array() : array($artist_ids);
     }
 
-    // Enqueue the WordPress media scripts
-    wp_enqueue_script('jquery-ui-autocomplete');
-
     // Get all available post types except some internal ones
     $excluded_post_types = array('revision', 'attachment', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request', 'wp_block', 'art_route', 'artwork');
     $post_types = get_post_types(array('public' => true), 'objects');
@@ -387,103 +384,6 @@ function wp_art_routes_render_artwork_artists_meta_box($post)
             <p class="description"><?php esc_html_e('These posts will be associated with this artwork as artists.', 'wp-art-routes'); ?></p>
         </div>
     </div>
-
-    <style>
-        .artist-association-container {
-            margin-bottom: 20px;
-        }
-
-        .artist-search {
-            margin-bottom: 15px;
-        }
-
-        .post-type-filter {
-            margin-top: 10px;
-        }
-
-        #selected_artists_list {
-            margin-top: 10px;
-        }
-
-        #selected_artists_list li {
-            margin-bottom: 5px;
-            padding: 5px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-
-        .remove-artist {
-            color: #a00;
-            text-decoration: none;
-        }
-
-        .post-type-label {
-            color: #666;
-            font-style: italic;
-        }
-    </style>
-
-    <script>
-        jQuery(document).ready(function($) {
-            // Autocomplete for artist search
-            $('#artist_search').autocomplete({
-                source: function(request, response) {
-                    var postType = $('#post_type_filter').val();
-
-                    $.ajax({
-                        url: ajaxurl,
-                        dataType: 'json',
-                        data: {
-                            action: 'search_posts_for_artist',
-                            term: request.term,
-                            post_type: postType,
-                            nonce: '<?php echo esc_js(wp_create_nonce('artist_search_nonce')); ?>'
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function(event, ui) {
-                    // Add the selected artist to the list
-                    addArtistToList(ui.item);
-
-                    // Clear the search field
-                    setTimeout(function() {
-                        $('#artist_search').val('');
-                    }, 100);
-
-                    return false;
-                }
-            }).autocomplete('instance')._renderItem = function(ul, item) {
-                return $('<li>')
-                    .append('<div>' + item.label + ' <span class="post-type-label">(' + item.post_type_label + ')</span></div>')
-                    .appendTo(ul);
-            };
-
-            // Function to add artist to the selected list
-            function addArtistToList(item) {
-                // Check if already added
-                if ($('#selected_artists_list li[data-id="' + item.id + '"]').length === 0) {
-                    var artistItem = $('<li data-id="' + item.id + '"></li>');
-                    artistItem.append('<span class="artist-title">' + item.label + '</span>');
-                    artistItem.append(' <span class="post-type-label">(' + item.post_type_label + ')</span>');
-                    artistItem.append(' <a href="#" class="remove-artist"><?php esc_html_e('Remove', 'wp-art-routes'); ?></a>');
-                    artistItem.append('<input type="hidden" name="artwork_artist_ids[]" value="' + item.id + '">');
-
-                    $('#selected_artists_list').append(artistItem);
-                }
-            }
-
-            // Remove artist from the list
-            $(document).on('click', '.remove-artist', function(e) {
-                e.preventDefault();
-                $(this).parent('li').remove();
-            });
-        });
-    </script>
 <?php
 }
 
@@ -542,23 +442,18 @@ function wp_art_routes_render_artwork_icon_meta_box($post)
         </div>
     </div>
 
-    <script>
-        jQuery(document).ready(function($) {
-            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
-
-            $('#artwork_icon_select').on('change', function() {
-                const selectedIcon = $(this).val();
-                const $previewContainer = $('#icon-preview');
-
-                if (selectedIcon && iconUrls[selectedIcon]) {
-                    $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
-                } else {
-                    $previewContainer.hide();
-                }
-            });
-        });
-    </script>
+    <?php
+    // Push icon config for the shared icon-preview.js
+    wp_add_inline_script('wp-art-routes-icon-preview-js',
+        'var wpArtRoutesIconConfigs = wpArtRoutesIconConfigs || [];' .
+        'wpArtRoutesIconConfigs.push(' . wp_json_encode([
+            'selectId'  => 'artwork_icon_select',
+            'previewId' => 'icon-preview',
+            'iconUrls'  => $icon_urls,
+        ]) . ');',
+        'before'
+    );
+    ?>
 
     <p class="description">
         <?php esc_html_e('Select an icon for this artwork. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
@@ -621,23 +516,18 @@ function wp_art_routes_render_info_point_icon_meta_box($post)
         </div>
     </div>
 
-    <script>
-        jQuery(document).ready(function($) {
-            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
-
-            $('#info_point_icon_select').on('change', function() {
-                const selectedIcon = $(this).val();
-                const $previewContainer = $('#icon-preview');
-
-                if (selectedIcon && iconUrls[selectedIcon]) {
-                    $previewContainer.show();
-                    $previewContainer.find('img').attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
-                } else {
-                    $previewContainer.hide();
-                }
-            });
-        });
-    </script>
+    <?php
+    // Push icon config for the shared icon-preview.js
+    wp_add_inline_script('wp-art-routes-icon-preview-js',
+        'var wpArtRoutesIconConfigs = wpArtRoutesIconConfigs || [];' .
+        'wpArtRoutesIconConfigs.push(' . wp_json_encode([
+            'selectId'  => 'info_point_icon_select',
+            'previewId' => 'icon-preview',
+            'iconUrls'  => $icon_urls,
+        ]) . ');',
+        'before'
+    );
+    ?>
 
     <p class="description">
         <?php esc_html_e('Select an icon for this information point. The icon will be displayed as a marker on the map.', 'wp-art-routes'); ?>
@@ -701,21 +591,18 @@ function wp_art_routes_render_route_icon_meta_box($post)
             <?php endif; ?>
         </div>
     </div>
-    <script>
-        jQuery(document).ready(function($) {
-            const iconUrls = <?php echo wp_json_encode($icon_urls); ?>;
-            $('#route_icon_select').on('change', function() {
-                const selectedIcon = $(this).val();
-                const $previewContainer = $('#route-icon-preview');
-                if (selectedIcon && iconUrls[selectedIcon]) {
-                    $previewContainer.show();
-                    $previewContainer.attr('src', iconUrls[selectedIcon]).attr('alt', selectedIcon);
-                } else {
-                    $previewContainer.hide();
-                }
-            });
-        });
-    </script>
+    <?php
+    // Push icon config for the shared icon-preview.js
+    wp_add_inline_script('wp-art-routes-icon-preview-js',
+        'var wpArtRoutesIconConfigs = wpArtRoutesIconConfigs || [];' .
+        'wpArtRoutesIconConfigs.push(' . wp_json_encode([
+            'selectId'  => 'route_icon_select',
+            'previewId' => 'route-icon-preview',
+            'iconUrls'  => $icon_urls,
+        ]) . ');',
+        'before'
+    );
+    ?>
     <p class="description">
         <?php esc_html_e('Select an icon for this route. The icon will be shown on the route overview page.', 'wp-art-routes'); ?>
     </p>

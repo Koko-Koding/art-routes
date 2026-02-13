@@ -1,0 +1,359 @@
+/**
+ * Edition Map Shortcode Styles
+ *
+ * @package WP Art Routes
+ */
+
+/* Edition Map Shortcode Styles */
+.edition-map-container {
+    margin: 20px 0;
+}
+
+.edition-map-wrapper {
+    position: relative;
+}
+
+.edition-map {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edition-map-placeholder {
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+}
+
+/* Legend Styles */
+.edition-map-legend {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.edition-map-legend h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.edition-map-zoom-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+    padding: 8px 16px;
+    background: #0073aa;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edition-map-zoom-all:hover {
+    background: #005a87;
+}
+
+.edition-route-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.edition-route-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.edition-route-item:last-child {
+    margin-bottom: 0;
+}
+
+.edition-route-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.edition-route-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edition-route-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.edition-route-title {
+    font-weight: 500;
+    color: #333;
+}
+
+.edition-route-link {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.edition-route-link:hover {
+    color: #005a87;
+}
+
+.edition-route-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.edition-route-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.edition-route-meta .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.edition-zoom-to-route-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.edition-zoom-to-route-button:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+}
+
+.edition-zoom-to-route-button.active {
+    background: #0073aa;
+    color: #fff;
+    border-color: #0073aa;
+}
+
+.edition-zoom-to-route-button .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+/* Map Controls */
+.edition-map-controls {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.edition-map-controls-title {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #333;
+}
+
+.edition-map-controls-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.edition-map-control-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.edition-map-control-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+}
+
+.edition-map-control-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #666;
+}
+
+.edition-map-control-label {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Map Marker Styles */
+.artwork-marker-inner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    background: #f4f4f4;
+    position: relative;
+}
+
+.artwork-marker-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.artwork-marker-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.artwork-marker-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+}
+
+.artwork-marker-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.info-point-marker-inner {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #ffc107;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Loading Indicator */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.map-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0073aa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Popup Styles */
+.artwork-popup,
+.info-point-popup {
+    min-width: 200px;
+}
+
+.artwork-popup-image img,
+.info-point-popup-image img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.artwork-popup-content h3,
+.info-point-popup-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1em;
+}
+
+.artwork-excerpt,
+.info-point-excerpt {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.artwork-link,
+.info-point-link {
+    display: inline-block;
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.artwork-link:hover,
+.info-point-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .edition-map-legend {
+        padding: 10px;
+    }
+
+    .edition-route-item {
+        padding: 10px;
+    }
+
+    .edition-route-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .edition-map-controls-grid {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

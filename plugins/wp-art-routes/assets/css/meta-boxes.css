@@ -1,0 +1,39 @@
+/**
+ * Admin Meta Box Styles
+ *
+ * @package WP Art Routes
+ */
+
+.artist-association-container {
+    margin-bottom: 20px;
+}
+
+.artist-search {
+    margin-bottom: 15px;
+}
+
+.post-type-filter {
+    margin-top: 10px;
+}
+
+#selected_artists_list {
+    margin-top: 10px;
+}
+
+#selected_artists_list li {
+    margin-bottom: 5px;
+    padding: 5px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.remove-artist {
+    color: #a00;
+    text-decoration: none;
+}
+
+.post-type-label {
+    color: #666;
+    font-style: italic;
+}

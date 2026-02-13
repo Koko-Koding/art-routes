@@ -128,10 +128,6 @@ function wp_art_routes_render_import_tab()
     $info_point_label = wp_art_routes_label('info_point', true);
 
     ?>
-    <style>
-        .new-edition-name-row { display: none; }
-        .new-edition-name-row.visible { display: table-row; }
-    </style>
 
     <div class="card" style="max-width: 800px; margin-bottom: 20px;">
         <h2><?php printf(
@@ -383,45 +379,6 @@ function wp_art_routes_render_import_tab()
         </form>
     </div>
 
-    <script type="text/javascript">
-    (function() {
-        // Toggle new edition name field for CSV import
-        var csvSelect = document.getElementById('import_edition_id');
-        var csvNewRow = document.getElementById('csv-new-edition-row');
-        var csvNameInput = document.getElementById('csv_new_edition_name');
-
-        if (csvSelect && csvNewRow) {
-            csvSelect.addEventListener('change', function() {
-                if (this.value === 'new') {
-                    csvNewRow.classList.add('visible');
-                    csvNameInput.required = true;
-                } else {
-                    csvNewRow.classList.remove('visible');
-                    csvNameInput.required = false;
-                    csvNameInput.value = '';
-                }
-            });
-        }
-
-        // Toggle new edition name field for GPX import
-        var gpxSelect = document.getElementById('gpx_import_edition_id');
-        var gpxNewRow = document.getElementById('gpx-new-edition-row');
-        var gpxNameInput = document.getElementById('gpx_new_edition_name');
-
-        if (gpxSelect && gpxNewRow) {
-            gpxSelect.addEventListener('change', function() {
-                if (this.value === 'new') {
-                    gpxNewRow.classList.add('visible');
-                    gpxNameInput.required = true;
-                } else {
-                    gpxNewRow.classList.remove('visible');
-                    gpxNameInput.required = false;
-                    gpxNameInput.value = '';
-                }
-            });
-        }
-    })();
-    </script>
     <?php
 }
 
@@ -485,26 +442,6 @@ function wp_art_routes_render_export_tab()
                 </p>
             </form>
 
-            <script type="text/javascript">
-                document.getElementById('export-button').addEventListener('click', function() {
-                    var editionId = document.getElementById('export_edition_id').value;
-                    var format = document.getElementById('export_format').value;
-                    var nonce = document.querySelector('input[name="_wpnonce"]').value;
-
-                    if (!editionId) {
-                        alert('<?php echo esc_js(__('Please select an edition.', 'wp-art-routes')); ?>');
-                        return;
-                    }
-
-                    var url = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>' +
-                              '?action=wp_art_routes_export_edition' +
-                              '&edition_id=' + encodeURIComponent(editionId) +
-                              '&format=' + encodeURIComponent(format) +
-                              '&_wpnonce=' + encodeURIComponent(nonce);
-
-                    window.location.href = url;
-                });
-            </script>
         <?php else : ?>
             <p class="description" style="color: #d63638;">
                 <?php esc_html_e('No editions found. Please create an edition first.', 'wp-art-routes'); ?>

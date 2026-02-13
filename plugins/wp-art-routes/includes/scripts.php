@@ -10,6 +10,135 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Register all frontend assets early (register only, enqueue from templates as needed)
+ */
+function wp_art_routes_register_frontend_assets()
+{
+    // Leaflet CSS (bundled locally for WordPress.org compliance)
+    wp_register_style(
+        'wp-art-routes-leaflet-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css',
+        [],
+        '1.9.4'
+    );
+
+    // Leaflet JS (bundled locally for WordPress.org compliance)
+    wp_register_script(
+        'wp-art-routes-leaflet-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js',
+        [],
+        '1.9.4',
+        true
+    );
+
+    // Main frontend map CSS
+    wp_register_style(
+        'wp-art-routes-map-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/art-route-map.css',
+        [],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Related artworks CSS
+    wp_register_style(
+        'wp-art-routes-related-artworks-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/related-artworks.css',
+        [],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Edition map shortcode CSS
+    wp_register_style(
+        'wp-art-routes-edition-map-shortcode-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/edition-map-shortcode.css',
+        ['wp-art-routes-leaflet-css'],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Single edition CSS
+    wp_register_style(
+        'wp-art-routes-single-edition-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/single-edition.css',
+        ['wp-art-routes-leaflet-css'],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Single artwork CSS
+    wp_register_style(
+        'wp-art-routes-single-artwork-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/single-artwork.css',
+        ['wp-art-routes-leaflet-css'],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Route icons CSS
+    wp_register_style(
+        'wp-art-routes-route-icons-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/route-icons.css',
+        [],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Edition map JS (unified shortcode + single)
+    wp_register_script(
+        'wp-art-routes-edition-map-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/edition-map.js',
+        ['wp-art-routes-leaflet-js'],
+        WP_ART_ROUTES_VERSION,
+        true
+    );
+
+    // Localize i18n for edition map
+    wp_localize_script('wp-art-routes-edition-map-js', 'wpArtRoutesEditionMapI18n', [
+        'viewDetails' => __('View details', 'wp-art-routes'),
+        'readMore'    => __('Read more', 'wp-art-routes'),
+    ]);
+
+    // Multiple routes map JS
+    wp_register_script(
+        'wp-art-routes-multiple-routes-map-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/multiple-routes-map.js',
+        ['wp-art-routes-leaflet-js'],
+        WP_ART_ROUTES_VERSION,
+        true
+    );
+
+    // Localize i18n for multiple routes map
+    wp_localize_script('wp-art-routes-multiple-routes-map-js', 'wpArtRoutesMultiMapI18n', [
+        'showAllRoutes' => __('Show All Routes', 'wp-art-routes'),
+        'readMore'      => __('Read more', 'wp-art-routes'),
+    ]);
+
+    // Single artwork map JS
+    wp_register_script(
+        'wp-art-routes-single-artwork-map-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/single-artwork-map.js',
+        ['jquery', 'wp-art-routes-leaflet-js'],
+        WP_ART_ROUTES_VERSION,
+        true
+    );
+
+    // Route icons JS
+    wp_register_script(
+        'wp-art-routes-route-icons-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/route-icons.js',
+        [],
+        WP_ART_ROUTES_VERSION,
+        true
+    );
+
+    // Main frontend map JS
+    wp_register_script(
+        'wp-art-routes-map-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/art-route-map.js',
+        ['jquery', 'wp-art-routes-leaflet-js'],
+        WP_ART_ROUTES_VERSION,
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'wp_art_routes_register_frontend_assets', 5);
+
+/**
  * Enqueue frontend scripts and styles for the art route map
  */
 function wp_art_routes_enqueue_scripts()
@@ -24,49 +153,28 @@ function wp_art_routes_enqueue_scripts()
         return;
     }
 
-    // Leaflet CSS (bundled locally for WordPress.org compliance)
-    wp_enqueue_style(
-        'wp-art-routes-leaflet-css',
-        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.css',
-        [],
-        '1.9.4'
-    );
-
-    // Leaflet JS (bundled locally for WordPress.org compliance)
-    wp_enqueue_script(
-        'wp-art-routes-leaflet-js',
-        WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js',
-        [],
-        '1.9.4',
-        true
-    );
+    // Enqueue Leaflet
+    wp_enqueue_style('wp-art-routes-leaflet-css');
+    wp_enqueue_script('wp-art-routes-leaflet-js');
 
     // Our custom CSS
-    wp_enqueue_style(
-        'wp-art-routes-map-css',
-        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/art-route-map.css',
-        [],
-        WP_ART_ROUTES_VERSION
-    );
+    wp_enqueue_style('wp-art-routes-map-css');
 
     // Related artworks CSS (only if shortcode is present)
     if ($has_related_artworks_shortcode) {
-        wp_enqueue_style(
-            'wp-art-routes-related-artworks-css',
-            WP_ART_ROUTES_PLUGIN_URL . 'assets/css/related-artworks.css',
-            [],
-            WP_ART_ROUTES_VERSION
-        );
+        wp_enqueue_style('wp-art-routes-related-artworks-css');
+    }
+
+    // Early-enqueue CSS for single post types to prevent FOUC
+    if (is_singular('edition')) {
+        wp_enqueue_style('wp-art-routes-single-edition-css');
+    }
+    if (is_singular('artwork')) {
+        wp_enqueue_style('wp-art-routes-single-artwork-css');
     }
 
     // Our custom JS
-    wp_enqueue_script(
-        'wp-art-routes-map-js',
-        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/art-route-map.js',
-        ['jquery', 'wp-art-routes-leaflet-js'],
-        WP_ART_ROUTES_VERSION,
-        true
-    );
+    wp_enqueue_script('wp-art-routes-map-js');
 
     // Determine Route ID
     $route_id = 0;
@@ -78,13 +186,10 @@ function wp_art_routes_enqueue_scripts()
         // Attempt to find route_id if shortcode is present on a non-singular/non-template page
         global $post;
         if (isset($post->post_content) && has_shortcode($post->post_content, 'art_route_map')) {
-            // Basic regex to extract route_id - might fail with complex attributes
-            // It's generally better to handle this within the shortcode callback itself if more complex logic is needed.
             preg_match('/\\[art_route_map.*?route_id=([\'"]?)(\d+)\1.*?\\]/', $post->post_content, $matches);
             if (!empty($matches[2])) {
                 $route_id = intval($matches[2]);
             } else {
-                // If shortcode exists but no ID, check for default route
                 $route_id = get_option('wp_art_routes_default_route', 0);
             }
         }
@@ -103,10 +208,10 @@ function wp_art_routes_enqueue_scripts()
             'nonce' => wp_create_nonce('wp_art_routes_nonce'),
             'route_path' => $route_data['route_path'],
             'artworks' => $route_data['artworks'],
-            'information_points' => $route_data['information_points'], // Ensure this is included
+            'information_points' => $route_data['information_points'],
             'show_completed_route' => $route_data['show_completed_route'],
             'show_artwork_toasts' => $route_data['show_artwork_toasts'],
-            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL, // Pass plugin URL for JS
+            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL,
             'i18n' => [
                 'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
                 'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
@@ -114,10 +219,9 @@ function wp_art_routes_enqueue_scripts()
         ];
         wp_localize_script('wp-art-routes-map-js', 'artRouteData', $js_data);
     } else {
-        // Localize with empty data or defaults if the script expects artRouteData to always exist
         wp_localize_script('wp-art-routes-map-js', 'artRouteData', [
             'error' => 'No route data found or specified.',
-            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL, // Still pass URL
+            'plugin_url' => WP_ART_ROUTES_PLUGIN_URL,
             'route_path' => [],
             'artworks' => [],
             'information_points' => [],
@@ -127,7 +231,7 @@ function wp_art_routes_enqueue_scripts()
 add_action('wp_enqueue_scripts', 'wp_art_routes_enqueue_scripts');
 
 /**
- * Enqueue admin scripts and styles for the route editor and location picker
+ * Enqueue admin scripts and styles for the route editor, location picker, and other admin pages
  */
 function wp_art_routes_enqueue_admin_scripts($hook)
 {
@@ -139,7 +243,52 @@ function wp_art_routes_enqueue_admin_scripts($hook)
     $is_artwork_type = isset($post) && $post->post_type === 'artwork';
     $is_info_point_type = isset($post) && $post->post_type === 'information_point';
 
-    // Only load on relevant pages
+    // Settings page
+    if ($hook === 'edition_page_wp-art-routes-settings') {
+        wp_enqueue_script(
+            'wp-art-routes-custom-icons-js',
+            WP_ART_ROUTES_PLUGIN_URL . 'assets/js/admin/custom-icons.js',
+            ['jquery'],
+            WP_ART_ROUTES_VERSION,
+            true
+        );
+        wp_localize_script('wp-art-routes-custom-icons-js', 'wpArtRoutesCustomIcons', [
+            'deleteNonce' => wp_create_nonce('wp_art_routes_delete_icon'),
+            'i18n' => [
+                'uploading'     => __('Uploading...', 'wp-art-routes'),
+                'uploadFailed'  => __('Upload failed.', 'wp-art-routes'),
+                'confirmDelete' => __('Are you sure you want to delete this icon? This cannot be undone.', 'wp-art-routes'),
+                'deleting'      => __('Deleting...', 'wp-art-routes'),
+                'deleteFailed'  => __('Delete failed.', 'wp-art-routes'),
+                'deleteBtn'     => __('Delete', 'wp-art-routes'),
+            ],
+        ]);
+    }
+
+    // Import/Export page
+    if ($hook === 'edition_page_wp-art-routes-import-export') {
+        wp_enqueue_style(
+            'wp-art-routes-import-export-css',
+            WP_ART_ROUTES_PLUGIN_URL . 'assets/css/import-export.css',
+            [],
+            WP_ART_ROUTES_VERSION
+        );
+        wp_enqueue_script(
+            'wp-art-routes-import-export-js',
+            WP_ART_ROUTES_PLUGIN_URL . 'assets/js/admin/import-export.js',
+            [],
+            WP_ART_ROUTES_VERSION,
+            true
+        );
+        wp_localize_script('wp-art-routes-import-export-js', 'wpArtRoutesImportExport', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'i18n' => [
+                'selectEdition' => __('Please select an edition.', 'wp-art-routes'),
+            ],
+        ]);
+    }
+
+    // Only load post-editor scripts on relevant pages
     if (!$is_edit_page || (!$is_route_type && !$is_artwork_type && !$is_info_point_type)) {
         return;
     }
@@ -158,6 +307,23 @@ function wp_art_routes_enqueue_admin_scripts($hook)
         WP_ART_ROUTES_PLUGIN_URL . 'assets/lib/leaflet/leaflet.js',
         ['jquery'],
         '1.9.4',
+        true
+    );
+
+    // Meta boxes CSS (for artist association styles)
+    wp_enqueue_style(
+        'wp-art-routes-meta-boxes-css',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/css/meta-boxes.css',
+        [],
+        WP_ART_ROUTES_VERSION
+    );
+
+    // Icon preview JS (shared by artwork, info point, and route icon meta boxes)
+    wp_enqueue_script(
+        'wp-art-routes-icon-preview-js',
+        WP_ART_ROUTES_PLUGIN_URL . 'assets/js/admin/icon-preview.js',
+        ['jquery'],
+        WP_ART_ROUTES_VERSION,
         true
     );
 
@@ -200,13 +366,13 @@ function wp_art_routes_enqueue_admin_scripts($hook)
                     'errorSavingPoints' => __('Error saving points.', 'wp-art-routes'),
                     'savingPoints' => __('Saving points...', 'wp-art-routes'),
                     'pointsSaved' => __('Points saved successfully.', 'wp-art-routes'),
-                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'wp-art-routes'), // Added draft warning
+                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'wp-art-routes'),
                 ]
             ]
         );
     }
 
-    // Location picker (for artwork and information_point post types)
+    // Location picker and mini map (for artwork and information_point post types)
     if ($is_artwork_type || $is_info_point_type) {
         wp_enqueue_style(
             'wp-art-routes-location-picker-css',
@@ -229,6 +395,32 @@ function wp_art_routes_enqueue_admin_scripts($hook)
             'artworkLocationModalHTML',
             wp_art_routes_get_location_picker_modal_html()
         );
+
+        // Location map mini (inline map in the meta box)
+        wp_enqueue_script(
+            'wp-art-routes-location-map-mini-js',
+            WP_ART_ROUTES_PLUGIN_URL . 'assets/js/admin/location-map-mini.js',
+            ['jquery', 'wp-art-routes-admin-leaflet-js'],
+            WP_ART_ROUTES_VERSION,
+            true
+        );
+
+        // Artist search (for artwork only)
+        if ($is_artwork_type) {
+            wp_enqueue_script('jquery-ui-autocomplete');
+
+            wp_enqueue_script(
+                'wp-art-routes-artist-search-js',
+                WP_ART_ROUTES_PLUGIN_URL . 'assets/js/admin/artist-search.js',
+                ['jquery', 'jquery-ui-autocomplete'],
+                WP_ART_ROUTES_VERSION,
+                true
+            );
+            wp_localize_script('wp-art-routes-artist-search-js', 'wpArtRoutesArtistSearch', [
+                'nonce'      => wp_create_nonce('artist_search_nonce'),
+                'removeText' => __('Remove', 'wp-art-routes'),
+            ]);
+        }
     }
 }
 add_action('admin_enqueue_scripts', 'wp_art_routes_enqueue_admin_scripts');
@@ -242,49 +434,39 @@ function wp_art_routes_is_route_page()
 
     // Check for shortcodes and blocks in post content
     if (isset($post->post_content)) {
-        // Check for art_route_map shortcode
         if (has_shortcode($post->post_content, 'art_route_map')) {
             return true;
         }
-        // Check for edition_map shortcode
         if (has_shortcode($post->post_content, 'edition_map')) {
             return true;
         }
-        // Check for art_routes_map shortcode (multiple routes)
         if (has_shortcode($post->post_content, 'art_routes_map')) {
             return true;
         }
-        // Check for Edition Map Gutenberg block
         if (has_block('wp-art-routes/edition-map', $post->post_content)) {
             return true;
         }
-        // Check for Routes Map Gutenberg block
         if (has_block('wp-art-routes/routes-map', $post->post_content)) {
             return true;
         }
     }
 
-    // Check for our template
     if (is_page_template('art-route-map-template.php')) {
         return true;
     }
 
-    // Check if viewing a single art_route post type
     if (is_singular('art_route')) {
         return true;
     }
 
-    // Check if viewing a single artwork post type (for the location map)
     if (is_singular('artwork')) {
         return true;
     }
 
-    // Check if viewing a single edition post type (for the edition map)
     if (is_singular('edition')) {
         return true;
     }
 
-    // Default to false
     return false;
 }
 
@@ -381,56 +563,3 @@ function wp_art_routes_get_location_picker_modal_html()
 <?php
     return ob_get_clean();
 }
-
-/**
- * Add the inline location map script for the artwork admin
- */
-function wp_art_routes_add_location_map_script()
-{
-    global $post;
-
-    // Only add to artwork or information_point post type
-    if (!$post || !in_array(get_post_type($post->ID), ['artwork', 'information_point'])) {
-        return;
-    }
-
-?>
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            // Initialize small map for location in the meta box
-            window.locationMap = L.map('artwork_location_map').setView([52.1326, 5.2913], 8);
-
-            // Add tile layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 19
-            }).addTo(window.locationMap);
-
-            // Get saved coordinates
-            var lat = $('#artwork_latitude').val();
-            var lng = $('#artwork_longitude').val();
-
-            // Add marker if coordinates exist
-            if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
-                window.locationMarker = L.marker([lat, lng]).addTo(window.locationMap);
-                window.locationMap.setView([lat, lng], 14);
-            }
-
-            // Handle map click events on the small map too
-            window.locationMap.on('click', function(e) {
-                // Update form fields
-                $('#artwork_latitude').val(e.latlng.lat.toFixed(6));
-                $('#artwork_longitude').val(e.latlng.lng.toFixed(6));
-
-                // Update or add marker
-                if (window.locationMarker) {
-                    window.locationMarker.setLatLng(e.latlng);
-                } else {
-                    window.locationMarker = L.marker(e.latlng).addTo(window.locationMap);
-                }
-            });
-        });
-    </script>
-<?php
-}
-add_action('admin_footer', 'wp_art_routes_add_location_map_script');

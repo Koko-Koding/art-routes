@@ -61,17 +61,17 @@ get_header();
             $stroller_accessible = get_post_meta(get_the_ID(), '_stroller_accessible', true);
             if ($wheelchair_accessible === '1' || $stroller_accessible === '1') :
             ?>
-                <div class="artwork-accessibility" style="margin-bottom: 30px; display: flex; gap: 24px; align-items: center;">
+                <div class="artwork-accessibility">
                     <?php if ($wheelchair_accessible === '1') : ?>
                         <span class="artwork-accessibility-item" title="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
-                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php esc_html_e('Wheelchair accessible', 'wp-art-routes'); ?></span>
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" />
+                            <span class="artwork-accessibility-label"><?php esc_html_e('Wheelchair accessible', 'wp-art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                     <?php if ($stroller_accessible === '1') : ?>
                         <span class="artwork-accessibility-item" title="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" style="height: 40px; width: 40px;" />
-                            <span class="artwork-accessibility-label" style="display:block; text-align:center; font-size:0.95em; color:#444; margin-top:4px;"><?php esc_html_e('Stroller accessible', 'wp-art-routes'); ?></span>
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" />
+                            <span class="artwork-accessibility-label"><?php esc_html_e('Stroller accessible', 'wp-art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                 </div>
@@ -121,162 +121,23 @@ get_header();
                     <h3><?php esc_html_e('Location on Map', 'wp-art-routes'); ?></h3>
                     <div id="artwork-single-map" style="height: 300px; margin: 20px 0;"></div>
                     
-                    <script type="text/javascript">
-                        jQuery(document).ready(function($) {
-                            // Initialize map
-                            var map = L.map('artwork-single-map').setView([<?php echo esc_js($latitude); ?>, <?php echo esc_js($longitude); ?>], 15);
-                            
-                            // Add tile layer
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '© OpenStreetMap contributors'
-                            }).addTo(map);
-                            
-                            // Add marker for artwork
-                            var artworkIcon = L.divIcon({
-                                className: 'artwork-marker',
-                                html: '<div class="artwork-marker-inner"><div class="artwork-marker-image" style="background-image: url(\'<?php echo esc_js(get_the_post_thumbnail_url(get_the_ID(), 'thumbnail')); ?>\');"></div><div class="artwork-marker-overlay"></div></div>',
-                                iconSize: [40, 40],
-                                iconAnchor: [20, 20]
-                            });
-                            
-                            L.marker([<?php echo esc_js($latitude); ?>, <?php echo esc_js($longitude); ?>], {
-                                icon: artworkIcon
-                            }).addTo(map)
-                            .bindPopup('<strong><?php echo esc_js(get_the_title()); ?></strong>')
-                            .openPopup();
-                        });
-                    </script>
+                    <?php
+                    // Enqueue single artwork map assets
+                    wp_enqueue_script('wp-art-routes-single-artwork-map-js');
+
+                    // Pass artwork data to the map script
+                    wp_localize_script('wp-art-routes-single-artwork-map-js', 'wpArtRoutesSingleArtwork', [
+                        'latitude'     => (float) $latitude,
+                        'longitude'    => (float) $longitude,
+                        'title'        => get_the_title(),
+                        'thumbnailUrl' => get_the_post_thumbnail_url(get_the_ID(), 'thumbnail'),
+                    ]);
+                    ?>
                 </div>
             <?php endif; ?>
 
         </article>
     <?php endwhile; ?>
 </div>
-
-<style>
-.wp-art-routes-single-artwork {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.artwork-header {
-    margin-bottom: 30px;
-}
-
-.artwork-title {
-    font-size: 2.5em;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.artwork-meta {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-}
-
-.artwork-meta span {
-    color: #666;
-}
-
-.artwork-featured-image {
-    margin-bottom: 30px;
-}
-
-.artwork-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.artwork-content {
-    margin-bottom: 40px;
-    line-height: 1.6;
-    font-size: 1.1em;
-}
-
-.artwork-artists {
-    margin-bottom: 40px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-}
-
-.artwork-artists .artists-heading {
-    margin: 0 0 15px 0;
-    padding-bottom: 0px;
-    color: #333;
-    font-size: 1.3em;
-}
-
-.artists-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.artist-item {
-    margin-bottom: 8px;
-    padding: 8px 0;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.artist-item:last-child {
-    border-bottom: none;
-}
-
-.artist-link {
-    color: #0073aa;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1.1em;
-}
-
-.artist-link:hover {
-    text-decoration: underline;
-}
-
-.artist-post-type {
-    color: #666;
-    font-style: italic;
-    font-size: 0.9em;
-    margin-left: 8px;
-}
-
-.artwork-location-map {
-    margin-bottom: 40px;
-}
-
-.artwork-location-map .leaflet-popup-content {
-    margin: 13px 24px 13px 20px;
-}
-
-.artwork-location-map h3 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .wp-art-routes-single-artwork {
-        padding: 15px;
-    }
-    
-    .artwork-title {
-        font-size: 2em;
-    }
-    
-    .artwork-meta {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-</style>
 
 <?php get_footer(); ?>

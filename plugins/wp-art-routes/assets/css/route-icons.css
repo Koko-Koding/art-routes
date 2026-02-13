@@ -1,0 +1,94 @@
+/**
+ * Route Icons Shortcode Styles
+ *
+ * @package WP Art Routes
+ */
+
+.art-route-icons-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 24px;
+    justify-items: center;
+    align-items: center;
+    margin: 24px auto;
+    max-width: 900px;
+    justify-content: center;
+}
+
+.art-route-icon-link {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 1 / 1;
+    text-align: center;
+    margin: 0 auto;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    transition: transform 0.18s cubic-bezier(.4, 1.3, .6, 1);
+}
+
+.art-route-icon-img {
+    width: 100%;
+    height: auto;
+    max-width: 360px;
+    max-height: 360px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.art-route-icon-fallback {
+    font-size: 3em;
+    color: #bbb;
+    display: block;
+    width: 100%;
+    height: 360px;
+    line-height: 360px;
+    text-align: center;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Pop out the center tile on larger screens */
+@media (min-width: 768px) {
+    .art-route-icons-list .art-route-icon-link.center-tile {
+        transform: scale(1.10);
+        z-index: 2;
+    }
+}
+
+.art-route-icon-link:hover,
+.art-route-icon-link:focus {
+    transform: scale(1.08);
+    z-index: 2;
+    outline: none;
+}
+
+@media (max-width: 767px) {
+    .art-route-icons-list {
+        grid-template-columns: 1fr;
+        max-width: 360px;
+        gap: 24px;
+    }
+
+    .art-route-icon-link {
+        max-width: 480px;
+    }
+
+    .art-route-icon-img,
+    .art-route-icon-fallback {
+        max-width: 480px;
+        max-height: 480px;
+        height: auto;
+        line-height: 480px;
+    }
+}

@@ -144,7 +144,11 @@ $js_data = [
     </div>
 </div>
 
-<!-- Map data passed to JavaScript -->
-<script type="text/javascript">
-    var artRouteData = <?php echo json_encode($js_data); ?>;
-</script>
+
+<?php
+// Pass route data to the main map script via inline script
+wp_add_inline_script('wp-art-routes-map-js',
+    'var artRouteData = ' . wp_json_encode($js_data) . ';',
+    'before'
+);
+?>
