@@ -14,14 +14,14 @@ NC='\033[0m' # No Color
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-PLUGIN_DIR="$REPO_ROOT/plugins/wp-art-routes"
-PLUGIN_NAME="wp-art-routes"
+PLUGIN_DIR="$REPO_ROOT/plugins/art-routes"
+PLUGIN_NAME="art-routes"
 
 # Extract version from main plugin file
-VERSION=$(grep "Version:" "$PLUGIN_DIR/wp-art-routes.php" | head -1 | awk -F: '{print $2}' | tr -d ' ')
+VERSION=$(grep "Version:" "$PLUGIN_DIR/art-routes.php" | head -1 | awk -F: '{print $2}' | tr -d ' ')
 
 if [ -z "$VERSION" ]; then
-    echo -e "${RED}Error: Could not extract version from wp-art-routes.php${NC}"
+    echo -e "${RED}Error: Could not extract version from art-routes.php${NC}"
     exit 1
 fi
 
@@ -41,7 +41,7 @@ mkdir -p "$RELEASE_DIR"
 echo -e "${YELLOW}Copying files to build directory...${NC}"
 
 # Copy files that should be included in distribution
-cp "$PLUGIN_DIR/wp-art-routes.php" "$RELEASE_DIR/"
+cp "$PLUGIN_DIR/art-routes.php" "$RELEASE_DIR/"
 cp "$PLUGIN_DIR/readme.txt" "$RELEASE_DIR/"
 cp "$PLUGIN_DIR/README.md" "$RELEASE_DIR/"
 cp "$PLUGIN_DIR/CHANGELOG.md" "$RELEASE_DIR/"

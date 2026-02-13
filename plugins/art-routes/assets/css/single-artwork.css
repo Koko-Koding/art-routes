@@ -1,0 +1,150 @@
+/**
+ * Single Artwork Template Styles
+ *
+ * @package WP Art Routes
+ */
+
+.art-routes-single-artwork {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.artwork-header {
+    margin-bottom: 30px;
+}
+
+.artwork-title {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.artwork-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.artwork-meta span {
+    color: #666;
+}
+
+.artwork-featured-image {
+    margin-bottom: 30px;
+}
+
+.artwork-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.artwork-content {
+    margin-bottom: 40px;
+    line-height: 1.6;
+    font-size: 1.1em;
+}
+
+.artwork-artists {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.artwork-artists .artists-heading {
+    margin: 0 0 15px 0;
+    padding-bottom: 0px;
+    color: #333;
+    font-size: 1.3em;
+}
+
+.artists-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.artist-item {
+    margin-bottom: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.artist-item:last-child {
+    border-bottom: none;
+}
+
+.artist-link {
+    color: #0073aa;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1em;
+}
+
+.artist-link:hover {
+    text-decoration: underline;
+}
+
+.artist-post-type {
+    color: #666;
+    font-style: italic;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
+.artwork-location-map {
+    margin-bottom: 40px;
+}
+
+.artwork-location-map .leaflet-popup-content {
+    margin: 13px 24px 13px 20px;
+}
+
+.artwork-location-map h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Accessibility icons */
+.artwork-accessibility {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.artwork-accessibility-item img {
+    height: 40px;
+    width: 40px;
+}
+
+.artwork-accessibility-label {
+    display: block;
+    text-align: center;
+    font-size: 0.95em;
+    color: #444;
+    margin-top: 4px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .art-routes-single-artwork {
+        padding: 15px;
+    }
+
+    .artwork-title {
+        font-size: 2em;
+    }
+
+    .artwork-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

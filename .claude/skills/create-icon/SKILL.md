@@ -1,13 +1,13 @@
 ---
 name: create-icon
-description: Use when creating new map marker icons for the WP Art Routes plugin - generates consistent SVG icons that match the existing style
+description: Use when creating new map marker icons for the Art Routes plugin - generates consistent SVG icons that match the existing style
 ---
 
 # Create Map Marker Icon
 
 ## Overview
 
-This skill creates SVG icons for the WP Art Routes plugin. All icons follow a consistent style: circular background with white symbol, 32x32 viewBox, optimized for map markers.
+This skill creates SVG icons for the Art Routes plugin. All icons follow a consistent style: circular background with white symbol, 32x32 viewBox, optimized for map markers.
 
 ## Icon Style Guide
 

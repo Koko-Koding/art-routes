@@ -6,7 +6,7 @@
 # Usage: ./bin/plugin-check
 #
 # This script:
-# 1. Builds the release package (creates clean build/wp-art-routes/)
+# 1. Builds the release package (creates clean build/art-routes/)
 # 2. Copies it to a temporary location in wp-content/plugins/
 # 3. Runs wp plugin check on the clean copy using Local's environment
 # 4. Cleans up the temporary copy
@@ -15,7 +15,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-PLUGIN_DIR="$REPO_ROOT/plugins/wp-art-routes"
+PLUGIN_DIR="$REPO_ROOT/plugins/art-routes"
 WP_PLUGINS_DIR="/Users/drikusroor/Local Sites/art-routes/app/public/wp-content/plugins"
 WP_DIR="/Users/drikusroor/Local Sites/art-routes/app/public"
 TEST_PLUGIN_NAME="art-routes-check"
@@ -91,7 +91,7 @@ if [ -d "$TEST_PLUGIN_DIR" ]; then
 fi
 
 # Copy the clean build
-cp -r "$REPO_ROOT/build/wp-art-routes" "$TEST_PLUGIN_DIR"
+cp -r "$REPO_ROOT/build/art-routes" "$TEST_PLUGIN_DIR"
 echo "   Copied to: $TEST_PLUGIN_DIR"
 
 # Step 3: Run plugin check

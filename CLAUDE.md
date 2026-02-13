@@ -19,8 +19,8 @@ This is a monorepo containing two WordPress plugins:
 ```
 art-routes/
 ├── plugins/
-│   ├── wp-art-routes/           # Free plugin (WordPress.org)
-│   │   ├── wp-art-routes.php, includes/, assets/, languages/,
+│   ├── art-routes/           # Free plugin (WordPress.org)
+│   │   ├── art-routes.php, includes/, assets/, languages/,
 │   │   ├── templates/, readme.txt, README.md, CHANGELOG.md,
 │   │   └── DISTRIBUTION.md, Dockerfile, icon-*.png/webp
 │   └── art-routes-pro/          # Pro add-on (premium)
@@ -34,7 +34,7 @@ art-routes/
 ```
 
 **Development setup:** The repo lives at `~/repos/art-routes/`. Symlinks in Local Sites point back here:
-- `<Local Sites>/plugins/wp-art-routes` → `~/repos/art-routes/plugins/wp-art-routes`
+- `<Local Sites>/plugins/art-routes` → `~/repos/art-routes/plugins/art-routes`
 - `<Local Sites>/plugins/art-routes-pro` → `~/repos/art-routes/plugins/art-routes-pro`
 
 Run `./bin/setup-dev` to create/verify symlinks.
@@ -76,14 +76,14 @@ Run `./bin/setup-dev` to create/verify symlinks.
 # Verify Editions system integration
 ./bin/verify-editions-system
 
-# Generate POT file for translations (run from plugins/wp-art-routes/)
-cd plugins/wp-art-routes && wp i18n make-pot . languages/wp-art-routes.pot
+# Generate POT file for translations (run from plugins/art-routes/)
+cd plugins/art-routes && wp i18n make-pot . languages/art-routes.pot
 
 # Merge POT with existing translations
-msgmerge --update plugins/wp-art-routes/languages/wp-art-routes-nl_NL.po plugins/wp-art-routes/languages/wp-art-routes.pot
+msgmerge --update plugins/art-routes/languages/art-routes-nl_NL.po plugins/art-routes/languages/art-routes.pot
 
 # Compile .mo file
-wp i18n make-mo plugins/wp-art-routes/languages/wp-art-routes-nl_NL.po
+wp i18n make-mo plugins/art-routes/languages/art-routes-nl_NL.po
 ```
 
 ## Free Plugin Architecture
@@ -106,31 +106,31 @@ Note: The "Add New Edition" submenu is intentionally hidden - editions should be
 
 ### Terminology System
 
-The plugin uses a centralized terminology system (`plugins/wp-art-routes/includes/terminology.php`) that allows all labels to be customized. **Never hardcode labels** like "Artwork", "Artist", "Route" - always use the helper functions:
+The plugin uses a centralized terminology system (`plugins/art-routes/includes/terminology.php`) that allows all labels to be customized. **Never hardcode labels** like "Artwork", "Artist", "Route" - always use the helper functions:
 
 ```php
 // Get a label (singular or plural) - with optional edition context
-wp_art_routes_label('location', false);              // "Location" (or custom)
-wp_art_routes_label('location', true);               // "Locations" (or custom)
-wp_art_routes_label('creator', false);               // "Artist" (or custom)
-wp_art_routes_label('route', true);                  // "Routes" (or custom)
-wp_art_routes_label('location', false, $edition_id); // Edition-specific override
+art_routes_label('location', false);              // "Location" (or custom)
+art_routes_label('location', true);               // "Locations" (or custom)
+art_routes_label('creator', false);               // "Artist" (or custom)
+art_routes_label('route', true);                  // "Routes" (or custom)
+art_routes_label('location', false, $edition_id); // Edition-specific override
 
 // Get URL slug
-wp_art_routes_slug('route');         // "art-route" (or custom)
-wp_art_routes_slug('location');      // "artwork" (or custom)
+art_routes_slug('route');         // "art-route" (or custom)
+art_routes_slug('location');      // "artwork" (or custom)
 
 // Get global terminology settings
-wp_art_routes_get_global_terminology();
+art_routes_get_global_terminology();
 
 // Get default (hardcoded) terminology
-wp_art_routes_get_default_terminology();
+art_routes_get_default_terminology();
 
 // Get merged terminology for an edition (edition → global → defaults)
-wp_art_routes_get_edition_terminology($edition_id);
+art_routes_get_edition_terminology($edition_id);
 
 // Detect edition context from current page
-wp_art_routes_detect_edition_context();
+art_routes_detect_edition_context();
 ```
 
 **Terminology Types:**
@@ -155,24 +155,24 @@ Editions are containers that group routes, locations, and info points for specif
 
 ```php
 // Get all published editions
-wp_art_routes_get_editions();
+art_routes_get_editions();
 
 // Get full edition data (title, dates, terminology, etc.)
-wp_art_routes_get_edition_data($edition_id);
+art_routes_get_edition_data($edition_id);
 
 // Get edition assigned to a post
-wp_art_routes_get_post_edition($post_id);
+art_routes_get_post_edition($post_id);
 
 // Get edition-aware label (checks edition overrides first)
-wp_art_routes_edition_label('location', false, $edition_id);
+art_routes_edition_label('location', false, $edition_id);
 
 // Get merged terminology for edition
-wp_art_routes_get_edition_terminology($edition_id);
+art_routes_get_edition_terminology($edition_id);
 
 // Get edition-filtered content
-wp_art_routes_get_edition_routes($edition_id);
-wp_art_routes_get_edition_artworks($edition_id);
-wp_art_routes_get_edition_information_points($edition_id);
+art_routes_get_edition_routes($edition_id);
+art_routes_get_edition_artworks($edition_id);
+art_routes_get_edition_information_points($edition_id);
 ```
 
 **Linking Content to Editions:**
@@ -193,7 +193,7 @@ wp_art_routes_get_edition_information_points($edition_id);
 
 ### Import/Export System
 
-Located at Editions → Import/Export (`plugins/wp-art-routes/includes/import-export.php`):
+Located at Editions → Import/Export (`plugins/art-routes/includes/import-export.php`):
 
 **CSV Import (Locations & Info Points):**
 - Select target edition or create a new edition during import
@@ -222,11 +222,11 @@ Both import methods include automatic duplicate detection:
 
 Helper functions for duplicate detection:
 ```php
-wp_art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance);
-wp_art_routes_find_duplicate_location_by_name($name, $edition_id);
-wp_art_routes_find_duplicate_route($name, $edition_id);
-wp_art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $tolerance);
-wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id);
+art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance);
+art_routes_find_duplicate_location_by_name($name, $edition_id);
+art_routes_find_duplicate_route($name, $edition_id);
+art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $tolerance);
+art_routes_find_duplicate_info_point_by_name($name, $edition_id);
 ```
 
 **CSV Export:**
@@ -239,7 +239,7 @@ wp_art_routes_find_duplicate_info_point_by_name($name, $edition_id);
 
 ### Edition Dashboard
 
-Located at Editions → Dashboard (`plugins/wp-art-routes/includes/edition-dashboard.php`):
+Located at Editions → Dashboard (`plugins/art-routes/includes/edition-dashboard.php`):
 
 **Features:**
 - Overview map showing all edition content (routes as polylines, locations/info points as markers)
@@ -258,18 +258,18 @@ Located at Editions → Dashboard (`plugins/wp-art-routes/includes/edition-dashb
 - Terminology overrides (Route, Location, Info Point, Creator - singular/plural)
 - AJAX-based save without page reload
 
-**JavaScript:** `plugins/wp-art-routes/assets/js/edition-dashboard.js`
-**CSS:** `plugins/wp-art-routes/assets/css/edition-dashboard.css`
+**JavaScript:** `plugins/art-routes/assets/js/edition-dashboard.js`
+**CSS:** `plugins/art-routes/assets/css/edition-dashboard.css`
 
 **AJAX Endpoints:**
 | Action | Purpose |
 |--------|---------|
-| `wp_art_routes_dashboard_get_items` | Fetch all routes/locations/info points/settings for edition |
-| `wp_art_routes_dashboard_update_item` | Update single field (title, status, number, lat, lng, icon) |
-| `wp_art_routes_dashboard_bulk_action` | Bulk publish/draft/delete |
-| `wp_art_routes_dashboard_save_settings` | Save edition settings (dates, icon, terminology) |
+| `art_routes_dashboard_get_items` | Fetch all routes/locations/info points/settings for edition |
+| `art_routes_dashboard_update_item` | Update single field (title, status, number, lat, lng, icon) |
+| `art_routes_dashboard_bulk_action` | Bulk publish/draft/delete |
+| `art_routes_dashboard_save_settings` | Save edition settings (dates, icon, terminology) |
 
-### Core PHP Files (plugins/wp-art-routes/includes/)
+### Core PHP Files (plugins/art-routes/includes/)
 
 | File | Purpose |
 |------|---------|
@@ -290,12 +290,12 @@ Located at Editions → Dashboard (`plugins/wp-art-routes/includes/edition-dashb
 
 ### Gutenberg Blocks
 
-**Edition Map Block** (`wp-art-routes/edition-map`)
+**Edition Map Block** (`art-routes/edition-map`)
 
 A dynamic server-side rendered block for displaying edition maps:
 
 ```
-Block name: wp-art-routes/edition-map
+Block name: art-routes/edition-map
 ```
 
 Attributes:
@@ -309,10 +309,10 @@ Attributes:
 Auto-detection: On Edition single pages, the block automatically uses that edition's content.
 
 **Block Assets:**
-- Editor script: `plugins/wp-art-routes/assets/js/blocks/edition-map-block.js`
-- Editor styles: `plugins/wp-art-routes/assets/css/blocks/edition-map-block-editor.css`
+- Editor script: `plugins/art-routes/assets/js/blocks/edition-map-block.js`
+- Editor styles: `plugins/art-routes/assets/css/blocks/edition-map-block-editor.css`
 
-**Routes Map Block** (`wp-art-routes/routes-map`)
+**Routes Map Block** (`art-routes/routes-map`)
 
 Legacy block for displaying multiple routes:
 
@@ -343,7 +343,7 @@ Attributes:
 
 ### Template System
 
-Templates in `plugins/wp-art-routes/templates/` can be overridden by themes by copying to `{theme}/wp-art-routes/`:
+Templates in `plugins/art-routes/templates/` can be overridden by themes by copying to `{theme}/art-routes/`:
 
 - `single-edition.php` - Edition single page (map + routes grid + locations grid + info points list)
 - `shortcode-edition-map.php` - Edition map shortcode template
@@ -358,7 +358,7 @@ The edition single template automatically displays:
 
 All section headings use edition-specific terminology.
 
-### JavaScript Files (plugins/wp-art-routes/assets/js/)
+### JavaScript Files (plugins/art-routes/assets/js/)
 
 | File | Lines | Purpose |
 |------|-------|---------|
@@ -396,7 +396,7 @@ ART_ROUTES_PRO_URL      // plugin_dir_url(__FILE__)
 
 ## Settings Structure
 
-Settings are stored in `wp_art_routes_terminology` option:
+Settings are stored in `art_routes_terminology` option:
 
 ```php
 [
@@ -413,8 +413,8 @@ Settings page has three tabs:
 - **Custom Icons** - Upload custom SVG/PNG/JPG/WebP icons, manage uploaded icons
 
 Additional settings stored separately:
-- `wp_art_routes_default_location_icon` - Default icon filename for locations without icons (used as fallback for imported locations)
-- `wp_art_routes_version` - Stored version for auto-flushing rewrite rules on updates
+- `art_routes_default_location_icon` - Default icon filename for locations without icons (used as fallback for imported locations)
+- `art_routes_version` - Stored version for auto-flushing rewrite rules on updates
 
 ## Meta Field Naming
 
@@ -453,29 +453,29 @@ Additional settings stored separately:
 ## Icon System
 
 The plugin supports two sources of icons:
-- **Built-in icons:** SVG files in `plugins/wp-art-routes/assets/icons/`
-- **Custom uploaded icons:** SVG/PNG/JPG/WebP files in `wp-content/uploads/wp-art-routes-icons/`
+- **Built-in icons:** SVG files in `plugins/art-routes/assets/icons/`
+- **Custom uploaded icons:** SVG/PNG/JPG/WebP files in `wp-content/uploads/art-routes-icons/`
 
 Custom icons can be uploaded via Settings → Custom Icons tab. SVG files are sanitized to prevent XSS attacks (`class-svg-sanitizer.php`).
 
-**Always use `wp_art_routes_get_icon_url()` for icon URLs** - it handles both built-in and custom icons correctly.
+**Always use `art_routes_get_icon_url()` for icon URLs** - it handles both built-in and custom icons correctly.
 
 **Icon Fallback Logic:**
-- **Locations:** Uses `_artwork_icon` meta → edition default (`_edition_default_location_icon`) → global default (`wp_art_routes_default_location_icon`) → no icon (gray circle)
+- **Locations:** Uses `_artwork_icon` meta → edition default (`_edition_default_location_icon`) → global default (`art_routes_default_location_icon`) → no icon (gray circle)
 - **Info Points:** Uses `_info_point_icon` meta → falls back to `_info_point_icon_url` (legacy) → falls back to `WB plattegrond-Informatie.svg`
 
 ```php
 // Get available icons (respects prefix setting)
-wp_art_routes_get_available_icons();
+art_routes_get_available_icons();
 
 // Get icon URL (handles both built-in and custom icons)
-wp_art_routes_get_icon_url($filename);
+art_routes_get_icon_url($filename);
 
 // Get display name for icon dropdown
-wp_art_routes_get_icon_display_name($filename);
+art_routes_get_icon_display_name($filename);
 
 // Get default info point icon
-wp_art_routes_get_default_info_icon();
+art_routes_get_default_info_icon();
 ```
 
 ## GPX Handler
@@ -506,19 +506,19 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 
 **Activation Hook:** Registers all CPTs and flushes rewrite rules.
 
-**Automatic Rewrite Flush:** The plugin automatically flushes rewrite rules when the version changes (stored in `wp_art_routes_version` option). This ensures permalinks work correctly after plugin updates without requiring manual flush via Settings → Permalinks.
+**Automatic Rewrite Flush:** The plugin automatically flushes rewrite rules when the version changes (stored in `art_routes_version` option). This ensures permalinks work correctly after plugin updates without requiring manual flush via Settings → Permalinks.
 
 ## Release Workflow
 
 ### Free Plugin (Art Routes)
 
-1. Update version in `plugins/wp-art-routes/wp-art-routes.php` (2 places: header + constant)
-2. Add entry to `plugins/wp-art-routes/CHANGELOG.md`
-3. Update `plugins/wp-art-routes/readme.txt`:
+1. Update version in `plugins/art-routes/art-routes.php` (2 places: header + constant)
+2. Add entry to `plugins/art-routes/CHANGELOG.md`
+3. Update `plugins/art-routes/readme.txt`:
    - Update `Stable tag:` to new version
    - Add changelog entry (condensed version)
    - Update `Upgrade Notice` section if significant
-4. Update `plugins/wp-art-routes/README.md` if user-facing features changed
+4. Update `plugins/art-routes/README.md` if user-facing features changed
 5. Update translation files if strings changed
 6. Run `./bin/build-free` to create distribution zip
 7. Tag: `vX.Y.Z`
@@ -534,8 +534,8 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 **IMPORTANT:** Always run these checks BEFORE tagging a release to avoid hotfix releases:
 
 1. **CDN Compliance:** All JS/CSS must be bundled locally (no external CDNs except Google Fonts)
-   - Leaflet.js is bundled in `plugins/wp-art-routes/assets/lib/leaflet/`
-   - Verify no new CDN links were added: `grep -r "cdn\." --include="*.php" --include="*.js" plugins/wp-art-routes/`
+   - Leaflet.js is bundled in `plugins/art-routes/assets/lib/leaflet/`
+   - Verify no new CDN links were added: `grep -r "cdn\." --include="*.php" --include="*.js" plugins/art-routes/`
 
 2. **WordPress Plugin Check:** Run `./bin/plugin-check`
    - Fix all errors before release (warnings can be reviewed case-by-case)
@@ -550,12 +550,12 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 
 For WordPress.org plugin directory submission:
 - Submission URL: https://wordpress.org/plugins/developers/add/
-- Plugin slug will be `art-routes` (not `wp-art-routes`)
+- Plugin slug will be `art-routes` (not `art-routes`)
 - After approval, use SVN to publish (instructions in memory/wordpress-org-submission.md)
 
 ## External Dependencies
 
-- Leaflet.js 1.9.4 (bundled locally in plugins/wp-art-routes/assets/lib/leaflet/)
+- Leaflet.js 1.9.4 (bundled locally in plugins/art-routes/assets/lib/leaflet/)
 - OpenStreetMap tiles
 - jQuery (WordPress bundled)
 
@@ -565,23 +565,23 @@ No composer or npm dependencies for the main plugin. The `@bin/route-info-rest-c
 
 ### Adding a New Translatable String
 
-Always use WordPress i18n functions with the `wp-art-routes` text domain:
+Always use WordPress i18n functions with the `art-routes` text domain:
 
 ```php
 // Simple string
-__('My string', 'wp-art-routes')
+__('My string', 'art-routes')
 
 // String with placeholder - add translators comment
 /* translators: %s: location label (e.g., "Location", "Artwork") */
-sprintf(__('Add New %s', 'wp-art-routes'), wp_art_routes_label('location'))
+sprintf(__('Add New %s', 'art-routes'), art_routes_label('location'))
 ```
 
 ### Adding a New Setting
 
-1. Add default value in `wp_art_routes_get_default_terminology()`
-2. Add form field in appropriate tab in `plugins/wp-art-routes/includes/settings.php`
+1. Add default value in `art_routes_get_default_terminology()`
+2. Add form field in appropriate tab in `plugins/art-routes/includes/settings.php`
 3. Add hidden field preservation in other tabs
-4. Create helper function in `plugins/wp-art-routes/includes/terminology.php` if needed
+4. Create helper function in `plugins/art-routes/includes/terminology.php` if needed
 
 ### Adding Edition-Aware Functionality
 
@@ -589,13 +589,13 @@ When building features that should respect edition context:
 
 ```php
 // Detect current edition from context
-$edition_id = wp_art_routes_detect_edition_context();
+$edition_id = art_routes_detect_edition_context();
 
 // Get edition-specific label
-$label = wp_art_routes_label('location', false, $edition_id);
+$label = art_routes_label('location', false, $edition_id);
 
 // Query content for specific edition
-$locations = wp_art_routes_get_edition_artworks($edition_id);
+$locations = art_routes_get_edition_artworks($edition_id);
 ```
 
 ### WordPress Enqueue Guidelines

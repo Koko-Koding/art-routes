@@ -28,9 +28,9 @@ Ask user which plugin to release (if not specified):
 | Step | Files/Commands |
 |------|----------------|
 | Version format | `X.Y.Z` (semantic versioning) |
-| Version locations | `plugins/wp-art-routes/wp-art-routes.php` (2 places: header + constant), `plugins/wp-art-routes/readme.txt` (Stable tag) |
-| Changelog | `plugins/wp-art-routes/CHANGELOG.md` (full entry), `plugins/wp-art-routes/readme.txt` (condensed entry) |
-| README.md | Update `plugins/wp-art-routes/README.md` if user-facing features changed |
+| Version locations | `plugins/art-routes/art-routes.php` (2 places: header + constant), `plugins/art-routes/readme.txt` (Stable tag) |
+| Changelog | `plugins/art-routes/CHANGELOG.md` (full entry), `plugins/art-routes/readme.txt` (condensed entry) |
+| README.md | Update `plugins/art-routes/README.md` if user-facing features changed |
 | Compliance | CDN check, WordPress.org requirements |
 | Build | `./bin/build-free` |
 | Tag format | `vX.Y.Z` |
@@ -102,18 +102,18 @@ digraph release_flow {
 
 1. **CDN Check:** No external CDN resources (except Google Fonts)
    ```bash
-   grep -r "cdn\." --include="*.php" --include="*.js" plugins/wp-art-routes/ | grep -v node_modules | grep -v .git
+   grep -r "cdn\." --include="*.php" --include="*.js" plugins/art-routes/ | grep -v node_modules | grep -v .git
    ```
 
 2. **WordPress.org Requirements:**
    - Plugin name must be "Art Routes" (no "WP" - trademark restriction)
    - readme.txt must have maximum 5 tags
    - "Tested up to" should match current WordPress version
-   - Check: `grep "Tags:" plugins/wp-art-routes/readme.txt` (count comma-separated values)
+   - Check: `grep "Tags:" plugins/art-routes/readme.txt` (count comma-separated values)
 
 3. **Output Escaping Spot Check:**
    ```bash
-   grep -r "_e(" --include="*.php" plugins/wp-art-routes/ | grep -v "esc_" | head -5
+   grep -r "_e(" --include="*.php" plugins/art-routes/ | grep -v "esc_" | head -5
    ```
 
 #### Full Plugin Check (REQUIRED before free plugin releases):
@@ -134,14 +134,14 @@ Ask user for bump type if not specified:
 ### 2. Update Version
 
 #### Free Plugin
-Update BOTH locations in `plugins/wp-art-routes/wp-art-routes.php`:
+Update BOTH locations in `plugins/art-routes/art-routes.php`:
 
 ```php
 // Header comment (line ~7)
 * Version: X.Y.Z
 
 // Constant definition (line ~26)
-define('WP_ART_ROUTES_VERSION', 'X.Y.Z');
+define('ART_ROUTES_VERSION', 'X.Y.Z');
 ```
 
 #### Pro Plugin
@@ -157,7 +157,7 @@ define( 'ART_ROUTES_PRO_VERSION', 'X.Y.Z' );
 
 ### 3. Update CHANGELOG.md (Free Plugin)
 
-Add new entry in `plugins/wp-art-routes/CHANGELOG.md` after the versioning note paragraph:
+Add new entry in `plugins/art-routes/CHANGELOG.md` after the versioning note paragraph:
 
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
@@ -181,7 +181,7 @@ Add new entry in `plugins/wp-art-routes/CHANGELOG.md` after the versioning note 
 
 ### 4. Update readme.txt (Free Plugin)
 
-Update `plugins/wp-art-routes/readme.txt`:
+Update `plugins/art-routes/readme.txt`:
 
 1. **Stable tag:** Update to new version number
 2. **Changelog section:** Add condensed changelog entry at top
@@ -189,7 +189,7 @@ Update `plugins/wp-art-routes/readme.txt`:
 
 ### 5. Update README.md (if needed)
 
-If user-facing features changed, update `plugins/wp-art-routes/README.md`:
+If user-facing features changed, update `plugins/art-routes/README.md`:
 - Update version number in header
 - Update Features list
 
@@ -198,7 +198,7 @@ If user-facing features changed, update `plugins/wp-art-routes/README.md`:
 ```bash
 # Free plugin
 ./bin/build-free
-# Creates: build/wp-art-routes-X.Y.Z.zip
+# Creates: build/art-routes-X.Y.Z.zip
 
 # Pro plugin
 ./bin/build-pro
@@ -209,7 +209,7 @@ If user-facing features changed, update `plugins/wp-art-routes/README.md`:
 
 #### Free Plugin
 ```bash
-git add plugins/wp-art-routes/wp-art-routes.php plugins/wp-art-routes/CHANGELOG.md plugins/wp-art-routes/readme.txt plugins/wp-art-routes/README.md
+git add plugins/art-routes/art-routes.php plugins/art-routes/CHANGELOG.md plugins/art-routes/readme.txt plugins/art-routes/README.md
 git commit -m "Release X.Y.Z"
 git tag vX.Y.Z
 git push origin HEAD --tags
@@ -230,7 +230,7 @@ git push origin HEAD --tags
 gh release create vX.Y.Z \
   --title "Art Routes X.Y.Z" \
   --notes-file - \
-  build/wp-art-routes-X.Y.Z.zip <<'EOF'
+  build/art-routes-X.Y.Z.zip <<'EOF'
 ## Changes
 
 [Paste relevant CHANGELOG section here]
@@ -263,7 +263,7 @@ EOF
 | Mistake | Fix |
 |---------|-----|
 | Skipping compliance checks | Always run CDN and WordPress.org checks BEFORE tagging (free plugin) |
-| CDN resources not bundled | Bundle all JS/CSS locally (see plugins/wp-art-routes/assets/lib/) |
+| CDN resources not bundled | Bundle all JS/CSS locally (see plugins/art-routes/assets/lib/) |
 | Plugin name contains "WP" | Use "Art Routes" not "WP Art Routes" (trademark) |
 | Too many tags in readme.txt | Maximum 5 tags allowed by WordPress.org |
 | Only updating one version location | Update ALL: header + constant + readme.txt Stable tag |
@@ -284,12 +284,12 @@ EOF
 - [ ] **Compliance: Plugin name is "Art Routes"** (no "WP")
 - [ ] **Compliance: readme.txt has ≤5 tags**
 - [ ] **Plugin Check passed** (`./bin/plugin-check`)
-- [ ] Version updated in `plugins/wp-art-routes/wp-art-routes.php` header
-- [ ] Version updated in `WP_ART_ROUTES_VERSION` constant
-- [ ] `plugins/wp-art-routes/CHANGELOG.md` has entry with correct version and date
-- [ ] `plugins/wp-art-routes/readme.txt` `Stable tag` updated
-- [ ] `plugins/wp-art-routes/readme.txt` changelog section has new entry
-- [ ] `plugins/wp-art-routes/README.md` version updated (if applicable)
+- [ ] Version updated in `plugins/art-routes/art-routes.php` header
+- [ ] Version updated in `ART_ROUTES_VERSION` constant
+- [ ] `plugins/art-routes/CHANGELOG.md` has entry with correct version and date
+- [ ] `plugins/art-routes/readme.txt` `Stable tag` updated
+- [ ] `plugins/art-routes/readme.txt` changelog section has new entry
+- [ ] `plugins/art-routes/README.md` version updated (if applicable)
 - [ ] `./bin/build-free` ran successfully
 - [ ] Zip file exists in build/ directory
 

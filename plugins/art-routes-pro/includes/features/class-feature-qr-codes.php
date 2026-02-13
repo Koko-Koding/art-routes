@@ -63,9 +63,9 @@ class Art_Routes_Pro_Feature_QR_Codes {
         $edition_label_info     = __( 'Info Points', 'art-routes-pro' );
 
         if ( $selected_edition ) {
-            if ( function_exists( 'wp_art_routes_label' ) ) {
-                $edition_label_location = wp_art_routes_label( 'location', true, $selected_edition );
-                $edition_label_info     = wp_art_routes_label( 'info_point', true, $selected_edition );
+            if ( function_exists( 'art_routes_label' ) ) {
+                $edition_label_location = art_routes_label( 'location', true, $selected_edition );
+                $edition_label_info     = art_routes_label( 'info_point', true, $selected_edition );
             }
 
             $locations = get_posts( array(

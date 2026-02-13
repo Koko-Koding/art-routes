@@ -46,7 +46,7 @@
 ### De plugin installeren
 
 1. Ga naar **Plugins > Nieuwe plugin** in het WordPress-beheergedeelte
-2. Klik op **Plugin uploaden** en selecteer het `wp-art-routes.zip`-bestand
+2. Klik op **Plugin uploaden** en selecteer het `art-routes.zip`-bestand
 3. Klik op **Nu installeren**
 4. Klik daarna op **Plugin activeren**
 
@@ -565,7 +565,7 @@ In het **Editie Dashboard** kun je:
 
 ### Kan ik het uiterlijk van de kaart aanpassen?
 
-De plugin gebruikt standaard OpenStreetMap-tegels. Het uiterlijk van de popups, markeringen en kaart-layout kan worden aangepast via CSS in je thema. De plugin biedt templates in de map `templates/` die je kunt overschrijven door ze te kopieren naar `wp-art-routes/` in je thema.
+De plugin gebruikt standaard OpenStreetMap-tegels. Het uiterlijk van de popups, markeringen en kaart-layout kan worden aangepast via CSS in je thema. De plugin biedt templates in de map `templates/` die je kunt overschrijven door ze te kopieren naar `art-routes/` in je thema.
 
 ### Dubbele items bij het importeren
 
@@ -577,7 +577,7 @@ De plugin detecteert automatisch duplicaten bij het importeren:
 
 ## Hulp nodig?
 
-Heb je een probleem of wil je een suggestie doen? Neem contact op met de pluginontwikkelaar via de [GitHub-pagina](https://github.com/drikusroor/wp-art-routes).
+Heb je een probleem of wil je een suggestie doen? Neem contact op met de pluginontwikkelaar via de [GitHub-pagina](https://github.com/Koko-Koding/art-routes).
 
 ---
 

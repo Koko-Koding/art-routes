@@ -28,7 +28,7 @@ if [ ! -d "$WP_PLUGINS_DIR" ]; then
     exit 1
 fi
 
-PLUGINS=("wp-art-routes" "art-routes-pro")
+PLUGINS=("art-routes" "art-routes-pro")
 
 for PLUGIN in "${PLUGINS[@]}"; do
     SOURCE="$REPO_ROOT/plugins/$PLUGIN"

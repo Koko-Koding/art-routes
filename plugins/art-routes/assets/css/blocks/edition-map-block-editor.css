@@ -1,0 +1,117 @@
+/**
+ * Edition Map Block - Editor Styles
+ *
+ * Styles for the block editor preview and settings.
+ *
+ * @package WP Art Routes
+ */
+
+/* Block wrapper in editor */
+.art-routes-edition-map-block-wrapper {
+    position: relative;
+}
+
+/* Prevent map interaction in editor to avoid conflicts */
+.art-routes-edition-map-block-wrapper .edition-map-container {
+    pointer-events: none;
+}
+
+/* Re-enable pointer events for legend interactions */
+.art-routes-edition-map-block-wrapper .edition-map-legend,
+.art-routes-edition-map-block-wrapper .edition-map-controls {
+    pointer-events: auto;
+}
+
+/* Editor placeholder styling */
+.wp-block-art-routes-edition-map .components-placeholder {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+}
+
+.wp-block-art-routes-edition-map .components-placeholder__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.wp-block-art-routes-edition-map .components-placeholder__instructions {
+    color: #757575;
+    margin-top: 8px;
+}
+
+/* Loading state in editor */
+.art-routes-edition-map-block-wrapper .components-spinner {
+    margin: 20px auto;
+}
+
+/* Server-side render error styling */
+.art-routes-edition-map-block-wrapper .block-editor-server-side-render__error {
+    padding: 20px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    color: #856404;
+}
+
+/* Ensure map displays properly in editor */
+.art-routes-edition-map-block-wrapper .edition-map {
+    min-height: 400px;
+}
+
+/* Adjust legend in editor for better visibility */
+.art-routes-edition-map-block-wrapper .edition-map-legend {
+    margin-bottom: 15px;
+}
+
+/* Fix z-index issues with Leaflet controls in editor */
+.art-routes-edition-map-block-wrapper .leaflet-control-container {
+    z-index: 10;
+}
+
+/* Editor-specific button hover states */
+.art-routes-edition-map-block-wrapper .edition-zoom-to-route-button:hover,
+.art-routes-edition-map-block-wrapper .edition-map-zoom-all:hover {
+    cursor: default;
+}
+
+/* Block alignment support */
+.wp-block-art-routes-edition-map.alignwide,
+.wp-block-art-routes-edition-map.alignfull {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-block-art-routes-edition-map.alignfull {
+    width: 100%;
+}
+
+/* Inspector controls enhancements */
+.wp-block-art-routes-edition-map .components-panel__body-title {
+    font-weight: 600;
+}
+
+/* Select control styling in sidebar */
+.wp-block-art-routes-edition-map .components-select-control__input {
+    max-width: 100%;
+}
+
+/* Toggle control alignment */
+.wp-block-art-routes-edition-map .components-toggle-control {
+    margin-bottom: 12px;
+}
+
+/* Help text styling */
+.wp-block-art-routes-edition-map .components-base-control__help {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 4px;
+}

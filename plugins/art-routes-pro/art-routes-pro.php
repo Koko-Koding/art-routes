@@ -26,7 +26,7 @@ define( 'ART_ROUTES_PRO_URL', plugin_dir_url( __FILE__ ) );
  * Check if the free Art Routes plugin is active.
  */
 function art_routes_pro_check_requirements() {
-    if ( ! defined( 'WP_ART_ROUTES_VERSION' ) ) {
+    if ( ! defined( 'ART_ROUTES_VERSION' ) ) {
         add_action( 'admin_notices', 'art_routes_pro_missing_free_notice' );
         return false;
     }

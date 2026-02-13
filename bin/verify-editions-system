@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Verification Script for WP Art Routes Editions System
+ * Verification Script for Art Routes Editions System
  *
  * This script verifies that the Editions system is properly integrated:
  * - All required files exist
@@ -10,17 +10,17 @@
  *
  * Usage: php bin/verify-editions-system.php
  *
- * @package WP Art Routes
+ * @package Art Routes
  */
 
 // Set script mode
 define('VERIFICATION_SCRIPT', true);
 
 // Change to free plugin directory
-chdir(dirname(__DIR__) . '/plugins/wp-art-routes');
+chdir(dirname(__DIR__) . '/plugins/art-routes');
 
 echo "===========================================\n";
-echo "WP Art Routes - Editions System Verification\n";
+echo "Art Routes - Editions System Verification\n";
 echo "===========================================\n\n";
 
 $errors = [];
@@ -34,7 +34,7 @@ $required_files = [
     'includes/editions.php' => 'Edition CPT',
     'includes/blocks.php' => 'Gutenberg blocks',
     'includes/import-export.php' => 'Import/Export admin page',
-    'wp-art-routes.php' => 'Main plugin file',
+    'art-routes.php' => 'Main plugin file',
     'templates/single-edition.php' => 'Edition single template',
     'assets/js/blocks/edition-map-block.js' => 'Edition map block JS',
     'assets/css/blocks/edition-map-block-editor.css' => 'Edition map block editor CSS',
@@ -49,8 +49,8 @@ foreach ($required_files as $file => $description) {
 }
 
 // 2. Check main plugin file includes all required files
-echo "2. Checking file requirements in wp-art-routes.php...\n";
-$main_plugin_content = file_get_contents('wp-art-routes.php');
+echo "2. Checking file requirements in art-routes.php...\n";
+$main_plugin_content = file_get_contents('art-routes.php');
 
 $required_includes = [
     'includes/terminology.php',
@@ -69,7 +69,7 @@ foreach ($required_includes as $include) {
 
 // 3. Check activation hook includes Edition CPT registration
 echo "3. Checking activation hook...\n";
-if (strpos($main_plugin_content, 'wp_art_routes_register_edition_post_type') !== false) {
+if (strpos($main_plugin_content, 'art_routes_register_edition_post_type') !== false) {
     $success[] = "  [OK] Activation hook registers Edition CPT";
 } else {
     $errors[] = "  [ERROR] Activation hook does not register Edition CPT";
@@ -90,9 +90,9 @@ $terminology_content = file_exists('includes/terminology.php')
     : '';
 
 $required_terminology_functions = [
-    'wp_art_routes_get_default_terminology',
-    'wp_art_routes_get_global_terminology',
-    'wp_art_routes_label',
+    'art_routes_get_default_terminology',
+    'art_routes_get_global_terminology',
+    'art_routes_label',
 ];
 
 foreach ($required_terminology_functions as $func) {
@@ -110,12 +110,12 @@ $editions_content = file_exists('includes/editions.php')
     : '';
 
 $required_editions_functions = [
-    'wp_art_routes_register_edition_post_type',
-    'wp_art_routes_register_edition_meta',
-    'wp_art_routes_get_editions',
-    'wp_art_routes_get_edition_data',
-    'wp_art_routes_get_post_edition',
-    'wp_art_routes_edition_label',
+    'art_routes_register_edition_post_type',
+    'art_routes_register_edition_meta',
+    'art_routes_get_editions',
+    'art_routes_get_edition_data',
+    'art_routes_get_post_edition',
+    'art_routes_edition_label',
 ];
 
 foreach ($required_editions_functions as $func) {
@@ -154,7 +154,7 @@ if (strpos($blocks_content, "register_block_type") !== false) {
     $errors[] = "  [ERROR] Block type registration missing";
 }
 
-if (strpos($blocks_content, 'wp-art-routes/edition-map') !== false) {
+if (strpos($blocks_content, 'art-routes/edition-map') !== false) {
     $success[] = "  [OK] Edition map block name found";
 } else {
     $warnings[] = "  [WARNING] Edition map block name not found (may use different name)";
