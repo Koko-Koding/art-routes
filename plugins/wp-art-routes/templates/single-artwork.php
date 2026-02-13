@@ -32,13 +32,13 @@ get_header();
                     <div class="artwork-meta">
                         <?php if (!empty($artwork_number)) : ?>
                             <span class="artwork-number">
-                                <strong><?php esc_html_e('Number:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_number); ?>
+                                <strong><?php esc_html_e('Number:', 'art-routes'); ?></strong> <?php echo esc_html($artwork_number); ?>
                             </span>
                         <?php endif; ?>
                         
                         <?php if (!empty($artwork_location)) : ?>
                             <span class="artwork-location">
-                                <strong><?php esc_html_e('Location:', 'wp-art-routes'); ?></strong> <?php echo esc_html($artwork_location); ?>
+                                <strong><?php esc_html_e('Location:', 'art-routes'); ?></strong> <?php echo esc_html($artwork_location); ?>
                             </span>
                         <?php endif; ?>
                     </div>
@@ -63,15 +63,15 @@ get_header();
             ?>
                 <div class="artwork-accessibility">
                     <?php if ($wheelchair_accessible === '1') : ?>
-                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'wp-art-routes'); ?>" />
-                            <span class="artwork-accessibility-label"><?php esc_html_e('Wheelchair accessible', 'wp-art-routes'); ?></span>
+                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Wheelchair accessible', 'art-routes'); ?>">
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Rolstoel.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Wheelchair accessible', 'art-routes'); ?>" />
+                            <span class="artwork-accessibility-label"><?php esc_html_e('Wheelchair accessible', 'art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                     <?php if ($stroller_accessible === '1') : ?>
-                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>">
-                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'wp-art-routes'); ?>" />
-                            <span class="artwork-accessibility-label"><?php esc_html_e('Stroller accessible', 'wp-art-routes'); ?></span>
+                        <span class="artwork-accessibility-item" title="<?php esc_attr_e('Stroller accessible', 'art-routes'); ?>">
+                            <img src="<?php echo esc_url(plugins_url('assets/icons/legacy/WB-plattegrond-Kinderwagen.svg', dirname(__FILE__))); ?>" alt="<?php esc_attr_e('Stroller accessible', 'art-routes'); ?>" />
+                            <span class="artwork-accessibility-label"><?php esc_html_e('Stroller accessible', 'art-routes'); ?></span>
                         </span>
                     <?php endif; ?>
                 </div>
@@ -87,8 +87,8 @@ get_header();
                     <h3 class="artists-heading">
                         <?php
                         echo count($artist_ids) > 1
-                            ? esc_html__('Artists:', 'wp-art-routes')
-                            : esc_html__('Artist:', 'wp-art-routes');
+                            ? esc_html__('Artists:', 'art-routes')
+                            : esc_html__('Artist:', 'art-routes');
                         ?>
                     </h3>
                     
@@ -118,7 +118,7 @@ get_header();
             if (is_numeric($latitude) && is_numeric($longitude)) :
             ?>
                 <div class="artwork-location-map">
-                    <h3><?php esc_html_e('Location on Map', 'wp-art-routes'); ?></h3>
+                    <h3><?php esc_html_e('Location on Map', 'art-routes'); ?></h3>
                     <div id="artwork-single-map" style="height: 300px; margin: 20px 0;"></div>
                     
                     <?php

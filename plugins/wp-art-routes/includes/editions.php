@@ -18,21 +18,21 @@ function wp_art_routes_register_edition_post_type()
 {
     register_post_type('edition', [
         'labels' => [
-            'name'               => __('Editions', 'wp-art-routes'),
-            'singular_name'      => __('Edition', 'wp-art-routes'),
-            'add_new'            => __('Add New', 'wp-art-routes'),
-            'add_new_item'       => __('Add New Edition', 'wp-art-routes'),
-            'edit_item'          => __('Edit Edition', 'wp-art-routes'),
-            'new_item'           => __('New Edition', 'wp-art-routes'),
-            'view_item'          => __('View Edition', 'wp-art-routes'),
-            'view_items'         => __('View Editions', 'wp-art-routes'),
-            'search_items'       => __('Search Editions', 'wp-art-routes'),
-            'not_found'          => __('No editions found', 'wp-art-routes'),
-            'not_found_in_trash' => __('No editions found in Trash', 'wp-art-routes'),
-            'all_items'          => __('Editions', 'wp-art-routes'),
-            'archives'           => __('Edition Archives', 'wp-art-routes'),
-            'attributes'         => __('Edition Attributes', 'wp-art-routes'),
-            'menu_name'          => __('Art Routes', 'wp-art-routes'),
+            'name'               => __('Editions', 'art-routes'),
+            'singular_name'      => __('Edition', 'art-routes'),
+            'add_new'            => __('Add New', 'art-routes'),
+            'add_new_item'       => __('Add New Edition', 'art-routes'),
+            'edit_item'          => __('Edit Edition', 'art-routes'),
+            'new_item'           => __('New Edition', 'art-routes'),
+            'view_item'          => __('View Edition', 'art-routes'),
+            'view_items'         => __('View Editions', 'art-routes'),
+            'search_items'       => __('Search Editions', 'art-routes'),
+            'not_found'          => __('No editions found', 'art-routes'),
+            'not_found_in_trash' => __('No editions found in Trash', 'art-routes'),
+            'all_items'          => __('Editions', 'art-routes'),
+            'archives'           => __('Edition Archives', 'art-routes'),
+            'attributes'         => __('Edition Attributes', 'art-routes'),
+            'menu_name'          => __('Art Routes', 'art-routes'),
         ],
         'public'             => true,
         'has_archive'        => true,
@@ -158,7 +158,7 @@ function wp_art_routes_add_edition_meta_boxes()
     // Terminology Overrides meta box
     add_meta_box(
         'edition_terminology',
-        __('Terminology Overrides', 'wp-art-routes'),
+        __('Terminology Overrides', 'art-routes'),
         'wp_art_routes_render_edition_terminology_meta_box',
         'edition',
         'normal',
@@ -168,7 +168,7 @@ function wp_art_routes_add_edition_meta_boxes()
     // Event Dates meta box
     add_meta_box(
         'edition_dates',
-        __('Event Dates', 'wp-art-routes'),
+        __('Event Dates', 'art-routes'),
         'wp_art_routes_render_edition_dates_meta_box',
         'edition',
         'side',
@@ -178,7 +178,7 @@ function wp_art_routes_add_edition_meta_boxes()
     // Edition Settings meta box (default icon)
     add_meta_box(
         'edition_settings',
-        __('Edition Settings', 'wp-art-routes'),
+        __('Edition Settings', 'art-routes'),
         'wp_art_routes_render_edition_settings_meta_box',
         'edition',
         'side',
@@ -209,26 +209,26 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
     // Define the terminology types and their fields
     $types = [
         'route' => [
-            'label' => __('Route', 'wp-art-routes'),
-            'description' => __('The main paths users follow', 'wp-art-routes'),
+            'label' => __('Route', 'art-routes'),
+            'description' => __('The main paths users follow', 'art-routes'),
         ],
         'location' => [
-            'label' => __('Location', 'wp-art-routes'),
-            'description' => __('Main content items (artworks, performances, etc.)', 'wp-art-routes'),
+            'label' => __('Location', 'art-routes'),
+            'description' => __('Main content items (artworks, performances, etc.)', 'art-routes'),
         ],
         'info_point' => [
-            'label' => __('Info Point', 'wp-art-routes'),
-            'description' => __('Information markers along routes', 'wp-art-routes'),
+            'label' => __('Info Point', 'art-routes'),
+            'description' => __('Information markers along routes', 'art-routes'),
         ],
         'creator' => [
-            'label' => __('Creator', 'wp-art-routes'),
-            'description' => __('People/entities associated with locations (artists, performers, etc.)', 'wp-art-routes'),
+            'label' => __('Creator', 'art-routes'),
+            'description' => __('People/entities associated with locations (artists, performers, etc.)', 'art-routes'),
         ],
     ];
 
     ?>
     <p class="description">
-        <?php esc_html_e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'wp-art-routes'); ?>
+        <?php esc_html_e('Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders).', 'art-routes'); ?>
     </p>
 
     <table class="form-table" role="presentation">
@@ -243,7 +243,7 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
                 <td>
                     <p>
                         <label for="edition_terminology_<?php echo esc_attr($type); ?>_singular">
-                            <?php esc_html_e('Singular:', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Singular:', 'art-routes'); ?>
                         </label>
                         <input type="text"
                                id="edition_terminology_<?php echo esc_attr($type); ?>_singular"
@@ -254,7 +254,7 @@ function wp_art_routes_render_edition_terminology_meta_box($post)
                     </p>
                     <p>
                         <label for="edition_terminology_<?php echo esc_attr($type); ?>_plural">
-                            <?php esc_html_e('Plural:', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Plural:', 'art-routes'); ?>
                         </label>
                         <input type="text"
                                id="edition_terminology_<?php echo esc_attr($type); ?>_plural"
@@ -287,7 +287,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
     ?>
     <p>
         <label for="edition_start_date">
-            <?php esc_html_e('Start Date:', 'wp-art-routes'); ?>
+            <?php esc_html_e('Start Date:', 'art-routes'); ?>
         </label>
         <input type="date"
                id="edition_start_date"
@@ -298,7 +298,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
 
     <p>
         <label for="edition_end_date">
-            <?php esc_html_e('End Date:', 'wp-art-routes'); ?>
+            <?php esc_html_e('End Date:', 'art-routes'); ?>
         </label>
         <input type="date"
                id="edition_end_date"
@@ -308,7 +308,7 @@ function wp_art_routes_render_edition_dates_meta_box($post)
     </p>
 
     <p class="description">
-        <?php esc_html_e('Optional: Set the event dates for this edition.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Optional: Set the event dates for this edition.', 'art-routes'); ?>
     </p>
     <?php
 }
@@ -329,18 +329,18 @@ function wp_art_routes_render_edition_settings_meta_box($post)
 
     // Get global default for fallback label
     $global_default = get_option('wp_art_routes_default_location_icon', '');
-    $global_label = $global_default ? wp_art_routes_get_icon_display_name($global_default) : __('none', 'wp-art-routes');
+    $global_label = $global_default ? wp_art_routes_get_icon_display_name($global_default) : __('none', 'art-routes');
 
     ?>
     <p>
         <label for="edition_default_location_icon">
-            <?php esc_html_e('Default Location Icon:', 'wp-art-routes'); ?>
+            <?php esc_html_e('Default Location Icon:', 'art-routes'); ?>
         </label>
         <select name="edition_default_location_icon" id="edition_default_location_icon" class="widefat">
             <option value="">
                 <?php
                 /* translators: %s: global default icon name */
-                printf(esc_html__('Use global default (%s)', 'wp-art-routes'), esc_html($global_label));
+                printf(esc_html__('Use global default (%s)', 'art-routes'), esc_html($global_label));
                 ?>
             </option>
             <?php foreach ($available_icons as $icon_filename) : ?>
@@ -358,7 +358,7 @@ function wp_art_routes_render_edition_settings_meta_box($post)
     <?php endif; ?>
 
     <p class="description">
-        <?php esc_html_e('Default icon for locations in this edition that do not have an icon assigned.', 'wp-art-routes'); ?>
+        <?php esc_html_e('Default icon for locations in this edition that do not have an icon assigned.', 'art-routes'); ?>
     </p>
     <?php
 }
@@ -622,27 +622,27 @@ function wp_art_routes_enqueue_edition_delete_modal_assets($hook) {
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('wp_art_routes_edition_delete'),
         'strings' => [
-            'modalTitle' => __('Delete Edition', 'wp-art-routes'),
+            'modalTitle' => __('Delete Edition', 'art-routes'),
             /* translators: %s: edition title */
-            'deleteEdition' => __('Delete %s', 'wp-art-routes'),
+            'deleteEdition' => __('Delete %s', 'art-routes'),
             /* translators: %d: number of editions */
-            'deleteEditions' => __('Delete %d editions', 'wp-art-routes'),
-            'containsContent' => __('This edition contains:', 'wp-art-routes'),
-            'noContent' => __('This edition has no linked content.', 'wp-art-routes'),
-            'whatToDo' => __('What would you like to do?', 'wp-art-routes'),
-            'deleteEditionOnly' => __('Delete Edition Only', 'wp-art-routes'),
-            'deleteEverything' => __('Delete Everything', 'wp-art-routes'),
-            'delete' => __('Delete', 'wp-art-routes'),
-            'cancel' => __('Cancel', 'wp-art-routes'),
-            'deleting' => __('Deleting...', 'wp-art-routes'),
-            'loading' => __('Loading...', 'wp-art-routes'),
-            'error' => __('An error occurred. Please try again.', 'wp-art-routes'),
-            'route' => __('Route', 'wp-art-routes'),
-            'routes' => __('Routes', 'wp-art-routes'),
-            'location' => __('Location', 'wp-art-routes'),
-            'locations' => __('Locations', 'wp-art-routes'),
-            'infoPoint' => __('Info Point', 'wp-art-routes'),
-            'infoPoints' => __('Info Points', 'wp-art-routes'),
+            'deleteEditions' => __('Delete %d editions', 'art-routes'),
+            'containsContent' => __('This edition contains:', 'art-routes'),
+            'noContent' => __('This edition has no linked content.', 'art-routes'),
+            'whatToDo' => __('What would you like to do?', 'art-routes'),
+            'deleteEditionOnly' => __('Delete Edition Only', 'art-routes'),
+            'deleteEverything' => __('Delete Everything', 'art-routes'),
+            'delete' => __('Delete', 'art-routes'),
+            'cancel' => __('Cancel', 'art-routes'),
+            'deleting' => __('Deleting...', 'art-routes'),
+            'loading' => __('Loading...', 'art-routes'),
+            'error' => __('An error occurred. Please try again.', 'art-routes'),
+            'route' => __('Route', 'art-routes'),
+            'routes' => __('Routes', 'art-routes'),
+            'location' => __('Location', 'art-routes'),
+            'locations' => __('Locations', 'art-routes'),
+            'infoPoint' => __('Info Point', 'art-routes'),
+            'infoPoints' => __('Info Points', 'art-routes'),
         ],
     ]);
 }
@@ -656,14 +656,14 @@ function wp_art_routes_ajax_get_edition_content_counts() {
     check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
 
     if (!current_user_can('delete_posts')) {
-        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Permission denied.', 'art-routes')]);
     }
 
     // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
     $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
-        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('No editions specified.', 'art-routes')]);
     }
 
     $counts = [
@@ -730,14 +730,14 @@ function wp_art_routes_ajax_delete_edition_only() {
     check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
 
     if (!current_user_can('delete_posts')) {
-        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Permission denied.', 'art-routes')]);
     }
 
     // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
     $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
-        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('No editions specified.', 'art-routes')]);
     }
 
     $deleted_count = 0;
@@ -779,7 +779,7 @@ function wp_art_routes_ajax_delete_edition_only() {
         'unlinked' => $unlinked_count,
         'message' => sprintf(
             /* translators: 1: number of editions deleted, 2: number of items unlinked */
-            __('Deleted %1$d edition(s). %2$d item(s) were unlinked.', 'wp-art-routes'),
+            __('Deleted %1$d edition(s). %2$d item(s) were unlinked.', 'art-routes'),
             $deleted_count,
             $unlinked_count
         ),
@@ -795,14 +795,14 @@ function wp_art_routes_ajax_delete_edition_all() {
     check_ajax_referer('wp_art_routes_edition_delete', 'nonce');
 
     if (!current_user_can('delete_posts')) {
-        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Permission denied.', 'art-routes')]);
     }
 
     // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Array values are sanitized via absint.
     $edition_ids = isset($_POST['edition_ids']) ? array_map('absint', wp_unslash((array) $_POST['edition_ids'])) : [];
 
     if (empty($edition_ids)) {
-        wp_send_json_error(['message' => __('No editions specified.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('No editions specified.', 'art-routes')]);
     }
 
     $deleted_editions = 0;
@@ -874,7 +874,7 @@ function wp_art_routes_ajax_delete_edition_all() {
         'deleted_info_points' => $deleted_info_points,
         'message' => sprintf(
             /* translators: 1: editions, 2: routes, 3: locations, 4: info points */
-            __('Deleted %1$d edition(s), %2$d route(s), %3$d location(s), %4$d info point(s).', 'wp-art-routes'),
+            __('Deleted %1$d edition(s), %2$d route(s), %3$d location(s), %4$d info point(s).', 'art-routes'),
             $deleted_editions,
             $deleted_routes,
             $deleted_locations,

@@ -44,19 +44,19 @@ $info_point_label_plural = wp_art_routes_label('info_point', true, $edition_id);
 $route_types = [
     'walking' => [
         'icon' => 'dashicons dashicons-admin-users',
-        'label' => __('Walking route', 'wp-art-routes')
+        'label' => __('Walking route', 'art-routes')
     ],
     'cycling' => [
         'icon' => 'dashicons dashicons-controls-repeat',
-        'label' => __('Bicycle route', 'wp-art-routes')
+        'label' => __('Bicycle route', 'art-routes')
     ],
     'wheelchair' => [
         'icon' => 'dashicons dashicons-universal-access',
-        'label' => __('Wheelchair friendly', 'wp-art-routes')
+        'label' => __('Wheelchair friendly', 'art-routes')
     ],
     'children' => [
         'icon' => 'dashicons dashicons-buddicons-groups',
-        'label' => __('Child-friendly route', 'wp-art-routes')
+        'label' => __('Child-friendly route', 'art-routes')
     ],
 ];
 
@@ -72,7 +72,7 @@ $route_types = [
                     <span class="dashicons dashicons-admin-site"></span>
                     <?php
                     /* translators: %s: route label plural */
-                    printf(esc_html__('Show All %s', 'wp-art-routes'), esc_html($route_label_plural));
+                    printf(esc_html__('Show All %s', 'art-routes'), esc_html($route_label_plural));
                     ?>
                 </button>
             <?php endif; ?>
@@ -87,7 +87,7 @@ $route_types = [
                                 <span class="edition-route-color-indicator" style="background-color: <?php echo esc_attr($color); ?>;"></span>
                                 <span class="edition-route-title"><?php echo esc_html($route['title']); ?></span>
                             </div>
-                            <a href="<?php echo esc_url($route['url']); ?>" class="edition-route-link" title="<?php esc_attr_e('View route details', 'wp-art-routes'); ?>">
+                            <a href="<?php echo esc_url($route['url']); ?>" class="edition-route-link" title="<?php esc_attr_e('View route details', 'art-routes'); ?>">
                                 <span class="dashicons dashicons-arrow-right-alt2"></span>
                             </a>
                         </div>
@@ -119,7 +119,7 @@ $route_types = [
                             <span class="dashicons dashicons-search"></span>
                             <?php
                             /* translators: %s: route label singular */
-                            printf(esc_html__('Zoom to %s', 'wp-art-routes'), esc_html($route_label_singular));
+                            printf(esc_html__('Zoom to %s', 'art-routes'), esc_html($route_label_singular));
                             ?>
                         </button>
                     </li>
@@ -135,14 +135,14 @@ $route_types = [
         <!-- Loading indicator -->
         <div id="map-loading-<?php echo esc_attr($map_id); ?>" class="map-loading" style="display: none;">
             <div class="spinner"></div>
-            <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('Loading map...', 'art-routes'); ?></p>
         </div>
     </div>
 
     <?php if ($atts['show_legend']) : ?>
         <!-- Map Controls -->
         <div class="edition-map-controls">
-            <h4 class="edition-map-controls-title"><?php esc_html_e('Map Display Options', 'wp-art-routes'); ?></h4>
+            <h4 class="edition-map-controls-title"><?php esc_html_e('Map Display Options', 'art-routes'); ?></h4>
             <div class="edition-map-controls-grid">
                 <?php if (!empty($routes)) : ?>
                     <label class="edition-map-control-item">
@@ -151,7 +151,7 @@ $route_types = [
                         <span class="edition-map-control-label">
                             <?php
                             /* translators: %s: route label plural */
-                            printf(esc_html__('Show %s', 'wp-art-routes'), esc_html($route_label_plural));
+                            printf(esc_html__('Show %s', 'art-routes'), esc_html($route_label_plural));
                             ?>
                         </span>
                     </label>
@@ -164,7 +164,7 @@ $route_types = [
                         <span class="edition-map-control-label">
                             <?php
                             /* translators: %s: location label plural */
-                            printf(esc_html__('Show %s', 'wp-art-routes'), esc_html($location_label_plural));
+                            printf(esc_html__('Show %s', 'art-routes'), esc_html($location_label_plural));
                             ?>
                         </span>
                     </label>
@@ -177,7 +177,7 @@ $route_types = [
                         <span class="edition-map-control-label">
                             <?php
                             /* translators: %s: info point label plural */
-                            printf(esc_html__('Show %s', 'wp-art-routes'), esc_html($info_point_label_plural));
+                            printf(esc_html__('Show %s', 'art-routes'), esc_html($info_point_label_plural));
                             ?>
                         </span>
                     </label>

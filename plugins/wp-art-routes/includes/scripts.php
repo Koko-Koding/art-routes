@@ -90,8 +90,8 @@ function wp_art_routes_register_frontend_assets()
 
     // Localize i18n for edition map
     wp_localize_script('wp-art-routes-edition-map-js', 'wpArtRoutesEditionMapI18n', [
-        'viewDetails' => __('View details', 'wp-art-routes'),
-        'readMore'    => __('Read more', 'wp-art-routes'),
+        'viewDetails' => __('View details', 'art-routes'),
+        'readMore'    => __('Read more', 'art-routes'),
     ]);
 
     // Multiple routes map JS
@@ -105,8 +105,8 @@ function wp_art_routes_register_frontend_assets()
 
     // Localize i18n for multiple routes map
     wp_localize_script('wp-art-routes-multiple-routes-map-js', 'wpArtRoutesMultiMapI18n', [
-        'showAllRoutes' => __('Show All Routes', 'wp-art-routes'),
-        'readMore'      => __('Read more', 'wp-art-routes'),
+        'showAllRoutes' => __('Show All Routes', 'art-routes'),
+        'readMore'      => __('Read more', 'art-routes'),
     ]);
 
     // Single artwork map JS
@@ -213,8 +213,8 @@ function wp_art_routes_enqueue_scripts()
             'show_artwork_toasts' => $route_data['show_artwork_toasts'],
             'plugin_url' => WP_ART_ROUTES_PLUGIN_URL,
             'i18n' => [
-                'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
-                'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
+                'routeComplete' => __('Congratulations! You have completed this route!', 'art-routes'),
+                'nearbyArtwork' => __('You are near an artwork!', 'art-routes'),
             ],
         ];
         wp_localize_script('wp-art-routes-map-js', 'artRouteData', $js_data);
@@ -255,12 +255,12 @@ function wp_art_routes_enqueue_admin_scripts($hook)
         wp_localize_script('wp-art-routes-custom-icons-js', 'wpArtRoutesCustomIcons', [
             'deleteNonce' => wp_create_nonce('wp_art_routes_delete_icon'),
             'i18n' => [
-                'uploading'     => __('Uploading...', 'wp-art-routes'),
-                'uploadFailed'  => __('Upload failed.', 'wp-art-routes'),
-                'confirmDelete' => __('Are you sure you want to delete this icon? This cannot be undone.', 'wp-art-routes'),
-                'deleting'      => __('Deleting...', 'wp-art-routes'),
-                'deleteFailed'  => __('Delete failed.', 'wp-art-routes'),
-                'deleteBtn'     => __('Delete', 'wp-art-routes'),
+                'uploading'     => __('Uploading...', 'art-routes'),
+                'uploadFailed'  => __('Upload failed.', 'art-routes'),
+                'confirmDelete' => __('Are you sure you want to delete this icon? This cannot be undone.', 'art-routes'),
+                'deleting'      => __('Deleting...', 'art-routes'),
+                'deleteFailed'  => __('Delete failed.', 'art-routes'),
+                'deleteBtn'     => __('Delete', 'art-routes'),
             ],
         ]);
     }
@@ -283,7 +283,7 @@ function wp_art_routes_enqueue_admin_scripts($hook)
         wp_localize_script('wp-art-routes-import-export-js', 'wpArtRoutesImportExport', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'i18n' => [
-                'selectEdition' => __('Please select an edition.', 'wp-art-routes'),
+                'selectEdition' => __('Please select an edition.', 'art-routes'),
             ],
         ]);
     }
@@ -355,18 +355,18 @@ function wp_art_routes_enqueue_admin_scripts($hook)
                 'save_points_nonce' => wp_create_nonce('save_route_points_nonce'),
                 'route_id' => isset($post) ? $post->ID : 0,
                 'i18n' => [
-                    'addArtwork' => __('Add Artwork', 'wp-art-routes'),
-                    'addInfoPoint' => __('Add Info Point', 'wp-art-routes'),
-                    'artwork' => __('Artwork', 'wp-art-routes'),
-                    'infoPoint' => __('Info Point', 'wp-art-routes'),
-                    'edit' => __('Edit', 'wp-art-routes'),
-                    'remove' => __('Remove', 'wp-art-routes'),
-                    'confirmRemove' => __('Are you sure you want to remove this point from the route?', 'wp-art-routes'),
-                    'errorLoadingPoints' => __('Error loading points for this route.', 'wp-art-routes'),
-                    'errorSavingPoints' => __('Error saving points.', 'wp-art-routes'),
-                    'savingPoints' => __('Saving points...', 'wp-art-routes'),
-                    'pointsSaved' => __('Points saved successfully.', 'wp-art-routes'),
-                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'wp-art-routes'),
+                    'addArtwork' => __('Add Artwork', 'art-routes'),
+                    'addInfoPoint' => __('Add Info Point', 'art-routes'),
+                    'artwork' => __('Artwork', 'art-routes'),
+                    'infoPoint' => __('Info Point', 'art-routes'),
+                    'edit' => __('Edit', 'art-routes'),
+                    'remove' => __('Remove', 'art-routes'),
+                    'confirmRemove' => __('Are you sure you want to remove this point from the route?', 'art-routes'),
+                    'errorLoadingPoints' => __('Error loading points for this route.', 'art-routes'),
+                    'errorSavingPoints' => __('Error saving points.', 'art-routes'),
+                    'savingPoints' => __('Saving points...', 'art-routes'),
+                    'pointsSaved' => __('Points saved successfully.', 'art-routes'),
+                    'draftWarning' => __('Warning: This point is a draft and won\'t be visible on the public map.', 'art-routes'),
                 ]
             ]
         );
@@ -418,7 +418,7 @@ function wp_art_routes_enqueue_admin_scripts($hook)
             );
             wp_localize_script('wp-art-routes-artist-search-js', 'wpArtRoutesArtistSearch', [
                 'nonce'      => wp_create_nonce('artist_search_nonce'),
-                'removeText' => __('Remove', 'wp-art-routes'),
+                'removeText' => __('Remove', 'art-routes'),
             ]);
         }
     }
@@ -480,45 +480,45 @@ function wp_art_routes_get_route_editor_modal_html()
     <div id="route-editor-modal" class="route-editor-modal" style="display: none;">
         <div class="route-editor-modal-content">
             <div class="route-editor-header">
-                <h2><?php esc_html_e('Route Editor', 'wp-art-routes'); ?></h2>
+                <h2><?php esc_html_e('Route Editor', 'art-routes'); ?></h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="route-editor-body">
                 <div class="route-editor-controls">
-                    <h4><?php esc_html_e('Route Path', 'wp-art-routes'); ?></h4>
-                    <button id="start-drawing" class="button"><?php esc_html_e('Start Drawing', 'wp-art-routes'); ?></button>
-                    <button id="stop-drawing" class="button"><?php esc_html_e('Stop Drawing', 'wp-art-routes'); ?></button>
-                    <button id="clear-route" class="button button-secondary"><?php esc_html_e('Clear Path', 'wp-art-routes'); ?></button>
-                    <p id="drawing-instructions" class="description"><?php esc_html_e('Select an action.', 'wp-art-routes'); ?></p>
+                    <h4><?php esc_html_e('Route Path', 'art-routes'); ?></h4>
+                    <button id="start-drawing" class="button"><?php esc_html_e('Start Drawing', 'art-routes'); ?></button>
+                    <button id="stop-drawing" class="button"><?php esc_html_e('Stop Drawing', 'art-routes'); ?></button>
+                    <button id="clear-route" class="button button-secondary"><?php esc_html_e('Clear Path', 'art-routes'); ?></button>
+                    <p id="drawing-instructions" class="description"><?php esc_html_e('Select an action.', 'art-routes'); ?></p>
 
-                    <h4><?php esc_html_e('Points of Interest', 'wp-art-routes'); ?></h4>
-                    <button id="add-artwork" class="button"><?php esc_html_e('Add Artwork', 'wp-art-routes'); ?></button>
-                    <button id="add-info-point" class="button"><?php esc_html_e('Add Info Point', 'wp-art-routes'); ?></button>
+                    <h4><?php esc_html_e('Points of Interest', 'art-routes'); ?></h4>
+                    <button id="add-artwork" class="button"><?php esc_html_e('Add Artwork', 'art-routes'); ?></button>
+                    <button id="add-info-point" class="button"><?php esc_html_e('Add Info Point', 'art-routes'); ?></button>
                     <p id="adding-point-info" class="description" style="display: none;"></p>
 
-                    <h4><?php esc_html_e('Map View', 'wp-art-routes'); ?></h4>
-                    <button id="fit-route-bounds" class="button"><?php esc_html_e('Fit Route', 'wp-art-routes'); ?></button>
-                    <button id="locate-user" class="button"><?php esc_html_e('My Location', 'wp-art-routes'); ?></button>
+                    <h4><?php esc_html_e('Map View', 'art-routes'); ?></h4>
+                    <button id="fit-route-bounds" class="button"><?php esc_html_e('Fit Route', 'art-routes'); ?></button>
+                    <button id="locate-user" class="button"><?php esc_html_e('My Location', 'art-routes'); ?></button>
 
-                    <h4><?php esc_html_e('Search Location', 'wp-art-routes'); ?></h4>
-                    <input type="text" id="route-search" placeholder="<?php esc_attr_e('Enter address or place...', 'wp-art-routes'); ?>" />
-                    <button id="search-location" class="button"><?php esc_html_e('Search', 'wp-art-routes'); ?></button>
+                    <h4><?php esc_html_e('Search Location', 'art-routes'); ?></h4>
+                    <input type="text" id="route-search" placeholder="<?php esc_attr_e('Enter address or place...', 'art-routes'); ?>" />
+                    <button id="search-location" class="button"><?php esc_html_e('Search', 'art-routes'); ?></button>
                 </div>
                 <div class="control-info">
-                    <p id="drawing-instructions"><?php esc_html_e('Use controls above to draw the route or add points. Click on the map to place items.', 'wp-art-routes'); ?></p>
+                    <p id="drawing-instructions"><?php esc_html_e('Use controls above to draw the route or add points. Click on the map to place items.', 'art-routes'); ?></p>
                     <p>
-                        <span id="point-count">0</span> <?php esc_html_e('route points', 'wp-art-routes'); ?> |
-                        <span id="artwork-count">0</span> <?php esc_html_e('artworks', 'wp-art-routes'); ?> |
-                        <span id="info-point-count">0</span> <?php esc_html_e('info points', 'wp-art-routes'); ?>
+                        <span id="point-count">0</span> <?php esc_html_e('route points', 'art-routes'); ?> |
+                        <span id="artwork-count">0</span> <?php esc_html_e('artworks', 'art-routes'); ?> |
+                        <span id="info-point-count">0</span> <?php esc_html_e('info points', 'art-routes'); ?>
                     </p>
-                    <p><?php esc_html_e('Route distance:', 'wp-art-routes'); ?> <span id="route-distance">0</span> km</p>
+                    <p><?php esc_html_e('Route distance:', 'art-routes'); ?> <span id="route-distance">0</span> km</p>
                     <p id="save-status" style="color: green; font-weight: bold;"></p>
                 </div>
                 <div id="route-editor-map"></div>
             </div>
             <div class="route-editor-footer">
-                <button type="button" class="button button-secondary" id="cancel-route"><?php esc_html_e('Close', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-route"><?php esc_html_e('Save Changes', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-route"><?php esc_html_e('Close', 'art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-route"><?php esc_html_e('Save Changes', 'art-routes'); ?></button>
             </div>
         </div>
     </div>
@@ -536,27 +536,27 @@ function wp_art_routes_get_location_picker_modal_html()
     <div id="artwork-location-modal" class="location-picker-modal" style="display: none;">
         <div class="location-picker-modal-content">
             <div class="location-picker-header">
-                <h2><?php esc_html_e('Pick Artwork Location', 'wp-art-routes'); ?></h2>
+                <h2><?php esc_html_e('Pick Artwork Location', 'art-routes'); ?></h2>
                 <span class="close-modal">&times;</span>
             </div>
             <div class="location-picker-body">
                 <div class="location-picker-controls">
                     <div class="control-group">
-                        <label for="location-search"><?php esc_html_e('Search Location:', 'wp-art-routes'); ?></label>
-                        <input type="text" id="location-search" class="regular-text" placeholder="<?php esc_html_e('Enter location...', 'wp-art-routes'); ?>">
-                        <button type="button" class="button" id="search-artwork-location"><?php esc_html_e('Search', 'wp-art-routes'); ?></button>
+                        <label for="location-search"><?php esc_html_e('Search Location:', 'art-routes'); ?></label>
+                        <input type="text" id="location-search" class="regular-text" placeholder="<?php esc_html_e('Enter location...', 'art-routes'); ?>">
+                        <button type="button" class="button" id="search-artwork-location"><?php esc_html_e('Search', 'art-routes'); ?></button>
                     </div>
                     <div class="control-info">
-                        <p><?php esc_html_e('Click on the map to select the artwork location.', 'wp-art-routes'); ?></p>
-                        <p><?php esc_html_e('Selected coordinates:', 'wp-art-routes'); ?></p>
+                        <p><?php esc_html_e('Click on the map to select the artwork location.', 'art-routes'); ?></p>
+                        <p><?php esc_html_e('Selected coordinates:', 'art-routes'); ?></p>
                         <p id="selected-coordinates">None</p>
                     </div>
                 </div>
                 <div id="location-picker-map"></div>
             </div>
             <div class="location-picker-footer">
-                <button type="button" class="button button-secondary" id="cancel-location"><?php esc_html_e('Cancel', 'wp-art-routes'); ?></button>
-                <button type="button" class="button button-primary" id="save-location"><?php esc_html_e('Save Location', 'wp-art-routes'); ?></button>
+                <button type="button" class="button button-secondary" id="cancel-location"><?php esc_html_e('Cancel', 'art-routes'); ?></button>
+                <button type="button" class="button button-primary" id="save-location"><?php esc_html_e('Save Location', 'art-routes'); ?></button>
             </div>
         </div>
     </div>

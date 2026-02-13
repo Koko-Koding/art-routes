@@ -60,16 +60,16 @@ get_header();
                         if ($formatted_start && $formatted_end) {
                             printf(
                                 /* translators: %1$s: start date, %2$s: end date */
-                                esc_html__('%1$s - %2$s', 'wp-art-routes'),
+                                esc_html__('%1$s - %2$s', 'art-routes'),
                                 esc_html($formatted_start),
                                 esc_html($formatted_end)
                             );
                         } elseif ($formatted_start) {
                             /* translators: %s: start date */
-                            printf(esc_html__('Starting %s', 'wp-art-routes'), esc_html($formatted_start));
+                            printf(esc_html__('Starting %s', 'art-routes'), esc_html($formatted_start));
                         } elseif ($formatted_end) {
                             /* translators: %s: end date */
-                            printf(esc_html__('Until %s', 'wp-art-routes'), esc_html($formatted_end));
+                            printf(esc_html__('Until %s', 'art-routes'), esc_html($formatted_end));
                         }
                         ?>
                     </div>
@@ -98,13 +98,13 @@ get_header();
                 $js_data = wp_art_routes_prepare_edition_map_data($edition_id, $routes, $artworks, $info_points);
             ?>
                 <section class="edition-map-section">
-                    <h2 class="edition-section-title"><?php esc_html_e('Map', 'wp-art-routes'); ?></h2>
+                    <h2 class="edition-section-title"><?php esc_html_e('Map', 'art-routes'); ?></h2>
                     <div id="<?php echo esc_attr($map_id); ?>" class="edition-map" style="height: 500px;"></div>
 
                     <!-- Loading indicator -->
                     <div id="map-loading-<?php echo esc_attr($map_id); ?>" class="map-loading" style="display: none;">
                         <div class="spinner"></div>
-                        <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
+                        <p><?php esc_html_e('Loading map...', 'art-routes'); ?></p>
                     </div>
                 </section>
 
@@ -171,7 +171,7 @@ get_header();
                                     <a href="<?php echo esc_url(get_permalink($route['id'])); ?>" class="route-card-link">
                                         <?php
                                         /* translators: %s: route label singular */
-                                        printf(esc_html__('View %s', 'wp-art-routes'), esc_html($route_label_singular));
+                                        printf(esc_html__('View %s', 'art-routes'), esc_html($route_label_singular));
                                         ?>
                                     </a>
                                 </div>
@@ -238,7 +238,7 @@ get_header();
                                     <a href="<?php echo esc_url($artwork['permalink']); ?>" class="location-card-link">
                                         <?php
                                         /* translators: %s: location label singular */
-                                        printf(esc_html__('View %s', 'wp-art-routes'), esc_html($location_label_singular));
+                                        printf(esc_html__('View %s', 'art-routes'), esc_html($location_label_singular));
                                         ?>
                                     </a>
                                 </div>

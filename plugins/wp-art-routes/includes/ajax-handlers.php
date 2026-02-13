@@ -144,7 +144,7 @@ function wp_ajax_get_route_points()
     check_ajax_referer('get_route_points_nonce', 'nonce');
 
     if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
-        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Invalid request or permissions.', 'art-routes')]);
     }
 
     $route_id = intval(wp_unslash($_POST['route_id']));
@@ -162,7 +162,7 @@ function wp_ajax_save_route_points()
     check_ajax_referer('save_route_points_nonce', 'nonce');
 
     if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
-        wp_send_json_error(['message' => __('Invalid request or permissions.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Invalid request or permissions.', 'art-routes')]);
     }
 
     $route_id = intval(wp_unslash($_POST['route_id']));
@@ -239,7 +239,7 @@ function wp_ajax_save_route_points()
             if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
                 $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
                 /* translators: %1$s: latitude coordinate, %2$s: longitude coordinate */
-                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %1$s, %2$s', 'wp-art-routes'), $lat, $lng) : sprintf(__('New Info Point near %1$s, %2$s', 'wp-art-routes'), $lat, $lng);
+                $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %1$s, %2$s', 'art-routes'), $lat, $lng) : sprintf(__('New Info Point near %1$s, %2$s', 'art-routes'), $lat, $lng);
 
                 $new_post_id = wp_insert_post([
                     'post_title' => $post_title,
@@ -391,20 +391,20 @@ function wp_art_routes_ajax_export_gpx()
     // Verify nonce - for GET requests, the nonce is in the URL parameter
     $nonce = isset($_GET['_wpnonce']) ? sanitize_text_field(wp_unslash($_GET['_wpnonce'])) : '';
     if (!wp_verify_nonce($nonce, 'wp_art_routes_export_gpx')) {
-        wp_die(esc_html__('Security check failed', 'wp-art-routes'));
+        wp_die(esc_html__('Security check failed', 'art-routes'));
     }
 
     $route_id = isset($_GET['route_id']) ? intval(wp_unslash($_GET['route_id'])) : 0;
 
     if ($route_id <= 0) {
-        wp_die(esc_html__('Invalid route ID', 'wp-art-routes'));
+        wp_die(esc_html__('Invalid route ID', 'art-routes'));
     }
 
     // Get route data
     $route_data = wp_art_routes_get_route_data($route_id);
 
     if (!$route_data) {
-        wp_die(esc_html__('Route not found', 'wp-art-routes'));
+        wp_die(esc_html__('Route not found', 'art-routes'));
     }
 
     // Generate GPX content

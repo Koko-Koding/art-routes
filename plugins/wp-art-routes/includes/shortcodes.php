@@ -229,13 +229,13 @@ function wp_art_routes_edition_map_shortcode($atts)
 
     // Still no edition? Show placeholder
     if (!$edition_id) {
-        return '<div class="edition-map-placeholder"><p>' . __('Please select an Edition.', 'wp-art-routes') . '</p></div>';
+        return '<div class="edition-map-placeholder"><p>' . __('Please select an Edition.', 'art-routes') . '</p></div>';
     }
 
     // Get edition data to verify it exists
     $edition = wp_art_routes_get_edition_data($edition_id);
     if (!$edition) {
-        return '<div class="edition-map-placeholder"><p>' . __('Edition not found.', 'wp-art-routes') . '</p></div>';
+        return '<div class="edition-map-placeholder"><p>' . __('Edition not found.', 'art-routes') . '</p></div>';
     }
 
     // Get routes based on parameter
@@ -270,7 +270,7 @@ function wp_art_routes_edition_map_shortcode($atts)
 
     // Check if there's any content to display
     if (empty($routes) && empty($artworks) && empty($info_points)) {
-        return '<div class="edition-map-placeholder"><p>' . __('No map content found for this edition.', 'wp-art-routes') . '</p></div>';
+        return '<div class="edition-map-placeholder"><p>' . __('No map content found for this edition.', 'art-routes') . '</p></div>';
     }
 
     // Start output buffering

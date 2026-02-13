@@ -17,14 +17,14 @@ function wp_art_routes_register_post_types()
     // Register Routes post type
     register_post_type('art_route', [
         'labels' => [
-            'name' => __('Routes', 'wp-art-routes'),
-            'singular_name' => __('Route', 'wp-art-routes'),
-            'add_new' => __('Add New Route', 'wp-art-routes'),
-            'add_new_item' => __('Add New Route', 'wp-art-routes'),
-            'edit_item' => __('Edit Route', 'wp-art-routes'),
-            'view_item' => __('View Route', 'wp-art-routes'),
-            'search_items' => __('Search Routes', 'wp-art-routes'),
-            'not_found' => __('No routes found', 'wp-art-routes'),
+            'name' => __('Routes', 'art-routes'),
+            'singular_name' => __('Route', 'art-routes'),
+            'add_new' => __('Add New Route', 'art-routes'),
+            'add_new_item' => __('Add New Route', 'art-routes'),
+            'edit_item' => __('Edit Route', 'art-routes'),
+            'view_item' => __('View Route', 'art-routes'),
+            'search_items' => __('Search Routes', 'art-routes'),
+            'not_found' => __('No routes found', 'art-routes'),
         ],
         'public' => true,
         'has_archive' => true,
@@ -38,14 +38,14 @@ function wp_art_routes_register_post_types()
     // Register Artworks post type
     register_post_type('artwork', [
         'labels' => [
-            'name' => __('Artworks', 'wp-art-routes'),
-            'singular_name' => __('Artwork', 'wp-art-routes'),
-            'add_new' => __('Add New Artwork', 'wp-art-routes'),
-            'add_new_item' => __('Add New Artwork', 'wp-art-routes'),
-            'edit_item' => __('Edit Artwork', 'wp-art-routes'),
-            'view_item' => __('View Artwork', 'wp-art-routes'),
-            'search_items' => __('Search Artworks', 'wp-art-routes'),
-            'not_found' => __('No artworks found', 'wp-art-routes'),
+            'name' => __('Artworks', 'art-routes'),
+            'singular_name' => __('Artwork', 'art-routes'),
+            'add_new' => __('Add New Artwork', 'art-routes'),
+            'add_new_item' => __('Add New Artwork', 'art-routes'),
+            'edit_item' => __('Edit Artwork', 'art-routes'),
+            'view_item' => __('View Artwork', 'art-routes'),
+            'search_items' => __('Search Artworks', 'art-routes'),
+            'not_found' => __('No artworks found', 'art-routes'),
         ],
         'public' => true,
         'has_archive' => true,
@@ -59,14 +59,14 @@ function wp_art_routes_register_post_types()
     // Register Information Points post type
     register_post_type('information_point', [
         'labels' => [
-            'name' => __('Information Points', 'wp-art-routes'),
-            'singular_name' => __('Information Point', 'wp-art-routes'),
-            'add_new' => __('Add New Info Point', 'wp-art-routes'),
-            'add_new_item' => __('Add New Info Point', 'wp-art-routes'),
-            'edit_item' => __('Edit Info Point', 'wp-art-routes'),
-            'view_item' => __('View Info Point', 'wp-art-routes'),
-            'search_items' => __('Search Info Points', 'wp-art-routes'),
-            'not_found' => __('No info points found', 'wp-art-routes'),
+            'name' => __('Information Points', 'art-routes'),
+            'singular_name' => __('Information Point', 'art-routes'),
+            'add_new' => __('Add New Info Point', 'art-routes'),
+            'add_new_item' => __('Add New Info Point', 'art-routes'),
+            'edit_item' => __('Edit Info Point', 'art-routes'),
+            'view_item' => __('View Info Point', 'art-routes'),
+            'search_items' => __('Search Info Points', 'art-routes'),
+            'not_found' => __('No info points found', 'art-routes'),
         ],
         'public' => true,
         'has_archive' => true,
@@ -236,7 +236,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Artwork latitude coordinate', 'wp-art-routes'),
+            'description' => __('Artwork latitude coordinate', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -250,7 +250,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Artwork longitude coordinate', 'wp-art-routes'),
+            'description' => __('Artwork longitude coordinate', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -264,7 +264,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return update_post_meta($post->ID, '_artwork_number', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Artwork number', 'wp-art-routes'),
+            'description' => __('Artwork number', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -278,7 +278,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return update_post_meta($post->ID, '_artwork_location', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Artwork location description', 'wp-art-routes'),
+            'description' => __('Artwork location description', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -293,7 +293,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return update_post_meta($post->ID, '_artwork_icon', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Artwork icon filename', 'wp-art-routes'),
+            'description' => __('Artwork icon filename', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -310,7 +310,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return '';
         },
         'schema' => [
-            'description' => __('Artwork icon URL', 'wp-art-routes'),
+            'description' => __('Artwork icon URL', 'art-routes'),
             'type' => 'string',
             'format' => 'uri',
             'context' => ['view', 'edit'],
@@ -323,7 +323,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return get_post_meta($post['id'], '_wheelchair_accessible', true);
         },
         'schema' => [
-            'description' => __('Wheelchair accessible', 'wp-art-routes'),
+            'description' => __('Wheelchair accessible', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -333,7 +333,7 @@ function wp_art_routes_register_artwork_rest_fields()
             return get_post_meta($post['id'], '_stroller_accessible', true);
         },
         'schema' => [
-            'description' => __('Stroller accessible', 'wp-art-routes'),
+            'description' => __('Stroller accessible', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -354,7 +354,7 @@ function wp_art_routes_register_information_point_rest_fields()
             return update_post_meta($post->ID, '_artwork_latitude', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Information point latitude coordinate', 'wp-art-routes'),
+            'description' => __('Information point latitude coordinate', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -368,7 +368,7 @@ function wp_art_routes_register_information_point_rest_fields()
             return update_post_meta($post->ID, '_artwork_longitude', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Information point longitude coordinate', 'wp-art-routes'),
+            'description' => __('Information point longitude coordinate', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -383,7 +383,7 @@ function wp_art_routes_register_information_point_rest_fields()
             return update_post_meta($post->ID, '_info_point_icon', sanitize_text_field($value));
         },
         'schema' => [
-            'description' => __('Information point icon filename', 'wp-art-routes'),
+            'description' => __('Information point icon filename', 'art-routes'),
             'type' => 'string',
             'context' => ['view', 'edit'],
         ],
@@ -405,7 +405,7 @@ function wp_art_routes_register_information_point_rest_fields()
             return wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
         },
         'schema' => [
-            'description' => __('Information point icon URL', 'wp-art-routes'),
+            'description' => __('Information point icon URL', 'art-routes'),
             'type' => 'string',
             'format' => 'uri',
             'context' => ['view', 'edit'],
@@ -420,8 +420,8 @@ add_filter('manage_artwork_posts_columns', function ($columns) {
     foreach ($columns as $key => $label) {
         $new_columns[$key] = $label;
         if ($key === 'title') {
-            $new_columns['artwork_number'] = __('Number', 'wp-art-routes');
-            $new_columns['artwork_artists'] = __('Artists', 'wp-art-routes');
+            $new_columns['artwork_number'] = __('Number', 'art-routes');
+            $new_columns['artwork_artists'] = __('Artists', 'art-routes');
         }
     }
     return $new_columns;
@@ -476,7 +476,7 @@ function wp_art_routes_add_edition_column($columns) {
     foreach ($columns as $key => $label) {
         $new_columns[$key] = $label;
         if ($key === 'title') {
-            $new_columns['edition'] = __('Edition', 'wp-art-routes');
+            $new_columns['edition'] = __('Edition', 'art-routes');
         }
     }
     return $new_columns;
@@ -491,7 +491,7 @@ add_filter('manage_artwork_posts_columns', function($columns) {
         $new_columns[$key] = $label;
         // Insert edition after artwork_artists (which comes after title)
         if ($key === 'artwork_artists') {
-            $new_columns['edition'] = __('Edition', 'wp-art-routes');
+            $new_columns['edition'] = __('Edition', 'art-routes');
         }
     }
     return $new_columns;
@@ -516,7 +516,7 @@ function wp_art_routes_render_edition_column($column, $post_id) {
                 echo '—';
             }
         } else {
-            echo '<span style="color:#999;">— ' . esc_html__('None', 'wp-art-routes') . ' —</span>';
+            echo '<span style="color:#999;">— ' . esc_html__('None', 'art-routes') . ' —</span>';
         }
     }
 }
@@ -539,8 +539,8 @@ function wp_art_routes_add_edition_filter() {
 
     ?>
     <select name="edition_filter">
-        <option value="0"><?php esc_html_e('All Editions', 'wp-art-routes'); ?></option>
-        <option value="-1" <?php selected($current_edition, -1); ?>><?php esc_html_e('No Edition', 'wp-art-routes'); ?></option>
+        <option value="0"><?php esc_html_e('All Editions', 'art-routes'); ?></option>
+        <option value="-1" <?php selected($current_edition, -1); ?>><?php esc_html_e('No Edition', 'art-routes'); ?></option>
         <?php foreach ($editions as $edition) : ?>
             <option value="<?php echo esc_attr($edition->ID); ?>" <?php selected($current_edition, $edition->ID); ?>>
                 <?php echo esc_html($edition->post_title); ?>

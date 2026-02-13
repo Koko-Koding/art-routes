@@ -9,7 +9,7 @@
 if (!defined('ABSPATH')) exit;
 
 if (empty($routes)) {
-    echo '<div class="art-route-icons-empty">' . esc_html__('No routes found.', 'wp-art-routes') . '</div>';
+    echo '<div class="art-route-icons-empty">' . esc_html__('No routes found.', 'art-routes') . '</div>';
     return;
 }
 

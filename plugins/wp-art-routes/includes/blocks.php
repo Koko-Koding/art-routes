@@ -44,7 +44,7 @@ function wp_art_routes_register_blocks()
     $editions_options = [
         [
             'value' => 0,
-            'label' => __('Auto-detect from context', 'wp-art-routes'),
+            'label' => __('Auto-detect from context', 'art-routes'),
         ],
     ];
 
@@ -59,31 +59,31 @@ function wp_art_routes_register_blocks()
     wp_localize_script('wp-art-routes-edition-map-block', 'wpArtRoutesBlockData', [
         'editions' => $editions_options,
         'i18n' => [
-            'blockTitle' => __('Edition Map', 'wp-art-routes'),
-            'blockDescription' => __('Display an interactive map for an Edition with routes, locations, and info points.', 'wp-art-routes'),
-            'editionLabel' => __('Edition', 'wp-art-routes'),
-            'editionHelp' => __('Select an edition or use auto-detect to determine from page context.', 'wp-art-routes'),
-            'displayOptionsTitle' => __('Display Options', 'wp-art-routes'),
-            'showRoutesLabel' => __('Show Routes', 'wp-art-routes'),
-            'showLocationsLabel' => __('Show Locations', 'wp-art-routes'),
-            'showInfoPointsLabel' => __('Show Info Points', 'wp-art-routes'),
-            'showLegendLabel' => __('Show Legend', 'wp-art-routes'),
-            'mapSettingsTitle' => __('Map Settings', 'wp-art-routes'),
-            'heightLabel' => __('Map Height', 'wp-art-routes'),
-            'heightHelp' => __('Enter a CSS value (e.g., 500px, 50vh)', 'wp-art-routes'),
-            'previewNote' => __('Note: The map preview may differ from the frontend display.', 'wp-art-routes'),
-            'noEditionSelected' => __('Please select an Edition or the block will auto-detect from the page context.', 'wp-art-routes'),
+            'blockTitle' => __('Edition Map', 'art-routes'),
+            'blockDescription' => __('Display an interactive map for an Edition with routes, locations, and info points.', 'art-routes'),
+            'editionLabel' => __('Edition', 'art-routes'),
+            'editionHelp' => __('Select an edition or use auto-detect to determine from page context.', 'art-routes'),
+            'displayOptionsTitle' => __('Display Options', 'art-routes'),
+            'showRoutesLabel' => __('Show Routes', 'art-routes'),
+            'showLocationsLabel' => __('Show Locations', 'art-routes'),
+            'showInfoPointsLabel' => __('Show Info Points', 'art-routes'),
+            'showLegendLabel' => __('Show Legend', 'art-routes'),
+            'mapSettingsTitle' => __('Map Settings', 'art-routes'),
+            'heightLabel' => __('Map Height', 'art-routes'),
+            'heightHelp' => __('Enter a CSS value (e.g., 500px, 50vh)', 'art-routes'),
+            'previewNote' => __('Note: The map preview may differ from the frontend display.', 'art-routes'),
+            'noEditionSelected' => __('Please select an Edition or the block will auto-detect from the page context.', 'art-routes'),
             // Editor preview strings
-            'autoDetect' => __('Auto-detect from page', 'wp-art-routes'),
-            'unknownEdition' => __('Unknown Edition', 'wp-art-routes'),
-            'routes' => __('Routes', 'wp-art-routes'),
-            'locations' => __('Locations', 'wp-art-routes'),
-            'infoPoints' => __('Info Points', 'wp-art-routes'),
-            'legend' => __('Legend', 'wp-art-routes'),
-            'nothingSelected' => __('Nothing selected', 'wp-art-routes'),
-            'editorPreview' => __('Interactive map preview', 'wp-art-routes'),
-            'showingLabel' => __('Showing', 'wp-art-routes'),
-            'previewHint' => __('The interactive map will appear on the published page', 'wp-art-routes'),
+            'autoDetect' => __('Auto-detect from page', 'art-routes'),
+            'unknownEdition' => __('Unknown Edition', 'art-routes'),
+            'routes' => __('Routes', 'art-routes'),
+            'locations' => __('Locations', 'art-routes'),
+            'infoPoints' => __('Info Points', 'art-routes'),
+            'legend' => __('Legend', 'art-routes'),
+            'nothingSelected' => __('Nothing selected', 'art-routes'),
+            'editorPreview' => __('Interactive map preview', 'art-routes'),
+            'showingLabel' => __('Showing', 'art-routes'),
+            'previewHint' => __('The interactive map will appear on the published page', 'art-routes'),
         ],
     ]);
 
@@ -162,7 +162,7 @@ function wp_art_routes_block_categories($categories)
         [
             [
                 'slug' => 'wp-art-routes',
-                'title' => __('Art Routes', 'wp-art-routes'),
+                'title' => __('Art Routes', 'art-routes'),
                 'icon' => 'location-alt',
             ],
         ]

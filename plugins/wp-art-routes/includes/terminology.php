@@ -22,23 +22,23 @@ if (!defined('ABSPATH')) {
 function wp_art_routes_get_default_terminology() {
     return [
         'route' => [
-            'singular' => __('Route', 'wp-art-routes'),
-            'plural'   => __('Routes', 'wp-art-routes'),
+            'singular' => __('Route', 'art-routes'),
+            'plural'   => __('Routes', 'art-routes'),
             'slug'     => 'route',
         ],
         'location' => [
-            'singular' => __('Location', 'wp-art-routes'),
-            'plural'   => __('Locations', 'wp-art-routes'),
+            'singular' => __('Location', 'art-routes'),
+            'plural'   => __('Locations', 'art-routes'),
             'slug'     => 'location',
         ],
         'info_point' => [
-            'singular' => __('Info Point', 'wp-art-routes'),
-            'plural'   => __('Info Points', 'wp-art-routes'),
+            'singular' => __('Info Point', 'art-routes'),
+            'plural'   => __('Info Points', 'art-routes'),
             'slug'     => 'info-point',
         ],
         'creator' => [
-            'singular' => __('Artist', 'wp-art-routes'),
-            'plural'   => __('Artists', 'wp-art-routes'),
+            'singular' => __('Artist', 'art-routes'),
+            'plural'   => __('Artists', 'art-routes'),
         ],
     ];
 }

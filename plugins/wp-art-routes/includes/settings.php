@@ -122,8 +122,8 @@ add_action('admin_init', 'wp_art_routes_register_settings');
 function wp_art_routes_add_settings_page() {
     add_submenu_page(
         'edit.php?post_type=edition',
-        __('Art Routes Settings', 'wp-art-routes'),
-        __('Settings', 'wp-art-routes'),
+        __('Art Routes Settings', 'art-routes'),
+        __('Settings', 'art-routes'),
         'manage_options',
         'wp-art-routes-settings',
         'wp_art_routes_render_settings_page',
@@ -145,9 +145,9 @@ function wp_art_routes_render_settings_page() {
 
     // Define available tabs
     $tabs = [
-        'general' => __('General', 'wp-art-routes'),
-        'terminology' => __('Terminology', 'wp-art-routes'),
-        'custom_icons' => __('Custom Icons', 'wp-art-routes'),
+        'general' => __('General', 'art-routes'),
+        'terminology' => __('Terminology', 'art-routes'),
+        'custom_icons' => __('Custom Icons', 'art-routes'),
     ];
 
     // Show success message if settings were updated
@@ -155,7 +155,7 @@ function wp_art_routes_render_settings_page() {
         add_settings_error(
             'wp_art_routes_messages',
             'wp_art_routes_message',
-            __('Settings saved.', 'wp-art-routes'),
+            __('Settings saved.', 'art-routes'),
             'updated'
         );
     }
@@ -206,7 +206,7 @@ function wp_art_routes_render_general_tab() {
             <tr>
                 <th scope="row">
                     <label for="wp_art_routes_default_route_id">
-                        <?php esc_html_e('Default Route', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Default Route', 'art-routes'); ?>
                     </label>
                 </th>
                 <td>
@@ -223,7 +223,7 @@ function wp_art_routes_render_general_tab() {
 
                     if (!empty($routes)) {
                         echo '<select name="wp_art_routes_default_route_id" id="wp_art_routes_default_route_id">';
-                        echo '<option value="0">' . esc_html__('Select a default route', 'wp-art-routes') . '</option>';
+                        echo '<option value="0">' . esc_html__('Select a default route', 'art-routes') . '</option>';
 
                         foreach ($routes as $route) {
                             echo '<option value="' . esc_attr($route->ID) . '" ' . selected($default_route_id, $route->ID, false) . '>';
@@ -232,27 +232,27 @@ function wp_art_routes_render_general_tab() {
                         }
 
                         echo '</select>';
-                        echo '<p class="description">' . esc_html__('This route will be used when no specific route is selected.', 'wp-art-routes') . '</p>';
+                        echo '<p class="description">' . esc_html__('This route will be used when no specific route is selected.', 'art-routes') . '</p>';
                     } else {
-                        echo '<p>' . esc_html__('No routes available. Please create a route first.', 'wp-art-routes') . '</p>';
+                        echo '<p>' . esc_html__('No routes available. Please create a route first.', 'art-routes') . '</p>';
                     }
                     ?>
                 </td>
             </tr>
             <tr>
-                <th scope="row"><?php esc_html_e('Location Tracking', 'wp-art-routes'); ?></th>
+                <th scope="row"><?php esc_html_e('Location Tracking', 'art-routes'); ?></th>
                 <td>
                     <label for="wp_art_routes_enable_location_tracking">
                         <input type="checkbox" name="wp_art_routes_enable_location_tracking" id="wp_art_routes_enable_location_tracking" value="1" <?php checked(get_option('wp_art_routes_enable_location_tracking', true)); ?> />
-                        <?php esc_html_e('Enable location tracking for users', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Enable location tracking for users', 'art-routes'); ?>
                     </label>
-                    <p class="description"><?php esc_html_e('When enabled, users will be prompted to share their location to track progress on routes.', 'wp-art-routes'); ?></p>
+                    <p class="description"><?php esc_html_e('When enabled, users will be prompted to share their location to track progress on routes.', 'art-routes'); ?></p>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
                     <label for="wp_art_routes_default_location_icon">
-                        <?php esc_html_e('Default Location Icon', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Default Location Icon', 'art-routes'); ?>
                     </label>
                 </th>
                 <td>
@@ -261,7 +261,7 @@ function wp_art_routes_render_general_tab() {
                     $available_icons = wp_art_routes_get_available_icons();
                     ?>
                     <select name="wp_art_routes_default_location_icon" id="wp_art_routes_default_location_icon">
-                        <option value=""><?php esc_html_e('No default icon (gray circle)', 'wp-art-routes'); ?></option>
+                        <option value=""><?php esc_html_e('No default icon (gray circle)', 'art-routes'); ?></option>
                         <?php foreach ($available_icons as $icon_filename) : ?>
                             <option value="<?php echo esc_attr($icon_filename); ?>" <?php selected($default_location_icon, $icon_filename); ?>>
                                 <?php echo esc_html(wp_art_routes_get_icon_display_name($icon_filename)); ?>
@@ -274,7 +274,7 @@ function wp_art_routes_render_general_tab() {
                         </span>
                     <?php endif; ?>
                     <p class="description">
-                        <?php esc_html_e('Select a default icon for locations that do not have an icon assigned (e.g., imported via GPX).', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Select a default icon for locations that do not have an icon assigned (e.g., imported via GPX).', 'art-routes'); ?>
                     </p>
                 </td>
             </tr>
@@ -303,23 +303,23 @@ function wp_art_routes_render_terminology_tab() {
     // Define the terminology fields
     $terminology_types = [
         'route' => [
-            'label' => __('Route', 'wp-art-routes'),
-            'description' => __('The main paths users follow (e.g., "Art Route", "Trail", "Walk")', 'wp-art-routes'),
+            'label' => __('Route', 'art-routes'),
+            'description' => __('The main paths users follow (e.g., "Art Route", "Trail", "Walk")', 'art-routes'),
             'has_slug' => true,
         ],
         'location' => [
-            'label' => __('Location', 'wp-art-routes'),
-            'description' => __('Points of interest along routes (e.g., "Artwork", "Performance", "Venue")', 'wp-art-routes'),
+            'label' => __('Location', 'art-routes'),
+            'description' => __('Points of interest along routes (e.g., "Artwork", "Performance", "Venue")', 'art-routes'),
             'has_slug' => true,
         ],
         'info_point' => [
-            'label' => __('Info Point', 'wp-art-routes'),
-            'description' => __('Information markers along routes (e.g., "Info Point", "Landmark", "Stop")', 'wp-art-routes'),
+            'label' => __('Info Point', 'art-routes'),
+            'description' => __('Information markers along routes (e.g., "Info Point", "Landmark", "Stop")', 'art-routes'),
             'has_slug' => true,
         ],
         'creator' => [
-            'label' => __('Creator', 'wp-art-routes'),
-            'description' => __('People or entities associated with locations (e.g., "Artist", "Performer", "Author")', 'wp-art-routes'),
+            'label' => __('Creator', 'art-routes'),
+            'description' => __('People or entities associated with locations (e.g., "Artist", "Performer", "Author")', 'art-routes'),
             'has_slug' => false,
         ],
     ];
@@ -328,7 +328,7 @@ function wp_art_routes_render_terminology_tab() {
         <?php settings_fields('wp_art_routes_terminology_options'); ?>
 
         <p class="description" style="margin-bottom: 20px;">
-            <?php esc_html_e('Customize the labels used throughout the plugin. Leave fields empty to use the default values shown as placeholders.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Customize the labels used throughout the plugin. Leave fields empty to use the default values shown as placeholders.', 'art-routes'); ?>
         </p>
 
         <?php foreach ($terminology_types as $type => $config) : ?>
@@ -339,7 +339,7 @@ function wp_art_routes_render_terminology_tab() {
                 <tr>
                     <th scope="row">
                         <label for="wp_art_routes_terminology_<?php echo esc_attr($type); ?>_singular">
-                            <?php esc_html_e('Singular', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Singular', 'art-routes'); ?>
                         </label>
                     </th>
                     <td>
@@ -354,7 +354,7 @@ function wp_art_routes_render_terminology_tab() {
                 <tr>
                     <th scope="row">
                         <label for="wp_art_routes_terminology_<?php echo esc_attr($type); ?>_plural">
-                            <?php esc_html_e('Plural', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Plural', 'art-routes'); ?>
                         </label>
                     </th>
                     <td>
@@ -370,7 +370,7 @@ function wp_art_routes_render_terminology_tab() {
                     <tr>
                         <th scope="row">
                             <label for="wp_art_routes_terminology_<?php echo esc_attr($type); ?>_slug">
-                                <?php esc_html_e('URL Slug', 'wp-art-routes'); ?>
+                                <?php esc_html_e('URL Slug', 'art-routes'); ?>
                             </label>
                         </th>
                         <td>
@@ -381,7 +381,7 @@ function wp_art_routes_render_terminology_tab() {
                                    placeholder="<?php echo esc_attr($defaults[$type]['slug']); ?>"
                                    class="regular-text" />
                             <p class="description">
-                                <?php esc_html_e('The URL-friendly version (lowercase, no spaces). After changing, go to Settings > Permalinks and click Save to refresh URL rules.', 'wp-art-routes'); ?>
+                                <?php esc_html_e('The URL-friendly version (lowercase, no spaces). After changing, go to Settings > Permalinks and click Save to refresh URL rules.', 'art-routes'); ?>
                             </p>
                         </td>
                     </tr>
@@ -404,9 +404,9 @@ function wp_art_routes_render_custom_icons_tab() {
     $custom_icons_url = wp_art_routes_get_custom_icons_url();
     ?>
     <div class="custom-icons-wrapper">
-        <h2><?php esc_html_e('Upload Custom Icons', 'wp-art-routes'); ?></h2>
+        <h2><?php esc_html_e('Upload Custom Icons', 'art-routes'); ?></h2>
         <p class="description">
-            <?php esc_html_e('Upload custom icons (SVG, PNG, JPG, or WebP) to use for locations and info points. Uploaded icons will appear in all icon selection dropdowns.', 'wp-art-routes'); ?>
+            <?php esc_html_e('Upload custom icons (SVG, PNG, JPG, or WebP) to use for locations and info points. Uploaded icons will appear in all icon selection dropdowns.', 'art-routes'); ?>
         </p>
 
         <div class="custom-icons-upload-form" style="margin: 20px 0; padding: 20px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
@@ -414,29 +414,29 @@ function wp_art_routes_render_custom_icons_tab() {
                 <?php wp_nonce_field('wp_art_routes_upload_icon', 'upload_icon_nonce'); ?>
                 <p>
                     <label for="custom_icon_file">
-                        <strong><?php esc_html_e('Select Icon File:', 'wp-art-routes'); ?></strong>
+                        <strong><?php esc_html_e('Select Icon File:', 'art-routes'); ?></strong>
                     </label>
                 </p>
                 <p>
                     <input type="file" name="custom_icon_file" id="custom_icon_file" accept=".svg,.png,.jpg,.jpeg,.webp" required />
                 </p>
                 <p class="description">
-                    <?php esc_html_e('Recommended: SVG files for best quality at any size. PNG/JPG supported for compatibility.', 'wp-art-routes'); ?>
+                    <?php esc_html_e('Recommended: SVG files for best quality at any size. PNG/JPG supported for compatibility.', 'art-routes'); ?>
                 </p>
                 <p>
                     <button type="submit" class="button button-primary" id="upload-icon-btn">
-                        <?php esc_html_e('Upload Icon', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Upload Icon', 'art-routes'); ?>
                     </button>
                     <span id="upload-status" style="margin-left: 10px;"></span>
                 </p>
             </form>
         </div>
 
-        <h2><?php esc_html_e('Uploaded Custom Icons', 'wp-art-routes'); ?></h2>
+        <h2><?php esc_html_e('Uploaded Custom Icons', 'art-routes'); ?></h2>
 
         <?php if (empty($custom_icons)) : ?>
             <p class="description" id="no-custom-icons-message">
-                <?php esc_html_e('No custom icons uploaded yet.', 'wp-art-routes'); ?>
+                <?php esc_html_e('No custom icons uploaded yet.', 'art-routes'); ?>
             </p>
         <?php endif; ?>
 
@@ -450,7 +450,7 @@ function wp_art_routes_render_custom_icons_tab() {
                         <?php echo esc_html($icon); ?>
                     </div>
                     <button type="button" class="button button-small button-link-delete delete-custom-icon" data-filename="<?php echo esc_attr($icon); ?>">
-                        <?php esc_html_e('Delete', 'wp-art-routes'); ?>
+                        <?php esc_html_e('Delete', 'art-routes'); ?>
                     </button>
                 </div>
             <?php endforeach; ?>
@@ -466,17 +466,17 @@ function wp_art_routes_render_custom_icons_tab() {
 function wp_art_routes_ajax_upload_custom_icon() {
     // Verify nonce
     if (!isset($_POST['upload_icon_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['upload_icon_nonce'])), 'wp_art_routes_upload_icon')) {
-        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Security check failed.', 'art-routes')]);
     }
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Permission denied.', 'art-routes')]);
     }
 
     // Check if file was uploaded
     if (!isset($_FILES['custom_icon_file']) || $_FILES['custom_icon_file']['error'] !== UPLOAD_ERR_OK) {
-        wp_send_json_error(['message' => __('No file uploaded or upload error.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('No file uploaded or upload error.', 'art-routes')]);
     }
 
     $file = $_FILES['custom_icon_file'];
@@ -486,7 +486,7 @@ function wp_art_routes_ajax_upload_custom_icon() {
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
     if (!in_array($ext, $allowed_extensions, true)) {
-        wp_send_json_error(['message' => __('Invalid file type. Allowed: SVG, PNG, JPG, WebP.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Invalid file type. Allowed: SVG, PNG, JPG, WebP.', 'art-routes')]);
     }
 
     // Validate MIME type
@@ -516,7 +516,7 @@ function wp_art_routes_ajax_upload_custom_icon() {
     }
 
     if (!$mime_valid) {
-        wp_send_json_error(['message' => __('Invalid file type detected.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Invalid file type detected.', 'art-routes')]);
     }
 
     // For SVG files, sanitize the content
@@ -535,7 +535,7 @@ function wp_art_routes_ajax_upload_custom_icon() {
             $sanitized = $sanitizer->sanitize($svg_content);
 
             if ($sanitized === false) {
-                wp_send_json_error(['message' => __('SVG file failed security validation.', 'wp-art-routes')]);
+                wp_send_json_error(['message' => __('SVG file failed security validation.', 'art-routes')]);
             }
 
             $svg_content = $sanitized;
@@ -545,7 +545,7 @@ function wp_art_routes_ajax_upload_custom_icon() {
     // Get the custom icons directory
     $custom_icons_dir = wp_art_routes_get_custom_icons_dir();
     if (!$custom_icons_dir) {
-        wp_send_json_error(['message' => __('Could not create icons directory.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Could not create icons directory.', 'art-routes')]);
     }
 
     // Generate safe filename
@@ -572,23 +572,23 @@ function wp_art_routes_ajax_upload_custom_icon() {
     if ($ext === 'svg' && isset($svg_content)) {
         // Write sanitized SVG content using WP_Filesystem
         if (!$wp_filesystem->put_contents($destination, $svg_content, FS_CHMOD_FILE)) {
-            wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
+            wp_send_json_error(['message' => __('Failed to save file.', 'art-routes')]);
         }
     } else {
         // For non-SVG files, read the uploaded file and write to destination using WP_Filesystem
         // This replaces move_uploaded_file() which is forbidden by WordPress Plugin Check
         $file_content = $wp_filesystem->get_contents($file['tmp_name']);
         if ($file_content === false) {
-            wp_send_json_error(['message' => __('Failed to read uploaded file.', 'wp-art-routes')]);
+            wp_send_json_error(['message' => __('Failed to read uploaded file.', 'art-routes')]);
         }
         if (!$wp_filesystem->put_contents($destination, $file_content, FS_CHMOD_FILE)) {
-            wp_send_json_error(['message' => __('Failed to save file.', 'wp-art-routes')]);
+            wp_send_json_error(['message' => __('Failed to save file.', 'art-routes')]);
         }
     }
 
     // Return success
     wp_send_json_success([
-        'message' => __('Icon uploaded successfully.', 'wp-art-routes'),
+        'message' => __('Icon uploaded successfully.', 'art-routes'),
         'filename' => $filename,
         'url' => wp_art_routes_get_custom_icons_url() . rawurlencode($filename),
     ]);
@@ -601,24 +601,24 @@ add_action('wp_ajax_wp_art_routes_upload_custom_icon', 'wp_art_routes_ajax_uploa
 function wp_art_routes_ajax_delete_custom_icon() {
     // Verify nonce
     if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wp_art_routes_delete_icon')) {
-        wp_send_json_error(['message' => __('Security check failed.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Security check failed.', 'art-routes')]);
     }
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Permission denied.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Permission denied.', 'art-routes')]);
     }
 
     // Get filename
     $filename = isset($_POST['filename']) ? sanitize_file_name(wp_unslash($_POST['filename'])) : '';
 
     if (empty($filename)) {
-        wp_send_json_error(['message' => __('No filename provided.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('No filename provided.', 'art-routes')]);
     }
 
     // Verify this is a custom icon (not a built-in one)
     if (!wp_art_routes_is_custom_icon($filename)) {
-        wp_send_json_error(['message' => __('Cannot delete built-in icons.', 'wp-art-routes')]);
+        wp_send_json_error(['message' => __('Cannot delete built-in icons.', 'art-routes')]);
     }
 
     // Get the file path
@@ -630,10 +630,10 @@ function wp_art_routes_ajax_delete_custom_icon() {
         wp_delete_file($filepath);
         // Verify file was deleted
         if (file_exists($filepath)) {
-            wp_send_json_error(['message' => __('Failed to delete file.', 'wp-art-routes')]);
+            wp_send_json_error(['message' => __('Failed to delete file.', 'art-routes')]);
         }
     }
 
-    wp_send_json_success(['message' => __('Icon deleted successfully.', 'wp-art-routes')]);
+    wp_send_json_success(['message' => __('Icon deleted successfully.', 'art-routes')]);
 }
 add_action('wp_ajax_wp_art_routes_delete_custom_icon', 'wp_art_routes_ajax_delete_custom_icon');

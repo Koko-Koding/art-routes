@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 // Check if route data exists
 if (empty($route)) {
-    echo '<p class="wp-art-routes-error">' . esc_html__('Route not found.', 'wp-art-routes') . '</p>';
+    echo '<p class="wp-art-routes-error">' . esc_html__('Route not found.', 'art-routes') . '</p>';
     return;
 }
 
@@ -30,21 +30,21 @@ $js_data = [
     'show_completed_route' => $route['show_completed_route'],
     'show_artwork_toasts' => $route['show_artwork_toasts'],
     'i18n' => [
-        'routeComplete' => __('Congratulations! You have completed this route!', 'wp-art-routes'),
-        'nearbyArtwork' => __('You are near an artwork!', 'wp-art-routes'),
-        'readMore' => __('Read more', 'wp-art-routes'),
-        'artist' => __('Artist', 'wp-art-routes'),
-        'artists' => __('Artists', 'wp-art-routes'),
-        'startPoint' => __('Start Point', 'wp-art-routes'),
-        'endPoint' => __('End Point', 'wp-art-routes'),
-        'goToMyLocation' => __('Go to My Location', 'wp-art-routes'),
-        'goToRoute' => __('Go to Route', 'wp-art-routes'),
-        'gettingLocation' => __('Getting location...', 'wp-art-routes'),
-        'locationError' => __('Could not get your location', 'wp-art-routes'),
-        'locationPermissionDenied' => __('Location access denied. Please allow location access in your browser.', 'wp-art-routes'),
-        'locationUnavailable' => __('Location information is unavailable.', 'wp-art-routes'),
-        'locationTimeout' => __('Location request timed out.', 'wp-art-routes'),
-        'geolocationNotSupported' => __('Geolocation is not supported by this browser.', 'wp-art-routes'),
+        'routeComplete' => __('Congratulations! You have completed this route!', 'art-routes'),
+        'nearbyArtwork' => __('You are near an artwork!', 'art-routes'),
+        'readMore' => __('Read more', 'art-routes'),
+        'artist' => __('Artist', 'art-routes'),
+        'artists' => __('Artists', 'art-routes'),
+        'startPoint' => __('Start Point', 'art-routes'),
+        'endPoint' => __('End Point', 'art-routes'),
+        'goToMyLocation' => __('Go to My Location', 'art-routes'),
+        'goToRoute' => __('Go to Route', 'art-routes'),
+        'gettingLocation' => __('Getting location...', 'art-routes'),
+        'locationError' => __('Could not get your location', 'art-routes'),
+        'locationPermissionDenied' => __('Location access denied. Please allow location access in your browser.', 'art-routes'),
+        'locationUnavailable' => __('Location information is unavailable.', 'art-routes'),
+        'locationTimeout' => __('Location request timed out.', 'art-routes'),
+        'geolocationNotSupported' => __('Geolocation is not supported by this browser.', 'art-routes'),
     ],
 ];
 ?>
@@ -78,10 +78,10 @@ $js_data = [
                 <span class="route-type">
                     <?php 
                     $route_types = [
-                        'walking' => __('Walking route', 'wp-art-routes'),
-                        'cycling' => __('Bicycle route', 'wp-art-routes'),
-                        'wheelchair' => __('Wheelchair friendly', 'wp-art-routes'),
-                        'children' => __('Child-friendly route', 'wp-art-routes'),
+                        'walking' => __('Walking route', 'art-routes'),
+                        'cycling' => __('Bicycle route', 'art-routes'),
+                        'wheelchair' => __('Wheelchair friendly', 'art-routes'),
+                        'children' => __('Child-friendly route', 'art-routes'),
                     ];
                     echo isset($route_types[$route['type']]) ? esc_html($route_types[$route['type']]) : esc_html($route['type']); 
                     ?>
@@ -95,7 +95,7 @@ $js_data = [
                class="gpx-export-button" 
                download="<?php echo esc_attr(sanitize_file_name($route['title'])); ?>.gpx">
                 <span class="dashicons dashicons-download"></span>
-                <?php esc_html_e('Export to GPX', 'wp-art-routes'); ?>
+                <?php esc_html_e('Export to GPX', 'art-routes'); ?>
             </a>
         </div>
     </div>
@@ -111,22 +111,22 @@ $js_data = [
     <!-- Loading indicator -->
     <div id="map-loading" class="map-loading" style="display: none;">
         <div class="spinner"></div>
-        <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
+        <p><?php esc_html_e('Loading map...', 'art-routes'); ?></p>
     </div>
     
     <!-- Location error message -->
     <div id="location-error" class="map-error" style="display: none;">
         <p></p>
-        <button id="retry-location" class="button"><?php esc_html_e('Retry', 'wp-art-routes'); ?></button>
+        <button id="retry-location" class="button"><?php esc_html_e('Retry', 'art-routes'); ?></button>
     </div>
     
     <!-- Route progress -->
     <div class="route-progress" style="display: none;">
-        <h3><?php esc_html_e('Progress', 'wp-art-routes'); ?></h3>
+        <h3><?php esc_html_e('Progress', 'art-routes'); ?></h3>
         <div class="progress-bar">
             <div class="progress-fill" style="width: 0%;"></div>
         </div>
-        <p><?php esc_html_e('You have completed', 'wp-art-routes'); ?> <span id="progress-percentage">0</span>% <?php esc_html_e('of this route', 'wp-art-routes'); ?></p>
+        <p><?php esc_html_e('You have completed', 'art-routes'); ?> <span id="progress-percentage">0</span>% <?php esc_html_e('of this route', 'art-routes'); ?></p>
     </div>
     
     <!-- Artwork modal -->

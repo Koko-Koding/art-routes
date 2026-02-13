@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 
 // Check if routes data exists
 if (empty($routes)) {
-    echo '<p class="wp-art-routes-error">' . esc_html__('No routes found.', 'wp-art-routes') . '</p>';
+    echo '<p class="wp-art-routes-error">' . esc_html__('No routes found.', 'art-routes') . '</p>';
     return;
 }
 
@@ -72,19 +72,19 @@ foreach ($routes as $index => $route) {
 $route_types = [
     'walking' => [
         'icon' => 'dashicons dashicons-admin-users',
-        'label' => __('Walking route', 'wp-art-routes')
+        'label' => __('Walking route', 'art-routes')
     ],
     'cycling' => [
         'icon' => 'dashicons dashicons-controls-repeat',
-        'label' => __('Bicycle route', 'wp-art-routes')
+        'label' => __('Bicycle route', 'art-routes')
     ],
     'wheelchair' => [
         'icon' => 'dashicons dashicons-universal-access',
-        'label' => __('Wheelchair friendly', 'wp-art-routes')
+        'label' => __('Wheelchair friendly', 'art-routes')
     ],
     'children' => [
         'icon' => 'dashicons dashicons-buddicons-groups',
-        'label' => __('Child-friendly route', 'wp-art-routes')
+        'label' => __('Child-friendly route', 'art-routes')
     ],
 ];
 
@@ -95,7 +95,7 @@ $map_id = 'art-routes-map-' . uniqid();
 <div class="art-routes-container">
     <?php if ($atts['show_legend']): ?>
         <div class="art-routes-legend">
-            <h3><?php esc_html_e('Routes', 'wp-art-routes'); ?></h3>
+            <h3><?php esc_html_e('Routes', 'art-routes'); ?></h3>
             <ul class="route-list">
                 <?php foreach ($js_data['routes'] as $index => $route): ?>
                     <li class="route-item">
@@ -104,7 +104,7 @@ $map_id = 'art-routes-map-' . uniqid();
                                 <span class="route-color-indicator" style="background-color: <?php echo esc_attr($route['color']); ?>;"></span>
                                 <span class="route-title"><?php echo esc_html($route['title']); ?></span>
                             </div>
-                            <a href="<?php echo esc_url($route['url']); ?>" class="route-link" title="<?php esc_attr_e('View route details', 'wp-art-routes'); ?>">
+                            <a href="<?php echo esc_url($route['url']); ?>" class="route-link" title="<?php esc_attr_e('View route details', 'art-routes'); ?>">
                                 <span class="dashicons dashicons-arrow-right-alt2"></span>
                             </a>
                         </div>
@@ -147,7 +147,7 @@ $map_id = 'art-routes-map-' . uniqid();
                         
                         <button class="zoom-to-route-button" data-route-index="<?php echo esc_attr($index); ?>">
                             <span class="dashicons dashicons-search"></span>
-                            <?php esc_html_e('Zoom to Route', 'wp-art-routes'); ?>
+                            <?php esc_html_e('Zoom to Route', 'art-routes'); ?>
                         </button>
                     </li>
                 <?php endforeach; ?>
@@ -157,7 +157,7 @@ $map_id = 'art-routes-map-' . uniqid();
     
     <div class="art-routes-map-container">
         <?php if ($atts['show_title']): ?>
-            <h2 class="art-routes-map-title"><?php esc_html_e('Art Routes Map', 'wp-art-routes'); ?></h2>
+            <h2 class="art-routes-map-title"><?php esc_html_e('Art Routes Map', 'art-routes'); ?></h2>
         <?php endif; ?>
         
         <!-- Map container -->
@@ -166,7 +166,7 @@ $map_id = 'art-routes-map-' . uniqid();
         <!-- Loading indicator -->
         <div id="map-loading-<?php echo esc_attr($map_id); ?>" class="map-loading" style="display: none;">
             <div class="spinner"></div>
-            <p><?php esc_html_e('Loading map...', 'wp-art-routes'); ?></p>
+            <p><?php esc_html_e('Loading map...', 'art-routes'); ?></p>
         </div>
     </div>
 </div>

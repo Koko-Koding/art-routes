@@ -9,7 +9,7 @@
  * Author URI: https://github.com/drikusroor
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: wp-art-routes
+ * Text Domain: art-routes
  * Domain Path: /languages
  * Requires at least: 5.6
  * Tested up to: 6.9
