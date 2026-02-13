@@ -152,23 +152,39 @@ function wp_art_routes_get_all_artworks()
 
     $result = [];
 
+    // Cache edition default icons to avoid repeated lookups
+    $edition_default_icons = [];
+
     foreach ($artworks as $artwork) {
         $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then fall back to default location icon setting
+            // Get icon information - prefer icon field, then edition default, then global default
             $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
             $icon_url = '';
 
             if (!empty($icon_filename)) {
                 $icon_url = wp_art_routes_get_icon_url($icon_filename);
             } else {
-                // Check for default location icon setting
-                $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
-                if (!empty($default_location_icon)) {
-                    $icon_url = wp_art_routes_get_icon_url($default_location_icon);
+                // Check edition default icon
+                $edition_id = get_post_meta($artwork->ID, '_edition_id', true);
+                if (!empty($edition_id)) {
+                    if (!isset($edition_default_icons[$edition_id])) {
+                        $edition_default_icons[$edition_id] = get_post_meta($edition_id, '_edition_default_location_icon', true);
+                    }
+                    if (!empty($edition_default_icons[$edition_id])) {
+                        $icon_url = wp_art_routes_get_icon_url($edition_default_icons[$edition_id]);
+                    }
+                }
+
+                // Fall back to global default location icon setting
+                if (empty($icon_url)) {
+                    $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
+                    if (!empty($default_location_icon)) {
+                        $icon_url = wp_art_routes_get_icon_url($default_location_icon);
+                    }
                 }
             }
 
