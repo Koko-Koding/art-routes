@@ -481,6 +481,9 @@ function art_routes_ajax_upload_custom_icon() {
 
     $file = $_FILES['custom_icon_file'];
 
+    // Sanitize file name early
+    $file['name'] = sanitize_file_name($file['name']);
+
     // Validate file extension
     $allowed_extensions = ['svg', 'png', 'jpg', 'jpeg', 'webp'];
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));

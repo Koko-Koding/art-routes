@@ -188,11 +188,14 @@ function wp_ajax_save_route_points()
         $updated_points = wp_unslash($_POST['updated_points']);
         foreach ($updated_points as $point) {
             $point_id = isset($point['id']) ? intval($point['id']) : 0;
-            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
-            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+            $lat = isset($point['lat']) ? (float) $point['lat'] : null;
+            $lng = isset($point['lng']) ? (float) $point['lng'] : null;
             $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
 
-            if ($point_id > 0 && $lat !== null && $lng !== null && current_user_can('edit_post', $point_id)) {
+            if ($point_id > 0 && $lat !== null && $lng !== null &&
+                $lat >= -90 && $lat <= 90 &&
+                $lng >= -180 && $lng <= 180 &&
+                current_user_can('edit_post', $point_id)) {
                 update_post_meta($point_id, '_artwork_latitude', $lat);
                 update_post_meta($point_id, '_artwork_longitude', $lng);
                 // Save icon_url for info points
@@ -232,11 +235,14 @@ function wp_ajax_save_route_points()
         $new_points = wp_unslash($_POST['new_points']);
         foreach ($new_points as $point) {
             $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
-            $lat = isset($point['lat']) ? sanitize_text_field($point['lat']) : null;
-            $lng = isset($point['lng']) ? sanitize_text_field($point['lng']) : null;
+            $lat = isset($point['lat']) ? (float) $point['lat'] : null;
+            $lng = isset($point['lng']) ? (float) $point['lng'] : null;
             $icon_url = isset($point['icon_url']) ? esc_url_raw($point['icon_url']) : null;
 
-            if (($type === 'artwork' || $type === 'information_point') && $lat !== null && $lng !== null) {
+            if (($type === 'artwork' || $type === 'information_point') &&
+                $lat !== null && $lng !== null &&
+                $lat >= -90 && $lat <= 90 &&
+                $lng >= -180 && $lng <= 180) {
                 $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
                 /* translators: %1$s: latitude coordinate, %2$s: longitude coordinate */
                 $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %1$s, %2$s', 'art-routes'), $lat, $lng) : sprintf(__('New Info Point near %1$s, %2$s', 'art-routes'), $lat, $lng);
@@ -258,7 +264,7 @@ function wp_ajax_save_route_points()
                     }
                     // No longer associate any points with routes - both artworks and info points are global
                     $results['added'][] = [
-                        'temp_id' => isset($point['temp_id']) ? $point['temp_id'] : null,
+                        'temp_id' => isset($point['temp_id']) ? sanitize_text_field($point['temp_id']) : null,
                         'new_id' => $new_post_id,
                         'type' => $type,
                         'edit_link' => get_edit_post_link($new_post_id, 'raw')

@@ -181,7 +181,8 @@ function art_routes_enqueue_scripts()
     if (is_singular('art_route')) {
         $route_id = get_the_ID();
     } elseif (is_page_template('art-route-map-template.php')) {
-        $route_id = isset($_GET['route_id']) ? intval(wp_unslash($_GET['route_id'])) : get_option('art_routes_default_route', 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public-facing display, no data modification
+        $route_id = isset($_GET['route_id']) ? absint($_GET['route_id']) : absint(get_option('art_routes_default_route', 0));
     } else {
         // Attempt to find route_id if shortcode is present on a non-singular/non-template page
         global $post;

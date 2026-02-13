@@ -535,6 +535,7 @@ function art_routes_add_edition_filter() {
     }
 
     $editions = art_routes_get_editions();
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin list table filter, no data modification
     $current_edition = isset($_GET['edition_filter']) ? absint(wp_unslash($_GET['edition_filter'])) : 0;
 
     ?>
@@ -567,10 +568,12 @@ function art_routes_filter_by_edition($query) {
         return;
     }
 
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin list table filter, no data modification
     if (!isset($_GET['edition_filter']) || wp_unslash($_GET['edition_filter']) === '0') {
         return;
     }
 
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin list table filter, no data modification
     $edition_filter = intval(wp_unslash($_GET['edition_filter']));
 
     if ($edition_filter === -1) {

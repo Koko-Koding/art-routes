@@ -121,6 +121,7 @@ function art_routes_render_dashboard_page()
     $editions = art_routes_get_editions();
 
     // Get selected edition from URL parameter
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin page display, no data modification
     $selected_edition_id = isset($_GET['edition_id']) ? absint(wp_unslash($_GET['edition_id'])) : 0;
 
     ?>
@@ -572,7 +573,7 @@ function art_routes_dashboard_update_item()
     // Get parameters
     $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
     $field = isset($_POST['field']) ? sanitize_key(wp_unslash($_POST['field'])) : '';
-    $value = isset($_POST['value']) ? wp_unslash($_POST['value']) : '';
+    $value = isset($_POST['value']) ? sanitize_text_field(wp_unslash($_POST['value'])) : '';
 
     // Validate post ID
     if (!$post_id) {

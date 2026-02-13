@@ -48,6 +48,7 @@ function art_routes_render_import_export_page()
     }
 
     // Determine current tab
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab navigation for display only, no data modification
     $current_tab = isset($_GET['tab']) ? sanitize_key(wp_unslash($_GET['tab'])) : 'import';
 
     // Define available tabs
@@ -523,7 +524,7 @@ function art_routes_handle_csv_import()
     }
 
     // Verify file type
-    $file_info = wp_check_filetype($_FILES['import_csv_file']['name']);
+    $file_info = wp_check_filetype(sanitize_file_name($_FILES['import_csv_file']['name']));
     if ($file_info['ext'] !== 'csv') {
         return new WP_Error('invalid_file_type', __('Please upload a CSV file.', 'art-routes'));
     }
@@ -1037,7 +1038,7 @@ function art_routes_handle_gpx_import()
     }
 
     // Verify file type - check extension directly since GPX is not in WordPress's default allowed types
-    $file_extension = strtolower(pathinfo($_FILES['import_gpx_file']['name'], PATHINFO_EXTENSION));
+    $file_extension = strtolower(pathinfo(sanitize_file_name($_FILES['import_gpx_file']['name']), PATHINFO_EXTENSION));
     if ($file_extension !== 'gpx') {
         return new WP_Error('invalid_file_type', __('Please upload a GPX file.', 'art-routes'));
     }

@@ -671,29 +671,41 @@ function art_routes_save_route_path($post_id)
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
-    // Save route path
+    // Save route path - JSON coordinate data, sanitized by validating each point individually
     if (isset($_POST['route_path'])) {
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON coordinate data; each value is validated as float and range-checked below
         $raw = trim(wp_unslash($_POST['route_path']));
         $json = json_decode($raw, true);
-        if (is_array($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
-            // Already valid JSON format
-            $to_save = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $points = [];
+        if (is_array($json) && !empty($json) && isset($json[0]['lat']) && isset($json[0]['lng'])) {
+            // Valid JSON format - validate and sanitize each coordinate pair
+            foreach ($json as $point) {
+                if (!isset($point['lat']) || !isset($point['lng'])) {
+                    continue;
+                }
+                $lat = (float) $point['lat'];
+                $lng = (float) $point['lng'];
+                if ($lat >= -90 && $lat <= 90 &&
+                    $lng >= -180 && $lng <= 180) {
+                    $points[] = ['lat' => $lat, 'lng' => $lng];
+                }
+            }
         } else {
             // Try to parse as old format and convert
             $lines = explode("\n", $raw);
-            $points = [];
             foreach ($lines as $line) {
-                $parts = explode(',', $line);
+                $parts = explode(',', sanitize_text_field($line));
                 if (count($parts) >= 2) {
-                    $lat = trim($parts[0]);
-                    $lng = trim($parts[1]);
-                    if (is_numeric($lat) && is_numeric($lng)) {
-                        $points[] = ['lat' => (float)$lat, 'lng' => (float)$lng];
+                    $lat = (float) trim($parts[0]);
+                    $lng = (float) trim($parts[1]);
+                    if ($lat >= -90 && $lat <= 90 &&
+                        $lng >= -180 && $lng <= 180) {
+                        $points[] = ['lat' => $lat, 'lng' => $lng];
                     }
                 }
             }
-            $to_save = json_encode($points, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         }
+        $to_save = wp_json_encode($points, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         update_post_meta($post_id, '_route_path', $to_save);
     }
 }
