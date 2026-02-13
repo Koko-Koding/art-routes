@@ -126,11 +126,14 @@ get_header();
                     wp_enqueue_script('wp-art-routes-single-artwork-map-js');
 
                     // Pass artwork data to the map script
+                    $icon_url = wp_art_routes_get_location_icon_url(get_the_ID());
                     wp_localize_script('wp-art-routes-single-artwork-map-js', 'wpArtRoutesSingleArtwork', [
                         'latitude'     => (float) $latitude,
                         'longitude'    => (float) $longitude,
                         'title'        => get_the_title(),
                         'thumbnailUrl' => get_the_post_thumbnail_url(get_the_ID(), 'thumbnail'),
+                        'iconUrl'      => $icon_url ? esc_url($icon_url) : '',
+                        'number'       => get_post_meta(get_the_ID(), '_artwork_number', true) ?: '',
                     ]);
                     ?>
                 </div>

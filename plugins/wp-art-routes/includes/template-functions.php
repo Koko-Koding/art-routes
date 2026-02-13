@@ -10,6 +10,69 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Get the icon URL for a location (artwork) with full fallback chain.
+ *
+ * Fallback order: per-item icon → edition default icon → global default icon → empty string.
+ *
+ * @param int      $post_id    The artwork post ID.
+ * @param int|null $edition_id The edition ID (if known). If null, will be looked up from post meta.
+ * @return string The icon URL or empty string if no icon configured.
+ */
+function wp_art_routes_get_location_icon_url($post_id, $edition_id = null)
+{
+    // 1. Per-item icon
+    $icon_filename = get_post_meta($post_id, '_artwork_icon', true);
+    if (!empty($icon_filename)) {
+        return wp_art_routes_get_icon_url($icon_filename);
+    }
+
+    // 2. Edition default icon
+    if (is_null($edition_id)) {
+        $edition_id = get_post_meta($post_id, '_edition_id', true);
+    }
+    if (!empty($edition_id)) {
+        $edition_icon = get_post_meta($edition_id, '_edition_default_location_icon', true);
+        if (!empty($edition_icon)) {
+            return wp_art_routes_get_icon_url($edition_icon);
+        }
+    }
+
+    // 3. Global default icon
+    $global_icon = get_option('wp_art_routes_default_location_icon', '');
+    if (!empty($global_icon)) {
+        return wp_art_routes_get_icon_url($global_icon);
+    }
+
+    return '';
+}
+
+/**
+ * Get the icon URL for an information point with full fallback chain.
+ *
+ * Fallback order: per-item icon → legacy icon_url field → default info icon.
+ *
+ * @param int $post_id The information point post ID.
+ * @return string The icon URL (always returns a value due to hardcoded default).
+ */
+function wp_art_routes_get_info_point_icon_url($post_id)
+{
+    // 1. New icon field
+    $icon_filename = get_post_meta($post_id, '_info_point_icon', true);
+    if (!empty($icon_filename)) {
+        return wp_art_routes_get_icon_url($icon_filename);
+    }
+
+    // 2. Legacy icon_url field (backward compatibility)
+    $legacy_url = get_post_meta($post_id, '_info_point_icon_url', true);
+    if (!empty($legacy_url)) {
+        return $legacy_url;
+    }
+
+    // 3. Hardcoded default
+    return wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
+}
+
+/**
  * Get all art routes
  */
 function wp_art_routes_get_routes()
@@ -152,41 +215,13 @@ function wp_art_routes_get_all_artworks()
 
     $result = [];
 
-    // Cache edition default icons to avoid repeated lookups
-    $edition_default_icons = [];
-
     foreach ($artworks as $artwork) {
         $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then edition default, then global default
-            $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
-            $icon_url = '';
-
-            if (!empty($icon_filename)) {
-                $icon_url = wp_art_routes_get_icon_url($icon_filename);
-            } else {
-                // Check edition default icon
-                $edition_id = get_post_meta($artwork->ID, '_edition_id', true);
-                if (!empty($edition_id)) {
-                    if (!isset($edition_default_icons[$edition_id])) {
-                        $edition_default_icons[$edition_id] = get_post_meta($edition_id, '_edition_default_location_icon', true);
-                    }
-                    if (!empty($edition_default_icons[$edition_id])) {
-                        $icon_url = wp_art_routes_get_icon_url($edition_default_icons[$edition_id]);
-                    }
-                }
-
-                // Fall back to global default location icon setting
-                if (empty($icon_url)) {
-                    $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
-                    if (!empty($default_location_icon)) {
-                        $icon_url = wp_art_routes_get_icon_url($default_location_icon);
-                    }
-                }
-            }
+            $icon_url = wp_art_routes_get_location_icon_url($artwork->ID);
 
             $artwork_data = [
                 'id' => $artwork->ID,
@@ -265,22 +300,6 @@ function wp_art_routes_get_all_information_points()
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer new icon field, fallback to old icon_url, then default
-            $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
-            $icon_url = '';
-
-            if (!empty($icon_filename)) {
-                $icon_url = wp_art_routes_get_icon_url($icon_filename);
-            } else {
-                // Fallback to old icon_url field for backward compatibility
-                $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
-
-                // If still no icon, use default
-                if (empty($icon_url)) {
-                    $icon_url = wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
-                }
-            }
-
             $info_points[] = [
                 'id' => $info_post->ID,
                 'title' => $info_post->post_title,
@@ -289,7 +308,7 @@ function wp_art_routes_get_all_information_points()
                 'permalink' => get_permalink($info_post->ID),
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
-                'icon_url' => $icon_url,
+                'icon_url' => wp_art_routes_get_info_point_icon_url($info_post->ID),
             ];
         }
     }
@@ -670,30 +689,13 @@ function wp_art_routes_get_edition_artworks($edition_id)
 
     $result = [];
 
-    // Get edition default icon for fallback
-    $edition_default_icon = get_post_meta($edition_id, '_edition_default_location_icon', true);
-
     foreach ($artworks as $artwork) {
         $latitude = get_post_meta($artwork->ID, '_artwork_latitude', true);
         $longitude = get_post_meta($artwork->ID, '_artwork_longitude', true);
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer icon field, then edition default, then global default
-            $icon_filename = get_post_meta($artwork->ID, '_artwork_icon', true);
-            $icon_url = '';
-
-            if (!empty($icon_filename)) {
-                $icon_url = wp_art_routes_get_icon_url($icon_filename);
-            } elseif (!empty($edition_default_icon)) {
-                $icon_url = wp_art_routes_get_icon_url($edition_default_icon);
-            } else {
-                // Fall back to global default location icon setting
-                $default_location_icon = get_option('wp_art_routes_default_location_icon', '');
-                if (!empty($default_location_icon)) {
-                    $icon_url = wp_art_routes_get_icon_url($default_location_icon);
-                }
-            }
+            $icon_url = wp_art_routes_get_location_icon_url($artwork->ID, $edition_id);
 
             $artwork_data = [
                 'id' => $artwork->ID,
@@ -773,23 +775,6 @@ function wp_art_routes_get_edition_information_points($edition_id)
 
         // Ensure location data exists
         if (is_numeric($latitude) && is_numeric($longitude)) {
-            // Get icon information - prefer new icon field, fallback to old icon_url, then default
-            $icon_filename = get_post_meta($info_post->ID, '_info_point_icon', true);
-            $icon_url = '';
-
-            if (!empty($icon_filename)) {
-                // Use centralized function that handles both built-in and custom icons
-                $icon_url = wp_art_routes_get_icon_url($icon_filename);
-            } else {
-                // Fallback to old icon_url field for backward compatibility
-                $icon_url = get_post_meta($info_post->ID, '_info_point_icon_url', true);
-
-                // If still no icon, use default
-                if (empty($icon_url)) {
-                    $icon_url = wp_art_routes_get_icon_url(wp_art_routes_get_default_info_icon());
-                }
-            }
-
             $info_points[] = [
                 'id' => $info_post->ID,
                 'title' => $info_post->post_title,
@@ -798,7 +783,7 @@ function wp_art_routes_get_edition_information_points($edition_id)
                 'permalink' => get_permalink($info_post->ID),
                 'latitude' => (float)$latitude,
                 'longitude' => (float)$longitude,
-                'icon_url' => $icon_url,
+                'icon_url' => wp_art_routes_get_info_point_icon_url($info_post->ID),
             ];
         }
     }
