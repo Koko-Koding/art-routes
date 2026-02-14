@@ -17,7 +17,7 @@ $route_id = isset($_GET['route_id']) ? absint($_GET['route_id']) : absint(get_op
 
 // Validate that the route exists and is the correct post type
 $route_post = get_post($route_id);
-if (!$route_post || $route_post->post_type !== 'art_route' || $route_post->post_status !== 'publish') {
+if (!$route_post || $route_post->post_type !== 'artro_route' || $route_post->post_status !== 'publish') {
     $route_id = absint(get_option('art_routes_default_route_id', 1));
 }
 

@@ -78,7 +78,7 @@ function art_routes_get_info_point_icon_url($post_id)
 function art_routes_get_routes()
 {
     return get_posts([
-        'post_type' => 'art_route',
+        'post_type' => 'artro_route',
         'posts_per_page' => -1,
         'orderby' => 'title',
         'order' => 'ASC',
@@ -92,7 +92,7 @@ function art_routes_get_route_data($route_id)
 {
     $route = get_post($route_id);
 
-    if (!$route || $route->post_type !== 'art_route') {
+    if (!$route || $route->post_type !== 'artro_route') {
         return null;
     }
 
@@ -206,7 +206,7 @@ function art_routes_get_all_artworks()
 {
     // Query all published artworks
     $artworks = get_posts([
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'posts_per_page' => -1,
         'post_status' => 'publish', // Only get published artworks
         'orderby' => 'title',
@@ -285,7 +285,7 @@ function art_routes_get_all_information_points()
 {
     // Query all published information points
     $info_point_posts = get_posts([
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'posts_per_page' => -1,
         'post_status' => 'publish', // Only get published points
         'orderby' => 'title',
@@ -384,7 +384,7 @@ add_filter('template_include', 'art_routes_template_include');
 function art_routes_single_artwork_template($template)
 {
     // Only handle single artwork posts
-    if (is_singular('artwork')) {
+    if (is_singular('artro_artwork')) {
         // Look for template in theme directory first
         $located = locate_template('art-routes/single-artwork.php');
 
@@ -408,7 +408,7 @@ add_filter('template_include', 'art_routes_single_artwork_template', 99);
 function art_routes_append_map_to_route_content($content)
 {
     // Only apply on singular art_route pages
-    if (!is_singular('art_route')) {
+    if (!is_singular('artro_route')) {
         return $content;
     }
 
@@ -645,7 +645,7 @@ function art_routes_get_edition_routes($edition_id)
     }
 
     $routes = get_posts([
-        'post_type' => 'art_route',
+        'post_type' => 'artro_route',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'meta_key' => '_edition_id',
@@ -678,7 +678,7 @@ function art_routes_get_edition_artworks($edition_id)
 
     // Query artworks filtered by edition
     $artworks = get_posts([
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'posts_per_page' => -1,
         'post_status' => 'publish',
         'meta_key' => '_edition_id',
@@ -758,7 +758,7 @@ function art_routes_get_edition_information_points($edition_id)
 
     // Query information points filtered by edition
     $info_point_posts = get_posts([
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'posts_per_page' => -1,
         'post_status' => 'publish',
         'meta_key' => '_edition_id',
@@ -801,7 +801,7 @@ function art_routes_get_edition_information_points($edition_id)
  */
 function art_routes_single_edition_template($template)
 {
-    if (is_singular('edition')) {
+    if (is_singular('artro_edition')) {
         // Look for template in theme directory first
         $located = locate_template('art-routes/single-edition.php');
 

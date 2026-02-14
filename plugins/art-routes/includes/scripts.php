@@ -146,7 +146,7 @@ function art_routes_enqueue_scripts()
     // Only enqueue on pages with our shortcode or template or single post type
     global $post;
     $has_related_artworks_shortcode = false;
-    if (isset($post->post_content) && has_shortcode($post->post_content, 'related_artworks')) {
+    if (isset($post->post_content) && has_shortcode($post->post_content, 'art_routes_related_artworks')) {
         $has_related_artworks_shortcode = true;
     }
     if (!art_routes_is_route_page() && !$has_related_artworks_shortcode) {
@@ -166,10 +166,10 @@ function art_routes_enqueue_scripts()
     }
 
     // Early-enqueue CSS for single post types to prevent FOUC
-    if (is_singular('edition')) {
+    if (is_singular('artro_edition')) {
         wp_enqueue_style('art-routes-single-edition-css');
     }
-    if (is_singular('artwork')) {
+    if (is_singular('artro_artwork')) {
         wp_enqueue_style('art-routes-single-artwork-css');
     }
 
@@ -178,7 +178,7 @@ function art_routes_enqueue_scripts()
 
     // Determine Route ID
     $route_id = 0;
-    if (is_singular('art_route')) {
+    if (is_singular('artro_route')) {
         $route_id = get_the_ID();
     } elseif (is_page_template('art-route-map-template.php')) {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Public-facing display, no data modification
@@ -218,9 +218,9 @@ function art_routes_enqueue_scripts()
                 'nearbyArtwork' => __('You are near an artwork!', 'art-routes'),
             ],
         ];
-        wp_localize_script('art-routes-map-js', 'artRouteData', $js_data);
+        wp_localize_script('art-routes-map-js', 'artRoutesData', $js_data);
     } else {
-        wp_localize_script('art-routes-map-js', 'artRouteData', [
+        wp_localize_script('art-routes-map-js', 'artRoutesData', [
             'error' => 'No route data found or specified.',
             'plugin_url' => ART_ROUTES_PLUGIN_URL,
             'route_path' => [],
@@ -240,12 +240,12 @@ function art_routes_enqueue_admin_scripts($hook)
 
     // Check if we need the route editor scripts
     $is_edit_page = $hook === 'post.php' || $hook === 'post-new.php';
-    $is_route_type = isset($post) && $post->post_type === 'art_route';
-    $is_artwork_type = isset($post) && $post->post_type === 'artwork';
-    $is_info_point_type = isset($post) && $post->post_type === 'information_point';
+    $is_route_type = isset($post) && $post->post_type === 'artro_route';
+    $is_artwork_type = isset($post) && $post->post_type === 'artro_artwork';
+    $is_info_point_type = isset($post) && $post->post_type === 'artro_info_point';
 
     // Settings page
-    if ($hook === 'edition_page_art-routes-settings') {
+    if ($hook === 'artro_edition_page_art-routes-settings') {
         wp_enqueue_script(
             'art-routes-custom-icons-js',
             ART_ROUTES_PLUGIN_URL . 'assets/js/admin/custom-icons.js',
@@ -267,7 +267,7 @@ function art_routes_enqueue_admin_scripts($hook)
     }
 
     // Import/Export page
-    if ($hook === 'edition_page_art-routes-import-export') {
+    if ($hook === 'artro_edition_page_art-routes-import-export') {
         wp_enqueue_style(
             'art-routes-import-export-css',
             ART_ROUTES_PLUGIN_URL . 'assets/css/import-export.css',
@@ -348,12 +348,12 @@ function art_routes_enqueue_admin_scripts($hook)
         // Pass data to JavaScript
         wp_localize_script(
             'art-routes-editor-js',
-            'routeEditorData',
+            'artRoutesRouteEditorData',
             [
                 'modalHTML' => art_routes_get_route_editor_modal_html(),
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'get_points_nonce' => wp_create_nonce('get_route_points_nonce'),
-                'save_points_nonce' => wp_create_nonce('save_route_points_nonce'),
+                'get_points_nonce' => wp_create_nonce('art_routes_get_route_points_nonce'),
+                'save_points_nonce' => wp_create_nonce('art_routes_save_route_points_nonce'),
                 'route_id' => isset($post) ? $post->ID : 0,
                 'i18n' => [
                     'addArtwork' => __('Add Artwork', 'art-routes'),
@@ -393,7 +393,7 @@ function art_routes_enqueue_admin_scripts($hook)
         // Pass the modal HTML to JavaScript
         wp_localize_script(
             'art-routes-location-picker-js',
-            'artworkLocationModalHTML',
+            'artRoutesLocationPickerModalHTML',
             art_routes_get_location_picker_modal_html()
         );
 
@@ -418,7 +418,7 @@ function art_routes_enqueue_admin_scripts($hook)
                 true
             );
             wp_localize_script('art-routes-artist-search-js', 'artRoutesArtistSearch', [
-                'nonce'      => wp_create_nonce('artist_search_nonce'),
+                'nonce'      => wp_create_nonce('art_routes_artist_search_nonce'),
                 'removeText' => __('Remove', 'art-routes'),
             ]);
         }
@@ -438,7 +438,7 @@ function art_routes_is_route_page()
         if (has_shortcode($post->post_content, 'art_route_map')) {
             return true;
         }
-        if (has_shortcode($post->post_content, 'edition_map')) {
+        if (has_shortcode($post->post_content, 'art_routes_edition_map')) {
             return true;
         }
         if (has_shortcode($post->post_content, 'art_routes_map')) {
@@ -456,15 +456,15 @@ function art_routes_is_route_page()
         return true;
     }
 
-    if (is_singular('art_route')) {
+    if (is_singular('artro_route')) {
         return true;
     }
 
-    if (is_singular('artwork')) {
+    if (is_singular('artro_artwork')) {
         return true;
     }
 
-    if (is_singular('edition')) {
+    if (is_singular('artro_edition')) {
         return true;
     }
 

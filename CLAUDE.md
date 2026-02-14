@@ -95,9 +95,9 @@ The plugin uses a centralized menu under **Art Routes** (translatable to "Kunstr
 ```
 Art Routes (top-level, dashicons-location-alt)
 ├── Editions          (list of editions)
-├── Routes            (art_route CPT)
-├── Locations         (artwork CPT)
-├── Info Points       (information_point CPT)
+├── Routes            (artro_route CPT)
+├── Locations         (artro_artwork CPT)
+├── Info Points       (artro_info_point CPT)
 ├── Import/Export     (CSV/GPX import and export)
 └── Settings          (General, Terminology tabs)
 ```
@@ -143,11 +143,13 @@ art_routes_detect_edition_context();
 
 ### Custom Post Types
 
-Post type machine names are **fixed** (for data compatibility), but labels are dynamic:
-- `art_route` - Routes with path coordinates and metadata
-- `artwork` - Locations/points of interest with GPS coordinates
-- `information_point` - Info markers along routes
-- `edition` - Container that groups routes/locations/info points for events/time periods
+Post type machine names use the `artro_` prefix (for WordPress.org compliance), labels are dynamic:
+- `artro_route` - Routes with path coordinates and metadata
+- `artro_artwork` - Locations/points of interest with GPS coordinates
+- `artro_info_point` - Info markers along routes
+- `artro_edition` - Container that groups routes/locations/info points for events/time periods
+
+A one-time database migration (`art_routes_migrate_cpt_names()`) automatically converts old generic CPT names to the new `artro_` prefixed names on plugin update.
 
 ### Editions System
 
@@ -278,11 +280,11 @@ Located at Editions → Dashboard (`plugins/art-routes/includes/edition-dashboar
 | `edition-dashboard.php` | Edition Dashboard admin page - bulk management UI with map |
 | `blocks.php` | Gutenberg block registration (Edition Map block) |
 | `import-export.php` | Import/Export admin page - CSV and GPX import/export |
-| `post-types.php` | Registers art_route, artwork, information_point CPTs with edition linking |
+| `post-types.php` | Registers artro_route, artro_artwork, artro_info_point CPTs with edition linking |
 | `meta-boxes.php` | Admin meta boxes for route/artwork/info point editing, Edition selector |
 | `template-functions.php` | Route data retrieval, edition-filtered queries, template loading |
 | `scripts.php` | Enqueues Leaflet.js and plugin assets with i18n |
-| `shortcodes.php` | `[art_route_map]`, `[art_routes_map]`, `[edition_map]`, `[art_route_icons]`, `[related_artworks]` |
+| `shortcodes.php` | `[art_route_map]`, `[art_routes_map]`, `[art_routes_edition_map]`, `[art_route_icons]`, `[art_routes_related_artworks]` |
 | `ajax-handlers.php` | AJAX for visited artworks, artist search, GPX export |
 | `settings.php` | Tabbed settings page (General, Terminology) |
 | `class-gpx-handler.php` | GPX import/export with device presets |
@@ -325,7 +327,7 @@ Attributes:
 
 **Edition Map Shortcode:**
 ```
-[edition_map
+[art_routes_edition_map
     edition_id="123"       (optional, auto-detects on edition pages)
     routes="all|none|45,67"
     show_locations="true"
@@ -339,7 +341,7 @@ Attributes:
 - `[art_route_map]` - Single route map
 - `[art_routes_map]` - Multiple routes map (supports `edition_id` parameter)
 - `[art_route_icons]` - Display route icons
-- `[related_artworks]` - Show related artworks
+- `[art_routes_related_artworks]` - Show related artworks
 
 ### Template System
 
@@ -420,14 +422,14 @@ Additional settings stored separately:
 
 **Important:** Meta keys are **fixed** and should never be renamed (for backwards compatibility).
 
-**Routes (`art_route`):**
+**Routes (`artro_route`):**
 - `_route_path` - JSON array of [lat, lng] coordinates
 - `_route_length` - Route length
 - `_route_duration` - Estimated duration
 - `_route_type` - Route type
 - `_edition_id` - Linked edition ID
 
-**Locations (`artwork`):**
+**Locations (`artro_artwork`):**
 - `_artwork_latitude` - GPS latitude
 - `_artwork_longitude` - GPS longitude
 - `_artwork_number` - Display number (e.g., "A1", "1")
@@ -438,13 +440,13 @@ Additional settings stored separately:
 - `_stroller_accessible` - Accessibility flag
 - `_edition_id` - Linked edition ID
 
-**Info Points (`information_point`):**
+**Info Points (`artro_info_point`):**
 - `_artwork_latitude` - GPS latitude (shares prefix with artwork for consistency)
 - `_artwork_longitude` - GPS longitude
 - `_info_point_icon` - Custom icon filename
 - `_edition_id` - Linked edition ID
 
-**Editions (`edition`):**
+**Editions (`artro_edition`):**
 - `_edition_terminology` - Serialized array of terminology overrides
 - `_edition_start_date` - Event start date (Y-m-d)
 - `_edition_end_date` - Event end date (Y-m-d)
@@ -507,6 +509,8 @@ Controlled via `markerDisplayOrder` object in `art-route-map.js`:
 **Activation Hook:** Registers all CPTs and flushes rewrite rules.
 
 **Automatic Rewrite Flush:** The plugin automatically flushes rewrite rules when the version changes (stored in `art_routes_version` option). This ensures permalinks work correctly after plugin updates without requiring manual flush via Settings → Permalinks.
+
+**CPT Name Migration:** On version upgrade, `art_routes_migrate_cpt_names()` converts old generic CPT names (`art_route`, `artwork`, `information_point`, `edition`) to the new `artro_` prefixed names in the database. Gated by `art_routes_cpt_migration_done` option flag (runs once).
 
 ## Release Workflow
 

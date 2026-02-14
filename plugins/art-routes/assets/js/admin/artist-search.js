@@ -21,7 +21,7 @@ jQuery(document).ready(function($) {
                 url: ajaxurl,
                 dataType: 'json',
                 data: {
-                    action: 'search_posts_for_artist',
+                    action: 'art_routes_search_posts_for_artist',
                     term: request.term,
                     post_type: postType,
                     nonce: artRoutesArtistSearch.nonce

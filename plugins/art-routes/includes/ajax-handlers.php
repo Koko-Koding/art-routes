@@ -68,7 +68,7 @@ add_action('wp_ajax_nopriv_art_routes_mark_artwork_visited', 'art_routes_ajax_ma
 function art_routes_search_posts_for_artist()
 {
     // Verify nonce
-    if (!isset($_GET['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce'])), 'artist_search_nonce')) {
+    if (!isset($_GET['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['nonce'])), 'art_routes_artist_search_nonce')) {
         wp_send_json_error('Invalid nonce');
         die();
     }
@@ -102,8 +102,8 @@ function art_routes_search_posts_for_artist()
             'oembed_cache',
             'user_request',
             'wp_block',
-            'art_route',
-            'artwork'
+            'artro_route',
+            'artro_artwork'
         );
         $post_types = get_post_types(array('public' => true), 'names');
         $filtered_post_types = array_diff($post_types, $excluded_post_types);
@@ -134,14 +134,14 @@ function art_routes_search_posts_for_artist()
     wp_send_json($results);
     die();
 }
-add_action('wp_ajax_search_posts_for_artist', 'art_routes_search_posts_for_artist');
+add_action('wp_ajax_art_routes_search_posts_for_artist', 'art_routes_search_posts_for_artist');
 
 /**
  * AJAX handler to get artworks and info points for a specific route
  */
-function wp_ajax_get_route_points()
+function art_routes_ajax_get_route_points()
 {
-    check_ajax_referer('get_route_points_nonce', 'nonce');
+    check_ajax_referer('art_routes_get_route_points_nonce', 'nonce');
 
     if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
         wp_send_json_error(['message' => __('Invalid request or permissions.', 'art-routes')]);
@@ -152,14 +152,14 @@ function wp_ajax_get_route_points()
 
     wp_send_json_success($points);
 }
-add_action('wp_ajax_get_route_points', 'wp_ajax_get_route_points');
+add_action('wp_ajax_art_routes_get_route_points', 'art_routes_ajax_get_route_points');
 
 /**
  * AJAX handler to save route path and associated points (artworks/info points)
  */
-function wp_ajax_save_route_points()
+function art_routes_ajax_save_route_points()
 {
-    check_ajax_referer('save_route_points_nonce', 'nonce');
+    check_ajax_referer('art_routes_save_route_points_nonce', 'nonce');
 
     if (!isset($_POST['route_id']) || !current_user_can('edit_post', intval(wp_unslash($_POST['route_id'])))) {
         wp_send_json_error(['message' => __('Invalid request or permissions.', 'art-routes')]);
@@ -182,9 +182,9 @@ function wp_ajax_save_route_points()
     }
 
     // 3. Handle Point Updates (Moved Points)
-    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
     if (isset($_POST['updated_points']) && is_array($_POST['updated_points'])) {
         $results['updated'] = [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
         $updated_points = wp_unslash($_POST['updated_points']);
         foreach ($updated_points as $point) {
             $point_id = isset($point['id']) ? intval($point['id']) : 0;
@@ -200,7 +200,7 @@ function wp_ajax_save_route_points()
                 update_post_meta($point_id, '_artwork_longitude', $lng);
                 // Save icon_url for info points
                 $post_type = get_post_type($point_id);
-                if ($post_type === 'information_point') {
+                if ($post_type === 'artro_info_point') {
                     if ($icon_url) {
                         // For backward compatibility, still save icon_url if provided
                         update_post_meta($point_id, '_info_point_icon_url', $icon_url);
@@ -214,9 +214,9 @@ function wp_ajax_save_route_points()
     }
 
     // 4. Handle Point Removals (Delete from system - no longer just disassociate)
-    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each ID is cast to int below
     if (isset($_POST['removed_points']) && is_array($_POST['removed_points'])) {
         $results['removed'] = [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each ID is cast to int below
         $removed_points = wp_unslash($_POST['removed_points']);
         foreach ($removed_points as $point_id_raw) {
             $point_id = intval($point_id_raw);
@@ -229,9 +229,9 @@ function wp_ajax_save_route_points()
     }
 
     // 5. Handle New Points (Create Draft Posts)
-    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
     if (isset($_POST['new_points']) && is_array($_POST['new_points'])) {
         $results['added'] = [];
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each field is sanitized individually below
         $new_points = wp_unslash($_POST['new_points']);
         foreach ($new_points as $point) {
             $type = isset($point['type']) ? sanitize_text_field($point['type']) : null;
@@ -243,7 +243,7 @@ function wp_ajax_save_route_points()
                 $lat !== null && $lng !== null &&
                 $lat >= -90 && $lat <= 90 &&
                 $lng >= -180 && $lng <= 180) {
-                $post_type = ($type === 'artwork') ? 'artwork' : 'information_point';
+                $post_type = ($type === 'artwork') ? 'artro_artwork' : 'artro_info_point';
                 /* translators: %1$s: latitude coordinate, %2$s: longitude coordinate */
                 $post_title = ($type === 'artwork') ? sprintf(__('New Artwork near %1$s, %2$s', 'art-routes'), $lat, $lng) : sprintf(__('New Info Point near %1$s, %2$s', 'art-routes'), $lat, $lng);
 
@@ -278,7 +278,7 @@ function wp_ajax_save_route_points()
 
     wp_send_json_success($results);
 }
-add_action('wp_ajax_save_route_points', 'wp_ajax_save_route_points');
+add_action('wp_ajax_art_routes_save_route_points', 'art_routes_ajax_save_route_points');
 
 /**
  * Helper function to get associated artworks and info points for a route
@@ -296,7 +296,7 @@ function art_routes_get_associated_points($route_id)
 
     // Get all artworks (no longer tied to specific routes)
     $artwork_query_args = [
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'posts_per_page' => -1,
         'post_status' => ['publish', 'draft'],
         'orderby' => 'title',
@@ -341,7 +341,7 @@ function art_routes_get_associated_points($route_id)
 
     // Get all information points (no longer tied to specific routes)
     $info_point_query_args = [
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'posts_per_page' => -1,
         'post_status' => ['publish', 'draft'],
         'orderby' => 'title',

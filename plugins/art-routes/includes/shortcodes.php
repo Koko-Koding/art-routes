@@ -17,8 +17,8 @@ function art_routes_register_shortcodes()
     add_shortcode('art_route_map', 'art_routes_map_shortcode');
     add_shortcode('art_routes_map', 'art_routes_multiple_map_shortcode');
     add_shortcode('art_route_icons', 'art_routes_icons_shortcode'); // NEW
-    add_shortcode('related_artworks', 'art_routes_related_artworks_shortcode');
-    add_shortcode('edition_map', 'art_routes_edition_map_shortcode');
+    add_shortcode('art_routes_related_artworks', 'art_routes_related_artworks_shortcode');
+    add_shortcode('art_routes_edition_map', 'art_routes_edition_map_shortcode');
 }
 add_action('init', 'art_routes_register_shortcodes');
 /**
@@ -33,7 +33,7 @@ function art_routes_related_artworks_shortcode($atts)
     }
 
     $artwork_args = [
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'orderby' => 'title',
@@ -166,7 +166,7 @@ function art_routes_icons_shortcode($atts)
 function art_routes_get_multiple_routes($route_ids = [], $exclude_ids = [])
 {
     $args = [
-        'post_type' => 'art_route',
+        'post_type' => 'artro_route',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'orderby' => 'title',

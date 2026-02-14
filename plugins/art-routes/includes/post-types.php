@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 function art_routes_register_post_types()
 {
     // Register Routes post type
-    register_post_type('art_route', [
+    register_post_type('artro_route', [
         'labels' => [
             'name' => __('Routes', 'art-routes'),
             'singular_name' => __('Route', 'art-routes'),
@@ -32,11 +32,11 @@ function art_routes_register_post_types()
         'menu_icon' => 'dashicons-location-alt',
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'art-route'],
-        'show_in_menu' => 'edit.php?post_type=edition',
+        'show_in_menu' => 'edit.php?post_type=artro_edition',
     ]);
 
     // Register Artworks post type
-    register_post_type('artwork', [
+    register_post_type('artro_artwork', [
         'labels' => [
             'name' => __('Artworks', 'art-routes'),
             'singular_name' => __('Artwork', 'art-routes'),
@@ -53,11 +53,11 @@ function art_routes_register_post_types()
         'menu_icon' => 'dashicons-format-image',
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'artwork'],
-        'show_in_menu' => 'edit.php?post_type=edition', // Add under the main Editions menu
+        'show_in_menu' => 'edit.php?post_type=artro_edition', // Add under the main Editions menu
     ]);
 
     // Register Information Points post type
-    register_post_type('information_point', [
+    register_post_type('artro_info_point', [
         'labels' => [
             'name' => __('Information Points', 'art-routes'),
             'singular_name' => __('Information Point', 'art-routes'),
@@ -74,7 +74,7 @@ function art_routes_register_post_types()
         'menu_icon' => 'dashicons-info', // Use an info icon
         'show_in_rest' => true,
         'rewrite' => ['slug' => 'info-point'],
-        'show_in_menu' => 'edit.php?post_type=edition', // Add under the main Editions menu
+        'show_in_menu' => 'edit.php?post_type=artro_edition', // Add under the main Editions menu
     ]);
 }
 add_action('init', 'art_routes_register_post_types');
@@ -85,7 +85,7 @@ add_action('init', 'art_routes_register_post_types');
 function art_routes_register_artwork_meta()
 {
     // Register meta for artwork post type
-    register_post_meta('artwork', '_artwork_latitude', [
+    register_post_meta('artro_artwork', '_artwork_latitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -94,7 +94,7 @@ function art_routes_register_artwork_meta()
             return current_user_can('edit_posts');
         },
     ]);
-    register_post_meta('artwork', '_artwork_longitude', [
+    register_post_meta('artro_artwork', '_artwork_longitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -105,7 +105,7 @@ function art_routes_register_artwork_meta()
     ]);
 
     // Register new meta fields for artwork number and location
-    register_post_meta('artwork', '_artwork_number', [
+    register_post_meta('artro_artwork', '_artwork_number', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -114,7 +114,7 @@ function art_routes_register_artwork_meta()
             return current_user_can('edit_posts');
         },
     ]);
-    register_post_meta('artwork', '_artwork_location', [
+    register_post_meta('artro_artwork', '_artwork_location', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -125,7 +125,7 @@ function art_routes_register_artwork_meta()
     ]);
 
     // Register artwork icon field (filename)
-    register_post_meta('artwork', '_artwork_icon', [
+    register_post_meta('artro_artwork', '_artwork_icon', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -136,7 +136,7 @@ function art_routes_register_artwork_meta()
     ]);
 
     // Register accessibility meta fields for artworks
-    register_post_meta('artwork', '_wheelchair_accessible', [
+    register_post_meta('artro_artwork', '_wheelchair_accessible', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -145,7 +145,7 @@ function art_routes_register_artwork_meta()
             return current_user_can('edit_posts');
         },
     ]);
-    register_post_meta('artwork', '_stroller_accessible', [
+    register_post_meta('artro_artwork', '_stroller_accessible', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -161,7 +161,7 @@ add_action('init', 'art_routes_register_artwork_meta');
  * Register _edition_id meta for all content post types
  */
 function art_routes_register_edition_id_meta() {
-    $post_types = ['art_route', 'artwork', 'information_point'];
+    $post_types = ['artro_route', 'artro_artwork', 'artro_info_point'];
 
     foreach ($post_types as $post_type) {
         register_post_meta($post_type, '_edition_id', [
@@ -182,7 +182,7 @@ add_action('init', 'art_routes_register_edition_id_meta');
  */
 function art_routes_register_information_point_meta()
 {
-    register_post_meta('information_point', '_artwork_latitude', [
+    register_post_meta('artro_info_point', '_artwork_latitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -191,7 +191,7 @@ function art_routes_register_information_point_meta()
             return current_user_can('edit_posts');
         },
     ]);
-    register_post_meta('information_point', '_artwork_longitude', [
+    register_post_meta('artro_info_point', '_artwork_longitude', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -201,7 +201,7 @@ function art_routes_register_information_point_meta()
         },
     ]);
     // Register the new icon field (filename instead of URL)
-    register_post_meta('information_point', '_info_point_icon', [
+    register_post_meta('artro_info_point', '_info_point_icon', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -211,7 +211,7 @@ function art_routes_register_information_point_meta()
         },
     ]);
     // Keep the old field for backward compatibility during transition
-    register_post_meta('information_point', '_info_point_icon_url', [
+    register_post_meta('artro_info_point', '_info_point_icon_url', [
         'type' => 'string',
         'single' => true,
         'show_in_rest' => true,
@@ -228,7 +228,7 @@ add_action('init', 'art_routes_register_information_point_meta');
  */
 function art_routes_register_artwork_rest_fields()
 {
-    register_rest_field('artwork', 'latitude', [
+    register_rest_field('artro_artwork', 'latitude', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_latitude', true);
         },
@@ -242,7 +242,7 @@ function art_routes_register_artwork_rest_fields()
         ],
     ]);
 
-    register_rest_field('artwork', 'longitude', [
+    register_rest_field('artro_artwork', 'longitude', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_longitude', true);
         },
@@ -256,7 +256,7 @@ function art_routes_register_artwork_rest_fields()
         ],
     ]);
 
-    register_rest_field('artwork', 'number', [
+    register_rest_field('artro_artwork', 'number', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_number', true);
         },
@@ -270,7 +270,7 @@ function art_routes_register_artwork_rest_fields()
         ],
     ]);
 
-    register_rest_field('artwork', 'location', [
+    register_rest_field('artro_artwork', 'location', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_location', true);
         },
@@ -285,7 +285,7 @@ function art_routes_register_artwork_rest_fields()
     ]);
 
     // Artwork icon field (filename)
-    register_rest_field('artwork', 'icon', [
+    register_rest_field('artro_artwork', 'icon', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_icon', true);
         },
@@ -300,7 +300,7 @@ function art_routes_register_artwork_rest_fields()
     ]);
 
     // Icon URL (computed from filename)
-    register_rest_field('artwork', 'icon_url', [
+    register_rest_field('artro_artwork', 'icon_url', [
         'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_artwork_icon', true);
             if (!empty($icon_filename)) {
@@ -318,7 +318,7 @@ function art_routes_register_artwork_rest_fields()
     ]);
 
     // Accessibility fields (expose as non-underscore fields for frontend)
-    register_rest_field('artwork', 'wheelchair_accessible', [
+    register_rest_field('artro_artwork', 'wheelchair_accessible', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_wheelchair_accessible', true);
         },
@@ -328,7 +328,7 @@ function art_routes_register_artwork_rest_fields()
             'context' => ['view', 'edit'],
         ],
     ]);
-    register_rest_field('artwork', 'stroller_accessible', [
+    register_rest_field('artro_artwork', 'stroller_accessible', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_stroller_accessible', true);
         },
@@ -346,7 +346,7 @@ add_action('rest_api_init', 'art_routes_register_artwork_rest_fields');
  */
 function art_routes_register_information_point_rest_fields()
 {
-    register_rest_field('information_point', 'latitude', [
+    register_rest_field('artro_info_point', 'latitude', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_latitude', true);
         },
@@ -360,7 +360,7 @@ function art_routes_register_information_point_rest_fields()
         ],
     ]);
 
-    register_rest_field('information_point', 'longitude', [
+    register_rest_field('artro_info_point', 'longitude', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_artwork_longitude', true);
         },
@@ -375,7 +375,7 @@ function art_routes_register_information_point_rest_fields()
     ]);
 
     // New icon field (filename)
-    register_rest_field('information_point', 'icon', [
+    register_rest_field('artro_info_point', 'icon', [
         'get_callback' => function ($post) {
             return get_post_meta($post['id'], '_info_point_icon', true);
         },
@@ -390,7 +390,7 @@ function art_routes_register_information_point_rest_fields()
     ]);
 
     // Icon URL (computed from filename)
-    register_rest_field('information_point', 'icon_url', [
+    register_rest_field('artro_info_point', 'icon_url', [
         'get_callback' => function ($post) {
             $icon_filename = get_post_meta($post['id'], '_info_point_icon', true);
             if (!empty($icon_filename)) {
@@ -415,7 +415,7 @@ function art_routes_register_information_point_rest_fields()
 add_action('rest_api_init', 'art_routes_register_information_point_rest_fields');
 
 // Add custom column to show artwork number in admin list
-add_filter('manage_artwork_posts_columns', function ($columns) {
+add_filter('manage_artro_artwork_posts_columns', function ($columns) {
     $new_columns = [];
     foreach ($columns as $key => $label) {
         $new_columns[$key] = $label;
@@ -427,7 +427,7 @@ add_filter('manage_artwork_posts_columns', function ($columns) {
     return $new_columns;
 });
 
-add_action('manage_artwork_posts_custom_column', function ($column, $post_id) {
+add_action('manage_artro_artwork_posts_custom_column', function ($column, $post_id) {
     if ($column === 'artwork_number') {
         $number = get_post_meta($post_id, '_artwork_number', true);
         echo esc_html($number);
@@ -449,7 +449,7 @@ add_action('manage_artwork_posts_custom_column', function ($column, $post_id) {
 }, 10, 2);
 
 // Make the artwork number column sortable
-add_filter('manage_edit-artwork_sortable_columns', function ($columns) {
+add_filter('manage_edit-artro_artwork_sortable_columns', function ($columns) {
     $columns['artwork_number'] = 'artwork_number';
     return $columns;
 });
@@ -459,7 +459,7 @@ add_action('pre_get_posts', function ($query) {
         return;
     }
     $orderby = $query->get('orderby');
-    if ('artwork_number' === $orderby && $query->get('post_type') === 'artwork') {
+    if ('artwork_number' === $orderby && $query->get('post_type') === 'artro_artwork') {
         $query->set('meta_key', '_artwork_number');
         $query->set('orderby', 'meta_value');
     }
@@ -481,11 +481,11 @@ function art_routes_add_edition_column($columns) {
     }
     return $new_columns;
 }
-add_filter('manage_art_route_posts_columns', 'art_routes_add_edition_column');
-add_filter('manage_information_point_posts_columns', 'art_routes_add_edition_column');
+add_filter('manage_artro_route_posts_columns', 'art_routes_add_edition_column');
+add_filter('manage_artro_info_point_posts_columns', 'art_routes_add_edition_column');
 
 // For artwork, we need to insert edition after the existing title-related columns
-add_filter('manage_artwork_posts_columns', function($columns) {
+add_filter('manage_artro_artwork_posts_columns', function($columns) {
     $new_columns = [];
     foreach ($columns as $key => $label) {
         $new_columns[$key] = $label;
@@ -520,9 +520,9 @@ function art_routes_render_edition_column($column, $post_id) {
         }
     }
 }
-add_action('manage_art_route_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
-add_action('manage_artwork_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
-add_action('manage_information_point_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
+add_action('manage_artro_route_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
+add_action('manage_artro_artwork_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
+add_action('manage_artro_info_point_posts_custom_column', 'art_routes_render_edition_column', 10, 2);
 
 /**
  * Add Edition filter dropdown to admin list tables
@@ -530,7 +530,7 @@ add_action('manage_information_point_posts_custom_column', 'art_routes_render_ed
 function art_routes_add_edition_filter() {
     global $typenow;
 
-    if (!in_array($typenow, ['art_route', 'artwork', 'information_point'])) {
+    if (!in_array($typenow, ['artro_route', 'artro_artwork', 'artro_info_point'])) {
         return;
     }
 
@@ -564,12 +564,12 @@ function art_routes_filter_by_edition($query) {
         return;
     }
 
-    if (!in_array($typenow, ['art_route', 'artwork', 'information_point'])) {
+    if (!in_array($typenow, ['artro_route', 'artro_artwork', 'artro_info_point'])) {
         return;
     }
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin list table filter, no data modification
-    if (!isset($_GET['edition_filter']) || wp_unslash($_GET['edition_filter']) === '0') {
+    if (!isset($_GET['edition_filter']) || sanitize_text_field(wp_unslash($_GET['edition_filter'])) === '0') {
         return;
     }
 

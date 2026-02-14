@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  */
 function art_routes_register_edition_post_type()
 {
-    register_post_type('edition', [
+    register_post_type('artro_edition', [
         'labels' => [
             'name'               => __('Editions', 'art-routes'),
             'singular_name'      => __('Edition', 'art-routes'),
@@ -53,7 +53,7 @@ add_action('init', 'art_routes_register_edition_post_type');
  */
 function art_routes_remove_edition_add_new_submenu()
 {
-    remove_submenu_page('edit.php?post_type=edition', 'post-new.php?post_type=edition');
+    remove_submenu_page('edit.php?post_type=artro_edition', 'post-new.php?post_type=artro_edition');
 }
 add_action('admin_menu', 'art_routes_remove_edition_add_new_submenu', 999);
 
@@ -63,7 +63,7 @@ add_action('admin_menu', 'art_routes_remove_edition_add_new_submenu', 999);
 function art_routes_register_edition_meta()
 {
     // Edition terminology overrides
-    register_post_meta('edition', '_edition_terminology', [
+    register_post_meta('artro_edition', '_edition_terminology', [
         'type'              => 'array',
         'single'            => true,
         'show_in_rest'      => [
@@ -81,7 +81,7 @@ function art_routes_register_edition_meta()
     ]);
 
     // Edition start date
-    register_post_meta('edition', '_edition_start_date', [
+    register_post_meta('artro_edition', '_edition_start_date', [
         'type'              => 'string',
         'single'            => true,
         'show_in_rest'      => true,
@@ -92,7 +92,7 @@ function art_routes_register_edition_meta()
     ]);
 
     // Edition end date
-    register_post_meta('edition', '_edition_end_date', [
+    register_post_meta('artro_edition', '_edition_end_date', [
         'type'              => 'string',
         'single'            => true,
         'show_in_rest'      => true,
@@ -103,7 +103,7 @@ function art_routes_register_edition_meta()
     ]);
 
     // Edition default location icon
-    register_post_meta('edition', '_edition_default_location_icon', [
+    register_post_meta('artro_edition', '_edition_default_location_icon', [
         'type'              => 'string',
         'single'            => true,
         'show_in_rest'      => true,
@@ -160,7 +160,7 @@ function art_routes_add_edition_meta_boxes()
         'edition_terminology',
         __('Terminology Overrides', 'art-routes'),
         'art_routes_render_edition_terminology_meta_box',
-        'edition',
+        'artro_edition',
         'normal',
         'high'
     );
@@ -170,7 +170,7 @@ function art_routes_add_edition_meta_boxes()
         'edition_dates',
         __('Event Dates', 'art-routes'),
         'art_routes_render_edition_dates_meta_box',
-        'edition',
+        'artro_edition',
         'side',
         'default'
     );
@@ -180,7 +180,7 @@ function art_routes_add_edition_meta_boxes()
         'edition_settings',
         __('Edition Settings', 'art-routes'),
         'art_routes_render_edition_settings_meta_box',
-        'edition',
+        'artro_edition',
         'side',
         'default'
     );
@@ -400,7 +400,7 @@ function art_routes_save_edition_settings($post_id)
         }
     }
 }
-add_action('save_post_edition', 'art_routes_save_edition_settings');
+add_action('save_post_artro_edition', 'art_routes_save_edition_settings');
 
 /**
  * Save Edition terminology meta box data
@@ -425,15 +425,15 @@ function art_routes_save_edition_terminology($post_id)
     }
 
     // Save terminology overrides
-    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by art_routes_sanitize_edition_terminology
     if (isset($_POST['edition_terminology']) && is_array($_POST['edition_terminology'])) {
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by art_routes_sanitize_edition_terminology
         $terminology = art_routes_sanitize_edition_terminology(wp_unslash($_POST['edition_terminology']));
         update_post_meta($post_id, '_edition_terminology', $terminology);
     } else {
         delete_post_meta($post_id, '_edition_terminology');
     }
 }
-add_action('save_post_edition', 'art_routes_save_edition_terminology');
+add_action('save_post_artro_edition', 'art_routes_save_edition_terminology');
 
 /**
  * Save Edition dates meta box data
@@ -483,7 +483,7 @@ function art_routes_save_edition_dates($post_id)
         }
     }
 }
-add_action('save_post_edition', 'art_routes_save_edition_dates');
+add_action('save_post_artro_edition', 'art_routes_save_edition_dates');
 
 /**
  * Get all published editions
@@ -494,7 +494,7 @@ add_action('save_post_edition', 'art_routes_save_edition_dates');
 function art_routes_get_editions($args = [])
 {
     $default_args = [
-        'post_type'      => 'edition',
+        'post_type'      => 'artro_edition',
         'post_status'    => 'publish',
         'posts_per_page' => -1,
         'orderby'        => 'title',
@@ -519,7 +519,7 @@ function art_routes_get_edition_data($edition_id)
 {
     $edition = get_post($edition_id);
 
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         return null;
     }
 
@@ -558,7 +558,7 @@ function art_routes_get_post_edition($post_id)
 
     // Verify the edition exists and is published
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition' || $edition->post_status !== 'publish') {
+    if (!$edition || $edition->post_type !== 'artro_edition' || $edition->post_status !== 'publish') {
         return null;
     }
 
@@ -593,7 +593,7 @@ function art_routes_enqueue_edition_delete_modal_assets($hook) {
     }
 
     $screen = get_current_screen();
-    if (!$screen || $screen->post_type !== 'edition') {
+    if (!$screen || $screen->post_type !== 'artro_edition') {
         return;
     }
 
@@ -676,7 +676,7 @@ function art_routes_ajax_get_edition_content_counts() {
     foreach ($edition_ids as $edition_id) {
         // Routes
         $routes = get_posts([
-            'post_type' => 'art_route',
+            'post_type' => 'artro_route',
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'posts_per_page' => -1,
             'fields' => 'ids',
@@ -687,7 +687,7 @@ function art_routes_ajax_get_edition_content_counts() {
 
         // Locations (artworks)
         $locations = get_posts([
-            'post_type' => 'artwork',
+            'post_type' => 'artro_artwork',
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'posts_per_page' => -1,
             'fields' => 'ids',
@@ -698,7 +698,7 @@ function art_routes_ajax_get_edition_content_counts() {
 
         // Info Points
         $info_points = get_posts([
-            'post_type' => 'information_point',
+            'post_type' => 'artro_info_point',
             'post_status' => ['publish', 'draft', 'pending', 'private'],
             'posts_per_page' => -1,
             'fields' => 'ids',
@@ -745,12 +745,12 @@ function art_routes_ajax_delete_edition_only() {
 
     foreach ($edition_ids as $edition_id) {
         // Verify this is an edition
-        if (get_post_type($edition_id) !== 'edition') {
+        if (get_post_type($edition_id) !== 'artro_edition') {
             continue;
         }
 
         // Clear _edition_id from all linked content
-        $post_types = ['art_route', 'artwork', 'information_point'];
+        $post_types = ['artro_route', 'artro_artwork', 'artro_info_point'];
         foreach ($post_types as $post_type) {
             $linked_posts = get_posts([
                 'post_type' => $post_type,
@@ -812,13 +812,13 @@ function art_routes_ajax_delete_edition_all() {
 
     foreach ($edition_ids as $edition_id) {
         // Verify this is an edition
-        if (get_post_type($edition_id) !== 'edition') {
+        if (get_post_type($edition_id) !== 'artro_edition') {
             continue;
         }
 
         // Delete all linked routes
         $routes = get_posts([
-            'post_type' => 'art_route',
+            'post_type' => 'artro_route',
             'post_status' => 'any',
             'posts_per_page' => -1,
             'fields' => 'ids',
@@ -833,7 +833,7 @@ function art_routes_ajax_delete_edition_all() {
 
         // Delete all linked locations
         $locations = get_posts([
-            'post_type' => 'artwork',
+            'post_type' => 'artro_artwork',
             'post_status' => 'any',
             'posts_per_page' => -1,
             'fields' => 'ids',
@@ -848,7 +848,7 @@ function art_routes_ajax_delete_edition_all() {
 
         // Delete all linked info points
         $info_points = get_posts([
-            'post_type' => 'information_point',
+            'post_type' => 'artro_info_point',
             'post_status' => 'any',
             'posts_per_page' => -1,
             'fields' => 'ids',

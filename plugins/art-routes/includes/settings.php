@@ -121,7 +121,7 @@ add_action('admin_init', 'art_routes_register_settings');
  */
 function art_routes_add_settings_page() {
     add_submenu_page(
-        'edit.php?post_type=edition',
+        'edit.php?post_type=artro_edition',
         __('Art Routes Settings', 'art-routes'),
         __('Settings', 'art-routes'),
         'manage_options',
@@ -141,6 +141,7 @@ function art_routes_render_settings_page() {
     }
 
     // Determine current tab
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab navigation for display only, no data modification
     $current_tab = isset($_GET['tab']) ? sanitize_key(wp_unslash($_GET['tab'])) : 'general';
 
     // Define available tabs
@@ -151,6 +152,7 @@ function art_routes_render_settings_page() {
     ];
 
     // Show success message if settings were updated
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Standard WordPress settings API pattern, display only
     if (isset($_GET['settings-updated'])) {
         add_settings_error(
             'art_routes_messages',
@@ -167,7 +169,7 @@ function art_routes_render_settings_page() {
 
         <nav class="nav-tab-wrapper">
             <?php foreach ($tabs as $tab_slug => $tab_label) : ?>
-                <a href="<?php echo esc_url(add_query_arg(['tab' => $tab_slug], admin_url('edit.php?post_type=edition&page=art-routes-settings'))); ?>"
+                <a href="<?php echo esc_url(add_query_arg(['tab' => $tab_slug], admin_url('edit.php?post_type=artro_edition&page=art-routes-settings'))); ?>"
                    class="nav-tab <?php echo $current_tab === $tab_slug ? 'nav-tab-active' : ''; ?>">
                     <?php echo esc_html($tab_label); ?>
                 </a>
@@ -215,7 +217,7 @@ function art_routes_render_general_tab() {
 
                     // Get all routes
                     $routes = get_posts([
-                        'post_type' => 'art_route',
+                        'post_type' => 'artro_route',
                         'posts_per_page' => -1,
                         'orderby' => 'title',
                         'order' => 'ASC',
@@ -475,10 +477,13 @@ function art_routes_ajax_upload_custom_icon() {
     }
 
     // Check if file was uploaded
-    if (!isset($_FILES['custom_icon_file']) || $_FILES['custom_icon_file']['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($_FILES['custom_icon_file']) ||
+        !isset($_FILES['custom_icon_file']['error']) ||
+        $_FILES['custom_icon_file']['error'] !== UPLOAD_ERR_OK) {
         wp_send_json_error(['message' => __('No file uploaded or upload error.', 'art-routes')]);
     }
 
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File array contains tmp_name (server path) and error (int); name is sanitized below
     $file = $_FILES['custom_icon_file'];
 
     // Sanitize file name early
@@ -533,8 +538,8 @@ function art_routes_ajax_upload_custom_icon() {
         $svg_content = $wp_filesystem->get_contents($file['tmp_name']);
 
         // Load the SVG sanitizer if available
-        if (class_exists('WP_Art_Routes_SVG_Sanitizer')) {
-            $sanitizer = new WP_Art_Routes_SVG_Sanitizer();
+        if (class_exists('Art_Routes_SVG_Sanitizer')) {
+            $sanitizer = new Art_Routes_SVG_Sanitizer();
             $sanitized = $sanitizer->sanitize($svg_content);
 
             if ($sanitized === false) {

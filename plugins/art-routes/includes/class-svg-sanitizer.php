@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 /**
  * SVG Sanitizer Class
  */
-class WP_Art_Routes_SVG_Sanitizer {
+class Art_Routes_SVG_Sanitizer {
 
     /**
      * Allowed SVG elements

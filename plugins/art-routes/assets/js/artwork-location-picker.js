@@ -12,7 +12,7 @@
     $(document).ready(function() {
         // Add modal to body if not already there
         if ($('#artwork-location-modal').length === 0) {
-            $('body').append(artworkLocationModalHTML);
+            $('body').append(artRoutesLocationPickerModalHTML);
         }
         
         // Setup event handlers

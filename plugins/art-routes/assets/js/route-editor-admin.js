@@ -24,17 +24,17 @@
 	let updateRouteInfoTimeout = null;
 
 	// Localized data from PHP
-	const ajaxUrl = routeEditorData.ajax_url;
-	const routeId = routeEditorData.route_id;
-	const getPointsNonce = routeEditorData.get_points_nonce;
-	const savePointsNonce = routeEditorData.save_points_nonce;
-	const i18n = routeEditorData.i18n;
+	const ajaxUrl = artRoutesRouteEditorData.ajax_url;
+	const routeId = artRoutesRouteEditorData.route_id;
+	const getPointsNonce = artRoutesRouteEditorData.get_points_nonce;
+	const savePointsNonce = artRoutesRouteEditorData.save_points_nonce;
+	const i18n = artRoutesRouteEditorData.i18n;
 
 	// Initialize when document is ready
 	$(document).ready(() => {
 		// Add modal to body if not already there
 		if ($("#route-editor-modal").length === 0) {
-			$("body").append(routeEditorData.modalHTML);
+			$("body").append(artRoutesRouteEditorData.modalHTML);
 		}
 
 		routePoints = getAndParseRouteFromTextarea();
@@ -537,7 +537,7 @@
 
 		// Prepare data for AJAX
 		const dataToSend = {
-			action: "save_route_points",
+			action: "art_routes_save_route_points",
 			nonce: savePointsNonce,
 			route_id: routeId,
 			route_path: formattedPath,
@@ -995,7 +995,7 @@
 			url: ajaxUrl,
 			type: "POST",
 			data: {
-				action: "get_route_points",
+				action: "art_routes_get_route_points",
 				nonce: getPointsNonce,
 				route_id: routeId,
 			},

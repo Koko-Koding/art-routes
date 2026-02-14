@@ -181,14 +181,14 @@ function art_routes_slug($type) {
  * Auto-detect edition context
  *
  * Attempts to determine the current edition from:
- * 1. Current Edition single page (is_singular('edition'))
+ * 1. Current Edition single page (is_singular('artro_edition'))
  * 2. Current post's _edition_id meta
  *
  * @return int|null Edition ID if detected, null otherwise
  */
 function art_routes_detect_edition_context() {
     // Check if we're on an edition single page
-    if (is_singular('edition')) {
+    if (is_singular('artro_edition')) {
         return get_the_ID();
     }
 

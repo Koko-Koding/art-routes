@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 function art_routes_add_import_export_page()
 {
     add_submenu_page(
-        'edit.php?post_type=edition',
+        'edit.php?post_type=artro_edition',
         __('Import/Export', 'art-routes'),
         __('Import/Export', 'art-routes'),
         'manage_options',
@@ -38,12 +38,14 @@ function art_routes_render_import_export_page()
 
     // Handle CSV import if form was submitted
     $import_result = null;
-    if (isset($_POST['art_routes_import_csv']) && isset($_POST['_wpnonce'])) {
+    if (isset($_POST['art_routes_import_csv']) && isset($_POST['_wpnonce']) &&
+        wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'art_routes_import_csv')) {
         $import_result = art_routes_handle_csv_import();
     }
 
     // Handle GPX import if form was submitted
-    if (isset($_POST['art_routes_import_gpx']) && isset($_POST['_wpnonce_gpx'])) {
+    if (isset($_POST['art_routes_import_gpx']) && isset($_POST['_wpnonce_gpx']) &&
+        wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce_gpx'])), 'art_routes_import_gpx')) {
         $import_result = art_routes_handle_gpx_import();
     }
 
@@ -68,7 +70,7 @@ function art_routes_render_import_export_page()
                 </div>
             <?php elseif (is_array($import_result)) : ?>
                 <?php
-                $dashboard_url = admin_url('edit.php?post_type=edition&page=art-routes-dashboard&edition_id=' . $import_result['edition_id']);
+                $dashboard_url = admin_url('edit.php?post_type=artro_edition&page=art-routes-dashboard&edition_id=' . $import_result['edition_id']);
                 $edition_title = get_the_title($import_result['edition_id']);
                 ?>
                 <div class="notice notice-success is-dismissible">
@@ -94,7 +96,7 @@ function art_routes_render_import_export_page()
 
         <nav class="nav-tab-wrapper">
             <?php foreach ($tabs as $tab_slug => $tab_label) : ?>
-                <a href="<?php echo esc_url(add_query_arg(['tab' => $tab_slug], admin_url('edit.php?post_type=edition&page=art-routes-import-export'))); ?>"
+                <a href="<?php echo esc_url(add_query_arg(['tab' => $tab_slug], admin_url('edit.php?post_type=artro_edition&page=art-routes-import-export'))); ?>"
                    class="nav-tab <?php echo $current_tab === $tab_slug ? 'nav-tab-active' : ''; ?>">
                     <?php echo esc_html($tab_label); ?>
                 </a>
@@ -460,7 +462,7 @@ function art_routes_render_export_tab()
 function art_routes_handle_csv_import()
 {
     // Verify nonce
-    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'art_routes_import_csv')) {
+    if (!isset($_POST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'art_routes_import_csv')) {
         return new WP_Error('invalid_nonce', __('Security check failed. Please try again.', 'art-routes'));
     }
 
@@ -483,7 +485,7 @@ function art_routes_handle_csv_import()
 
         $edition_id = wp_insert_post([
             'post_title'  => $new_edition_name,
-            'post_type'   => 'edition',
+            'post_type'   => 'artro_edition',
             'post_status' => 'publish',
             'post_author' => get_current_user_id(),
         ]);
@@ -502,12 +504,14 @@ function art_routes_handle_csv_import()
 
     // Verify edition exists
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         return new WP_Error('invalid_edition', __('Selected edition does not exist.', 'art-routes'));
     }
 
     // Check file upload
-    if (!isset($_FILES['import_csv_file']) || $_FILES['import_csv_file']['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($_FILES['import_csv_file']) ||
+        !isset($_FILES['import_csv_file']['error']) ||
+        $_FILES['import_csv_file']['error'] !== UPLOAD_ERR_OK) {
         $error_message = __('File upload failed.', 'art-routes');
         if (isset($_FILES['import_csv_file']['error'])) {
             switch ($_FILES['import_csv_file']['error']) {
@@ -524,6 +528,9 @@ function art_routes_handle_csv_import()
     }
 
     // Verify file type
+    if (!isset($_FILES['import_csv_file']['name'])) {
+        return new WP_Error('upload_error', __('File upload failed.', 'art-routes'));
+    }
     $file_info = wp_check_filetype(sanitize_file_name($_FILES['import_csv_file']['name']));
     if ($file_info['ext'] !== 'csv') {
         return new WP_Error('invalid_file_type', __('Please upload a CSV file.', 'art-routes'));
@@ -536,6 +543,10 @@ function art_routes_handle_csv_import()
         WP_Filesystem();
     }
 
+    if (!isset($_FILES['import_csv_file']['tmp_name'])) {
+        return new WP_Error('upload_error', __('File upload failed.', 'art-routes'));
+    }
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name is a server-generated temp path, not user input
     $csv_content = $wp_filesystem->get_contents($_FILES['import_csv_file']['tmp_name']);
     if (!$csv_content) {
         return new WP_Error('file_read_error', __('Could not read the uploaded file.', 'art-routes'));
@@ -670,7 +681,7 @@ function art_routes_handle_csv_import()
         }
 
         // Determine post type
-        $post_type = ($type === 'location') ? 'artwork' : 'information_point';
+        $post_type = ($type === 'location') ? 'artro_artwork' : 'artro_info_point';
 
         // Check for duplicates
         if ($type === 'location') {
@@ -821,7 +832,7 @@ function art_routes_handle_csv_import()
 function art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance = 0.00002)
 {
     $existing_locations = get_posts([
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'post_status' => ['publish', 'draft', 'pending', 'private'],
         'posts_per_page' => -1,
         'fields' => 'ids',
@@ -857,7 +868,7 @@ function art_routes_find_duplicate_location($lat, $lon, $edition_id, $tolerance 
 function art_routes_find_duplicate_route($name, $edition_id)
 {
     $existing_routes = get_posts([
-        'post_type' => 'art_route',
+        'post_type' => 'artro_route',
         'post_status' => ['publish', 'draft', 'pending', 'private'],
         'posts_per_page' => 1,
         'title' => $name,
@@ -882,7 +893,7 @@ function art_routes_find_duplicate_route($name, $edition_id)
 function art_routes_find_duplicate_location_by_name($name, $edition_id)
 {
     $existing_locations = get_posts([
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'post_status' => ['publish', 'draft', 'pending', 'private'],
         'posts_per_page' => 1,
         'title' => $name,
@@ -909,7 +920,7 @@ function art_routes_find_duplicate_location_by_name($name, $edition_id)
 function art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $tolerance = 0.00002)
 {
     $existing_info_points = get_posts([
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'post_status' => ['publish', 'draft', 'pending', 'private'],
         'posts_per_page' => -1,
         'fields' => 'ids',
@@ -945,7 +956,7 @@ function art_routes_find_duplicate_info_point($lat, $lon, $edition_id, $toleranc
 function art_routes_find_duplicate_info_point_by_name($name, $edition_id)
 {
     $existing_info_points = get_posts([
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'post_status' => ['publish', 'draft', 'pending', 'private'],
         'posts_per_page' => 1,
         'title' => $name,
@@ -968,7 +979,7 @@ function art_routes_find_duplicate_info_point_by_name($name, $edition_id)
 function art_routes_handle_gpx_import()
 {
     // Verify nonce
-    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce_gpx'])), 'art_routes_import_gpx')) {
+    if (!isset($_POST['_wpnonce_gpx']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce_gpx'])), 'art_routes_import_gpx')) {
         return new WP_Error('invalid_nonce', __('Security check failed. Please try again.', 'art-routes'));
     }
 
@@ -991,7 +1002,7 @@ function art_routes_handle_gpx_import()
 
         $edition_id = wp_insert_post([
             'post_title'  => $new_edition_name,
-            'post_type'   => 'edition',
+            'post_type'   => 'artro_edition',
             'post_status' => 'publish',
             'post_author' => get_current_user_id(),
         ]);
@@ -1010,7 +1021,7 @@ function art_routes_handle_gpx_import()
 
     // Verify edition exists
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         return new WP_Error('invalid_edition', __('Selected edition does not exist.', 'art-routes'));
     }
 
@@ -1021,7 +1032,9 @@ function art_routes_handle_gpx_import()
     }
 
     // Check file upload
-    if (!isset($_FILES['import_gpx_file']) || $_FILES['import_gpx_file']['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($_FILES['import_gpx_file']) ||
+        !isset($_FILES['import_gpx_file']['error']) ||
+        $_FILES['import_gpx_file']['error'] !== UPLOAD_ERR_OK) {
         $error_message = __('File upload failed.', 'art-routes');
         if (isset($_FILES['import_gpx_file']['error'])) {
             switch ($_FILES['import_gpx_file']['error']) {
@@ -1038,6 +1051,9 @@ function art_routes_handle_gpx_import()
     }
 
     // Verify file type - check extension directly since GPX is not in WordPress's default allowed types
+    if (!isset($_FILES['import_gpx_file']['name'])) {
+        return new WP_Error('upload_error', __('File upload failed.', 'art-routes'));
+    }
     $file_extension = strtolower(pathinfo(sanitize_file_name($_FILES['import_gpx_file']['name']), PATHINFO_EXTENSION));
     if ($file_extension !== 'gpx') {
         return new WP_Error('invalid_file_type', __('Please upload a GPX file.', 'art-routes'));
@@ -1049,6 +1065,10 @@ function art_routes_handle_gpx_import()
         require_once ABSPATH . '/wp-admin/includes/file.php';
         WP_Filesystem();
     }
+    if (!isset($_FILES['import_gpx_file']['tmp_name'])) {
+        return new WP_Error('upload_error', __('File upload failed.', 'art-routes'));
+    }
+    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- tmp_name is a server-generated temp path, not user input
     $gpx_content = $wp_filesystem->get_contents($_FILES['import_gpx_file']['tmp_name']);
     if (!$gpx_content) {
         return new WP_Error('file_read_error', __('Could not read the uploaded file.', 'art-routes'));
@@ -1134,7 +1154,7 @@ function art_routes_handle_gpx_import()
             $post_data = [
                 'post_title'   => $track_name,
                 'post_content' => $track_desc,
-                'post_type'    => 'art_route',
+                'post_type'    => 'artro_route',
                 'post_status'  => 'draft',
                 'post_author'  => get_current_user_id(),
             ];
@@ -1206,7 +1226,7 @@ function art_routes_handle_gpx_import()
             $post_data = [
                 'post_title'   => $rte_name,
                 'post_content' => $rte_desc,
-                'post_type'    => 'art_route',
+                'post_type'    => 'artro_route',
                 'post_status'  => 'draft',
                 'post_author'  => get_current_user_id(),
             ];
@@ -1279,7 +1299,7 @@ function art_routes_handle_gpx_import()
             $post_data = [
                 'post_title'   => $wpt_name,
                 'post_content' => $wpt_desc,
-                'post_type'    => 'artwork',
+                'post_type'    => 'artro_artwork',
                 'post_status'  => 'draft',
                 'post_author'  => get_current_user_id(),
             ];
@@ -1480,7 +1500,7 @@ function art_routes_export_edition()
     }
 
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         wp_die(esc_html__('Selected edition does not exist.', 'art-routes'));
     }
 

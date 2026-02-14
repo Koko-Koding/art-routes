@@ -74,18 +74,18 @@
 		}).addTo(map);
 
 		// Get route data from WordPress
-		routePath = artRouteData.route_path;
+		routePath = artRoutesData.route_path;
 
 		// Check if we should show the completed route
 		showCompletedRoute =
-			artRouteData.show_completed_route !== undefined
-				? artRouteData.show_completed_route
+			artRoutesData.show_completed_route !== undefined
+				? artRoutesData.show_completed_route
 				: true;
 
 		// Check if we should show artwork toasts
 		showArtworkToasts =
-			artRouteData.show_artwork_toasts !== undefined
-				? artRouteData.show_artwork_toasts
+			artRoutesData.show_artwork_toasts !== undefined
+				? artRoutesData.show_artwork_toasts
 				: true;
 
 		// Add the route to the map
@@ -298,8 +298,8 @@
 				popupHtml +=
 					"<strong>" +
 					(isStart
-						? artRouteData.i18n.startPoint || "Startpunt"
-						: artRouteData.i18n.endPoint || "Eindpunt") +
+						? artRoutesData.i18n.startPoint || "Startpunt"
+						: artRoutesData.i18n.endPoint || "Eindpunt") +
 					"</strong>";
 				if (notes && notes.trim().length > 0) {
 					popupHtml +=
@@ -420,7 +420,7 @@
 	 * Add artwork markers to the map using the generic function
 	 */
 	function addArtworkMarkers() {
-		const artworks = artRouteData.artworks;
+		const artworks = artRoutesData.artworks;
 		const iconOptions = {
 			className: "artwork-marker",
 			htmlFn: (artwork) => {
@@ -439,7 +439,7 @@
 					// Use default artwork marker with image and number
 					return `
 						<div class="artwork-marker-inner">
-							<div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRouteData.plugin_url + "assets/images/placeholder.png"}');"></div>
+							<div class="artwork-marker-image" style="background-image: url('${artwork.image_url || artRoutesData.plugin_url + "assets/images/placeholder.png"}');"></div>
 							<div class="artwork-marker-overlay"></div>
 							<div class="artwork-marker-number">${displayNumber}</div>
 						</div>
@@ -457,7 +457,7 @@
 	 * Add information point markers to the map using the generic function
 	 */
 	function addInfoPointMarkers() {
-		const infoPoints = artRouteData.information_points;
+		const infoPoints = artRoutesData.information_points;
 		const iconOptions = {
 			className: "info-point-marker",
 			htmlFn: (infoPoint) => {
@@ -500,7 +500,7 @@
 		}
 
 		const permalink = item.permalink || "";
-		const readMoreText = artRouteData.i18n.readMore || "Lees meer"; // Use translated string or default
+		const readMoreText = artRoutesData.i18n.readMore || "Lees meer"; // Use translated string or default
 
 		// Build image HTML only if imageUrl exists
 		let imageHtml = "";
@@ -516,7 +516,7 @@
 		let artistsHtml = "";
 		if (type === "artwork" && item.artists && item.artists.length > 0) {
 			artistsHtml = '<div class="artwork-artists">';
-			artistsHtml += `<h4>${item.artists.length > 1 ? artRouteData.i18n.artists || "Kunstenaars" : artRouteData.i18n.artist || "Kunstenaar"}:</h4>`;
+			artistsHtml += `<h4>${item.artists.length > 1 ? artRoutesData.i18n.artists || "Kunstenaars" : artRoutesData.i18n.artist || "Kunstenaar"}:</h4>`;
 			artistsHtml += "<ul>";
 			item.artists.forEach((artist) => {
 				artistsHtml += `<li><a href="${artist.url}" target="_blank">${artist.title}</a></li>`;
@@ -532,10 +532,10 @@
 			if (wheelchair || stroller) {
 				accessibilityHtml = '<div class="artwork-accessibility" style="margin: 12px 0 0 0; display: flex; gap: 18px; align-items: center;">';
 				if (wheelchair) {
-					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRouteData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\"><img src=\"${artRouteData.plugin_url}assets/icons/WB%20plattegrond-Rolstoel.svg\" alt=\"${artRouteData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
+					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRoutesData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\"><img src=\"${artRoutesData.plugin_url}assets/icons/WB%20plattegrond-Rolstoel.svg\" alt=\"${artRoutesData.i18n.wheelchairAccessible || 'Wheelchair accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
 				}
 				if (stroller) {
-					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRouteData.i18n.strollerAccessible || 'Stroller accessible'}\"><img src=\"${artRouteData.plugin_url}assets/icons/WB%20plattegrond-Kinderwagen.svg\" alt=\"${artRouteData.i18n.strollerAccessible || 'Stroller accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
+					accessibilityHtml += `<span class=\"artwork-accessibility-item\" title=\"${artRoutesData.i18n.strollerAccessible || 'Stroller accessible'}\"><img src=\"${artRoutesData.plugin_url}assets/icons/WB%20plattegrond-Kinderwagen.svg\" alt=\"${artRoutesData.i18n.strollerAccessible || 'Stroller accessible'}\" style=\"height:28px;width:28px;\" /></span>`;
 				}
 				accessibilityHtml += '</div>';
 			}
@@ -575,7 +575,7 @@
 		if (artwork.artists && artwork.artists.length > 0) {
 			artistsHtml =
 				'<div style="margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">';
-			artistsHtml += `<strong>${artwork.artists.length > 1 ? artRouteData.i18n.artists || "Kunstenaars" : artRouteData.i18n.artist || "Kunstenaar"}:</strong>`;
+			artistsHtml += `<strong>${artwork.artists.length > 1 ? artRoutesData.i18n.artists || "Kunstenaars" : artRoutesData.i18n.artist || "Kunstenaar"}:</strong>`;
 			artistsHtml +=
 				'<ul style="margin: 5px 0 0 0; padding-left: 20px; font-size: 13px;">';
 
@@ -717,7 +717,7 @@
 
 		// Check if route is complete
 		if (progressPercent >= 98) {
-			alert(artRouteData.i18n.routeComplete);
+			alert(artRoutesData.i18n.routeComplete);
 		}
 	}
 
@@ -840,12 +840,12 @@
 	 */
 	function saveVisitedArtwork(artworkId) {
 		$.ajax({
-			url: artRouteData.ajax_url,
+			url: artRoutesData.ajax_url,
 			type: "POST",
 			data: {
 				action: "art_routes_mark_artwork_visited",
 				artwork_id: artworkId,
-				nonce: artRouteData.nonce,
+				nonce: artRoutesData.nonce,
 			},
 			success: (response) => {
 				console.log("Artwork visit saved");
@@ -918,7 +918,7 @@
 			button
 				.prop("disabled", true)
 				.find(".map-control-label")
-				.text(artRouteData.i18n.gettingLocation || "Getting location...");
+				.text(artRoutesData.i18n.gettingLocation || "Getting location...");
 
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -933,31 +933,31 @@
 						button
 							.prop("disabled", false)
 							.find(".map-control-label")
-							.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+							.text(artRoutesData.i18n.goToMyLocation || "Go to My Location");
 					},
 					(error) => {
 						// Handle error
 						button
 							.prop("disabled", false)
 							.find(".map-control-label")
-							.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+							.text(artRoutesData.i18n.goToMyLocation || "Go to My Location");
 
 						let errorMessage =
-							artRouteData.i18n.locationError || "Could not get your location";
+							artRoutesData.i18n.locationError || "Could not get your location";
 						switch (error.code) {
 							case error.PERMISSION_DENIED:
 								errorMessage =
-									artRouteData.i18n.locationPermissionDenied ||
+									artRoutesData.i18n.locationPermissionDenied ||
 									"Location access denied. Please allow location access in your browser.";
 								break;
 							case error.POSITION_UNAVAILABLE:
 								errorMessage =
-									artRouteData.i18n.locationUnavailable ||
+									artRoutesData.i18n.locationUnavailable ||
 									"Location information is unavailable.";
 								break;
 							case error.TIMEOUT:
 								errorMessage =
-									artRouteData.i18n.locationTimeout ||
+									artRoutesData.i18n.locationTimeout ||
 									"Location request timed out.";
 								break;
 						}
@@ -975,9 +975,9 @@
 				button
 					.prop("disabled", false)
 					.find(".map-control-label")
-					.text(artRouteData.i18n.goToMyLocation || "Go to My Location");
+					.text(artRoutesData.i18n.goToMyLocation || "Go to My Location");
 				alert(
-					artRouteData.i18n.geolocationNotSupported ||
+					artRoutesData.i18n.geolocationNotSupported ||
 					"Geolocation is not supported by this browser.",
 				);
 			}

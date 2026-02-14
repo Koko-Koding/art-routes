@@ -19,7 +19,7 @@ function art_routes_add_meta_boxes()
         'art_route_details',
         __('Route Details', 'art-routes'),
         'art_routes_render_route_details_meta_box',
-        'art_route',
+        'artro_route',
         'normal',
         'high'
     );
@@ -29,7 +29,7 @@ function art_routes_add_meta_boxes()
         'art_route_path',
         __('Route Path', 'art-routes'),
         'art_routes_render_route_path_meta_box',
-        'art_route',
+        'artro_route',
         'normal',
         'high'
     );
@@ -39,7 +39,7 @@ function art_routes_add_meta_boxes()
         'artwork_location',
         __('Artwork Location', 'art-routes'),
         'art_routes_render_artwork_location_meta_box',
-        'artwork',
+        'artro_artwork',
         'normal',
         'high'
     );
@@ -49,7 +49,7 @@ function art_routes_add_meta_boxes()
         'info_point_location',
         __('Info Point Location', 'art-routes'),
         'art_routes_render_info_point_location_meta_box', // Use dedicated function for info points
-        'information_point', // Apply to the new CPT
+        'artro_info_point', // Apply to the new CPT
         'normal',
         'high'
     );
@@ -59,7 +59,7 @@ function art_routes_add_meta_boxes()
         'artwork_artists',
         __('Artist(s)', 'art-routes'),
         'art_routes_render_artwork_artists_meta_box',
-        'artwork',
+        'artro_artwork',
         'normal',
         'default'
     );
@@ -69,7 +69,7 @@ function art_routes_add_meta_boxes()
         'artwork_icon',
         __('Artwork Icon', 'art-routes'),
         'art_routes_render_artwork_icon_meta_box',
-        'artwork',
+        'artro_artwork',
         'side',
         'default'
     );
@@ -79,7 +79,7 @@ function art_routes_add_meta_boxes()
         'info_point_icon',
         __('Info Point Icon', 'art-routes'),
         'art_routes_render_info_point_icon_meta_box',
-        'information_point',
+        'artro_info_point',
         'side',
         'default'
     );
@@ -89,13 +89,13 @@ function art_routes_add_meta_boxes()
         'route_icon',
         __('Route Icon', 'art-routes'),
         'art_routes_render_route_icon_meta_box',
-        'art_route',
+        'artro_route',
         'side',
         'default'
     );
 
     // Edition selector for all content types
-    $edition_post_types = ['art_route', 'artwork', 'information_point'];
+    $edition_post_types = ['artro_route', 'artro_artwork', 'artro_info_point'];
     foreach ($edition_post_types as $post_type) {
         add_meta_box(
             'edition_selector',
@@ -333,7 +333,7 @@ function art_routes_render_artwork_artists_meta_box($post)
     }
 
     // Get all available post types except some internal ones
-    $excluded_post_types = array('revision', 'attachment', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request', 'wp_block', 'art_route', 'artwork');
+    $excluded_post_types = array('revision', 'attachment', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache', 'user_request', 'wp_block', 'artro_route', 'artro_artwork');
     $post_types = get_post_types(array('public' => true), 'objects');
 
 ?>
@@ -652,7 +652,7 @@ function art_routes_save_route_details($post_id)
     $show_artwork_toasts = isset($_POST['show_artwork_toasts']) ? '1' : '0';
     update_post_meta($post_id, '_show_artwork_toasts', $show_artwork_toasts);
 }
-add_action('save_post_art_route', 'art_routes_save_route_details');
+add_action('save_post_artro_route', 'art_routes_save_route_details');
 
 /**
  * Save route path meta box data
@@ -709,7 +709,7 @@ function art_routes_save_route_path($post_id)
         update_post_meta($post_id, '_route_path', $to_save);
     }
 }
-add_action('save_post_art_route', 'art_routes_save_route_path');
+add_action('save_post_artro_route', 'art_routes_save_route_path');
 
 /**
  * Save artwork location meta box data
@@ -719,7 +719,7 @@ function art_routes_save_artwork_location($post_id)
     // Verify nonce
     // Use a dynamic nonce name based on post type
     $post_type = get_post_type($post_id);
-    if ($post_type !== 'artwork' && $post_type !== 'information_point') {
+    if ($post_type !== 'artro_artwork' && $post_type !== 'artro_info_point') {
         return; // Only save for these post types
     }
     $nonce_action = 'save_artwork_location'; // Nonce action remains the same as it's tied to the rendering function
@@ -740,7 +740,7 @@ function art_routes_save_artwork_location($post_id)
     }
 
     // Only save number and location for artwork post type
-    if ($post_type === 'artwork') {
+    if ($post_type === 'artro_artwork') {
         // Save artwork number
         if (isset($_POST['artwork_number'])) {
             update_post_meta($post_id, '_artwork_number', sanitize_text_field(wp_unslash($_POST['artwork_number'])));
@@ -760,8 +760,8 @@ function art_routes_save_artwork_location($post_id)
         update_post_meta($post_id, '_stroller_accessible', $stroller_accessible);
     }
 }
-add_action('save_post_artwork', 'art_routes_save_artwork_location');
-add_action('save_post_information_point', 'art_routes_save_artwork_location');
+add_action('save_post_artro_artwork', 'art_routes_save_artwork_location');
+add_action('save_post_artro_info_point', 'art_routes_save_artwork_location');
 
 /**
  * Save artwork artist associations
@@ -794,7 +794,7 @@ function art_routes_save_artwork_artists($post_id)
         update_post_meta($post_id, '_artwork_artist_ids', array());
     }
 }
-add_action('save_post_artwork', 'art_routes_save_artwork_artists');
+add_action('save_post_artro_artwork', 'art_routes_save_artwork_artists');
 
 /**
  * Save artwork icon meta box data
@@ -821,7 +821,7 @@ function art_routes_save_artwork_icon($post_id)
         }
     }
 }
-add_action('save_post_artwork', 'art_routes_save_artwork_icon');
+add_action('save_post_artro_artwork', 'art_routes_save_artwork_icon');
 
 /**
  * Save info point icon meta box data
@@ -848,7 +848,7 @@ function art_routes_save_info_point_icon($post_id)
         }
     }
 }
-add_action('save_post_information_point', 'art_routes_save_info_point_icon');
+add_action('save_post_artro_info_point', 'art_routes_save_info_point_icon');
 
 /**
  * Save route icon meta box data
@@ -877,7 +877,7 @@ function art_routes_save_route_icon($post_id)
         delete_post_meta($post_id, '_route_icon');
     }
 }
-add_action('save_post_art_route', 'art_routes_save_route_icon');
+add_action('save_post_artro_route', 'art_routes_save_route_icon');
 
 /**
  * Render Edition selector meta box
@@ -931,6 +931,6 @@ function art_routes_save_edition_selector($post_id) {
         }
     }
 }
-add_action('save_post_art_route', 'art_routes_save_edition_selector');
-add_action('save_post_artwork', 'art_routes_save_edition_selector');
-add_action('save_post_information_point', 'art_routes_save_edition_selector');
+add_action('save_post_artro_route', 'art_routes_save_edition_selector');
+add_action('save_post_artro_artwork', 'art_routes_save_edition_selector');
+add_action('save_post_artro_info_point', 'art_routes_save_edition_selector');

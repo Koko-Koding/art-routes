@@ -148,7 +148,7 @@ $js_data = [
 <?php
 // Pass route data to the main map script via inline script
 wp_add_inline_script('art-routes-map-js',
-    'var artRouteData = ' . wp_json_encode($js_data) . ';',
+    'var artRoutesData = ' . wp_json_encode($js_data) . ';',
     'before'
 );
 ?>

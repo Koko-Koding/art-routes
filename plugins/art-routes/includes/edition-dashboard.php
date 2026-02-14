@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 function art_routes_add_dashboard_page()
 {
     add_submenu_page(
-        'edit.php?post_type=edition',
+        'edit.php?post_type=artro_edition',
         __('Dashboard', 'art-routes'),
         __('Dashboard', 'art-routes'),
         'manage_options',
@@ -35,7 +35,7 @@ add_action('admin_menu', 'art_routes_add_dashboard_page');
 function art_routes_enqueue_dashboard_assets($hook)
 {
     // Only load on the dashboard page
-    if ('edition_page_art-routes-dashboard' !== $hook) {
+    if ('artro_edition_page_art-routes-dashboard' !== $hook) {
         return;
     }
 
@@ -409,7 +409,7 @@ function art_routes_dashboard_get_items()
 
     // Verify edition exists and is correct post type
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         wp_send_json_error(['message' => __('Invalid edition.', 'art-routes')]);
     }
 
@@ -430,7 +430,7 @@ function art_routes_dashboard_get_items()
 
     // Query routes for this edition
     $routes_query = new WP_Query([
-        'post_type' => 'art_route',
+        'post_type' => 'artro_route',
         'post_status' => ['publish', 'draft'],
         'posts_per_page' => -1,
         'meta_key' => '_edition_id',
@@ -453,7 +453,7 @@ function art_routes_dashboard_get_items()
 
     // Query locations (artworks) for this edition
     $locations_query = new WP_Query([
-        'post_type' => 'artwork',
+        'post_type' => 'artro_artwork',
         'post_status' => ['publish', 'draft'],
         'posts_per_page' => -1,
         'meta_key' => '_edition_id',
@@ -495,7 +495,7 @@ function art_routes_dashboard_get_items()
 
     // Query info points for this edition
     $info_points_query = new WP_Query([
-        'post_type' => 'information_point',
+        'post_type' => 'artro_info_point',
         'post_status' => ['publish', 'draft'],
         'posts_per_page' => -1,
         'meta_key' => '_edition_id',
@@ -586,7 +586,7 @@ function art_routes_dashboard_update_item()
         wp_send_json_error(['message' => __('Post not found.', 'art-routes')]);
     }
 
-    $allowed_post_types = ['art_route', 'artwork', 'information_point'];
+    $allowed_post_types = ['artro_route', 'artro_artwork', 'artro_info_point'];
     if (!in_array($post->post_type, $allowed_post_types, true)) {
         wp_send_json_error(['message' => __('Invalid post type.', 'art-routes')]);
     }
@@ -667,7 +667,7 @@ function art_routes_dashboard_update_item()
             }
 
             // Use different meta key based on post type
-            $meta_key = ($post->post_type === 'information_point') ? '_info_point_icon' : '_artwork_icon';
+            $meta_key = ($post->post_type === 'artro_info_point') ? '_info_point_icon' : '_artwork_icon';
             update_post_meta($post_id, $meta_key, $sanitized_value);
 
             // Return icon data in response
@@ -716,7 +716,7 @@ function art_routes_dashboard_bulk_action()
     }
 
     // Allowed post types for bulk operations
-    $allowed_post_types = ['art_route', 'artwork', 'information_point'];
+    $allowed_post_types = ['artro_route', 'artro_artwork', 'artro_info_point'];
 
     // Track results
     $success_count = 0;
@@ -835,7 +835,7 @@ function art_routes_dashboard_save_settings()
 
     // Verify edition exists and is correct post type
     $edition = get_post($edition_id);
-    if (!$edition || $edition->post_type !== 'edition') {
+    if (!$edition || $edition->post_type !== 'artro_edition') {
         wp_send_json_error(['message' => __('Invalid edition.', 'art-routes')]);
     }
 

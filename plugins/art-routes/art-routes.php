@@ -41,12 +41,47 @@ function art_routes_maybe_flush_rewrites()
     $stored_version = get_option('art_routes_version');
 
     if ($stored_version !== ART_ROUTES_VERSION) {
+        // Migrate CPT names from old generic names to artro_ prefix (one-time)
+        art_routes_migrate_cpt_names();
+
         // Version changed, flush rewrite rules
         flush_rewrite_rules();
         update_option('art_routes_version', ART_ROUTES_VERSION);
     }
 }
 add_action('init', 'art_routes_maybe_flush_rewrites', 999);
+
+/**
+ * One-time migration: rename old CPT slugs in the database
+ *
+ * Converts post_type values from the old generic names to the new
+ * artro_ prefixed names. Safe to run multiple times (idempotent).
+ */
+function art_routes_migrate_cpt_names()
+{
+    if (get_option('art_routes_cpt_migration_done')) {
+        return;
+    }
+
+    global $wpdb;
+
+    $migrations = [
+        'art_route'         => 'artro_route',
+        'artwork'           => 'artro_artwork',
+        'information_point' => 'artro_info_point',
+        'edition'           => 'artro_edition',
+    ];
+
+    foreach ($migrations as $old => $new) {
+        $wpdb->update(
+            $wpdb->posts,
+            ['post_type' => $new],
+            ['post_type' => $old]
+        );
+    }
+
+    update_option('art_routes_cpt_migration_done', true);
+}
 
 // Load required files
 require_once ART_ROUTES_PLUGIN_DIR . 'includes/terminology.php';  // Must load first (provides helper functions)
@@ -87,10 +122,10 @@ register_activation_hook(__FILE__, 'art_routes_activate');
 function art_routes_deactivate()
 {
     // Unregister the post types so the rules are no longer in memory
-    unregister_post_type('art_route');
-    unregister_post_type('artwork');
-    unregister_post_type('information_point');
-    unregister_post_type('edition');
+    unregister_post_type('artro_route');
+    unregister_post_type('artro_artwork');
+    unregister_post_type('artro_info_point');
+    unregister_post_type('artro_edition');
 
     // Clear the permalinks
     flush_rewrite_rules();
