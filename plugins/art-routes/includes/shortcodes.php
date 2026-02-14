@@ -38,6 +38,7 @@ function art_routes_related_artworks_shortcode($atts)
         'posts_per_page' => -1,
         'orderby' => 'title',
         'order' => 'ASC',
+        // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Required to find artworks linked to the current artist; no alternative relationship API
         'meta_query' => [
             [
                 'key' => '_artwork_artist_ids',
@@ -99,7 +100,7 @@ function art_routes_multiple_map_shortcode($atts)
     // Parse attributes
     $atts = shortcode_atts([
         'ids' => '',                   // Comma-separated route IDs (empty = all routes)
-        'exclude' => '',               // Comma-separated route IDs to exclude
+        'exclude' => '',               // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude -- Shortcode attribute name, not a WP_Query param; small dataset of routes
         'height' => '600px',           // Map height
         'show_title' => 'true',        // Show route titles
         'show_description' => 'true',  // Show route descriptions
@@ -180,6 +181,7 @@ function art_routes_get_multiple_routes($route_ids = [], $exclude_ids = [])
 
     // Exclude specific IDs if provided
     if (!empty($exclude_ids)) {
+        // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- Small dataset of routes; exclusion is core shortcode functionality
         $args['post__not_in'] = $exclude_ids;
     }
 

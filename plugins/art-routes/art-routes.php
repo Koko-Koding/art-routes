@@ -73,6 +73,7 @@ function art_routes_migrate_cpt_names()
     ];
 
     foreach ($migrations as $old => $new) {
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time migration; no WP API for bulk post_type rename, cache irrelevant for single-run operation
         $wpdb->update(
             $wpdb->posts,
             ['post_type' => $new],
