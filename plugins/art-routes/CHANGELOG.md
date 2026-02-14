@@ -6,6 +6,25 @@ All notable changes to the Art Routes plugin will be documented in this file.
 
 **Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
 
+## [2.3.0] - 2026-02-14
+
+### Changed
+
+- **WordPress.org compliance**: Renamed all custom post types to use unique `artro_` prefix (`artro_route`, `artro_artwork`, `artro_info_point`, `artro_edition`)
+- **AJAX actions**: Prefixed all AJAX action names with `art_routes_` to avoid conflicts
+- **JS globals**: Renamed JavaScript global variables to use unique `artRoutes` prefix
+- **Shortcodes**: Renamed `[related_artworks]` to `[art_routes_related_artworks]` and `[edition_map]` to `[art_routes_edition_map]`
+- **SVG Sanitizer**: Renamed class from `WP_Art_Routes_SVG_Sanitizer` to `Art_Routes_SVG_Sanitizer`
+- **Security**: Added nonces, user permission checks, and input sanitization across all AJAX handlers
+- **Enqueue system**: Extracted all inline scripts and styles to use WordPress enqueue functions
+- **External services**: Documented OpenStreetMap and Nominatim usage in readme.txt
+- **Text domain**: Changed from `wp-art-routes` to `art-routes`
+- **Plugin URI**: Updated to new GitHub repository URL
+
+### Added
+
+- Automatic database migration for existing installations (converts old CPT names to new `artro_` prefix)
+
 ## [2.2.3] - 2026-02-05
 
 ### Added

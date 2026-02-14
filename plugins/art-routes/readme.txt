@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.2.3
+Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,14 @@ The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace id
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.3.0 =
+* WordPress.org compliance: renamed CPTs to unique artro_ prefix with automatic database migration
+* Prefixed AJAX actions, JS globals, and shortcodes to avoid conflicts
+* Added nonces, user permission checks, and input sanitization
+* Extracted all inline scripts/styles to WordPress enqueue system
+* Documented external services (OpenStreetMap, Nominatim) in readme
+* Updated text domain and Plugin URI
 
 = 2.2.3 =
 * Added complete Dutch translations for Edition and Information Point labels
@@ -235,6 +243,9 @@ The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace id
 See CHANGELOG.md for complete version history.
 
 == Upgrade Notice ==
+
+= 2.3.0 =
+Addresses all WordPress.org plugin review feedback. Existing data is automatically migrated. Shortcodes [related_artworks] and [edition_map] have been renamed — update any pages using them.
 
 = 2.2.0 =
 Plugin renamed from "WP Art Routes" to "Art Routes" for WordPress.org trademark compliance. No functional changes.
