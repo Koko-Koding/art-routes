@@ -814,7 +814,7 @@ function art_routes_save_artwork_icon($post_id)
     // Save the selected icon filename
     if (isset($_POST['artwork_icon'])) {
         $selected_icon = sanitize_text_field(wp_unslash($_POST['artwork_icon']));
-        if (!empty($selected_icon)) {
+        if (!empty($selected_icon) && in_array($selected_icon, art_routes_get_available_icons(), true)) {
             update_post_meta($post_id, '_artwork_icon', $selected_icon);
         } else {
             delete_post_meta($post_id, '_artwork_icon');
@@ -841,7 +841,7 @@ function art_routes_save_info_point_icon($post_id)
     // Save the selected icon filename
     if (isset($_POST['info_point_icon'])) {
         $selected_icon = sanitize_text_field(wp_unslash($_POST['info_point_icon']));
-        if (!empty($selected_icon)) {
+        if (!empty($selected_icon) && in_array($selected_icon, art_routes_get_available_icons(), true)) {
             update_post_meta($post_id, '_info_point_icon', $selected_icon);
         } else {
             delete_post_meta($post_id, '_info_point_icon');
