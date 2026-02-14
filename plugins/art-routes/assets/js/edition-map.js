@@ -5,7 +5,7 @@
  * Expects artRoutesEditionMapI18n to be localized with: { viewDetails, readMore }
  * Per-instance data is passed via artRoutesEditionMapInstances array.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 var artRoutesEditionMap = (function() {

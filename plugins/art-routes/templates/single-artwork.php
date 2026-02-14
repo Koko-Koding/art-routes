@@ -4,7 +4,7 @@
  * 
  * Template for displaying individual artwork posts
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // Don't allow direct access to the template

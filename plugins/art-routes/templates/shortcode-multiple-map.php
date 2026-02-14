@@ -3,7 +3,7 @@
  * Template for the art_routes_map shortcode
  * Displays multiple routes on a single map with color coding
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // Don't allow direct access to the template

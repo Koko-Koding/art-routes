@@ -4,7 +4,7 @@
  * Handles AJAX upload and delete of custom icons in the Settings page.
  * Expects artRoutesCustomIcons to be localized with: { deleteNonce, i18n }
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 jQuery(document).ready(function($) {

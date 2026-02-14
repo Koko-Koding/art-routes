@@ -4,7 +4,7 @@
  * Adds center-tile class to the center icon in the route icons grid.
  * On mobile, reorders to show center tile first.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 (function() {

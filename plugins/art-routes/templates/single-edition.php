@@ -10,7 +10,7 @@
  * - Locations grid section
  * - Info Points list section
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // Don't allow direct access to the template

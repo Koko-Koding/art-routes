@@ -6,7 +6,7 @@
  * Expects artRoutesSingleArtwork to be localized with:
  *   { latitude, longitude, title, thumbnailUrl, iconUrl, number }
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 jQuery(document).ready(function($) {

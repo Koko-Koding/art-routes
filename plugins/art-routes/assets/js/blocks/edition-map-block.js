@@ -4,7 +4,7 @@
  * Displays an interactive map with routes, locations, and info points
  * from a selected Edition.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 (function (wp) {

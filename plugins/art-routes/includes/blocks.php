@@ -4,7 +4,7 @@
  *
  * Registers the Edition Map block with server-side rendering.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // If this file is called directly, abort.

@@ -4,7 +4,7 @@
  * Provides autocomplete search for associating artists/creators with artworks.
  * Expects artRoutesArtistSearch to be localized with: { nonce, removeText }
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 jQuery(document).ready(function($) {

@@ -4,7 +4,7 @@
  * Small inline map in the artwork/info point location meta box.
  * Allows clicking to set coordinates.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 jQuery(document).ready(function($) {

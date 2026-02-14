@@ -3,7 +3,7 @@
  * Template Name: Art Route Map
  * Template for displaying an interactive art route map
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // Prevent direct access

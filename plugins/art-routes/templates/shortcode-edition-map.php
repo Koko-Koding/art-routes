@@ -3,7 +3,7 @@
  * Template for the edition_map shortcode
  * Displays an interactive map with routes, locations, and info points from an edition.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  *
  * Variables passed via art_routes_get_template_part():
  * @var array $atts        Shortcode attributes

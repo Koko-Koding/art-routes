@@ -3,7 +3,7 @@
 /**
  * Template for displaying related artworks for the current post/page/artist
  *
- * @package WP_Art_Routes
+ * @package Art_Routes
  */
 
 if (!defined('ABSPATH')) {

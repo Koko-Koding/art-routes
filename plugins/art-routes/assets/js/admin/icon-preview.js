@@ -6,7 +6,7 @@
  *
  * Config format: { selectId: string, previewId: string, iconUrls: object }
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 jQuery(document).ready(function($) {

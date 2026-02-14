@@ -11,7 +11,7 @@
  * and marker icons is intentional and matches the existing codebase patterns.
  * All dynamic data comes from server-side sanitized PHP output.
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 var artRoutesMultiMap = (function() {

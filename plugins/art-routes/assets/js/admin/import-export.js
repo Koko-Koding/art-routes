@@ -4,7 +4,7 @@
  * Handles edition dropdown toggle for CSV/GPX import and export button.
  * Expects artRoutesImportExport to be localized with: { ajaxUrl, i18n }
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 (function() {

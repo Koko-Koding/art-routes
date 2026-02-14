@@ -2,7 +2,7 @@
 /**
  * Template for the art_route_map shortcode
  *
- * @package WP Art Routes
+ * @package Art_Routes
  */
 
 // Don't allow direct access to the template
