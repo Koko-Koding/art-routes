@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,9 @@ The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace id
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.3.1 =
+* Fixed: Validate icon filenames against available icons before saving
 
 = 2.3.0 =
 * WordPress.org compliance: renamed CPTs to unique artro_ prefix with automatic database migration
@@ -243,6 +246,9 @@ The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace id
 See CHANGELOG.md for complete version history.
 
 == Upgrade Notice ==
+
+= 2.3.1 =
+Security hardening: validates icon filenames before saving.
 
 = 2.3.0 =
 Addresses all WordPress.org plugin review feedback. Existing data is automatically migrated. Shortcodes [related_artworks] and [edition_map] have been renamed — update any pages using them.
