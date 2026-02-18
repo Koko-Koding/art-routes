@@ -1,482 +1,2117 @@
-# Copyright (C) 2025 Your Name
+# Copyright (C) 2026 Drikus Roor - Koko Koding
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Art Routes 1.2.5\n"
+"Project-Id-Version: Art Routes 2.3.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/art-routes\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-27T10:31:21+00:00\n"
+"POT-Creation-Date: 2026-02-18T20:18:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: art-routes\n"
 
 #. Plugin Name of the plugin
 #: art-routes.php
-msgid "WP Art Routes"
+#: includes/blocks.php:165
+#: includes/editions.php:35
+msgid "Art Routes"
 msgstr ""
 
 #. Plugin URI of the plugin
 #: art-routes.php
-msgid "https://example.com/art-routes"
+msgid "https://github.com/Koko-Koding/art-routes"
 msgstr ""
 
 #. Description of the plugin
 #: art-routes.php
-msgid "Interactive art route maps with OpenStreetMap integration for WordPress"
+msgid "Interactive art route maps with OpenStreetMap integration for WordPress. Create custom routes with artworks and points of interest, track user progress, and display interactive maps with Leaflet.js."
 msgstr ""
 
 #. Author of the plugin
 #: art-routes.php
-msgid "Your Name"
+msgid "Drikus Roor - Koko Koding"
 msgstr ""
 
 #. Author URI of the plugin
 #: art-routes.php
-msgid "https://example.com"
+msgid "https://github.com/drikusroor"
 msgstr ""
 
-#: includes/meta-boxes.php:18
-msgid "Route Details"
+#: includes/ajax-handlers.php:147
+#: includes/ajax-handlers.php:165
+msgid "Invalid request or permissions."
 msgstr ""
 
-#: includes/meta-boxes.php:28
-msgid "Route Path"
+#. translators: %1$s: latitude coordinate, %2$s: longitude coordinate
+#: includes/ajax-handlers.php:248
+msgid "New Artwork near %1$s, %2$s"
 msgstr ""
 
-#: includes/meta-boxes.php:38
-msgid "Artwork Location"
+#. translators: %1$s: latitude coordinate, %2$s: longitude coordinate
+#: includes/ajax-handlers.php:248
+msgid "New Info Point near %1$s, %2$s"
 msgstr ""
 
-#: includes/meta-boxes.php:48
-msgid "Artwork Route"
+#: includes/ajax-handlers.php:400
+msgid "Security check failed"
 msgstr ""
 
-#: includes/meta-boxes.php:58
-msgid "Artist(s)"
+#: includes/ajax-handlers.php:406
+msgid "Invalid route ID"
 msgstr ""
 
-#: includes/meta-boxes.php:93
-#: includes/template-functions.php:254
-#: templates/shortcode-map.php:69
-#: templates/shortcode-multiple-map.php:79
-msgid "Walking route"
+#: includes/ajax-handlers.php:413
+msgid "Route not found"
 msgstr ""
 
-#: includes/meta-boxes.php:94
-#: includes/template-functions.php:255
-#: templates/shortcode-map.php:70
-#: templates/shortcode-multiple-map.php:83
-msgid "Bicycle route"
+#: includes/blocks.php:47
+msgid "Auto-detect from context"
 msgstr ""
 
-#: includes/meta-boxes.php:95
-#: includes/template-functions.php:256
-#: templates/shortcode-map.php:71
-#: templates/shortcode-multiple-map.php:87
-msgid "Wheelchair friendly"
+#: includes/blocks.php:62
+msgid "Edition Map"
 msgstr ""
 
-#: includes/meta-boxes.php:96
-#: includes/template-functions.php:257
-#: templates/shortcode-map.php:72
-#: templates/shortcode-multiple-map.php:91
-msgid "Child-friendly route"
+#: includes/blocks.php:63
+msgid "Display an interactive map for an Edition with routes, locations, and info points."
 msgstr ""
 
+#: includes/blocks.php:64
+#: includes/editions.php:22
+#: includes/import-export.php:153
+#: includes/import-export.php:293
+#: includes/import-export.php:411
 #: includes/meta-boxes.php:102
-msgid "Route Length (km)"
+#: includes/post-types.php:479
+#: includes/post-types.php:494
+msgid "Edition"
 msgstr ""
 
-#: includes/meta-boxes.php:109
-msgid "Duration (minutes)"
+#: includes/blocks.php:65
+msgid "Select an edition or use auto-detect to determine from page context."
 msgstr ""
 
-#: includes/meta-boxes.php:132
-msgid "Calculate estimated duration based on route distance and type"
+#: includes/blocks.php:66
+msgid "Display Options"
 msgstr ""
 
-#: includes/meta-boxes.php:133
-msgid "Calculate"
+#: includes/blocks.php:67
+msgid "Show Routes"
 msgstr ""
 
-#: includes/meta-boxes.php:116
-msgid "Route Type"
+#: includes/blocks.php:68
+msgid "Show Locations"
 msgstr ""
 
-#: includes/meta-boxes.php:119
-msgid "Select Type"
+#: includes/blocks.php:69
+msgid "Show Info Points"
 msgstr ""
 
-#: includes/meta-boxes.php:131
-msgid "Show completed route path"
+#: includes/blocks.php:70
+msgid "Show Legend"
 msgstr ""
 
-#: includes/meta-boxes.php:134
-msgid "When checked, users will see which part of the route they have already traversed."
+#: includes/blocks.php:71
+msgid "Map Settings"
 msgstr ""
 
-#: includes/meta-boxes.php:140
-msgid "Show artwork notifications"
+#: includes/blocks.php:72
+msgid "Map Height"
 msgstr ""
 
-#: includes/meta-boxes.php:143
-msgid "When checked, users will receive a notification when they pass near an artwork."
+#: includes/blocks.php:73
+msgid "Enter a CSS value (e.g., 500px, 50vh)"
 msgstr ""
 
-#: includes/meta-boxes.php:159
-msgid "Enter the route path as a series of latitude,longitude points. One point per line."
+#: includes/blocks.php:74
+msgid "Note: The map preview may differ from the frontend display."
 msgstr ""
 
-#: includes/meta-boxes.php:160
-msgid "Example: 52.3702, 4.8952"
+#: includes/blocks.php:75
+msgid "Please select an Edition or the block will auto-detect from the page context."
 msgstr ""
 
-#: includes/meta-boxes.php:166
-msgid "Use Map to Create Route"
+#: includes/blocks.php:77
+msgid "Auto-detect from page"
 msgstr ""
 
-#: includes/meta-boxes.php:183
-msgid "Latitude"
+#: includes/blocks.php:78
+msgid "Unknown Edition"
 msgstr ""
 
-#: includes/meta-boxes.php:190
-msgid "Longitude"
-msgstr ""
-
-#: includes/meta-boxes.php:196
-msgid "Pick Location on Map"
-msgstr ""
-
-#: includes/meta-boxes.php:219
-#: includes/settings.php:112
-msgid "No routes available. Please create a route first."
-msgstr ""
-
-#: includes/meta-boxes.php:224
-msgid "Select a Route"
-msgstr ""
-
-#: includes/meta-boxes.php:258
-msgid "Connect this artwork to one or more posts representing the artist(s)."
-msgstr ""
-
-#: includes/meta-boxes.php:261
-msgid "Search for content:"
-msgstr ""
-
-#: includes/meta-boxes.php:262
-msgid "Start typing to search..."
-msgstr ""
-
-#: includes/meta-boxes.php:265
-msgid "Filter by post type:"
-msgstr ""
-
-#: includes/meta-boxes.php:267
-msgid "All post types"
-msgstr ""
-
-#: includes/meta-boxes.php:280
-msgid "Selected Artist(s):"
-msgstr ""
-
-#: includes/meta-boxes.php:293
-#: includes/meta-boxes.php:381
-msgid "Remove"
-msgstr ""
-
-#: includes/meta-boxes.php:301
-msgid "These posts will be associated with this artwork as artists."
-msgstr ""
-
-#: includes/post-types.php:18
-#: templates/shortcode-multiple-map.php:102
+#: includes/blocks.php:79
+#: includes/edition-dashboard.php:96
+#: includes/edition-dashboard.php:151
+#: includes/edition-dashboard.php:162
+#: includes/editions.php:641
+#: includes/post-types.php:20
+#: includes/terminology.php:26
+#: templates/shortcode-multiple-map.php:98
 msgid "Routes"
 msgstr ""
 
-#: includes/post-types.php:19
+#: includes/blocks.php:80
+#: includes/edition-dashboard.php:97
+#: includes/edition-dashboard.php:152
+#: includes/edition-dashboard.php:200
+#: includes/editions.php:643
+#: includes/terminology.php:31
+msgid "Locations"
+msgstr ""
+
+#: includes/blocks.php:81
+#: includes/edition-dashboard.php:98
+#: includes/edition-dashboard.php:153
+#: includes/edition-dashboard.php:242
+#: includes/editions.php:645
+#: includes/terminology.php:36
+msgid "Info Points"
+msgstr ""
+
+#: includes/blocks.php:82
+msgid "Legend"
+msgstr ""
+
+#: includes/blocks.php:83
+msgid "Nothing selected"
+msgstr ""
+
+#: includes/blocks.php:84
+msgid "Interactive map preview"
+msgstr ""
+
+#: includes/blocks.php:85
+msgid "Showing"
+msgstr ""
+
+#: includes/blocks.php:86
+msgid "The interactive map will appear on the published page"
+msgstr ""
+
+#: includes/edition-dashboard.php:20
+#: includes/edition-dashboard.php:21
+msgid "Dashboard"
+msgstr ""
+
+#: includes/edition-dashboard.php:82
+#: includes/edition-dashboard.php:190
+#: includes/edition-dashboard.php:232
+#: includes/edition-dashboard.php:273
+#: includes/editions.php:638
+msgid "Loading..."
+msgstr ""
+
+#: includes/edition-dashboard.php:83
+msgid "No items found."
+msgstr ""
+
+#: includes/edition-dashboard.php:84
+#: includes/edition-dashboard.php:382
+msgid "Select an edition to manage its content."
+msgstr ""
+
+#: includes/edition-dashboard.php:85
+msgid "Are you sure you want to delete this item? This cannot be undone."
+msgstr ""
+
+#: includes/edition-dashboard.php:86
+msgid "Are you sure you want to delete the selected items? This cannot be undone."
+msgstr ""
+
+#: includes/edition-dashboard.php:87
+msgid "Saving..."
+msgstr ""
+
+#: includes/edition-dashboard.php:88
+msgid "Saved!"
+msgstr ""
+
+#: includes/edition-dashboard.php:89
+msgid "Error saving. Please try again."
+msgstr ""
+
+#: includes/edition-dashboard.php:90
+msgid "Please select at least one item."
+msgstr ""
+
+#: includes/edition-dashboard.php:91
+#: includes/edition-dashboard.php:169
+#: includes/edition-dashboard.php:207
+#: includes/edition-dashboard.php:249
+msgid "Publish"
+msgstr ""
+
+#: includes/edition-dashboard.php:92
+msgid "Draft"
+msgstr ""
+
+#: includes/edition-dashboard.php:93
+#: includes/scripts.php:363
+msgid "Edit"
+msgstr ""
+
+#: includes/edition-dashboard.php:94
+msgid "View"
+msgstr ""
+
+#: includes/edition-dashboard.php:95
+#: includes/edition-dashboard.php:171
+#: includes/edition-dashboard.php:209
+#: includes/edition-dashboard.php:251
+#: includes/editions.php:635
+#: includes/scripts.php:264
+#: includes/settings.php:455
+msgid "Delete"
+msgstr ""
+
+#: includes/edition-dashboard.php:99
+msgid "published"
+msgstr ""
+
+#: includes/edition-dashboard.php:100
+msgid "drafts"
+msgstr ""
+
+#: includes/edition-dashboard.php:101
+msgid "→ Draft"
+msgstr ""
+
+#: includes/edition-dashboard.php:102
+msgid "→ Publish"
+msgstr ""
+
+#: includes/edition-dashboard.php:103
+#: includes/edition-dashboard.php:170
+#: includes/edition-dashboard.php:208
+#: includes/edition-dashboard.php:250
+msgid "Set to Draft"
+msgstr ""
+
+#: includes/edition-dashboard.php:104
+#: includes/edition-dashboard.php:312
+msgid "Use global default"
+msgstr ""
+
+#: includes/edition-dashboard.php:105
+#: includes/edition-dashboard.php:883
+msgid "Settings saved successfully."
+msgstr ""
+
+#: includes/edition-dashboard.php:117
+#: includes/import-export.php:36
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: includes/edition-dashboard.php:129
+msgid "Edition Dashboard"
+msgstr ""
+
+#: includes/edition-dashboard.php:132
+msgid "Select Edition:"
+msgstr ""
+
+#: includes/edition-dashboard.php:134
+msgid "-- Select an edition --"
+msgstr ""
+
+#: includes/edition-dashboard.php:142
+msgid "View Frontend"
+msgstr ""
+
+#: includes/edition-dashboard.php:154
+msgid "Draft (faded)"
+msgstr ""
+
+#: includes/edition-dashboard.php:168
+#: includes/edition-dashboard.php:206
+#: includes/edition-dashboard.php:248
+msgid "Bulk Actions"
+msgstr ""
+
+#: includes/edition-dashboard.php:173
+#: includes/edition-dashboard.php:211
+#: includes/edition-dashboard.php:253
+msgid "Apply"
+msgstr ""
+
+#: includes/edition-dashboard.php:175
+#: includes/edition-dashboard.php:213
+#: includes/edition-dashboard.php:255
+msgid "Select All"
+msgstr ""
+
+#: includes/edition-dashboard.php:176
+#: includes/edition-dashboard.php:214
+#: includes/edition-dashboard.php:256
+msgid "Select None"
+msgstr ""
+
+#: includes/edition-dashboard.php:177
+#: includes/edition-dashboard.php:215
+#: includes/edition-dashboard.php:257
+msgid "Select Drafts"
+msgstr ""
+
+#: includes/edition-dashboard.php:184
+#: includes/edition-dashboard.php:223
+#: includes/edition-dashboard.php:264
+msgid "Title"
+msgstr ""
+
+#: includes/edition-dashboard.php:185
+#: includes/edition-dashboard.php:224
+#: includes/edition-dashboard.php:265
+msgid "Status"
+msgstr ""
+
+#: includes/edition-dashboard.php:186
+#: includes/edition-dashboard.php:228
+#: includes/edition-dashboard.php:269
+msgid "Actions"
+msgstr ""
+
+#: includes/edition-dashboard.php:222
+msgid "#"
+msgstr ""
+
+#: includes/edition-dashboard.php:225
+#: includes/edition-dashboard.php:266
+msgid "Lat"
+msgstr ""
+
+#: includes/edition-dashboard.php:226
+#: includes/edition-dashboard.php:267
+msgid "Lng"
+msgstr ""
+
+#: includes/edition-dashboard.php:227
+#: includes/edition-dashboard.php:268
+msgid "Icon"
+msgstr ""
+
+#: includes/edition-dashboard.php:283
+#: includes/editions.php:181
+msgid "Edition Settings"
+msgstr ""
+
+#: includes/edition-dashboard.php:289
+#: includes/editions.php:171
+msgid "Event Dates"
+msgstr ""
+
+#: includes/edition-dashboard.php:290
+#: includes/editions.php:311
+msgid "Optional: Set the event dates for this edition."
+msgstr ""
+
+#: includes/edition-dashboard.php:293
+#: includes/editions.php:290
+msgid "Start Date:"
+msgstr ""
+
+#: includes/edition-dashboard.php:297
+#: includes/editions.php:301
+msgid "End Date:"
+msgstr ""
+
+#: includes/edition-dashboard.php:305
+#: includes/settings.php:257
+msgid "Default Location Icon"
+msgstr ""
+
+#: includes/edition-dashboard.php:306
+#: includes/editions.php:361
+msgid "Default icon for locations in this edition that do not have an icon assigned."
+msgstr ""
+
+#: includes/edition-dashboard.php:309
+msgid "Icon:"
+msgstr ""
+
+#: includes/edition-dashboard.php:323
+#: includes/editions.php:161
+msgid "Terminology Overrides"
+msgstr ""
+
+#: includes/edition-dashboard.php:324
+#: includes/editions.php:231
+msgid "Override the global terminology labels for this edition. Leave empty to use the global settings (shown as placeholders)."
+msgstr ""
+
+#: includes/edition-dashboard.php:328
+msgid "Type"
+msgstr ""
+
+#: includes/edition-dashboard.php:329
+#: includes/settings.php:344
+msgid "Singular"
+msgstr ""
+
+#: includes/edition-dashboard.php:330
+#: includes/settings.php:359
+msgid "Plural"
+msgstr ""
+
+#: includes/edition-dashboard.php:336
+#: includes/editions.php:212
+#: includes/editions.php:640
+#: includes/post-types.php:21
+#: includes/settings.php:308
+#: includes/terminology.php:25
 msgid "Route"
 msgstr ""
 
-#: includes/post-types.php:20
-#: includes/post-types.php:21
-msgid "Add New Route"
+#: includes/edition-dashboard.php:337
+#: includes/editions.php:213
+msgid "The main paths users follow"
 msgstr ""
 
-#: includes/post-types.php:22
-msgid "Edit Route"
+#: includes/edition-dashboard.php:344
+#: includes/editions.php:216
+#: includes/editions.php:642
+#: includes/meta-boxes.php:246
+#: includes/settings.php:313
+#: includes/terminology.php:30
+msgid "Location"
 msgstr ""
 
-#: includes/post-types.php:23
-msgid "View Route"
+#: includes/edition-dashboard.php:345
+#: includes/editions.php:217
+msgid "Main content items (artworks, performances, etc.)"
 msgstr ""
 
-#: includes/post-types.php:24
-msgid "Search Routes"
+#: includes/edition-dashboard.php:352
+#: includes/editions.php:220
+#: includes/editions.php:644
+#: includes/scripts.php:362
+#: includes/settings.php:318
+#: includes/terminology.php:35
+msgid "Info Point"
 msgstr ""
 
-#: includes/post-types.php:25
-msgid "No routes found"
+#: includes/edition-dashboard.php:353
+#: includes/editions.php:221
+msgid "Information markers along routes"
 msgstr ""
 
-#: includes/post-types.php:38
-msgid "Artworks"
+#: includes/edition-dashboard.php:360
+#: includes/editions.php:224
+#: includes/settings.php:323
+msgid "Creator"
 msgstr ""
 
-#: includes/post-types.php:39
-msgid "Artwork"
+#: includes/edition-dashboard.php:361
+msgid "People/entities associated with locations"
 msgstr ""
 
-#: includes/post-types.php:40
-#: includes/post-types.php:41
-msgid "Add New Artwork"
+#: includes/edition-dashboard.php:372
+msgid "Save Settings"
 msgstr ""
 
-#: includes/post-types.php:42
-msgid "Edit Artwork"
+#: includes/edition-dashboard.php:395
+#: includes/edition-dashboard.php:565
+#: includes/edition-dashboard.php:694
+#: includes/edition-dashboard.php:821
+#: includes/import-export.php:1443
+#: includes/import-export.php:1485
+#: includes/settings.php:471
+#: includes/settings.php:612
+msgid "Security check failed."
 msgstr ""
 
-#: includes/post-types.php:43
-msgid "View Artwork"
+#: includes/edition-dashboard.php:400
+msgid "You do not have permission to access this data."
 msgstr ""
 
-#: includes/post-types.php:44
-msgid "Search Artworks"
+#: includes/edition-dashboard.php:407
+#: includes/edition-dashboard.php:833
+msgid "No edition selected."
 msgstr ""
 
-#: includes/post-types.php:45
-msgid "No artworks found"
+#: includes/edition-dashboard.php:413
+#: includes/edition-dashboard.php:839
+msgid "Invalid edition."
 msgstr ""
 
-#: includes/scripts.php:68
-#: templates/shortcode-map.php:38
-msgid "Congratulations! You have completed this route!"
+#: includes/edition-dashboard.php:570
+msgid "You do not have permission to update this item."
 msgstr ""
 
-#: includes/scripts.php:69
-#: templates/shortcode-map.php:39
-msgid "You are near an artwork!"
+#: includes/edition-dashboard.php:580
+msgid "Invalid post ID."
 msgstr ""
 
-#: includes/scripts.php:198
-msgid "Route Editor"
+#: includes/edition-dashboard.php:586
+msgid "Post not found."
 msgstr ""
 
-#: includes/scripts.php:204
-msgid "Start Drawing"
+#: includes/edition-dashboard.php:591
+msgid "Invalid post type."
 msgstr ""
 
-#: includes/scripts.php:205
-msgid "Stop Drawing"
+#: includes/edition-dashboard.php:596
+msgid "Invalid field."
 msgstr ""
 
-#: includes/scripts.php:206
-msgid "Clear Route"
+#: includes/edition-dashboard.php:619
+msgid "Invalid status value. Must be \"publish\" or \"draft\"."
 msgstr ""
 
-#: includes/scripts.php:209
-#: includes/scripts.php:246
-msgid "Search Location:"
+#: includes/edition-dashboard.php:643
+msgid "Latitude must be between -90 and 90."
 msgstr ""
 
-#: includes/scripts.php:210
-#: includes/scripts.php:247
-msgid "Enter location..."
+#: includes/edition-dashboard.php:653
+msgid "Longitude must be between -180 and 180."
 msgstr ""
 
-#: includes/scripts.php:211
-#: includes/scripts.php:248
-msgid "Search"
+#: includes/edition-dashboard.php:680
+msgid "Unknown field type."
 msgstr ""
 
-#: includes/scripts.php:214
-msgid "Click \"Start Drawing\" then click on the map to create your route. Click \"Stop Drawing\" when finished."
+#: includes/edition-dashboard.php:699
+msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: includes/scripts.php:215
-msgid "points in route"
+#: includes/edition-dashboard.php:710
+msgid "Invalid bulk action."
 msgstr ""
 
-#: includes/scripts.php:216
-msgid "Total distance:"
+#: includes/edition-dashboard.php:715
+msgid "No items selected."
 msgstr ""
 
-#: includes/scripts.php:222
-#: includes/scripts.php:259
+#. translators: %d: number of items
+#: includes/edition-dashboard.php:776
+msgid "%d item published."
+msgid_plural "%d items published."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of items
+#: includes/edition-dashboard.php:783
+msgid "%d item set to draft."
+msgid_plural "%d items set to draft."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of items
+#: includes/edition-dashboard.php:790
+msgid "%d item deleted."
+msgid_plural "%d items deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of items
+#: includes/edition-dashboard.php:800
+msgid "%d item could not be processed."
+msgid_plural "%d items could not be processed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/edition-dashboard.php:826
+msgid "You do not have permission to save settings."
+msgstr ""
+
+#: includes/editions.php:21
+#: includes/editions.php:32
+msgid "Editions"
+msgstr ""
+
+#: includes/editions.php:23
+msgid "Add New"
+msgstr ""
+
+#: includes/editions.php:24
+msgid "Add New Edition"
+msgstr ""
+
+#: includes/editions.php:25
+msgid "Edit Edition"
+msgstr ""
+
+#: includes/editions.php:26
+msgid "New Edition"
+msgstr ""
+
+#: includes/editions.php:27
+msgid "View Edition"
+msgstr ""
+
+#: includes/editions.php:28
+msgid "View Editions"
+msgstr ""
+
+#: includes/editions.php:29
+msgid "Search Editions"
+msgstr ""
+
+#: includes/editions.php:30
+msgid "No editions found"
+msgstr ""
+
+#: includes/editions.php:31
+msgid "No editions found in Trash"
+msgstr ""
+
+#: includes/editions.php:33
+msgid "Edition Archives"
+msgstr ""
+
+#: includes/editions.php:34
+msgid "Edition Attributes"
+msgstr ""
+
+#: includes/editions.php:225
+msgid "People/entities associated with locations (artists, performers, etc.)"
+msgstr ""
+
+#: includes/editions.php:246
+msgid "Singular:"
+msgstr ""
+
+#: includes/editions.php:257
+msgid "Plural:"
+msgstr ""
+
+#: includes/editions.php:332
+msgid "none"
+msgstr ""
+
+#: includes/editions.php:337
+msgid "Default Location Icon:"
+msgstr ""
+
+#. translators: %s: global default icon name
+#: includes/editions.php:343
+msgid "Use global default (%s)"
+msgstr ""
+
+#: includes/editions.php:625
+msgid "Delete Edition"
+msgstr ""
+
+#. translators: %s: edition title
+#: includes/editions.php:627
+msgid "Delete %s"
+msgstr ""
+
+#. translators: %d: number of editions
+#: includes/editions.php:629
+msgid "Delete %d editions"
+msgstr ""
+
+#: includes/editions.php:630
+msgid "This edition contains:"
+msgstr ""
+
+#: includes/editions.php:631
+msgid "This edition has no linked content."
+msgstr ""
+
+#: includes/editions.php:632
+msgid "What would you like to do?"
+msgstr ""
+
+#: includes/editions.php:633
+msgid "Delete Edition Only"
+msgstr ""
+
+#: includes/editions.php:634
+msgid "Delete Everything"
+msgstr ""
+
+#: includes/editions.php:636
+#: includes/scripts.php:559
 msgid "Cancel"
 msgstr ""
 
-#: includes/scripts.php:223
-msgid "Save Route"
+#: includes/editions.php:637
+#: includes/scripts.php:262
+msgid "Deleting..."
 msgstr ""
 
-#: includes/scripts.php:240
-msgid "Pick Artwork Location"
+#: includes/editions.php:639
+msgid "An error occurred. Please try again."
 msgstr ""
 
-#: includes/scripts.php:251
-msgid "Click on the map to select the artwork location."
+#: includes/editions.php:659
+#: includes/editions.php:733
+#: includes/editions.php:798
+#: includes/settings.php:476
+#: includes/settings.php:617
+msgid "Permission denied."
 msgstr ""
 
-#: includes/scripts.php:252
-msgid "Selected coordinates:"
+#: includes/editions.php:666
+#: includes/editions.php:740
+#: includes/editions.php:805
+msgid "No editions specified."
+msgstr ""
+
+#. translators: 1: number of editions deleted, 2: number of items unlinked
+#: includes/editions.php:782
+msgid "Deleted %1$d edition(s). %2$d item(s) were unlinked."
+msgstr ""
+
+#. translators: 1: editions, 2: routes, 3: locations, 4: info points
+#: includes/editions.php:877
+msgid "Deleted %1$d edition(s), %2$d route(s), %3$d location(s), %4$d info point(s)."
+msgstr ""
+
+#: includes/import-export.php:20
+#: includes/import-export.php:21
+msgid "Import/Export"
+msgstr ""
+
+#: includes/import-export.php:58
+msgid "Import"
+msgstr ""
+
+#: includes/import-export.php:59
+#: includes/import-export.php:443
+msgid "Export"
+msgstr ""
+
+#. translators: %s: edition title
+#: includes/import-export.php:83
+msgid "Go to %s Dashboard"
+msgstr ""
+
+#. translators: %1$s: locations label (e.g., "Locations"), %2$s: info points label (e.g., "Info Points")
+#: includes/import-export.php:138
+msgid "Import %1$s & %2$s from CSV"
+msgstr ""
+
+#: includes/import-export.php:144
+msgid "Upload a CSV file to import locations and information points. Items will be created as drafts for review before publishing."
+msgstr ""
+
+#: includes/import-export.php:157
+#: includes/import-export.php:297
+#: includes/import-export.php:415
+msgid "Select an edition"
+msgstr ""
+
+#: includes/import-export.php:163
+#: includes/import-export.php:303
+msgid "Create new edition"
+msgstr ""
+
+#: includes/import-export.php:166
+#: includes/import-export.php:306
+msgid "All imported items will be assigned to this edition."
+msgstr ""
+
+#: includes/import-export.php:172
+#: includes/import-export.php:312
+msgid "New Edition Name"
+msgstr ""
+
+#: includes/import-export.php:177
+#: includes/import-export.php:317
+msgid "Enter a name for the new edition (e.g., \"Kunstroute 2026\")."
+msgstr ""
+
+#: includes/import-export.php:183
+msgid "CSV File"
+msgstr ""
+
+#: includes/import-export.php:188
+msgid "Select a CSV file following the template format."
+msgstr ""
+
+#: includes/import-export.php:196
+msgid "Import CSV"
+msgstr ""
+
+#: includes/import-export.php:202
+msgid "CSV Template"
+msgstr ""
+
+#: includes/import-export.php:204
+msgid "Download the template CSV file to see the required format for importing."
+msgstr ""
+
+#: includes/import-export.php:211
+msgid "Download Template CSV"
+msgstr ""
+
+#: includes/import-export.php:215
+msgid "CSV Format"
+msgstr ""
+
+#: includes/import-export.php:217
+msgid "The CSV file should have the following columns:"
+msgstr ""
+
+#: includes/import-export.php:222
+msgid "Column"
+msgstr ""
+
+#: includes/import-export.php:223
+msgid "Required"
+msgstr ""
+
+#: includes/import-export.php:224
+msgid "Description"
+msgstr ""
+
+#: includes/import-export.php:230
+#: includes/import-export.php:235
+#: includes/import-export.php:245
+#: includes/import-export.php:250
+msgid "Yes"
+msgstr ""
+
+#: includes/import-export.php:231
+msgid "\"location\" or \"info_point\""
+msgstr ""
+
+#: includes/import-export.php:236
+msgid "The title of the item"
+msgstr ""
+
+#: includes/import-export.php:240
+#: includes/import-export.php:255
+#: includes/import-export.php:264
+#: includes/import-export.php:269
+msgid "No"
+msgstr ""
+
+#: includes/import-export.php:241
+msgid "Full description/content"
+msgstr ""
+
+#: includes/import-export.php:246
+msgid "GPS latitude (e.g., 52.0907)"
+msgstr ""
+
+#: includes/import-export.php:251
+msgid "GPS longitude (e.g., 5.1214)"
+msgstr ""
+
+#. translators: %s: location label (e.g., "Locations")
+#: includes/import-export.php:258
+msgid "%s only: Display number (e.g., A1, 1)"
+msgstr ""
+
+#: includes/import-export.php:265
+msgid "Icon filename (e.g., icon.svg)"
+msgstr ""
+
+#. translators: %s: location label (e.g., "Locations")
+#: includes/import-export.php:272
+msgid "%s only: Creator/artist name"
+msgstr ""
+
+#: includes/import-export.php:281
+msgid "Import from GPX"
+msgstr ""
+
+#: includes/import-export.php:284
+msgid "Upload a GPX file to import route paths and/or waypoints. Routes will be created as drafts for review."
+msgstr ""
+
+#: includes/import-export.php:323
+msgid "GPX File"
+msgstr ""
+
+#: includes/import-export.php:328
+msgid "Select a GPX file containing tracks and/or waypoints."
+msgstr ""
+
+#: includes/import-export.php:334
+msgid "Import Mode"
+msgstr ""
+
+#: includes/import-export.php:340
+msgid "Route path only"
+msgstr ""
+
+#: includes/import-export.php:342
+msgid "Import tracks as route paths. Waypoints are ignored."
+msgstr ""
+
+#. translators: %s: locations label
+#: includes/import-export.php:350
+msgid "Route path + waypoints as %s"
+msgstr ""
+
+#. translators: %s: locations label
+#: includes/import-export.php:356
+msgid "Import tracks as route paths and waypoints as %s."
+msgstr ""
+
+#. translators: %s: locations label
+#: includes/import-export.php:366
+msgid "Waypoints as %s only"
+msgstr ""
+
+#: includes/import-export.php:370
+msgid "Ignore track data, only import waypoints."
+msgstr ""
+
+#: includes/import-export.php:380
+msgid "Import GPX"
+msgstr ""
+
+#: includes/import-export.php:398
+msgid "Export Edition Data"
+msgstr ""
+
+#: includes/import-export.php:401
+msgid "Export all locations and information points from an edition to CSV or GPX format."
+msgstr ""
+
+#: includes/import-export.php:426
+msgid "Format"
+msgstr ""
+
+#: includes/import-export.php:430
+msgid "CSV (Spreadsheet)"
+msgstr ""
+
+#: includes/import-export.php:431
+msgid "GPX (GPS Exchange Format)"
+msgstr ""
+
+#: includes/import-export.php:434
+msgid "CSV is best for spreadsheet editing. GPX is compatible with GPS devices and mapping apps."
+msgstr ""
+
+#: includes/import-export.php:450
+msgid "No editions found. Please create an edition first."
+msgstr ""
+
+#: includes/import-export.php:466
+#: includes/import-export.php:983
+msgid "Security check failed. Please try again."
+msgstr ""
+
+#: includes/import-export.php:471
+#: includes/import-export.php:988
+msgid "You do not have permission to import data."
+msgstr ""
+
+#: includes/import-export.php:483
+#: includes/import-export.php:1000
+msgid "Please enter a name for the new edition."
+msgstr ""
+
+#: includes/import-export.php:494
+#: includes/import-export.php:1011
+msgid "Failed to create edition."
+msgstr ""
+
+#: includes/import-export.php:502
+#: includes/import-export.php:1019
+#: includes/import-export.php:1499
+#: includes/scripts.php:287
+msgid "Please select an edition."
+msgstr ""
+
+#: includes/import-export.php:508
+#: includes/import-export.php:1025
+#: includes/import-export.php:1504
+msgid "Selected edition does not exist."
+msgstr ""
+
+#: includes/import-export.php:515
+#: includes/import-export.php:532
+#: includes/import-export.php:547
+#: includes/import-export.php:1038
+#: includes/import-export.php:1055
+#: includes/import-export.php:1069
+msgid "File upload failed."
+msgstr ""
+
+#: includes/import-export.php:520
+#: includes/import-export.php:1043
+msgid "The file is too large."
+msgstr ""
+
+#: includes/import-export.php:523
+#: includes/import-export.php:1046
+msgid "No file was uploaded."
+msgstr ""
+
+#: includes/import-export.php:536
+msgid "Please upload a CSV file."
+msgstr ""
+
+#: includes/import-export.php:552
+#: includes/import-export.php:1074
+msgid "Could not read the uploaded file."
+msgstr ""
+
+#: includes/import-export.php:562
+#: includes/import-export.php:568
+msgid "The CSV file is empty."
+msgstr ""
+
+#. translators: %s: comma-separated list of missing column names
+#: includes/import-export.php:584
+msgid "Missing required columns: %s"
+msgstr ""
+
+#. translators: %1$d: row number, %2$s: invalid type value
+#: includes/import-export.php:633
+msgid "Row %1$d: Invalid type \"%2$s\". Must be \"location\" or \"info_point\"."
+msgstr ""
+
+#. translators: %d: row number
+#: includes/import-export.php:644
+msgid "Row %d: Name is required."
+msgstr ""
+
+#. translators: %d: row number
+#: includes/import-export.php:654
+msgid "Row %d: Invalid latitude or longitude."
+msgstr ""
+
+#. translators: %d: row number
+#: includes/import-export.php:667
+msgid "Row %d: Latitude must be between -90 and 90."
+msgstr ""
+
+#. translators: %d: row number
+#: includes/import-export.php:677
+msgid "Row %d: Longitude must be between -180 and 180."
+msgstr ""
+
+#. translators: %1$d: row number, %2$s: error message
+#: includes/import-export.php:729
+msgid "Row %1$d: Failed to create post - %2$s"
+msgstr ""
+
+#. translators: %1$d: number of locations, %2$s: location label, %3$d: number of info points, %4$s: info point label
+#: includes/import-export.php:771
+msgid "Import complete: %1$d %2$s and %3$d %4$s created as drafts."
+msgstr ""
+
+#. translators: %1$d: number of locations, %2$s: location label
+#. translators: %1$d: number of info points, %2$s: info point label
+#. translators: %1$d: number of routes, %2$s: route label
+#: includes/import-export.php:784
+#: includes/import-export.php:793
+#: includes/import-export.php:1346
+#: includes/import-export.php:1355
+#: includes/import-export.php:1373
+#: includes/import-export.php:1382
+msgid "%1$d %2$s"
+msgstr ""
+
+#. translators: %s: skipped items summary
+#: includes/import-export.php:802
+#: includes/import-export.php:1391
+msgid "%s skipped (duplicates)."
+msgstr ""
+
+#: includes/import-export.php:803
+#: includes/import-export.php:1364
+#: includes/import-export.php:1392
+msgid "and"
+msgstr ""
+
+#. translators: %d: number of errors
+#: includes/import-export.php:810
+msgid "%d row had errors."
+msgid_plural "%d rows had errors."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/import-export.php:1059
+msgid "Please upload a GPX file."
+msgstr ""
+
+#: includes/import-export.php:1083
+msgid "Invalid GPX file. Could not parse XML."
+msgstr ""
+
+#. translators: %d: route number
+#: includes/import-export.php:1113
+#: includes/import-export.php:1195
+msgid "Imported Route %d"
+msgstr ""
+
+#. translators: %s: track name
+#: includes/import-export.php:1147
+msgid "Track \"%s\" has no valid points and was skipped."
+msgstr ""
+
+#. translators: %1$s: track name, %2$s: error message
+#: includes/import-export.php:1167
+msgid "Failed to create route \"%1$s\": %2$s"
+msgstr ""
+
+#. translators: %d: location number
+#: includes/import-export.php:1271
+msgid "Imported Location %d"
+msgstr ""
+
+#. translators: %1$s: waypoint name, %2$s: error message
+#: includes/import-export.php:1312
+msgid "Failed to create location \"%1$s\": %2$s"
+msgstr ""
+
+#. translators: %s: items created summary
+#: includes/import-export.php:1363
+msgid "GPX import complete: %s created as drafts."
+msgstr ""
+
+#. translators: %d: number of errors
+#: includes/import-export.php:1399
+msgid "%d item had errors."
+msgid_plural "%d items had errors."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/import-export.php:1448
+#: includes/import-export.php:1490
+msgid "You do not have permission to access this resource."
+msgstr ""
+
+#: includes/meta-boxes.php:20
+msgid "Route Details"
+msgstr ""
+
+#: includes/meta-boxes.php:30
+#: includes/scripts.php:489
+msgid "Route Path"
+msgstr ""
+
+#: includes/meta-boxes.php:40
+msgid "Artwork Location"
+msgstr ""
+
+#: includes/meta-boxes.php:50
+msgid "Info Point Location"
+msgstr ""
+
+#: includes/meta-boxes.php:60
+msgid "Artist(s)"
+msgstr ""
+
+#: includes/meta-boxes.php:70
+msgid "Artwork Icon"
+msgstr ""
+
+#: includes/meta-boxes.php:80
+msgid "Info Point Icon"
+msgstr ""
+
+#: includes/meta-boxes.php:90
+msgid "Route Icon"
+msgstr ""
+
+#: includes/meta-boxes.php:139
+#: includes/template-functions.php:445
+#: templates/shortcode-edition-map.php:47
+#: templates/shortcode-map.php:81
+#: templates/shortcode-multiple-map.php:75
+msgid "Walking route"
+msgstr ""
+
+#: includes/meta-boxes.php:140
+#: includes/template-functions.php:446
+#: templates/shortcode-edition-map.php:51
+#: templates/shortcode-map.php:82
+#: templates/shortcode-multiple-map.php:79
+msgid "Bicycle route"
+msgstr ""
+
+#: includes/meta-boxes.php:141
+#: includes/template-functions.php:447
+#: templates/shortcode-edition-map.php:55
+#: templates/shortcode-map.php:83
+#: templates/shortcode-multiple-map.php:83
+msgid "Wheelchair friendly"
+msgstr ""
+
+#: includes/meta-boxes.php:142
+#: includes/template-functions.php:448
+#: templates/shortcode-edition-map.php:59
+#: templates/shortcode-map.php:84
+#: templates/shortcode-multiple-map.php:87
+msgid "Child-friendly route"
+msgstr ""
+
+#: includes/meta-boxes.php:148
+msgid "Route Length (km)"
+msgstr ""
+
+#: includes/meta-boxes.php:155
+msgid "Duration (minutes)"
+msgstr ""
+
+#: includes/meta-boxes.php:158
+msgid "Calculate estimated duration based on route distance and type"
+msgstr ""
+
+#: includes/meta-boxes.php:159
+msgid "Calculate"
+msgstr ""
+
+#: includes/meta-boxes.php:165
+msgid "Route Type"
+msgstr ""
+
+#: includes/meta-boxes.php:168
+msgid "Select Type"
+msgstr ""
+
+#: includes/meta-boxes.php:180
+msgid "Show completed route path"
+msgstr ""
+
+#: includes/meta-boxes.php:183
+msgid "When checked, users will see which part of the route they have already traversed."
+msgstr ""
+
+#: includes/meta-boxes.php:189
+msgid "Show artwork notifications"
+msgstr ""
+
+#: includes/meta-boxes.php:192
+msgid "When checked, users will receive a notification when they pass near an artwork."
+msgstr ""
+
+#: includes/meta-boxes.php:209
+msgid "Enter the route path as a series of latitude,longitude points. One point per line."
+msgstr ""
+
+#: includes/meta-boxes.php:210
+msgid "Example: 52.3702, 4.8952"
+msgstr ""
+
+#: includes/meta-boxes.php:216
+msgid "Use Map to Create Route"
+msgstr ""
+
+#: includes/meta-boxes.php:238
+#: includes/post-types.php:423
+msgid "Number"
+msgstr ""
+
+#: includes/meta-boxes.php:241
+msgid "Optional artwork number for identification"
+msgstr ""
+
+#: includes/meta-boxes.php:249
+msgid "Optional location description (e.g., \"Near the town square\")"
+msgstr ""
+
+#: includes/meta-boxes.php:255
+#: includes/post-types.php:326
+#: templates/single-artwork.php:66
+#: templates/single-artwork.php:67
+#: templates/single-artwork.php:68
+msgid "Wheelchair accessible"
+msgstr ""
+
+#: includes/meta-boxes.php:258
+msgid "Check if this artwork is accessible by wheelchair."
+msgstr ""
+
+#: includes/meta-boxes.php:263
+#: includes/post-types.php:336
+#: templates/single-artwork.php:72
+#: templates/single-artwork.php:73
+#: templates/single-artwork.php:74
+msgid "Stroller accessible"
+msgstr ""
+
+#: includes/meta-boxes.php:266
+msgid "Check if this artwork is accessible by stroller."
+msgstr ""
+
+#: includes/meta-boxes.php:271
+#: includes/meta-boxes.php:303
+msgid "Latitude"
+msgstr ""
+
+#: includes/meta-boxes.php:278
+#: includes/meta-boxes.php:310
+msgid "Longitude"
+msgstr ""
+
+#: includes/meta-boxes.php:284
+#: includes/meta-boxes.php:316
+msgid "Pick Location on Map"
+msgstr ""
+
+#: includes/meta-boxes.php:341
+msgid "Connect this artwork to one or more posts representing the artist(s)."
+msgstr ""
+
+#: includes/meta-boxes.php:344
+msgid "Search for content:"
+msgstr ""
+
+#: includes/meta-boxes.php:345
+msgid "Start typing to search..."
+msgstr ""
+
+#: includes/meta-boxes.php:348
+msgid "Filter by post type:"
+msgstr ""
+
+#: includes/meta-boxes.php:350
+msgid "All post types"
+msgstr ""
+
+#: includes/meta-boxes.php:363
+msgid "Selected Artist(s):"
+msgstr ""
+
+#: includes/meta-boxes.php:376
+#: includes/scripts.php:364
+#: includes/scripts.php:422
+msgid "Remove"
+msgstr ""
+
+#: includes/meta-boxes.php:384
+msgid "These posts will be associated with this artwork as artists."
+msgstr ""
+
+#: includes/meta-boxes.php:413
+#: includes/meta-boxes.php:487
+#: includes/meta-boxes.php:565
+msgid "Select Icon:"
+msgstr ""
+
+#: includes/meta-boxes.php:418
+#: includes/meta-boxes.php:492
+#: includes/meta-boxes.php:569
+msgid "-- No Icon --"
+msgstr ""
+
+#: includes/meta-boxes.php:428
+#: includes/meta-boxes.php:436
+#: includes/meta-boxes.php:502
+#: includes/meta-boxes.php:510
+#: includes/meta-boxes.php:578
+#: includes/meta-boxes.php:586
+msgid "Preview:"
+msgstr ""
+
+#: includes/meta-boxes.php:459
+msgid "Select an icon for this artwork. The icon will be displayed as a marker on the map."
+msgstr ""
+
+#: includes/meta-boxes.php:533
+msgid "Select an icon for this information point. The icon will be displayed as a marker on the map."
+msgstr ""
+
+#: includes/meta-boxes.php:607
+msgid "Select an icon for this route. The icon will be shown on the route overview page."
+msgstr ""
+
+#: includes/meta-boxes.php:894
+msgid "— No Edition —"
+msgstr ""
+
+#: includes/meta-boxes.php:903
+msgid "Assign this content to an edition."
+msgstr ""
+
+#: includes/post-types.php:22
+#: includes/post-types.php:23
+msgid "Add New Route"
+msgstr ""
+
+#: includes/post-types.php:24
+msgid "Edit Route"
+msgstr ""
+
+#: includes/post-types.php:25
+msgid "View Route"
+msgstr ""
+
+#: includes/post-types.php:26
+msgid "Search Routes"
+msgstr ""
+
+#: includes/post-types.php:27
+msgid "No routes found"
+msgstr ""
+
+#: includes/post-types.php:41
+msgid "Artworks"
+msgstr ""
+
+#: includes/post-types.php:42
+#: includes/scripts.php:361
+msgid "Artwork"
+msgstr ""
+
+#: includes/post-types.php:43
+#: includes/post-types.php:44
+msgid "Add New Artwork"
+msgstr ""
+
+#: includes/post-types.php:45
+msgid "Edit Artwork"
+msgstr ""
+
+#: includes/post-types.php:46
+msgid "View Artwork"
+msgstr ""
+
+#: includes/post-types.php:47
+msgid "Search Artworks"
+msgstr ""
+
+#: includes/post-types.php:48
+msgid "No artworks found"
+msgstr ""
+
+#: includes/post-types.php:62
+msgid "Information Points"
+msgstr ""
+
+#: includes/post-types.php:63
+msgid "Information Point"
+msgstr ""
+
+#: includes/post-types.php:64
+#: includes/post-types.php:65
+msgid "Add New Info Point"
+msgstr ""
+
+#: includes/post-types.php:66
+msgid "Edit Info Point"
+msgstr ""
+
+#: includes/post-types.php:67
+msgid "View Info Point"
+msgstr ""
+
+#: includes/post-types.php:68
+msgid "Search Info Points"
+msgstr ""
+
+#: includes/post-types.php:69
+msgid "No info points found"
+msgstr ""
+
+#: includes/post-types.php:239
+msgid "Artwork latitude coordinate"
+msgstr ""
+
+#: includes/post-types.php:253
+msgid "Artwork longitude coordinate"
+msgstr ""
+
+#: includes/post-types.php:267
+msgid "Artwork number"
+msgstr ""
+
+#: includes/post-types.php:281
+msgid "Artwork location description"
+msgstr ""
+
+#: includes/post-types.php:296
+msgid "Artwork icon filename"
+msgstr ""
+
+#: includes/post-types.php:313
+msgid "Artwork icon URL"
+msgstr ""
+
+#: includes/post-types.php:357
+msgid "Information point latitude coordinate"
+msgstr ""
+
+#: includes/post-types.php:371
+msgid "Information point longitude coordinate"
+msgstr ""
+
+#: includes/post-types.php:386
+msgid "Information point icon filename"
+msgstr ""
+
+#: includes/post-types.php:408
+msgid "Information point icon URL"
+msgstr ""
+
+#: includes/post-types.php:424
+#: includes/terminology.php:41
+#: templates/shortcode-map.php:37
+msgid "Artists"
+msgstr ""
+
+#: includes/post-types.php:519
+msgid "None"
+msgstr ""
+
+#: includes/post-types.php:543
+msgid "All Editions"
+msgstr ""
+
+#: includes/post-types.php:544
+msgid "No Edition"
+msgstr ""
+
+#: includes/scripts.php:93
+msgid "View details"
+msgstr ""
+
+#: includes/scripts.php:94
+#: includes/scripts.php:109
+#: templates/shortcode-map.php:35
+msgid "Read more"
+msgstr ""
+
+#: includes/scripts.php:108
+msgid "Show All Routes"
+msgstr ""
+
+#: includes/scripts.php:217
+#: templates/shortcode-map.php:33
+msgid "Congratulations! You have completed this route!"
+msgstr ""
+
+#: includes/scripts.php:218
+#: templates/shortcode-map.php:34
+msgid "You are near an artwork!"
+msgstr ""
+
+#: includes/scripts.php:259
+msgid "Uploading..."
 msgstr ""
 
 #: includes/scripts.php:260
-msgid "Save Location"
+msgid "Upload failed."
 msgstr ""
 
-#: includes/scripts.php:268
+#: includes/scripts.php:261
+msgid "Are you sure you want to delete this icon? This cannot be undone."
+msgstr ""
+
+#: includes/scripts.php:263
+msgid "Delete failed."
+msgstr ""
+
+#: includes/scripts.php:359
+#: includes/scripts.php:496
+msgid "Add Artwork"
+msgstr ""
+
+#: includes/scripts.php:360
+#: includes/scripts.php:497
+msgid "Add Info Point"
+msgstr ""
+
+#: includes/scripts.php:365
+msgid "Are you sure you want to remove this point from the route?"
+msgstr ""
+
+#: includes/scripts.php:366
+msgid "Error loading points for this route."
+msgstr ""
+
+#: includes/scripts.php:367
+msgid "Error saving points."
+msgstr ""
+
+#: includes/scripts.php:368
+msgid "Saving points..."
+msgstr ""
+
+#: includes/scripts.php:369
+msgid "Points saved successfully."
+msgstr ""
+
+#: includes/scripts.php:370
+msgid "Warning: This point is a draft and won't be visible on the public map."
+msgstr ""
+
+#: includes/scripts.php:484
+msgid "Route Editor"
+msgstr ""
+
+#: includes/scripts.php:490
+msgid "Start Drawing"
+msgstr ""
+
+#: includes/scripts.php:491
+msgid "Stop Drawing"
+msgstr ""
+
+#: includes/scripts.php:492
+msgid "Clear Path"
+msgstr ""
+
+#: includes/scripts.php:493
+msgid "Select an action."
+msgstr ""
+
+#: includes/scripts.php:495
+msgid "Points of Interest"
+msgstr ""
+
+#: includes/scripts.php:500
 msgid "Map View"
 msgstr ""
 
-#: includes/scripts.php:269
+#: includes/scripts.php:501
 msgid "Fit Route"
 msgstr ""
 
-#: includes/scripts.php:270
+#: includes/scripts.php:502
 msgid "My Location"
 msgstr ""
 
-#: includes/settings.php:43
+#: includes/scripts.php:504
+msgid "Search Location"
+msgstr ""
+
+#: includes/scripts.php:505
+msgid "Enter address or place..."
+msgstr ""
+
+#: includes/scripts.php:506
+#: includes/scripts.php:548
+msgid "Search"
+msgstr ""
+
+#: includes/scripts.php:509
+msgid "Use controls above to draw the route or add points. Click on the map to place items."
+msgstr ""
+
+#: includes/scripts.php:511
+msgid "route points"
+msgstr ""
+
+#: includes/scripts.php:512
+msgid "artworks"
+msgstr ""
+
+#: includes/scripts.php:513
+msgid "info points"
+msgstr ""
+
+#: includes/scripts.php:515
+msgid "Route distance:"
+msgstr ""
+
+#: includes/scripts.php:521
+msgid "Close"
+msgstr ""
+
+#: includes/scripts.php:522
+msgid "Save Changes"
+msgstr ""
+
+#: includes/scripts.php:540
+msgid "Pick Artwork Location"
+msgstr ""
+
+#: includes/scripts.php:546
+msgid "Search Location:"
+msgstr ""
+
+#: includes/scripts.php:547
+msgid "Enter location..."
+msgstr ""
+
+#: includes/scripts.php:551
+msgid "Click on the map to select the artwork location."
+msgstr ""
+
+#: includes/scripts.php:552
+msgid "Selected coordinates:"
+msgstr ""
+
+#: includes/scripts.php:560
+msgid "Save Location"
+msgstr ""
+
+#: includes/settings.php:125
 msgid "Art Routes Settings"
 msgstr ""
 
-#: includes/settings.php:44
+#: includes/settings.php:126
 msgid "Settings"
 msgstr ""
 
-#: includes/settings.php:65
+#: includes/settings.php:149
+msgid "General"
+msgstr ""
+
+#: includes/settings.php:150
+msgid "Terminology"
+msgstr ""
+
+#: includes/settings.php:151
+msgid "Custom Icons"
+msgstr ""
+
+#: includes/settings.php:160
 msgid "Settings saved."
 msgstr ""
 
-#: includes/settings.php:84
+#: includes/settings.php:211
 msgid "Default Route"
 msgstr ""
 
-#: includes/settings.php:101
+#: includes/settings.php:228
 msgid "Select a default route"
 msgstr ""
 
-#: includes/settings.php:110
+#: includes/settings.php:237
 msgid "This route will be used when no specific route is selected."
 msgstr ""
 
-#: includes/settings.php:118
+#: includes/settings.php:239
+msgid "No routes available. Please create a route first."
+msgstr ""
+
+#: includes/settings.php:245
 msgid "Location Tracking"
 msgstr ""
 
-#: includes/settings.php:122
+#: includes/settings.php:249
 msgid "Enable location tracking for users"
 msgstr ""
 
-#: includes/settings.php:124
+#: includes/settings.php:251
 msgid "When enabled, users will be prompted to share their location to track progress on routes."
 msgstr ""
 
-#: includes/template-functions.php:247
-#: templates/shortcode-map.php:62
-msgid "minutes"
+#: includes/settings.php:266
+msgid "No default icon (gray circle)"
 msgstr ""
 
-#: includes/template-functions.php:272
-#: templates/shortcode-map.php:87
-#: templates/shortcode-multiple-map.php:173
+#: includes/settings.php:279
+msgid "Select a default icon for locations that do not have an icon assigned (e.g., imported via GPX)."
+msgstr ""
+
+#: includes/settings.php:309
+msgid "The main paths users follow (e.g., \"Art Route\", \"Trail\", \"Walk\")"
+msgstr ""
+
+#: includes/settings.php:314
+msgid "Points of interest along routes (e.g., \"Artwork\", \"Performance\", \"Venue\")"
+msgstr ""
+
+#: includes/settings.php:319
+msgid "Information markers along routes (e.g., \"Info Point\", \"Landmark\", \"Stop\")"
+msgstr ""
+
+#: includes/settings.php:324
+msgid "People or entities associated with locations (e.g., \"Artist\", \"Performer\", \"Author\")"
+msgstr ""
+
+#: includes/settings.php:333
+msgid "Customize the labels used throughout the plugin. Leave fields empty to use the default values shown as placeholders."
+msgstr ""
+
+#: includes/settings.php:375
+msgid "URL Slug"
+msgstr ""
+
+#: includes/settings.php:386
+msgid "The URL-friendly version (lowercase, no spaces). After changing, go to Settings > Permalinks and click Save to refresh URL rules."
+msgstr ""
+
+#: includes/settings.php:409
+msgid "Upload Custom Icons"
+msgstr ""
+
+#: includes/settings.php:411
+msgid "Upload custom icons (SVG, PNG, JPG, or WebP) to use for locations and info points. Uploaded icons will appear in all icon selection dropdowns."
+msgstr ""
+
+#: includes/settings.php:419
+msgid "Select Icon File:"
+msgstr ""
+
+#: includes/settings.php:426
+msgid "Recommended: SVG files for best quality at any size. PNG/JPG supported for compatibility."
+msgstr ""
+
+#: includes/settings.php:430
+msgid "Upload Icon"
+msgstr ""
+
+#: includes/settings.php:437
+msgid "Uploaded Custom Icons"
+msgstr ""
+
+#: includes/settings.php:441
+msgid "No custom icons uploaded yet."
+msgstr ""
+
+#: includes/settings.php:483
+msgid "No file uploaded or upload error."
+msgstr ""
+
+#: includes/settings.php:497
+msgid "Invalid file type. Allowed: SVG, PNG, JPG, WebP."
+msgstr ""
+
+#: includes/settings.php:527
+msgid "Invalid file type detected."
+msgstr ""
+
+#: includes/settings.php:546
+msgid "SVG file failed security validation."
+msgstr ""
+
+#: includes/settings.php:556
+msgid "Could not create icons directory."
+msgstr ""
+
+#: includes/settings.php:583
+#: includes/settings.php:593
+msgid "Failed to save file."
+msgstr ""
+
+#: includes/settings.php:590
+msgid "Failed to read uploaded file."
+msgstr ""
+
+#: includes/settings.php:599
+msgid "Icon uploaded successfully."
+msgstr ""
+
+#: includes/settings.php:624
+msgid "No filename provided."
+msgstr ""
+
+#: includes/settings.php:629
+msgid "Cannot delete built-in icons."
+msgstr ""
+
+#: includes/settings.php:641
+msgid "Failed to delete file."
+msgstr ""
+
+#: includes/settings.php:645
+msgid "Icon deleted successfully."
+msgstr ""
+
+#: includes/shortcodes.php:234
+msgid "Please select an Edition."
+msgstr ""
+
+#: includes/shortcodes.php:240
+msgid "Edition not found."
+msgstr ""
+
+#: includes/shortcodes.php:275
+msgid "No map content found for this edition."
+msgstr ""
+
+#: includes/template-functions.php:462
+#: templates/shortcode-map.php:98
+msgid "Export to GPX"
+msgstr ""
+
+#: includes/template-functions.php:478
+#: templates/shortcode-edition-map.php:138
+#: templates/shortcode-map.php:114
+#: templates/shortcode-multiple-map.php:169
+#: templates/single-edition.php:107
 msgid "Loading map..."
 msgstr ""
 
-#: includes/template-functions.php:278
-#: templates/shortcode-map.php:93
+#: includes/template-functions.php:484
+#: templates/shortcode-map.php:120
 msgid "Retry"
 msgstr ""
 
-#: includes/template-functions.php:283
-#: templates/shortcode-map.php:98
+#: includes/template-functions.php:489
+#: templates/shortcode-map.php:125
 msgid "Progress"
 msgstr ""
 
-#: includes/template-functions.php:287
-#: templates/shortcode-map.php:102
+#: includes/template-functions.php:493
+#: templates/shortcode-map.php:129
 msgid "You have completed"
 msgstr ""
 
-#: includes/template-functions.php:287
-#: templates/shortcode-map.php:102
+#: includes/template-functions.php:493
+#: templates/shortcode-map.php:129
 msgid "of this route"
+msgstr ""
+
+#: includes/template-functions.php:537
+#: templates/shortcode-edition-map.php:145
+msgid "Map Display Options"
+msgstr ""
+
+#: includes/template-functions.php:559
+msgid "Show Artworks"
+msgstr ""
+
+#: includes/template-functions.php:567
+msgid "Show Information Points"
+msgstr ""
+
+#: includes/template-functions.php:575
+msgid "Show Route"
+msgstr ""
+
+#: includes/template-functions.php:583
+msgid "Show My Location"
+msgstr ""
+
+#: includes/template-functions.php:592
+#: templates/shortcode-map.php:40
+msgid "Go to My Location"
+msgstr ""
+
+#: includes/template-functions.php:597
+#: templates/shortcode-map.php:41
+msgid "Go to Route"
+msgstr ""
+
+#: includes/template-functions.php:611
+msgid "Less than a minute"
+msgstr ""
+
+#. translators: %d: number of hours
+#: includes/template-functions.php:617
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of minutes
+#: includes/template-functions.php:621
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/terminology.php:40
+#: templates/shortcode-map.php:36
+msgid "Artist"
+msgstr ""
+
+#. translators: %s: route label plural
+#: templates/shortcode-edition-map.php:75
+msgid "Show All %s"
+msgstr ""
+
+#: templates/shortcode-edition-map.php:90
+#: templates/shortcode-multiple-map.php:107
+msgid "View route details"
+msgstr ""
+
+#. translators: %s: route label singular
+#: templates/shortcode-edition-map.php:122
+msgid "Zoom to %s"
+msgstr ""
+
+#. translators: %s: route label plural
+#. translators: %s: location label plural
+#. translators: %s: info point label plural
+#: templates/shortcode-edition-map.php:154
+#: templates/shortcode-edition-map.php:167
+#: templates/shortcode-edition-map.php:180
+msgid "Show %s"
 msgstr ""
 
 #: templates/shortcode-map.php:19
 msgid "Route not found."
 msgstr ""
 
+#: templates/shortcode-map.php:38
+msgid "Start Point"
+msgstr ""
+
+#: templates/shortcode-map.php:39
+msgid "End Point"
+msgstr ""
+
+#: templates/shortcode-map.php:42
+msgid "Getting location..."
+msgstr ""
+
+#: templates/shortcode-map.php:43
+msgid "Could not get your location"
+msgstr ""
+
+#: templates/shortcode-map.php:44
+msgid "Location access denied. Please allow location access in your browser."
+msgstr ""
+
+#: templates/shortcode-map.php:45
+msgid "Location information is unavailable."
+msgstr ""
+
+#: templates/shortcode-map.php:46
+msgid "Location request timed out."
+msgstr ""
+
+#: templates/shortcode-map.php:47
+msgid "Geolocation is not supported by this browser."
+msgstr ""
+
 #: templates/shortcode-multiple-map.php:20
+#: templates/shortcode-route-icons.php:12
 msgid "No routes found."
 msgstr ""
 
-#: templates/shortcode-multiple-map.php:111
-msgid "View route details"
-msgstr ""
-
-#: templates/shortcode-multiple-map.php:134
-msgid "min"
-msgstr ""
-
-#: templates/shortcode-multiple-map.php:154
+#: templates/shortcode-multiple-map.php:150
 msgid "Zoom to Route"
 msgstr ""
 
-#: templates/shortcode-multiple-map.php:164
+#: templates/shortcode-multiple-map.php:160
 msgid "Art Routes Map"
 msgstr ""
 
-#: templates/shortcode-multiple-map.php:346
-msgid "Show All Routes"
+#: templates/single-artwork.php:35
+msgid "Number:"
 msgstr ""
 
-#: templates/shortcode-map.php:89
-msgid "Map Display Options"
+#: templates/single-artwork.php:41
+msgid "Location:"
 msgstr ""
 
-#: templates/shortcode-map.php:92
-msgid "Show Artworks"
+#: templates/single-artwork.php:90
+msgid "Artists:"
 msgstr ""
 
-#: templates/shortcode-map.php:97
-msgid "Show Information Points"
+#: templates/single-artwork.php:91
+msgid "Artist:"
 msgstr ""
 
-#: templates/shortcode-map.php:102
-msgid "Show Route"
+#: templates/single-artwork.php:121
+msgid "Location on Map"
 msgstr ""
 
-#: templates/shortcode-map.php:107
-msgid "Show My Location"
+#. translators: %1$s: start date, %2$s: end date
+#: templates/single-edition.php:63
+msgid "%1$s - %2$s"
 msgstr ""
 
-#: templates/shortcode-map.php:113
-msgid "Go to My Location"
+#. translators: %s: start date
+#: templates/single-edition.php:69
+msgid "Starting %s"
 msgstr ""
 
-#: templates/shortcode-map.php:118
-msgid "Go to Route"
+#. translators: %s: end date
+#: templates/single-edition.php:72
+msgid "Until %s"
 msgstr ""
 
-#: templates/shortcode-map.php:85
-msgid "Export to GPX"
+#: templates/single-edition.php:101
+msgid "Map"
 msgstr ""
 
-#: includes/ajax-handlers.php:345
-msgid "Security check failed"
-msgstr ""
-
-#: includes/ajax-handlers.php:352
-msgid "Invalid route ID"
-msgstr ""
-
-#: includes/ajax-handlers.php:359
-msgid "Route not found"
+#. translators: %s: route label singular
+#. translators: %s: location label singular
+#: templates/single-edition.php:174
+#: templates/single-edition.php:241
+msgid "View %s"
 msgstr ""

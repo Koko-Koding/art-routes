@@ -4,7 +4,7 @@ Tags: maps, routes, art, leaflet, openstreetmap
 Requires at least: 5.6
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.3.1
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -118,6 +118,11 @@ The plugin references `http://www.topografix.com/GPX/1/1` as an XML namespace id
 5. Mobile-responsive map interface
 
 == Changelog ==
+
+= 2.3.2 =
+* Fixed: Complete Dutch (nl_NL) translation update - 215+ missing strings translated
+* Fixed: Mixed-language display on edition pages (e.g., "View Locatie" now correctly shows "Bekijk Locatie")
+* Updated: Regenerated POT file to include all translatable strings
 
 = 2.3.1 =
 * Fixed: Validate icon filenames against available icons before saving

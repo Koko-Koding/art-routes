@@ -6,6 +6,14 @@ All notable changes to the Art Routes plugin will be documented in this file.
 
 **Versioning Note:** Versions 1.19.1 through 1.31.0 used a `wenb-` prefix (e.g., `wenb-1.25.0`) when the plugin was specific to Woest & Bijster. As of version 2.0.0, the plugin uses standard semantic versioning and is suitable for any organization running location-based cultural events.
 
+## [2.3.2] - 2026-02-18
+
+### Fixed
+
+- Complete Dutch (nl_NL) translation update: translated ~215 missing strings covering editions, edition dashboard, import/export, terminology system, blocks, settings, and icon management
+- Fixed mixed-language display on edition pages ("View Locatie" → "Bekijk Locatie", "Locations" → "Locaties")
+- Regenerated POT file to include all translatable strings from current codebase
+
 ## [2.3.1] - 2026-02-14
 
 ### Fixed
